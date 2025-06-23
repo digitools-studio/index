@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>寫作規劃器</title>
+    <!-- 引入 Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 引入 Vue 2 CDN -->
+    <script src="https://unpkg.com/vue@2.6.14/dist/vue.js"></script>
+    <!-- 引入 Inter 字體 -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* 這裡可以放置任何全域或 App.vue 特有的自定義 CSS */
+        /* Tailwind CSS 已經處理了大部分樣式，這裡只放一些基礎或覆蓋性樣式 */
+        body {
+          margin: 0;
+          font-family: 'Inter', sans-serif;
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* 確保所有元素都有圓角 */
+        .rounded-full, .rounded-lg, .rounded-xl, .rounded-md {
+          border-radius: var(--rounded-radius, 0.5rem); /* Default to md */
+        }
+        .rounded-full { border-radius: 9999px; }
+        .rounded-lg { border-radius: 0.5rem; }
+        .rounded-xl { border-radius: 0.75rem; }
+        .rounded-md { border-radius: 0.375rem; }
+
+        /* 針對輸入框和選擇框的過渡效果 */
+        input[type="text"], select {
+          transition: all 0.2s ease-in-out;
+        }
+        input[type="text"]:focus, select:focus {
+          outline: none;
+          box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.4); /* Indigo-500 with opacity */
+        }
+
+        /* 自定義 checkbox 樣式 */
+        input[type="checkbox"].form-checkbox {
+          appearance: none;
+          -webkit-appearance: none;
+          -moz-appearance: none;
+          display: inline-block;
+          vertical-align: middle;
+          height: 1.25rem; /* h-5 */
+          width: 1.25rem; /* w-5 */
+          border: 1px solid theme('colors.gray.300');
+          border-radius: theme('borderRadius.md');
+          background-color: theme('colors.white');
+          cursor: pointer;
+          transition: all 0.15s ease-in-out;
+        }
+
+        input[type="checkbox"].form-checkbox:checked {
+          background-color: theme('colors.indigo.600');
+          border-color: theme('colors.indigo.600');
+          background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M12.207 4.793a1 1 0 00-1.414 0L7 8.586 4.207 5.793a1 1 0 00-1.414 1.414l3.5 3.5a1 1 0 001.414 0l4.5-4.5a1 1 0 000-1.414z'/%3e%3c/svg%3e");
+          background-size: 100% 100%;
+          background-position: center;
+          background-repeat: no-repeat;
+        }
+
+        input[type="checkbox"].form-checkbox:focus {
+          outline: none;
+          box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.4); /* focus:ring-indigo-500 */
+        }
+    </style>
+</head>
+<body>
+    <div id="app" class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 font-sans antialiased text-gray-800 p-4 sm:p-6 md:p-8">
+      <!-- 頁面主結構：整體畫面的組成 -->
+      <div class="max-w-6xl mx-auto bg-white shadow-xl rounded-xl overflow-hidden">
+
+        <!-- 頁面標題區 (Header) -->
+        <header class="bg-gradient-to-r from-blue-600 to-indigo-700 text-white p-6 sm:p-8 rounded-t-xl flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0">
+          <div class="flex items-center space-x-4">
+            <!-- LOGO / 名稱 -->
+            <img src="https://placehold.co/48x48/4F46E5/FFFFFF?text=WP" alt="Writing Planner Logo" class="rounded-full shadow-md">
+            <div>
+              <h1 class="text-3xl sm:text-4xl font-bold tracking-tight">寫作規劃器</h1>
+              <!-- 副標題 -->
+              <p class="text-sm sm:text-base opacity-90 mt-1">幫助你一鍵規劃 7–30 天文章主題與段落架構</p>
+            </div>
+          </div>
+          <!-- 登入按鈕支援登入、切換語言、偏好設定等功能 (placeholder) -->
+          <button class="bg-white text-blue-600 hover:bg-blue-50 rounded-full px-5 py-2 text-base font-semibold shadow-md transition duration-300 ease-in-out">
+            登入 / 設定
+          </button>
+        </header>
+
+        <main class="p-6 sm:p-8 space-y-8">
+
+          <!-- 內容設定區 (Topic Config Section) -->
+          <section class="bg-gray-50 p-6 rounded-lg shadow-inner border border-gray-100">
+            <h2 class="text-2xl font-semibold mb-6 text-gray-700">內容設定</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <!-- 關鍵字輸入 -->
+              <div>
+                <label for="keywordInput" class="block text-sm font-medium text-gray-700 mb-2">主題關鍵字</label>
+                <input
+                  id="keywordInput"
+                  v-model="keyword"
+                  type="text"
+                  placeholder="輸入你想寫的主題關鍵字，如 SEO、斜槓人生"
+                  class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 transition duration-200"
+                />
+              </div>
+
+              <!-- 時間範圍選擇 -->
+              <div>
+                <label for="daySelector" class="block text-sm font-medium text-gray-700 mb-2">時間範圍</label>
+                <select
+                  id="daySelector"
+                  v-model="selectedDays"
+                  class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 transition duration-200"
+                >
+                  <option value="7">7 天</option>
+                  <option value="14">14 天</option>
+                  <option value="30">30 天</option>
+                </select>
+              </div>
+
+              <!-- 目標讀者輸入 -->
+              <div>
+                <label for="audienceInput" class="block text-sm font-medium text-gray-700 mb-2">目標讀者</label>
+                <input
+                  id="audienceInput"
+                  v-model="audience"
+                  type="text"
+                  placeholder="如「行銷新手」、「部落客」"
+                  class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 transition duration-200"
+                />
+              </div>
+
+              <!-- 語氣風格選擇 (多選) -->
+              <div class="col-span-1 md:col-span-2 lg:col-span-3">
+                <label class="block text-sm font-medium text-gray-700 mb-2">語氣風格 (可選)</label>
+                <div class="flex flex-wrap gap-4">
+                  <label v-for="toneOption in toneOptions" :key="toneOption" class="inline-flex items-center">
+                    <input
+                      type="checkbox"
+                      :value="toneOption"
+                      v-model="selectedTone"
+                      class="form-checkbox h-5 w-5 text-indigo-600 rounded-md border-gray-300 focus:ring-indigo-500 transition duration-150"
+                    />
+                    <span class="ml-2 text-gray-900">{{ toneOption }}</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- [生成主題] 按鈕 -->
+            <button
+              @click="generateTopics"
+              class="mt-8 w-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg transform transition duration-300 ease-in-out hover:scale-105 focus:outline-none focus:ring-4 focus:ring-blue-300"
+            >
+              生成主題
+            </button>
+          </section>
+
+          <!-- 主題建議展示區 (Topic Cards Section) -->
+          <section class="space-y-6">
+            <h2 class="text-2xl font-semibold text-gray-700">主題建議</h2>
+            <div v-if="topics.length === 0" class="bg-white p-6 rounded-lg shadow-sm text-center text-gray-500">
+              點擊「生成主題」按鈕，開始規劃你的文章內容！
+            </div>
+            <div v-else class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div
+                v-for="(topic, index) in topics"
+                :key="index"
+                class="bg-white rounded-lg shadow-md hover:shadow-lg transition duration-300 overflow-hidden"
+              >
+                <div class="p-6">
+                  <!-- 主題標題 -->
+                  <h3 class="text-xl font-bold text-gray-900 mb-2">{{ topic.title }}</h3>
+                  <!-- 簡介摘要 -->
+                  <p class="text-gray-600 text-sm mb-4">{{ topic.summary }}</p>
+                  <!-- 建議文章類型小標籤 -->
+                  <div class="flex flex-wrap gap-2 mb-4">
+                    <span
+                      v-for="type in topic.types"
+                      :key="type"
+                      class="bg-indigo-100 text-indigo-700 text-xs font-semibold px-3 py-1 rounded-full"
+                    >
+                      {{ type }}
+                    </span>
+                  </div>
+
+                  <!-- 展開段落架構 (可摺疊) -->
+                  <button
+                    @click="toggleParagraphs(index)"
+                    class="flex items-center text-blue-600 hover:text-blue-800 text-sm font-medium transition duration-200 mb-4"
+                  >
+                    <span class="mr-1">{{ showParagraphs[index] ? '收起' : '展開' }}段落架構</span>
+                    <svg
+                      :class="{ 'rotate-180': showParagraphs[index] }"
+                      class="w-4 h-4 transform transition-transform duration-200"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                  </button>
+
+                  <div v-if="showParagraphs[index]" class="bg-gray-50 p-4 rounded-md border border-gray-200 mt-2 space-y-3">
+                    <div v-for="(paragraph, pIndex) in topic.paragraphs" :key="pIndex">
+                      <p class="text-gray-800 font-medium">{{ paragraph.heading }}</p>
+                      <p class="text-gray-600 text-sm ml-2">{{ paragraph.description }}</p>
+                    </div>
+                    <p class="text-indigo-700 font-semibold text-sm">建議 CTA: {{ topic.cta }}</p>
+                  </div>
+                </div>
+
+                <!-- 操作按鈕 -->
+                <div class="bg-gray-100 p-4 flex justify-end gap-3 border-t border-gray-200">
+                  <button
+                    @click="copyTopic(topic)"
+                    class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium py-2 px-4 rounded-md text-sm transition duration-200 flex items-center"
+                  >
+                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1.414M9 6h6l-3-3m0 6v6"></path></svg>
+                    複製
+                  </button>
+                  <button
+                    @click="saveDraft(topic)"
+                    class="bg-green-500 hover:bg-green-600 text-white font-medium py-2 px-4 rounded-md text-sm transition duration-200 flex items-center"
+                  >
+                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path></svg>
+                    儲存草稿
+                  </button>
+                  <!-- 匯出按鈕可以在 Export Bar 統一處理，這裡的匯出可能指單獨匯出此卡片 -->
+                  <button
+                    @click="exportSingleTopic(topic)"
+                    class="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-md text-sm transition duration-200 flex items-center"
+                  >
+                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                    匯出
+                  </button>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- 工具列與匯出區 (Export Bar) -->
+          <section class="bg-gray-50 p-6 rounded-lg shadow-inner border border-gray-100 flex flex-wrap justify-center gap-4">
+            <button
+              @click="exportAllTopicsMarkdown"
+              class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg shadow-md transform transition duration-300 ease-in-out hover:scale-105 focus:outline-none focus:ring-4 focus:ring-blue-300 flex items-center"
+            >
+              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+              匯出 Markdown
+            </button>
+            <button
+              @click="saveAllDrafts"
+              class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-lg shadow-md transform transition duration-300 ease-in-out hover:scale-105 focus:outline-none focus:ring-4 focus:ring-purple-300 flex items-center"
+            >
+              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+              儲存草稿
+            </button>
+            <button
+              @click="showMessage('Notion 整合功能 (選配)')"
+              class="bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-6 rounded-lg shadow-md transform transition duration-300 ease-in-out hover:scale-105 focus:outline-none focus:ring-4 focus:ring-orange-300 flex items-center"
+            >
+              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.627 18.724a1 1 0 10-.735-1.748l-.001.001a1 1 0 00-.735 1.748m.735-1.748h-.001L13.627 18.724zm-2.062-1.724a1 1 0 10-.735-1.748l-.001.001a1 1 0 00-.735 1.748m.735-1.748h-.001L11.565 17.001zm-2.062-1.724a1 1 0 10-.735-1.748l-.001.001a1 1 0 00-.735 1.748m.735-1.748h-.001L9.503 15.277zM7.441 13.55a1 1 0 10-.735-1.748l-.001.001a1 1 0 00-.735 1.748m.735-1.748h-.001L7.441 13.55zM5.379 11.826a1 1 0 10-.735-1.748l-.001.001a1 1 0 00-.735 1.748m.735-1.748h-.001L5.379 11.826z"></path></svg>
+              分享到 Notion
+            </button>
+            <button
+              @click="showMessage('一鍵分享功能 (選配)')"
+              class="bg-gray-700 hover:bg-gray-800 text-white font-bold py-3 px-6 rounded-lg shadow-md transform transition duration-300 ease-in-out hover:scale-105 focus:outline-none focus:ring-4 focus:ring-gray-300 flex items-center"
+            >
+              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.823 13.57 9 13.948 9 14.185v4.061l-3.956 2.535A1 1 0 014 20.332V8.242a1 1 0 011.514-.852l3.123 1.968z"></path></svg>
+              一鍵分享
+            </button>
+          </section>
+
+        </main>
+
+        <!-- 訊息提示框 -->
+        <div v-if="message" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div class="bg-white rounded-lg p-6 shadow-xl max-w-sm w-full text-center">
+            <p class="text-lg font-semibold text-gray-800 mb-4">{{ message }}</p>
+            <button @click="message = ''" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition duration-200">
+              確定
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <script>
+        // Vue 應用程式的配置
+        const App = {
+            data() {
+                return {
+                    keyword: '', // 主題關鍵字輸入
+                    selectedDays: 7, // 時間範圍選擇 (預設 7 天)
+                    audience: '', // 目標讀者輸入
+                    toneOptions: ['專業', '親切', '活潑'], // 語氣風格選項
+                    selectedTone: [], // 選定的語氣風格
+                    topics: [], // 儲存生成的主題建議
+                    showParagraphs: {}, // 控制每個主題卡片的段落架構顯示/隱藏
+                    message: '', // 用於顯示提示訊息
+                    drafts: [], // 儲存草稿
+                };
+            },
+            mounted() {
+                // 頁面載入時從 LocalStorage 載入草稿
+                this.loadDrafts();
+            },
+            methods: {
+                /**
+                 * 模擬生成主題的函數。
+                 * 已移除所有 AI 相關程式碼，這裡將生成模擬數據。
+                 */
+                generateTopics() {
+                    if (!this.keyword || !this.audience) {
+                        this.showMessage('請輸入主題關鍵字和目標讀者！');
+                        return;
+                    }
+
+                    // 模擬數據生成中...
+                    this.message = '正在生成內容...';
+                    setTimeout(() => {
+                        const generatedCount = Math.floor(Math.random() * 3) + 2; // 生成 2 到 4 個主題
+                        this.topics = []; // 清空現有主題
+                        for (let i = 0; i < generatedCount; i++) {
+                            this.topics.push(this.createDummyTopic(i));
+                        }
+                        this.message = ''; // 清除訊息
+                    }, 1000); // 模擬網路請求延遲
+                },
+
+                /**
+                 * 創建模擬主題數據的輔助函數。
+                 * @param {number} index - 主題索引，用於生成不同的內容。
+                 * @returns {Object} 模擬的主題對象。
+                 */
+                createDummyTopic(index) {
+                    const titles = [
+                        '如何開始 SEO 寫作：新手入門指南',
+                        '斜槓人生必備技能：打造個人品牌',
+                        '內容行銷的未來趨勢：主題規劃策略',
+                        '提升部落格流量的 5 大策略',
+                        '電子報行銷：如何寫出高開信率的標題',
+                    ];
+                    const summaries = [
+                        '這篇文章將為您介紹 SEO 寫作的基礎知識，幫助您從零開始優化您的內容。',
+                        '探索如何發展多重收入來源，並透過個人品牌提升您的影響力。',
+                        '了解如何制定有效的內容策略，以應對市場變化。',
+                        '從關鍵字研究到社群推廣，本文為您揭示提升部落格流量的實用方法。',
+                        '學習撰寫引人入勝的電子報標題，讓您的訊息更容易被讀者看見。',
+                    ];
+                    const types = [['部落格'], ['IG Post', '部落格'], ['電子報'], ['部落格', '社群'], ['電子報', '部落格']];
+                    const ctas = [
+                        '立即閱讀完整指南，開啟您的 SEO 寫作之旅！',
+                        '立即下載斜槓人生啟動包，開始您的個人品牌建構！',
+                        '報名內容策略工作坊，掌握內容規劃新技能！',
+                        '訂閱我們的電子報，獲取更多流量提升秘訣！',
+                        '點擊這裡，獲得更多電子報行銷的成功案例！',
+                    ];
+                    const paragraphs = [
+                        [
+                            { heading: '段落一：SEO 寫作基礎', description: '介紹 SEO 的定義與為何寫作需要 SEO。' },
+                            { heading: '段落二：關鍵字研究', description: '如何尋找適合的關鍵字並應用到文章中。' },
+                            { heading: '段落三：內容結構優化', description: '文章標題、H1-H6、內文的寫作技巧。' },
+                        ],
+                        [
+                            { heading: '段落一：定義你的斜槓目標', description: '探索個人興趣和專長，確立斜槓方向。' },
+                            { heading: '段落二：建立個人品牌形象', description: '設計專屬的品牌識別，展現獨特性。' },
+                            { heading: '段落三：多元收入來源的建立', description: '分享如何將斜槓技能變現，創造被動收入。' },
+                        ],
+                        [
+                            { heading: '段落一：內容規劃的重要性', description: '探討有條理的內容規劃如何提升效率與成果。' },
+                            { heading: '段落二：規劃工具的選擇', description: '介紹主流的內容規劃工具及其功能。' },
+                            { heading: '段落三：實踐與優化', description: '強調規劃後執行與不斷優化策略的重要性。' },
+                        ],
+                    ];
+
+                    return {
+                        title: titles[index % titles.length],
+                        summary: summaries[index % summaries.length],
+                        types: types[index % types.length],
+                        cta: ctas[index % ctas.length],
+                        paragraphs: paragraphs[index % paragraphs.length],
+                    };
+                },
+
+                /**
+                 * 切換單一主題卡片的段落架構顯示/隱藏。
+                 * @param {number} index - 主題在 topics 陣列中的索引。
+                 */
+                toggleParagraphs(index) {
+                    // 使用 Vue.set 確保響應式更新對象的新屬性
+                    this.$set(this.showParagraphs, index, !this.showParagraphs[index]);
+                },
+
+                /**
+                 * 將指定主題的內容複製到剪貼簿。
+                 * @param {Object} topic - 要複製的主題對象。
+                 */
+                copyTopic(topic) {
+                    let contentToCopy = `
+文章標題: ${topic.title}
+簡介: ${topic.summary}
+文章形式: ${topic.types.join(', ')}
+
+段落架構:
+`;
+                    topic.paragraphs.forEach(p => {
+                        contentToCopy += `- ${p.heading}: ${p.description}\n`;
+                    });
+                    contentToCopy += `建議 CTA: ${topic.cta}`;
+
+                    // 使用 document.execCommand('copy') 來兼容 iframe 環境
+                    const tempTextArea = document.createElement('textarea');
+                    tempTextArea.value = contentToCopy;
+                    document.body.appendChild(tempTextArea);
+                    tempTextArea.select();
+                    try {
+                        const successful = document.execCommand('copy');
+                        if (successful) {
+                            this.showMessage('主題內容已複製到剪貼簿！');
+                        } else {
+                            this.showMessage('複製失敗，請手動複製。');
+                        }
+                    } catch (err) {
+                        this.showMessage('複製失敗，瀏覽器不支援此操作。');
+                        console.error('Failed to copy: ', err);
+                    } finally {
+                        document.body.removeChild(tempTextArea);
+                    }
+                },
+
+                /**
+                 * 將所有生成的主題儲存為草稿到 LocalStorage。
+                 */
+                saveAllDrafts() {
+                    if (this.topics.length === 0) {
+                        this.showMessage('沒有內容可以儲存為草稿。');
+                        return;
+                    }
+                    // 這裡簡單地將當前所有 topics 儲存，實際應用中可能會有更複雜的草稿管理邏輯。
+                    localStorage.setItem('writingPlannerDrafts', JSON.stringify(this.topics));
+                    this.showMessage('所有主題已儲存為草稿！');
+                    this.loadDrafts(); // 更新草稿列表 (如果有一個草稿列表UI)
+                },
+
+                /**
+                 * 載入 LocalStorage 中的草稿。
+                 */
+                loadDrafts() {
+                    try {
+                        const storedDrafts = localStorage.getItem('writingPlannerDrafts');
+                        if (storedDrafts) {
+                            this.drafts = JSON.parse(storedDrafts);
+                            // 如果有需要，也可以將載入的草稿顯示在 topics 列表中
+                            // this.topics = this.drafts;
+                        }
+                    } catch (e) {
+                        console.error('無法載入草稿:', e);
+                        this.showMessage('載入草稿時發生錯誤。');
+                    }
+                },
+
+                /**
+                 * 匯出所有生成的主題為 Markdown 文件。
+                 */
+                exportAllTopicsMarkdown() {
+                    if (this.topics.length === 0) {
+                        this.showMessage('沒有主題可以匯出為 Markdown。');
+                        return;
+                    }
+
+                    let markdownContent = `# 寫作規劃器 - 主題清單\n\n`;
+                    markdownContent += `**主題關鍵字**: ${this.keyword || '未設定'}\n`;
+                    markdownContent += `**時間範圍**: ${this.selectedDays} 天\n`;
+                    markdownContent += `**目標讀者**: ${this.audience || '未設定'}\n`;
+                    markdownContent += `**語氣風格**: ${this.selectedTone.length > 0 ? this.selectedTone.join(', ') : '未設定'}\n\n`;
+                    markdownContent += `---\n\n`;
+
+                    this.topics.forEach((topic, index) => {
+                        markdownContent += `## ${index + 1}. ${topic.title}\n\n`;
+                        markdownContent += `**簡介**: ${topic.summary}\n\n`;
+                        markdownContent += `**建議文章形式**: ${topic.types.join(', ')}\n\n`;
+                        markdownContent += `### 段落架構\n`;
+                        topic.paragraphs.forEach(p => {
+                            markdownContent += `- **${p.heading}**: ${p.description}\n`;
+                        });
+                        markdownContent += `\n**建議 Call-to-Action (CTA)**: ${topic.cta}\n\n`;
+                        markdownContent += `---\n\n`;
+                    });
+
+                    // 創建 Blob 並觸發下載
+                    const blob = new Blob([markdownContent], { type: 'text/markdown;charset=utf-8' });
+                    const link = document.createElement('a');
+                    link.href = URL.createObjectURL(blob);
+                    link.download = `writing-planner-${new Date().toISOString().slice(0, 10)}.md`;
+                    link.click();
+                    URL.revokeObjectURL(link.href);
+                    this.showMessage('Markdown 文件已匯出！');
+                },
+
+                /**
+                 * 匯出單一主題為 Markdown (假設需求如此，與整體匯出區功能互補)。
+                 * @param {Object} topic - 要匯出的單一主題。
+                 */
+                exportSingleTopic(topic) {
+                    let markdownContent = `# ${topic.title}\n\n`;
+                    markdownContent += `**簡介**: ${topic.summary}\n\n`;
+                    markdownContent += `**建議文章形式**: ${topic.types.join(', ')}\n\n`;
+                    markdownContent += `### 段落架構\n`;
+                    topic.paragraphs.forEach(p => {
+                        markdownContent += `- **${p.heading}**: ${p.description}\n`;
+                    });
+                    markdownContent += `\n**建議 Call-to-Action (CTA)**: ${topic.cta}\n`;
+
+                    const blob = new Blob([markdownContent], { type: 'text/markdown;charset=utf-8' });
+                    const link = document.createElement('a');
+                    link.href = URL.createObjectURL(blob);
+                    link.download = `${topic.title.replace(/[^a-zA-Z0-9_\u4e00-\u9fa5]/g, '-')}.md`; // 清理檔案名
+                    link.click();
+                    URL.revokeObjectURL(link.href);
+                    this.showMessage(`單一主題 "${topic.title}" 已匯出為 Markdown！`);
+                },
+
+                /**
+                 * 顯示自定義訊息框。
+                 * @param {string} msg - 要顯示的訊息。
+                 */
+                showMessage(msg) {
+                    this.message = msg;
+                },
+            },
+        };
+
+        // 創建 Vue 實例並掛載到 #app 元素
+        window.onload = function() {
+            new Vue({
+                el: '#app',
+                data: App.data(),
+                methods: App.methods,
+                mounted() {
+                    this.loadDrafts();
+                }
+            });
+        };
+    </script>
+</body>
+</html>
