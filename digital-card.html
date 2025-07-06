@@ -1,0 +1,1271 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>電子名片生成器</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Inter Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Vue.js CDN -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <!-- Removed QRCode.js CDN for mocking purposes -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f2f5;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden; /* Prevent horizontal scrolling */
+        }
+
+        /* Custom scrollbar styles */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        /* Notification animation */
+        .notification-enter-active, .notification-leave-active {
+            transition: opacity 0.5s, transform 0.5s;
+        }
+        .notification-enter-from, .notification-leave-to {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+
+        /* Name glow and pulse animation */
+        @keyframes glow {
+            0%, 100% { text-shadow: 0 0 5px var(--accent-color), 0 0 10px var(--accent-color); }
+            50% { text-shadow: 0 0 15px var(--accent-color), 0 0 25px var(--accent-color); }
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+
+        .name-effect {
+            animation: glow 2s infinite alternate, pulse 3s infinite ease-in-out;
+        }
+
+        /* Template specific styles */
+        .template-tech-futuristic {
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            color: #e0e0e0;
+        }
+        .template-minimal-business {
+            background: linear-gradient(135deg, #ece9e6, #ffffff);
+            color: #333;
+        }
+        .template-creative-art {
+            background: linear-gradient(135deg, #ff7e5f, #feb47b);
+            color: #333;
+        }
+        .template-modern-gradient {
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            color: #e0e0e0;
+        }
+
+        /* Custom CSS injection */
+        .custom-css-style {
+            /* This will be dynamically populated */
+        }
+    </style>
+</head>
+<body>
+    <div id="app" class="min-h-screen flex flex-col items-center p-4 bg-gray-100">
+        <!-- Notification Message -->
+        <transition name="notification">
+            <div v-if="showNotification" class="fixed top-4 left-1/2 -translate-x-1/2 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 transition-all duration-500 ease-out">
+                {{ notificationMessage }}
+            </div>
+        </transition>
+
+        <!-- Header and Template Selector -->
+        <header class="w-full max-w-4xl bg-white p-4 rounded-xl shadow-md flex flex-col sm:flex-row justify-between items-center mb-6">
+            <h1 class="text-2xl font-bold text-gray-800 mb-4 sm:mb-0">電子名片生成器</h1>
+            <div class="flex items-center space-x-4">
+                <label for="template-select" class="text-gray-700">選擇模板:</label>
+                <select id="template-select" v-model="selectedTemplateId" @change="applyTemplate"
+                        class="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="tech-futuristic">科技未來感</option>
+                    <option value="minimal-business">簡約商務風</option>
+                    <option value="creative-art">創意藝術風</option>
+                    <option value="modern-gradient">現代漸變風</option>
+                </select>
+                <button @click="toggleView"
+                        class="px-5 py-2 bg-blue-600 text-white rounded-md shadow-md hover:bg-blue-700 transition-colors duration-300">
+                    {{ view === 'form' ? '預覽名片' : '編輯名片' }}
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="w-full max-w-4xl bg-white rounded-xl shadow-lg p-6">
+            <div v-if="view === 'form'">
+                <!-- BusinessCardForm Component -->
+                <business-card-form
+                    :card-data="cardData"
+                    @update:cardData="updateCardData"
+                    @generate-card="generateCard"
+                    @preview-card="previewCard"
+                    @save-draft="saveDraft"
+                ></business-card-form>
+            </div>
+            <div v-else>
+                <!-- BusinessCardDisplay Component -->
+                <business-card-display
+                    :card-data="cardData"
+                    :selected-template-id="selectedTemplateId"
+                    :shareable-url="shareableUrl"
+                    :active-module="activeModule"
+                    @update:activeModule="updateActiveModule"
+                    @show-notification="showAppNotification"
+                ></business-card-display>
+            </div>
+        </main>
+    </div>
+
+    <script type="module">
+        const { createApp, ref, reactive, watch, computed, onMounted } = Vue;
+
+        // --- BusinessCardForm Component ---
+        const BusinessCardForm = {
+            props: ['cardData'],
+            emits: ['update:cardData', 'generate-card', 'preview-card', 'save-draft'], // Added 'save-draft' emit
+            setup(props, { emit }) {
+                // Create a local reactive copy of cardData for editing
+                const localCardData = reactive(JSON.parse(JSON.stringify(props.cardData)));
+
+                // Watch for changes in the prop and update local copy
+                watch(() => props.cardData, (newVal) => {
+                    console.log('BusinessCardForm: cardData prop updated from parent:', newVal); // Added log
+                    Object.assign(localCardData, JSON.parse(JSON.stringify(newVal)));
+                }, { deep: true });
+
+                // Function to emit updates back to parent
+                const emitUpdate = () => {
+                    console.log('BusinessCardForm: Emitting update:cardData with:', localCardData); // Added log
+                    emit('update:cardData', localCardData);
+                };
+
+                // Add/Remove item functions for dynamic modules
+                const addItem = (moduleName) => {
+                    if (moduleName === 'products') {
+                        localCardData.modules.products.items.push({ name: '', description: '', imageUrl: '' });
+                    } else if (moduleName === 'portfolio') {
+                        localCardData.modules.portfolio.items.push({ name: '', description: '', imageUrl: '' });
+                    } else if (moduleName === 'documents') {
+                        localCardData.modules.documents.items.push({ name: '', url: '' });
+                    }
+                    emitUpdate();
+                };
+
+                const removeItem = (moduleName, index) => {
+                    if (moduleName === 'products') {
+                        localCardData.modules.products.items.splice(index, 1);
+                    } else if (moduleName === 'portfolio') {
+                        localCardData.modules.portfolio.items.splice(index, 1);
+                    } else if (moduleName === 'documents') {
+                        localCardData.modules.documents.items.splice(index, 1);
+                    }
+                    emitUpdate();
+                };
+
+                // Handle form submission
+                const handleGenerate = () => {
+                    emit('generate-card');
+                };
+
+                const handlePreview = () => {
+                    emit('preview-card');
+                };
+
+                // Handle save draft
+                const handleSaveDraft = () => {
+                    emit('save-draft', localCardData); // Emit the current localCardData as draft
+                };
+
+                return {
+                    localCardData,
+                    emitUpdate,
+                    addItem,
+                    removeItem,
+                    handleGenerate,
+                    handlePreview,
+                    handleSaveDraft // Expose the new handler
+                };
+            },
+            template: `
+                <div class="space-y-8 p-4">
+                    <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">編輯您的電子名片</h2>
+
+                    <!-- 個人資料 Personal Information -->
+                    <section class="bg-gray-50 p-6 rounded-lg shadow-sm border border-gray-200">
+                        <h3 class="text-xl font-semibold text-gray-700 mb-4 flex items-center">
+                            <i class="fas fa-user-circle mr-3 text-blue-500"></i>個人資料
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label for="name" class="block text-sm font-medium text-gray-700">姓名</label>
+                                <input type="text" id="name" v-model="localCardData.personal.name" @input="emitUpdate"
+                                    class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                            </div>
+                            <div>
+                                <label for="title" class="block text-sm font-medium text-gray-700">職稱</label>
+                                <input type="text" id="title" v-model="localCardData.personal.title" @input="emitUpdate"
+                                    class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                            </div>
+                            <div class="md:col-span-2">
+                                <label for="avatarUrl" class="block text-sm font-medium text-gray-700">頭像圖片網址</label>
+                                <input type="url" id="avatarUrl" v-model="localCardData.personal.avatarUrl" @input="emitUpdate"
+                                    class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                                <div v-if="localCardData.personal.avatarUrl" class="mt-2 text-center">
+                                    <img :src="localCardData.personal.avatarUrl" alt="頭像預覽" class="w-24 h-24 rounded-full object-cover mx-auto border-2 border-gray-300">
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- 聯絡資訊 Contact Information -->
+                    <section class="bg-gray-50 p-6 rounded-lg shadow-sm border border-gray-200">
+                        <h3 class="text-xl font-semibold text-gray-700 mb-4 flex items-center">
+                            <i class="fas fa-address-book mr-3 text-blue-500"></i>聯絡資訊
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label for="phone" class="block text-sm font-medium text-gray-700">電話</label>
+                                <input type="tel" id="phone" v-model="localCardData.contact.phone" @input="emitUpdate"
+                                    class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                            </div>
+                            <div>
+                                <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+                                <input type="email" id="email" v-model="localCardData.contact.email" @input="emitUpdate"
+                                    class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                            </div>
+                            <div>
+                                <label for="companyName" class="block text-sm font-medium text-gray-700">公司名稱</label>
+                                <input type="text" id="companyName" v-model="localCardData.contact.companyName" @input="emitUpdate"
+                                    class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                            </div>
+                            <div>
+                                <label for="companyWebsite" class="block text-sm font-medium text-gray-700">公司網址</label>
+                                <input type="url" id="companyWebsite" v-model="localCardData.contact.companyWebsite" @input="emitUpdate"
+                                    class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                            </div>
+                            <div class="md:col-span-2">
+                                <label for="companyLogoUrl" class="block text-sm font-medium text-gray-700">公司 Logo 圖片網址</label>
+                                <input type="url" id="companyLogoUrl" v-model="localCardData.contact.companyLogoUrl" @input="emitUpdate"
+                                    class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                                <div v-if="localCardData.contact.companyLogoUrl" class="mt-2 text-center">
+                                    <img :src="localCardData.contact.companyLogoUrl" alt="公司 Logo 預覽" class="max-h-16 mx-auto object-contain border-2 border-gray-300 p-1 rounded-md">
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- 設計與風格 Design & Style -->
+                    <section class="bg-gray-50 p-6 rounded-lg shadow-sm border border-gray-200">
+                        <h3 class="text-xl font-semibold text-gray-700 mb-4 flex items-center">
+                            <i class="fas fa-paint-brush mr-3 text-blue-500"></i>設計與風格
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label for="primaryTextColor" class="block text-sm font-medium text-gray-700">主要文字顏色</label>
+                                <input type="color" id="primaryTextColor" v-model="localCardData.design.primaryTextColor" @input="emitUpdate"
+                                    class="mt-1 block w-full h-10 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 cursor-pointer">
+                            </div>
+                            <div>
+                                <label for="accentColor" class="block text-sm font-medium text-gray-700">強調色</label>
+                                <input type="color" id="accentColor" v-model="localCardData.design.accentColor" @input="emitUpdate"
+                                    class="mt-1 block w-full h-10 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 cursor-pointer">
+                            </div>
+                            <div class="md:col-span-2">
+                                <label for="customCss" class="block text-sm font-medium text-gray-700">自訂 CSS (進階)</label>
+                                <textarea id="customCss" v-model="localCardData.design.customCss" @input="emitUpdate"
+                                    rows="5" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 font-mono text-sm"></textarea>
+                                <p class="mt-1 text-xs text-gray-500">在此輸入自訂 CSS 程式碼，將會直接應用於名片。</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- 模組啟用與內容編輯 Module Enablement & Content Editing -->
+                    <section class="bg-gray-50 p-6 rounded-lg shadow-sm border border-gray-200">
+                        <h3 class="text-xl font-semibold text-gray-700 mb-4 flex items-center">
+                            <i class="fas fa-cubes mr-3 text-blue-500"></i>模組啟用與內容編輯
+                        </h3>
+
+                        <!-- About Me / Brand Introduction -->
+                        <div class="mb-6 p-4 border border-gray-200 rounded-md bg-white">
+                            <div class="flex items-center justify-between mb-3">
+                                <label class="flex items-center text-lg font-medium text-gray-700 cursor-pointer">
+                                    <input type="checkbox" v-model="localCardData.modules.about.enabled" @change="emitUpdate" class="h-5 w-5 text-blue-600 rounded mr-2">
+                                    關於我 / 品牌簡介
+                                </label>
+                            </div>
+                            <div v-if="localCardData.modules.about.enabled" class="space-y-3">
+                                <div>
+                                    <label for="aboutContent" class="block text-sm font-medium text-gray-700">簡介內容</label>
+                                    <textarea id="aboutContent" v-model="localCardData.modules.about.content" @input="emitUpdate"
+                                        rows="4" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm"></textarea>
+                                </div>
+                                <div>
+                                    <label for="audioUrl" class="block text-sm font-medium text-gray-700">語音自介網址 (MP3)</label>
+                                    <input type="url" id="audioUrl" v-model="localCardData.modules.about.audioUrl" @input="emitUpdate"
+                                        class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm">
+                                    <p class="mt-1 text-xs text-gray-500">請提供 MP3 檔案的直接連結。</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Product Services -->
+                        <div class="mb-6 p-4 border border-gray-200 rounded-md bg-white">
+                            <div class="flex items-center justify-between mb-3">
+                                <label class="flex items-center text-lg font-medium text-gray-700 cursor-pointer">
+                                    <input type="checkbox" v-model="localCardData.modules.products.enabled" @change="emitUpdate" class="h-5 w-5 text-blue-600 rounded mr-2">
+                                    產品服務
+                                </label>
+                            </div>
+                            <div v-if="localCardData.modules.products.enabled" class="space-y-4">
+                                <div v-for="(product, index) in localCardData.modules.products.items" :key="index" class="border p-4 rounded-md bg-gray-50">
+                                    <h4 class="font-medium text-gray-800 mb-2">產品 #{{ index + 1 }}</h4>
+                                    <div class="space-y-2">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700">產品名稱</label>
+                                            <input type="text" v-model="product.name" @input="emitUpdate"
+                                                class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm">
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700">產品描述</label>
+                                            <textarea v-model="product.description" @input="emitUpdate"
+                                                rows="2" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm"></textarea>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700">產品圖片網址</label>
+                                            <input type="url" v-model="product.imageUrl" @input="emitUpdate"
+                                                class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm">
+                                            <img v-if="product.imageUrl" :src="product.imageUrl" alt="產品預覽" class="mt-2 max-h-20 object-contain mx-auto border p-1 rounded-md">
+                                        </div>
+                                    </div>
+                                    <button @click="removeItem('products', index)"
+                                            class="mt-3 px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors">
+                                        移除產品
+                                    </button>
+                                </div>
+                                <button @click="addItem('products')"
+                                        class="w-full px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors">
+                                    新增產品
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Portfolio -->
+                        <div class="mb-6 p-4 border border-gray-200 rounded-md bg-white">
+                            <div class="flex items-center justify-between mb-3">
+                                <label class="flex items-center text-lg font-medium text-gray-700 cursor-pointer">
+                                    <input type="checkbox" v-model="localCardData.modules.portfolio.enabled" @change="emitUpdate" class="h-5 w-5 text-blue-600 rounded mr-2">
+                                    作品集
+                                </label>
+                            </div>
+                            <div v-if="localCardData.modules.portfolio.enabled" class="space-y-4">
+                                <div v-for="(project, index) in localCardData.modules.portfolio.items" :key="index" class="border p-4 rounded-md bg-gray-50">
+                                    <h4 class="font-medium text-gray-800 mb-2">專案 #{{ index + 1 }}</h4>
+                                    <div class="space-y-2">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700">專案名稱</label>
+                                            <input type="text" v-model="project.name" @input="emitUpdate"
+                                                class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm">
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700">專案描述</label>
+                                            <textarea v-model="project.description" @input="emitUpdate"
+                                                rows="2" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm"></textarea>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700">專案圖片網址</label>
+                                            <input type="url" v-model="project.imageUrl" @input="emitUpdate"
+                                                class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm">
+                                            <img v-if="project.imageUrl" :src="project.imageUrl" alt="專案預覽" class="mt-2 max-h-20 object-contain mx-auto border p-1 rounded-md">
+                                        </div>
+                                    </div>
+                                    <button @click="removeItem('portfolio', index)"
+                                            class="mt-3 px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors">
+                                        移除專案
+                                    </button>
+                                </div>
+                                <button @click="addItem('portfolio')"
+                                        class="w-full px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors">
+                                    新增專案
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Documents / PDF Download -->
+                        <div class="mb-6 p-4 border border-gray-200 rounded-md bg-white">
+                            <div class="flex items-center justify-between mb-3">
+                                <label class="flex items-center text-lg font-medium text-gray-700 cursor-pointer">
+                                    <input type="checkbox" v-model="localCardData.modules.documents.enabled" @change="emitUpdate" class="h-5 w-5 text-blue-600 rounded mr-2">
+                                    文件/PDF 下載
+                                </label>
+                            </div>
+                            <div v-if="localCardData.modules.documents.enabled" class="space-y-4">
+                                <div v-for="(doc, index) in localCardData.modules.documents.items" :key="index" class="border p-4 rounded-md bg-gray-50">
+                                    <h4 class="font-medium text-gray-800 mb-2">文件 #{{ index + 1 }}</h4>
+                                    <div class="space-y-2">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700">檔案名稱</label>
+                                            <input type="text" v-model="doc.name" @input="emitUpdate"
+                                                class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm">
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700">檔案連結 (PDF URL)</label>
+                                            <input type="url" v-model="doc.url" @input="emitUpdate"
+                                                class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm">
+                                            <p class="mt-1 text-xs text-gray-500">請提供 PDF 檔案的直接連結。</p>
+                                        </div>
+                                    </div>
+                                    <button @click="removeItem('documents', index)"
+                                            class="mt-3 px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors">
+                                        移除文件
+                                    </button>
+                                </div>
+                                <button @click="addItem('documents')"
+                                        class="w-full px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors">
+                                    新增文件
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Company Location -->
+                        <div class="mb-6 p-4 border border-gray-200 rounded-md bg-white">
+                            <div class="flex items-center justify-between mb-3">
+                                <label class="flex items-center text-lg font-medium text-gray-700 cursor-pointer">
+                                    <input type="checkbox" v-model="localCardData.modules.location.enabled" @change="emitUpdate" class="h-5 w-5 text-blue-600 rounded mr-2">
+                                    公司位置
+                                </label>
+                            </div>
+                            <div v-if="localCardData.modules.location.enabled" class="space-y-3">
+                                <div>
+                                    <label for="mapEmbedUrl" class="block text-sm font-medium text-gray-700">地圖嵌入網址 (iframe src)</label>
+                                    <input type="url" id="mapEmbedUrl" v-model="localCardData.modules.location.mapEmbedUrl" @input="emitUpdate"
+                                        class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm">
+                                    <p class="mt-1 text-xs text-gray-500">請貼上 Google Maps 嵌入程式碼中的 'src' 連結。</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- One-click Add LINE -->
+                        <div class="mb-6 p-4 border border-gray-200 rounded-md bg-white">
+                            <div class="flex items-center justify-between mb-3">
+                                <label class="flex items-center text-lg font-medium text-gray-700 cursor-pointer">
+                                    <input type="checkbox" v-model="localCardData.modules.line.enabled" @change="emitUpdate" class="h-5 w-5 text-blue-600 rounded mr-2">
+                                    一鍵加 LINE
+                                </label>
+                            </div>
+                            <div v-if="localCardData.modules.line.enabled" class="space-y-3">
+                                <div>
+                                    <label for="lineUrl" class="block text-sm font-medium text-gray-700">LINE 連結</label>
+                                    <input type="url" id="lineUrl" v-model="localCardData.modules.line.lineUrl" @input="emitUpdate"
+                                        class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm">
+                                    <p class="mt-1 text-xs text-gray-500">請提供 LINE 官方帳號或個人連結 URL。</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Social Media Links -->
+                        <div class="mb-6 p-4 border border-gray-200 rounded-md bg-white">
+                            <div class="flex items-center justify-between mb-3">
+                                <label class="flex items-center text-lg font-medium text-gray-700 cursor-pointer">
+                                    <input type="checkbox" v-model="localCardData.modules.social.enabled" @change="emitUpdate" class="h-5 w-5 text-blue-600 rounded mr-2">
+                                    社群媒體連結 (總開關)
+                                </label>
+                            </div>
+                            <div v-if="localCardData.modules.social.enabled" class="space-y-3">
+                                <div>
+                                    <label for="linkedin" class="block text-sm font-medium text-gray-700">LinkedIn</label>
+                                    <input type="url" id="linkedin" v-model="localCardData.modules.social.linkedin" @input="emitUpdate"
+                                        class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm">
+                                </div>
+                                <div>
+                                    <label for="facebook" class="block text-sm font-medium text-gray-700">Facebook</label>
+                                    <input type="url" id="facebook" v-model="localCardData.modules.social.facebook" @input="emitUpdate"
+                                        class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm">
+                                </div>
+                                <div>
+                                    <label for="instagram" class="block text-sm font-medium text-gray-700">Instagram</label>
+                                    <input type="url" id="instagram" v-model="localCardData.modules.social.instagram" @input="emitUpdate"
+                                        class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm">
+                                </div>
+                                <div>
+                                    <label for="youtube" class="block text-sm font-medium text-gray-700">YouTube</label>
+                                    <input type="url" id="youtube" v-model="localCardData.modules.social.youtube" @input="emitUpdate"
+                                        class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm">
+                                </div>
+                                <div>
+                                    <label for="twitter" class="block text-sm font-medium text-gray-700">Twitter (X)</label>
+                                    <input type="url" id="twitter" v-model="localCardData.modules.social.twitter" @input="emitUpdate"
+                                        class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Real-time Messages / Announcement Board -->
+                        <div class="mb-6 p-4 border border-gray-200 rounded-md bg-white">
+                            <div class="flex items-center justify-between mb-3">
+                                <label class="flex items-center text-lg font-medium text-gray-700 cursor-pointer">
+                                    <input type="checkbox" v-model="localCardData.modules.messages.enabled" @change="emitUpdate" class="h-5 w-5 text-blue-600 rounded mr-2">
+                                    即時訊息 / 公告欄 (靜態)
+                                </label>
+                            </div>
+                            <div v-if="localCardData.modules.messages.enabled" class="space-y-3">
+                                <p class="text-sm text-gray-600">此模組為靜態內容，您可以在此預設訊息。</p>
+                                <div v-for="(msg, index) in localCardData.modules.messages.items" :key="index" class="border p-3 rounded-md bg-gray-50">
+                                    <label class="block text-sm font-medium text-gray-700">日期</label>
+                                    <input type="date" v-model="msg.date" @input="emitUpdate" class="mt-1 block w-full p-2 border rounded-md">
+                                    <label class="block text-sm font-medium text-gray-700 mt-2">內容</label>
+                                    <textarea v-model="msg.content" @input="emitUpdate" rows="2" class="mt-1 block w-full p-2 border rounded-md"></textarea>
+                                    <label class="block text-sm font-medium text-gray-700 mt-2">類型</label>
+                                    <input type="text" v-model="msg.type" @input="emitUpdate" class="mt-1 block w-full p-2 border rounded-md">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Customer Testimonials / Message Board -->
+                        <div class="mb-6 p-4 border border-gray-200 rounded-md bg-white">
+                            <div class="flex items-center justify-between mb-3">
+                                <label class="flex items-center text-lg font-medium text-gray-700 cursor-pointer">
+                                    <input type="checkbox" v-model="localCardData.modules.testimonials.enabled" @change="emitUpdate" class="h-5 w-5 text-blue-600 rounded mr-2">
+                                    客戶評價 / 留言板 (靜態)
+                                </label>
+                            </div>
+                            <div v-if="localCardData.modules.testimonials.enabled" class="space-y-3">
+                                <p class="text-sm text-gray-600">此模組為靜態內容，您可以在此預設評價。</p>
+                                <div v-for="(review, index) in localCardData.modules.testimonials.items" :key="index" class="border p-3 rounded-md bg-gray-50">
+                                    <label class="block text-sm font-medium text-gray-700">姓名</label>
+                                    <input type="text" v-model="review.name" @input="emitUpdate" class="mt-1 block w-full p-2 border rounded-md">
+                                    <label class="block text-sm font-medium text-gray-700 mt-2">評分 (1-5)</label>
+                                    <input type="number" v-model="review.rating" @input="emitUpdate" min="1" max="5" class="mt-1 block w-full p-2 border rounded-md">
+                                    <label class="block text-sm font-medium text-gray-700 mt-2">評論內容</label>
+                                    <textarea v-model="review.comment" @input="emitUpdate" rows="2" class="mt-1 block w-full p-2 border rounded-md"></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                    </section>
+
+                    <!-- 操作按鈕 Action Buttons -->
+                    <div class="flex justify-center space-x-4 mt-8">
+                        <button @click="handleGenerate"
+                                class="px-8 py-3 bg-indigo-600 text-white font-semibold rounded-lg shadow-lg hover:bg-indigo-700 transition-colors duration-300 transform hover:scale-105">
+                            <i class="fas fa-magic mr-2"></i>生成名片
+                        </button>
+                        <button @click="handlePreview"
+                                class="px-8 py-3 bg-gray-600 text-white font-semibold rounded-lg shadow-lg hover:bg-gray-700 transition-colors duration-300 transform hover:scale-105">
+                            <i class="fas fa-eye mr-2"></i>預覽名片
+                        </button>
+                        <button @click="handleSaveDraft"
+                                class="px-8 py-3 bg-green-600 text-white font-semibold rounded-lg shadow-lg hover:bg-green-700 transition-colors duration-300 transform hover:scale-105">
+                            <i class="fas fa-save mr-2"></i>儲存草稿
+                        </button>
+                    </div>
+                </div>
+            `
+        };
+
+        // --- BusinessCardDisplay Component ---
+        const BusinessCardDisplay = {
+            props: ['cardData', 'selectedTemplateId', 'shareableUrl', 'activeModule'],
+            emits: ['update:activeModule', 'show-notification'],
+            setup(props, { emit }) {
+                const qrcodeRef = ref(null);
+
+                // Computed property for dynamic styles based on template and custom CSS
+                const cardStyles = computed(() => {
+                    const templateClass = `template-${props.selectedTemplateId}`;
+                    const textColor = props.cardData.design.primaryTextColor;
+                    const accentColor = props.cardData.design.accentColor;
+                    const customCss = props.cardData.design.customCss;
+
+                    // Dynamically create a style element for custom CSS
+                    const styleElement = document.createElement('style');
+                    styleElement.className = 'custom-css-style'; // Add a class to easily find and replace
+                    styleElement.innerHTML = customCss;
+
+                    // Remove existing custom CSS style element if any
+                    const existingStyle = document.querySelector('.custom-css-style');
+                    if (existingStyle) {
+                        existingStyle.remove();
+                    }
+                    // Append the new custom CSS
+                    document.head.appendChild(styleElement);
+
+                    return {
+                        '--primary-text-color': textColor,
+                        '--accent-color': accentColor,
+                        'color': textColor, // Apply primary text color globally to the card display
+                    };
+                });
+
+                // Mock QRCode object
+                class MockQRCode {
+                    constructor(element, options) {
+                        console.log('Mock QRCode: Initializing with options:', options);
+                        this.element = element;
+                        this.options = options;
+                        this.drawMockQrCode();
+                    }
+                    drawMockQrCode() {
+                        if (this.element) {
+                            this.element.innerHTML = `
+                                <div class="text-center text-gray-500 text-sm">QR Code (模擬)</div>
+                                <img src="https://placehold.co/128x128/cccccc/333333?text=QR+Code" alt="QR Code Placeholder" class="mt-2">
+                            `;
+                        }
+                    }
+                    clear() {
+                        console.log('Mock QRCode: Clearing.');
+                        this.drawMockQrCode(); // Re-draw the mock placeholder
+                    }
+                    makeCode(text) {
+                        console.log('Mock QRCode: Generating code for:', text);
+                        this.drawMockQrCode(); // Re-draw the mock placeholder
+                    }
+                }
+
+                // Generate QR Code
+                const generateQRCode = () => {
+                    if (qrcodeRef.value && props.shareableUrl) {
+                        // Directly use the MockQRCode
+                        new MockQRCode(qrcodeRef.value, {
+                            text: props.shareableUrl,
+                            width: 128,
+                            height: 128,
+                            colorDark: props.cardData.design.accentColor,
+                            colorLight: "#ffffff",
+                            correctLevel: 'H' // Mock doesn't need the actual enum
+                        });
+                    }
+                };
+
+                // Watch for shareableUrl changes to regenerate QR code
+                watch(() => props.shareableUrl, () => {
+                    console.log('BusinessCardDisplay: shareableUrl updated, regenerating QR code.'); // Added log
+                    generateQRCode();
+                });
+
+                // Watch for cardData prop changes
+                watch(() => props.cardData, (newVal) => {
+                    console.log('BusinessCardDisplay: cardData prop updated from parent:', newVal); // Added log
+                }, { deep: true });
+
+                // Watch for activeModule prop changes
+                watch(() => props.activeModule, (newVal, oldVal) => {
+                    console.log(`BusinessCardDisplay: activeModule prop changed from "${oldVal}" to "${newVal}"`); // Added log
+                });
+
+                // On component mount, generate QR code
+                onMounted(() => {
+                    generateQRCode();
+                });
+
+                // Download vCard
+                const downloadVCard = () => {
+                    const card = props.cardData;
+                    const vCardContent = `BEGIN:VCARD
+VERSION:3.0
+FN:${card.personal.name}
+N:${card.personal.name};;;;
+TITLE:${card.personal.title}
+TEL:${card.contact.phone}
+EMAIL:${card.contact.email}
+ORG:${card.contact.companyName}
+URL:${card.contact.companyWebsite}
+END:VCARD`;
+
+                    const blob = new Blob([vCardContent], { type: 'text/vcard' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `${card.personal.name || 'business_card'}.vcf`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                    emit('show-notification', 'vCard 已下載！');
+                };
+
+                // Copy shareable URL to clipboard
+                const copyShareLink = () => {
+                    if (document.execCommand) {
+                        const tempInput = document.createElement('textarea');
+                        tempInput.value = props.shareableUrl;
+                        document.body.appendChild(tempInput);
+                        tempInput.select();
+                        document.execCommand('copy');
+                        document.body.removeChild(tempInput);
+                        emit('show-notification', '分享連結已複製！');
+                    } else {
+                        emit('show-notification', '您的瀏覽器不支援自動複製，請手動複製。');
+                    }
+                };
+
+                // Web Share API
+                const shareCard = async () => {
+                    if (navigator.share) {
+                        try {
+                            await navigator.share({
+                                title: `${props.cardData.personal.name} 的電子名片`,
+                                text: `查看 ${props.cardData.personal.name} 的數位名片！`,
+                                url: props.shareableUrl,
+                            });
+                            emit('show-notification', '名片已成功分享！');
+                        } catch (error) {
+                            console.error('分享失敗:', error);
+                            emit('show-notification', '分享失敗，請稍後再試。');
+                        }
+                    } else {
+                        // Fallback to copy to clipboard if Web Share API is not supported
+                        copyShareLink();
+                    }
+                };
+
+                // Update active module
+                const setActiveModule = (moduleName) => {
+                    console.log(`BusinessCardDisplay: Setting active module to: ${moduleName}`); // Added log
+                    emit('update:activeModule', moduleName);
+                };
+
+                // Filter enabled modules for navigation
+                const enabledModules = computed(() => {
+                    const modules = [];
+                    if (props.cardData.modules.about.enabled) modules.push({ id: 'about', name: '關於我' });
+                    if (props.cardData.modules.products.enabled) modules.push({ id: 'products', name: '產品服務' });
+                    if (props.cardData.modules.portfolio.enabled) modules.push({ id: 'portfolio', name: '作品集' });
+                    if (props.cardData.modules.documents.enabled) modules.push({ id: 'documents', name: '文件下載' });
+                    if (props.cardData.modules.messages.enabled) modules.push({ id: 'messages', name: '即時訊息' });
+                    if (props.cardData.modules.testimonials.enabled) modules.push({ id: 'testimonials', name: '客戶評價' });
+                    console.log('BusinessCardDisplay: enabledModules computed:', modules); // Added log
+                    return modules;
+                });
+
+                // Default active module if none is set or current one is disabled
+                watch(enabledModules, (newModules) => {
+                    console.log('BusinessCardDisplay: enabledModules watcher triggered. New modules:', newModules); // Added log
+                    if (newModules.length > 0 && (!props.activeModule || !newModules.some(m => m.id === props.activeModule))) {
+                        const firstEnabled = newModules[0].id;
+                        console.log(`BusinessCardDisplay: Active module changed from ${props.activeModule} to ${firstEnabled}`);
+                        emit('update:activeModule', firstEnabled);
+                    } else if (newModules.length === 0) {
+                        console.log('BusinessCardDisplay: No modules enabled.');
+                        emit('update:activeModule', null);
+                    }
+                }, { immediate: true });
+
+
+                return {
+                    qrcodeRef,
+                    cardStyles,
+                    downloadVCard,
+                    copyShareLink,
+                    shareCard,
+                    setActiveModule,
+                    enabledModules
+                };
+            },
+            template: `
+                <div :class="['relative min-h-[600px] rounded-xl shadow-2xl overflow-hidden transform transition-all duration-500 ease-in-out', selectedTemplateId]" :style="cardStyles">
+                    <!-- Header -->
+                    <div class="relative p-6 text-center text-white" :style="{ backgroundColor: selectedTemplateId === 'minimal-business' ? '#f8f8f8' : 'transparent', color: selectedTemplateId === 'minimal-business' ? cardData.design.primaryTextColor : 'white' }">
+                        <div class="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-6">
+                            <img v-if="cardData.contact.companyLogoUrl" :src="cardData.contact.companyLogoUrl" alt="公司 Logo" class="w-20 h-20 object-contain rounded-full border-2 border-white shadow-lg p-1">
+                            <div class="text-center sm:text-left">
+                                <h2 class="text-3xl font-bold" :style="{ color: selectedTemplateId === 'minimal-business' ? cardData.design.accentColor : 'white' }">{{ cardData.contact.companyName }}</h2>
+                                <p class="text-lg" :style="{ color: selectedTemplateId === 'minimal-business' ? cardData.design.primaryTextColor : 'white' }">{{ cardData.contact.companyWebsite }}</p>
+                            </div>
+                        </div>
+                        <div class="mt-6 flex flex-col items-center">
+                            <img :src="cardData.personal.avatarUrl || 'https://placehold.co/120x120/cccccc/333333?text=Avatar'" alt="個人頭像"
+                                class="w-32 h-32 rounded-full object-cover border-4 shadow-xl" :style="{ 'border-color': cardData.design.accentColor }">
+                            <h1 class="text-4xl font-extrabold mt-4 name-effect" :style="{ color: cardData.design.primaryTextColor, '--accent-color': cardData.design.accentColor }">{{ cardData.personal.name }}</h1>
+                            <p class="text-xl font-medium mt-1" :style="{ color: cardData.design.primaryTextColor }">{{ cardData.personal.title }}</p>
+                        </div>
+                    </div>
+
+                    <!-- Basic Information & Actions -->
+                    <div class="bg-white p-6 rounded-t-3xl shadow-inner -mt-4 relative z-10 text-gray-800">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                            <div class="flex items-center space-x-3">
+                                <i class="fas fa-phone-alt text-lg" :style="{ color: cardData.design.accentColor }"></i>
+                                <a :href="'tel:' + cardData.contact.phone" class="text-blue-600 hover:underline">{{ cardData.contact.phone }}</a>
+                            </div>
+                            <div class="flex items-center space-x-3">
+                                <i class="fas fa-envelope text-lg" :style="{ color: cardData.design.accentColor }"></i>
+                                <a :href="'mailto:' + cardData.contact.email" class="text-blue-600 hover:underline">{{ cardData.contact.email }}</a>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-wrap justify-center items-center gap-4 mb-6">
+                            <div id="qrcode" ref="qrcodeRef" class="p-2 bg-white rounded-md shadow-md border border-gray-200"></div>
+                            <div class="flex flex-col space-y-3">
+                                <button @click="downloadVCard" class="flex items-center justify-center px-4 py-2 bg-blue-500 text-white rounded-md shadow-md hover:bg-blue-600 transition-colors">
+                                    <i class="fas fa-download mr-2"></i>下載 vCard
+                                </button>
+                                <button @click="copyShareLink" class="flex items-center justify-center px-4 py-2 bg-gray-500 text-white rounded-md shadow-md hover:bg-gray-600 transition-colors">
+                                    <i class="fas fa-copy mr-2"></i>複製分享連結
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Company Location Map -->
+                        <div v-if="cardData.modules.location.enabled && cardData.modules.location.mapEmbedUrl" class="mb-6">
+                            <h3 class="text-xl font-semibold mb-3 text-center" :style="{ color: cardData.design.accentColor }">公司位置</h3>
+                            <div class="aspect-w-16 aspect-h-9 rounded-lg overflow-hidden shadow-md">
+                                <iframe :src="cardData.modules.location.mapEmbedUrl" width="100%" height="300" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Dynamic Module Navigation -->
+                    <div v-if="enabledModules.length > 0" class="bg-gray-100 p-4 sticky top-0 z-20 shadow-md">
+                        <div class="flex flex-wrap justify-center gap-2">
+                            <button v-for="mod in enabledModules" :key="mod.id"
+                                @click="setActiveModule(mod.id)"
+                                :class="['px-4 py-2 rounded-full font-medium transition-colors duration-300',
+                                    activeModule === mod.id ? 'text-white shadow-md' : 'bg-white text-gray-700 hover:bg-gray-200']"
+                                :style="activeModule === mod.id ? { backgroundColor: cardData.design.accentColor } : {}">
+                                {{ mod.name }}
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Dynamic Module Content Area -->
+                    <div class="p-6 bg-white text-gray-800">
+                        <!-- About Me -->
+                        <div v-if="activeModule === 'about' && cardData.modules.about.enabled" class="module-content">
+                            <template v-if="console.log('Rendering About Me module (activeModule:', activeModule, ')')"></template>
+                            <h3 class="text-2xl font-bold mb-4 text-center" :style="{ color: cardData.design.accentColor }">關於我 / 品牌簡介</h3>
+                            <p class="text-gray-700 leading-relaxed whitespace-pre-wrap">{{ cardData.modules.about.content }}</p>
+                            <div v-if="cardData.modules.about.audioUrl" class="mt-4 text-center">
+                                <audio controls :src="cardData.modules.about.audioUrl" class="w-full max-w-md mx-auto"></audio>
+                            </div>
+                        </div>
+
+                        <!-- Product Services -->
+                        <div v-if="activeModule === 'products' && cardData.modules.products.enabled" class="module-content">
+                            <template v-if="console.log('Rendering Product Services module (activeModule:', activeModule, ')')"></template>
+                            <h3 class="text-2xl font-bold mb-4 text-center" :style="{ color: cardData.design.accentColor }">產品服務</h3>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                                <div v-for="(product, index) in cardData.modules.products.items" :key="index" class="bg-gray-50 rounded-lg shadow-md p-4 flex flex-col items-center text-center">
+                                    <img v-if="product.imageUrl" :src="product.imageUrl" alt="產品圖片" class="w-full h-32 object-contain rounded-md mb-3 border border-gray-200 p-1">
+                                    <h4 class="text-lg font-semibold mb-1" :style="{ color: cardData.design.accentColor }">{{ product.name }}</h4>
+                                    <p class="text-sm text-gray-600">{{ product.description }}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Portfolio -->
+                        <div v-if="activeModule === 'portfolio' && cardData.modules.portfolio.enabled" class="module-content">
+                            <template v-if="console.log('Rendering Portfolio module (activeModule:', activeModule, ')')"></template>
+                            <h3 class="text-2xl font-bold mb-4 text-center" :style="{ color: cardData.design.accentColor }">作品集</h3>
+                            <div class="flex overflow-x-auto pb-4 space-x-4 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100">
+                                <div v-for="(project, index) in cardData.modules.portfolio.items" :key="index" class="flex-none w-64 bg-gray-50 rounded-lg shadow-md p-4 text-center">
+                                    <img v-if="project.imageUrl" :src="project.imageUrl" alt="專案圖片" class="w-full h-36 object-cover rounded-md mb-3 border border-gray-200 p-1">
+                                    <h4 class="text-lg font-semibold mb-1" :style="{ color: cardData.design.accentColor }">{{ project.name }}</h4>
+                                    <p class="text-sm text-gray-600">{{ project.description }}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Documents / PDF Download -->
+                        <div v-if="activeModule === 'documents' && cardData.modules.documents.enabled" class="module-content">
+                            <template v-if="console.log('Rendering Documents module (activeModule:', activeModule, ')')"></template>
+                            <h3 class="text-2xl font-bold mb-4 text-center" :style="{ color: cardData.design.accentColor }">文件/PDF 下載</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div v-for="(doc, index) in cardData.modules.documents.items" :key="index" class="bg-gray-50 rounded-lg shadow-md p-4 flex items-center justify-between">
+                                    <span class="font-medium text-gray-700">{{ doc.name }}</span>
+                                    <a :href="doc.url" target="_blank" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors flex items-center">
+                                        <i class="fas fa-file-pdf mr-2"></i>下載
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Real-time Messages / Announcement Board -->
+                        <div v-if="activeModule === 'messages' && cardData.modules.messages.enabled" class="module-content">
+                            <template v-if="console.log('Rendering Messages module (activeModule:', activeModule, ')')"></template>
+                            <h3 class="text-2xl font-bold mb-4 text-center" :style="{ color: cardData.design.accentColor }">即時訊息 / 公告欄</h3>
+                            <div class="space-y-4">
+                                <div v-for="(msg, index) in cardData.modules.messages.items" :key="index" class="bg-gray-50 rounded-lg shadow-md p-4">
+                                    <div class="flex justify-between items-center mb-2">
+                                        <span class="text-sm text-gray-500">{{ msg.date }}</span>
+                                        <span :class="['px-2 py-1 rounded-full text-xs font-semibold',
+                                            msg.type === '重要公告' ? 'bg-red-100 text-red-800' :
+                                            msg.type === '活動預告' ? 'bg-blue-100 text-blue-800' :
+                                            'bg-gray-100 text-gray-800']">{{ msg.type }}</span>
+                                    </div>
+                                    <p class="text-gray-700">{{ msg.content }}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Customer Testimonials / Message Board -->
+                        <div v-if="activeModule === 'testimonials' && cardData.modules.testimonials.enabled" class="module-content">
+                            <template v-if="console.log('Rendering Testimonials module (activeModule:', activeModule, ')')"></template>
+                            <h3 class="text-2xl font-bold mb-4 text-center" :style="{ color: cardData.design.accentColor }">客戶評價 / 留言板</h3>
+                            <div class="space-y-4 mb-6">
+                                <div v-for="(review, index) in cardData.modules.testimonials.items" :key="index" class="bg-gray-50 rounded-lg shadow-md p-4">
+                                    <div class="flex items-center mb-2">
+                                        <span class="font-semibold text-gray-800">{{ review.name }}</span>
+                                        <div class="ml-3 flex text-yellow-500">
+                                            <i v-for="n in 5" :key="n" :class="['fas fa-star', { 'opacity-50': n > review.rating }]"></i>
+                                        </div>
+                                    </div>
+                                    <p class="text-gray-700 italic">"{{ review.comment }}"</p>
+                                </div>
+                            </div>
+                            <div class="border-t pt-4 mt-4">
+                                <h4 class="text-xl font-semibold mb-3 text-center">留下您的評價</h4>
+                                <textarea placeholder="您的評論..." rows="3" class="w-full p-3 border border-gray-300 rounded-md mb-3 focus:ring-blue-500 focus:border-blue-500"></textarea>
+                                <div class="flex justify-between items-center">
+                                    <input type="text" placeholder="您的姓名" class="p-2 border border-gray-300 rounded-md w-1/2 mr-2">
+                                    <select class="p-2 border border-gray-300 rounded-md">
+                                        <option value="">評分</option>
+                                        <option v-for="n in 5" :key="n" :value="n">{{ n }} 星</option>
+                                    </select>
+                                    <button class="px-5 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors ml-2">提交</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Footer -->
+                    <div class="bg-gray-800 p-6 text-white text-center rounded-b-xl">
+                        <div v-if="cardData.modules.line.enabled && cardData.modules.line.lineUrl" class="mb-4">
+                            <a :href="cardData.modules.line.lineUrl" target="_blank"
+                                class="inline-flex items-center justify-center px-6 py-3 bg-green-500 text-white font-semibold rounded-full shadow-lg hover:bg-green-600 transition-colors transform hover:scale-105">
+                                <i class="fab fa-line text-2xl mr-3"></i>一鍵加 LINE
+                            </a>
+                        </div>
+
+                        <div v-if="cardData.modules.social.enabled" class="flex justify-center space-x-6 mb-6">
+                            <a v-if="cardData.modules.social.linkedin" :href="cardData.modules.social.linkedin" target="_blank" class="text-white hover:text-blue-400 transition-colors text-3xl">
+                                <i class="fab fa-linkedin"></i>
+                            </a>
+                            <a v-if="cardData.modules.social.facebook" :href="cardData.modules.social.facebook" target="_blank" class="text-white hover:text-blue-600 transition-colors text-3xl">
+                                <i class="fab fa-facebook-square"></i>
+                            </a>
+                            <a v-if="cardData.modules.social.instagram" :href="cardData.modules.social.instagram" target="_blank" class="text-white hover:text-pink-500 transition-colors text-3xl">
+                                <i class="fab fa-instagram-square"></i>
+                            </a>
+                            <a v-if="cardData.modules.social.youtube" :href="cardData.modules.social.youtube" target="_blank" class="text-white hover:text-red-600 transition-colors text-3xl">
+                                <i class="fab fa-youtube-square"></i>
+                            </a>
+                            <a v-if="cardData.modules.social.twitter" :href="cardData.modules.social.twitter" target="_blank" class="text-white hover:text-blue-300 transition-colors text-3xl">
+                                <i class="fab fa-twitter-square"></i>
+                            </a>
+                        </div>
+
+                        <button @click="shareCard" class="px-6 py-3 bg-purple-600 text-white font-semibold rounded-full shadow-lg hover:bg-purple-700 transition-colors transform hover:scale-105">
+                            <i class="fas fa-share-alt mr-2"></i>分享名片
+                        </button>
+                    </div>
+                </div>
+            `
+        };
+
+        // --- Main App Setup ---
+        const app = createApp({
+            components: {
+                BusinessCardForm,
+                BusinessCardDisplay
+            },
+            setup() {
+                const cardData = reactive({
+                    personal: {
+                        name: '您的姓名',
+                        title: '您的職稱',
+                        avatarUrl: 'https://placehold.co/120x120/cccccc/333333?text=Avatar',
+                    },
+                    contact: {
+                        phone: '+886-912-345678',
+                        email: 'your.email@example.com',
+                        companyName: '您的公司',
+                        companyWebsite: 'https://www.yourcompany.com',
+                        companyLogoUrl: 'https://placehold.co/80x80/000000/ffffff?text=LOGO',
+                    },
+                    design: {
+                        primaryTextColor: '#333333',
+                        accentColor: '#007bff',
+                        customCss: '',
+                    },
+                    modules: {
+                        about: {
+                            enabled: true,
+                            content: '您好！我是[您的姓名]，一位熱衷於[您的領域]的專業人士。我致力於提供[您的服務或產品]，幫助客戶實現他們的目標。期待與您交流！',
+                            audioUrl: '', // Example: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3'
+                        },
+                        products: {
+                            enabled: true,
+                            items: [
+                                { name: '產品 A', description: '這是我們最受歡迎的產品，具有獨特的功能。', imageUrl: 'https://placehold.co/150x100/A0B2C3/ffffff?text=Product+A' },
+                                { name: '產品 B', description: '創新設計，為您帶來全新體驗。', imageUrl: 'https://placehold.co/150x100/B2C3A0/ffffff?text=Product+B' },
+                            ],
+                        },
+                        portfolio: {
+                            enabled: true,
+                            items: [
+                                { name: '專案 X', description: '一個成功的客戶專案，展示了我們的專業能力。', imageUrl: 'https://placehold.co/200x150/C3A0B2/ffffff?text=Project+X' },
+                                { name: '專案 Y', description: '個人創意專案，探索新技術的應用。', imageUrl: 'https://placehold.co/200x150/A0C3B2/ffffff?text=Project+Y' },
+                            ],
+                        },
+                        documents: {
+                            enabled: true,
+                            items: [
+                                { name: '公司簡介', url: 'https://www.africau.edu/images/default/sample.pdf' },
+                                { name: '服務價目表', url: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf' },
+                            ],
+                        },
+                        location: {
+                            enabled: true,
+                            mapEmbedUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3615.0003058869186!2d121.5647000!3d25.0330!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3402fd0555555555%3A0x123456789abcdef!2z5Y-w5YyX5ZyS5ZyS5Y-w5YyX5ZyS5ZyS5Y-w5YyX5ZyS5ZyS!5e0!3m2!1szh-TW!2stw!4v1678901234567!5m2!1szh-TW!2stw', // Example: Taipei 101
+                        },
+                        line: {
+                            enabled: true,
+                            lineUrl: 'https://line.me/ti/p/@your_line_id', // Replace with actual LINE ID
+                        },
+                        social: {
+                            enabled: true,
+                            linkedin: 'https://www.linkedin.com/in/yourprofile',
+                            facebook: 'https://www.facebook.com/yourpage',
+                            instagram: 'https://www.instagram.com/yourprofile',
+                            youtube: 'https://www.youtube.com/yourchannel',
+                            twitter: 'https://twitter.com/yourprofile',
+                        },
+                        messages: {
+                            enabled: true,
+                            items: [
+                                { date: '2025-07-01', content: '歡迎使用我的數位名片！', type: '重要公告' },
+                                { date: '2025-06-15', content: '新產品發布會即將舉行，敬請期待！', type: '活動預告' },
+                            ],
+                        },
+                        testimonials: {
+                            enabled: true,
+                            items: [
+                                { name: '王小明', rating: 5, comment: '非常專業的服務！' },
+                                { name: '陳美麗', rating: 4, comment: '名片設計很棒，功能也很實用。' },
+                            ],
+                        },
+                    },
+                });
+
+                const view = ref('form'); // 'form' or 'display'
+                const showNotification = ref(false);
+                const notificationMessage = ref('');
+                const selectedTemplateId = ref('tech-futuristic'); // Default template
+                const activeModule = ref(null); // Controls which module content is displayed in BusinessCardDisplay
+                const shareableUrl = ref('');
+
+                // Define template configurations
+                const templates = {
+                    'tech-futuristic': {
+                        primaryTextColor: '#e0e0e0',
+                        accentColor: '#00ccff',
+                        modules: { about: true, products: true, portfolio: true, documents: true, location: true, line: true, social: true, messages: true, testimonials: true }
+                    },
+                    'minimal-business': {
+                        primaryTextColor: '#333333',
+                        accentColor: '#4a90e2',
+                        modules: { about: true, products: true, portfolio: false, documents: true, location: true, line: true, social: true, messages: false, testimonials: true }
+                    },
+                    'creative-art': {
+                        primaryTextColor: '#4a4a4a',
+                        accentColor: '#ff6b6b',
+                        modules: { about: true, products: true, portfolio: true, documents: false, location: false, line: true, social: true, messages: true, testimonials: true }
+                    },
+                    'modern-gradient': {
+                        primaryTextColor: '#f0f0f0',
+                        accentColor: '#ff4e50',
+                        modules: { about: true, products: true, portfolio: true, documents: true, location: true, line: true, social: true, messages: true, testimonials: true }
+                    }
+                };
+
+                // Apply selected template styles and module enablement
+                const applyTemplate = () => {
+                    console.log('App: Applying template:', selectedTemplateId.value); // Added log
+                    const templateConfig = templates[selectedTemplateId.value];
+                    if (templateConfig) {
+                        cardData.design.primaryTextColor = templateConfig.primaryTextColor;
+                        cardData.design.accentColor = templateConfig.accentColor;
+                        // Enable/disable modules based on template config
+                        for (const moduleKey in cardData.modules) {
+                            if (templateConfig.modules.hasOwnProperty(moduleKey)) {
+                                cardData.modules[moduleKey].enabled = templateConfig.modules[moduleKey];
+                            }
+                        }
+                    }
+                };
+
+                // Initialize with default template
+                onMounted(() => {
+                    applyTemplate();
+                    loadCardDataFromUrlHash(); // Try to load from URL on mount
+                    generateShareableLink(); // Generate initial shareable link
+                });
+
+                // Update cardData from child component
+                const updateCardData = (newCardData) => {
+                    console.log('App: Updating cardData with:', newCardData); // Added log
+                    Object.assign(cardData, newCardData);
+                    generateShareableLink(); // Regenerate link on any data change
+                };
+
+                // Generate shareable URL from cardData
+                const generateShareableLink = () => {
+                    try {
+                        const encodedData = btoa(encodeURIComponent(JSON.stringify(cardData)));
+                        shareableUrl.value = `${window.location.origin}${window.location.pathname}#card=${encodedData}`;
+                        console.log('App: Shareable URL generated:', shareableUrl.value); // Added log
+                    } catch (e) {
+                        console.error("Error encoding card data:", e);
+                        shareableUrl.value = `${window.location.origin}${window.location.pathname}`; // Fallback
+                    }
+                };
+
+                // Load cardData from URL hash
+                const loadCardDataFromUrlHash = () => {
+                    const hash = window.location.hash;
+                    if (hash.startsWith('#card=')) {
+                        try {
+                            const encodedData = hash.substring(6);
+                            const decodedData = JSON.parse(decodeURIComponent(atob(encodedData)));
+                            Object.assign(cardData, decodedData);
+                            // Also update template if it's different in loaded data
+                            if (decodedData.selectedTemplateId && templates[decodedData.selectedTemplateId]) {
+                                selectedTemplateId.value = decodedData.selectedTemplateId;
+                                applyTemplate(); // Re-apply template to ensure module states are correct
+                            }
+                            view.value = 'display'; // Switch to display view if data loaded from URL
+                            showAppNotification('名片資料已從連結載入！', 3000);
+                            console.log('App: Card data loaded from URL hash.'); // Added log
+                        } catch (e) {
+                            console.error("Error decoding card data from URL hash:", e);
+                            showAppNotification('載入名片資料失敗，請檢查連結。', 5000);
+                        }
+                    }
+                };
+
+                // Watch for cardData changes to update URL hash (optional, for real-time URL updates)
+                watch(cardData, () => {
+                    generateShareableLink();
+                }, { deep: true });
+
+                // Toggle between form and display view
+                const toggleView = () => {
+                    view.value = view.value === 'form' ? 'display' : 'form';
+                    console.log('App: Toggling view to:', view.value); // Added log
+                    if (view.value === 'display') {
+                        // Ensure activeModule is set when switching to display
+                        const firstEnabledModule = Object.keys(cardData.modules).find(key => cardData.modules[key].enabled);
+                        if (firstEnabledModule) {
+                            activeModule.value = firstEnabledModule;
+                            console.log('App: Setting active module on view toggle:', activeModule.value); // Added log
+                        } else {
+                            activeModule.value = null;
+                            console.log('App: No enabled modules, active module set to null.'); // Added log
+                        }
+                    }
+                };
+
+                // Actions triggered by BusinessCardForm
+                const generateCard = () => {
+                    view.value = 'display';
+                    showAppNotification('名片已更新！', 3000);
+                    console.log('App: Generating card, switching to display view.'); // Added log
+                    // Set default active module if none is selected or current one is disabled
+                    const firstEnabledModule = Object.keys(cardData.modules).find(key => cardData.modules[key].enabled);
+                    if (firstEnabledModule) {
+                        activeModule.value = firstEnabledModule;
+                        console.log('App: Setting active module on generate:', activeModule.value); // Added log
+                    } else {
+                        activeModule.value = null;
+                        console.log('App: No enabled modules, active module set to null.'); // Added log
+                    }
+                };
+
+                const previewCard = () => {
+                    view.value = 'display';
+                    showAppNotification('正在預覽名片...', 2000);
+                    console.log('App: Previewing card, switching to display view.'); // Added log
+                    // Set default active module if none is selected or current one is disabled
+                    const firstEnabledModule = Object.keys(cardData.modules).find(key => cardData.modules[key].enabled);
+                    if (firstEnabledModule) {
+                        activeModule.value = firstEnabledModule;
+                        console.log('App: Setting active module on preview:', activeModule.value); // Added log
+                    } else {
+                        activeModule.value = null;
+                        console.log('App: No enabled modules, active module set to null.'); // Added log
+                    }
+                };
+
+                // New method to handle saving draft
+                const saveDraft = (draftData) => {
+                    console.log('App: Saving draft:', draftData);
+                    // In a real application, you would save `draftData` to a database or local storage here.
+                    // For now, we'll just show a notification.
+                    showAppNotification('草稿已儲存！', 3000);
+                };
+
+                // Show application-wide notification
+                const showAppNotification = (message, duration = 3000) => {
+                    notificationMessage.value = message;
+                    showNotification.value = true;
+                    setTimeout(() => {
+                        showNotification.value = false;
+                    }, duration);
+                    console.log('App: Showing notification:', message); // Added log
+                };
+
+                const updateActiveModule = (newModule) => {
+                    activeModule.value = newModule;
+                    console.log('App: Active module updated from display component:', newModule); // Added log
+                };
+
+                return {
+                    cardData,
+                    view,
+                    showNotification,
+                    notificationMessage,
+                    selectedTemplateId,
+                    activeModule,
+                    shareableUrl,
+                    updateCardData,
+                    toggleView,
+                    generateCard,
+                    previewCard,
+                    saveDraft, // Expose the new method
+                    showAppNotification,
+                    updateActiveModule,
+                    applyTemplate
+                };
+            }
+        });
+
+        app.mount('#app');
+    </script>
+</body>
+</html>
