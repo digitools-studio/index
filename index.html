@@ -1,1070 +1,1097 @@
 <!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <title>Sense Web Demo 平台</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Tailwind CSS & Inter 字體 -->
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+    <title>數轉工作室 一頁式網站銷售平台</title>
+    <!-- 引入 Tailwind CSS 框架，用於快速構建響應式設計 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 引入 Vue.js 3 核心庫 -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <!-- 引入 Ionicons 圖示庫，提供豐富的向量圖示 -->
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+    <!-- 引入 Google Fonts 相關連結，確保字體載入 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&family=Roboto:wght@400;700&family=Noto+Serif+TC:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome for social icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
     <style>
+        /* 自訂樣式 */
+        html {
+            scroll-behavior: smooth; /* 平滑滾動效果 */
+        }
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: #1a202c; /* Dark background */
-            color: #e2e8f0; /* Light gray text */
-            line-height: 1.6;
+            font-family: 'Inter', '微軟正黑體', sans-serif; /* 預設字體設置 */
         }
-        #app {
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
+        /* 預覽模式下的字體樣式 */
+        .preview-font-inter { font-family: 'Inter', sans-serif; }
+        .preview-font-roboto { font-family: 'Roboto', sans-serif; }
+        .preview-font-serif { font-family: 'Noto Serif TC', serif; }
+
+        /* Vue 過渡動畫：淡入淡出 */
+        .fade-enter-active, .fade-leave-active {
+            transition: opacity 0.5s ease;
         }
-        main {
-            flex-grow: 1;
-            padding: 2rem 1rem;
+        .fade-enter-from, .fade-leave-to {
+            opacity: 0;
+        }
+        /* Vue 過渡動畫：從右側滑入 (此處已不使用，但保留樣式) */
+        .slide-in-right-enter-active, .slide-in-right-leave-active {
+            transition: transform 0.5s ease;
+        }
+        .slide-in-right-enter-from, .slide-in-right-leave-to {
+            transform: translateX(100%);
+        }
+        /* 預覽容器的過渡效果與確保滾動觸發動畫 */
+        .preview-container {
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            min-height: 500px; /* 確保有足夠的高度，以便在內容較少時也能產生滾動條來觸發動畫 */
+        }
+        
+        /* 滾動淡入動畫 */
+        .scroll-fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        .scroll-fade-in.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* 移除了指引步驟區塊樣式 */
+        /* 移除了 FAQ 區塊樣式 */
+
+        /* Footer 樣式 */
+        .footer {
+            background-color: #2d3748;
+            color: #fff;
+            padding: 3rem 0 1rem;
+            margin-top: 4rem;
+        }
+
+        .footer-container {
             max-width: 1200px;
             margin: 0 auto;
-            width: 100%;
+            padding: 0 1rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
         }
-        .btn-primary {
-            @apply inline-flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-full shadow-lg text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition duration-300 ease-in-out transform hover:-translate-y-1;
+
+        .footer-section h4 {
+            color: #fff;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
         }
-        .btn-secondary {
-            @apply inline-flex items-center justify-center px-8 py-3 border-2 border-purple-600 text-base font-medium rounded-full shadow-lg text-purple-600 bg-white hover:bg-purple-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition duration-300 ease-in-out transform hover:-translate-y-1;
+
+        .footer-section ul {
+            list-style: none;
+            padding: 0;
         }
-        .card {
-            @apply bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-700;
+
+        .footer-section ul li {
+            margin-bottom: 0.5rem;
         }
-        .animate-fade-in-up {
-            animation: fadeInUp 1s ease-out forwards;
-            opacity: 0;
-            transform: translateY(20px);
+
+        .footer-section ul li a {
+            color: #cbd5e0;
+            text-decoration: none;
+            transition: color 0.3s ease;
         }
-        @keyframes fadeInUp {
-            to {
-                opacity: 1;
-                transform: translateY(0);
+
+        .footer-section ul li a:hover {
+            color: #fff;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .social-links a {
+            color: #cbd5e0;
+            font-size: 1.5rem;
+            transition: color 0.3s ease;
+        }
+
+        .social-links a:hover {
+            color: #fff;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid #4a5568;
+            color: #cbd5e0;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .footer {
+                padding: 2rem 0 1rem;
+            }
+
+            .footer-container {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .social-links {
+                justify-content: center;
             }
         }
-        /* FAQ transition styles */
-        .faq-enter-active, .faq-leave-active {
-            transition: all 0.3s ease-in-out;
-            overflow: hidden;
-        }
-        .faq-enter-from, .faq-leave-to {
-            max-height: 0;
-            opacity: 0;
-            padding-top: 0;
-            padding-bottom: 0;
-        }
-        .faq-enter-to, .faq-leave-from {
-            max-height: 500px; /* Adjust based on content height */
-            opacity: 1;
-        }
-        /* Responsive iframe container */
-        .iframe-container {
-            position: relative;
-            width: 100%;
-            padding-bottom: 56.25%; /* 16:9 Aspect Ratio (height / width * 100%) */
-            height: 0;
-            overflow: hidden;
-            border-radius: 0.75rem; /* rounded-xl */
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* shadow-xl */
-        }
-        .iframe-container iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border: 0;
-        }
+
+        /* Header 樣式 */
+.header {
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.header-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+}
+
+.logo, .footer-logo {
+    display: inline-block;
+}
+
+.logo-img {
+    height: 50px;
+    width: auto;
+}
+
+.footer-logo .logo-img {
+    height: 60px;
+    margin-bottom: 1rem;
+}
+
+@media (max-width: 768px) {
+    .logo-img {
+        height: 40px;
+    }
+    
+    .footer-logo .logo-img {
+        height: 50px;
+    }
+}
     </style>
 </head>
-<body>
-<div id="app"></div>
+<body class="bg-gray-50 text-gray-800">
 
-<script type="module">
-    const { createApp, ref, computed, defineComponent, reactive, onMounted, onUnmounted, Transition } = Vue;
-
-    // Navbar Component
-    const Navbar = defineComponent({
-        props: ['currentPage', 'menuItems'], // 接收 menuItems prop
-        emits: ['changePage'],
-        setup(props, { emit }) {
-            const isOpen = ref(false);
-            const toggleMenu = () => { isOpen.value = !isOpen.value; };
-            const navigateAndClose = (page) => { emit('changePage', page); isOpen.value = false; };
-            return { isOpen, toggleMenu, navigateAndClose, props };
-        },
-        template: `
-            <nav class="relative z-20 bg-gray-900 bg-opacity-80 backdrop-filter backdrop-blur-lg shadow-lg py-4">
-                <div class="container mx-auto flex justify-between items-center px-4">
-                    <a href="#" @click.prevent="$emit('changePage', 'HomePage')" class="flex items-center space-x-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-purple-500"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
-                        <span class="text-2xl font-bold text-white tracking-wider">Sense Web</span>
-                    </a>
-                    <div class="hidden md:flex space-x-6">
-                        <!-- 動態生成選單項目 -->
-                        <button v-for="item in menuItems" :key="item.page"
-                                @click="$emit('changePage', item.page)"
-                                :class="{'text-purple-400 font-bold': currentPage === item.page, 'btn-primary': item.isPrimaryButton, 'text-gray-300 hover:text-white transition duration-300': !item.isPrimaryButton}">
-                            {{ item.name }}
-                        </button>
-                    </div>
-                    <button @click="toggleMenu" class="md:hidden text-gray-300 hover:text-white focus:outline-none">
-                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
-                    </button>
+    <div id="app" class="overflow-x-hidden">
+        <!-- 頂部導覽列 -->
+        <header class="bg-white/80 backdrop-blur-md shadow-sm sticky top-0 z-40">
+            <nav class="container mx-auto px-6 py-3 flex justify-between items-center">
+                <a href="#" class="text-2xl font-bold text-gray-800 flex items-center">
+                    <ion-icon name="layers" class="inline-block align-middle mr-2 text-blue-600"></ion-icon>
+                    數轉工作室
+                </a>
+                <div class="hidden md:flex space-x-8 items-center">
+                    <a v-for="link in navLinks" :key="link.name" :href="link.href" class="text-gray-600 hover:text-blue-600 transition-colors font-medium">{{ link.name }}</a>
                 </div>
-                <div v-if="isOpen" class="md:hidden bg-gray-800 py-4 px-4 shadow-inner">
-                    <div class="flex flex-col space-y-3">
-                        <!-- 動態生成手機版選單項目 -->
-                        <button v-for="item in menuItems" :key="'mobile-' + item.page"
-                                @click="navigateAndClose(item.page)"
-                                :class="{'btn-primary w-full mt-4': item.isPrimaryButton, 'text-gray-300 hover:text-white text-left py-2 border-b border-gray-700': !item.isPrimaryButton}">
-                            {{ item.name }}
-                        </button>
-                    </div>
+                <div class="flex items-center">
+                    <!-- 諮詢申請按鈕已移除 -->
+                    <!-- 行動版選單開關按鈕 -->
+                    <button class="md:hidden ml-4" @click="isMobileMenuOpen = !isMobileMenuOpen">
+                        <ion-icon name="menu-outline" class="text-3xl"></ion-icon>
+                    </button>
                 </div>
             </nav>
-        `
-    });
+            <!-- 行動版選單內容，使用 Vue 過渡效果 -->
+            <transition name="fade">
+                <div v-show="isMobileMenuOpen" class="md:hidden bg-white shadow-lg">
+                   <a v-for="link in navLinks" :key="link.name" :href="link.href" @click="isMobileMenuOpen = false" class="block py-3 px-6 text-base text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors">{{ link.name }}</a>
+                </div>
+            </transition>
+        </header>
 
-    // Footer Component
-    const Footer = defineComponent({
-        emits: ['changePage'],
-        template: `
-            <footer class="relative z-20 bg-gray-900 bg-opacity-80 backdrop-filter backdrop-blur-lg py-8 mt-12 text-gray-400 text-center text-sm shadow-inner">
-                <div class="container mx-auto px-4">
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
-                        <div class="space-y-2">
-                            <h4 class="text-lg font-semibold text-white mb-2">聯絡我們</h4>
-                            <p>Email: info@senseweb.com</p>
-                            <p>電話: +886 912 345 678</p>
-                            <p>地址: 台北市信義區忠孝東路x號</p>
-                        </div>
-                        <div class="space-y-2">
-                            <h4 class="text-lg font-semibold text-white mb-2">追蹤我們</h4>
-                            <div class="flex justify-center space-x-4">
-                                <a href="#" class="hover:text-white transition duration-300"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-facebook"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
-                                <a href="#" class="hover:text-white transition duration-300"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-instagram"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.5" y1="6.5" y2="6.5"/></svg></a>
-                                <a href="#" class="hover:text-white transition duration-300"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24" height="24"><path d="M17.696 17.159c-.482.029-.968.044-1.458.044-5.32 0-9.645-4.325-9.645-9.646 0-.49.015-.975.044-1.458H5.894c-.03 0-.056.002-.086.002-.047 0-.088-.007-.13-.008-.242-.008-.485-.015-.728-.015-.49 0-.974.015-1.458.044C2.518 6.07 2.001 6.812 2.001 7.747v8.506c0 .935.518 1.677 1.458 1.968.482.029.968.044 1.458.044 5.32 0 9.645-4.325 9.645-9.646 0-.49-.015-.975-.044-1.458h1.802c.03 0 .056-.002.086-.002.047 0 .088.007.13.008.242.008.485.015.728.015.49 0 .974-.015 1.458-.044C21.482 17.93 21.999 17.188 21.999 16.253V7.747c0-.935-.518-1.677-1.458-1.968-.482-.029-.968-.044-1.458-.044C16.68 5.735 12.355 10.06 12.355 15.385c0 .49.015.975.044 1.458H17.696zM15.385 5.735c.49 0 .975.015 1.458.044.935.291 1.677.81 1.968 1.458.029.482.044.968.044 1.458 0 5.32-4.325 9.645-9.646 9.645-.49 0-.975-.015-1.458-.044-.935-.291-1.677-.81-1.968-1.458-.029-.482-.044-.968-.044-1.458C5.735 10.06 10.06 5.735 15.385 5.735zM12 20.485c2.474-2.474 4.103-5.267 4.908-7.054.402-.892.648-1.635.748-2.18.1-.546.124-.863.076-1.047-.038-.146-.164-.325-.382-.53-.217-.206-.475-.37-.773-.49-.298-.12-.66-.18-.99-.18-.33 0-.693.06-.99.18-.298.12-.556.284-.773.49-.217.205-.344.384-.382.53-.048.184-.024.501.076 1.047.1.545.346 1.288.748 2.18.805 1.787 2.434 4.58 4.908 7.054z"/></svg></a>
-                            </div>
-                        </div>
-                        <div class="space-y-2">
-                            <h4 class="text-lg font-semibold text-white mb-2">快速連結</h4>
-                            <ul>
-                                <li><a href="#" @click.prevent="$emit('changePage', 'OnepagePage')" class="hover:text-white transition duration-300">一頁式網站</a></li>
-                                <li><a href="#" @click.prevent="$emit('changePage', 'MultipagePage')" class="hover:text-white transition duration-300">多頁式網站</a></li>
-                                <li><a href="#" @click.prevent="$emit('changePage', 'CustomPage')" class="hover:text-white transition duration-300">客製網站</a></li>
-                                <li><a href="#" @click.prevent="$emit('changePage', 'PricingPage')" class="hover:text-white transition duration-300">價格方案</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="border-t border-gray-700 pt-6 mt-6">
-                        <p>&copy; 2023 Sense Web. All rights reserved.</p>
-                        <p class="mt-2">Privacy Policy | Terms of Service</p>
+        <!-- Add this header section right after <body> tag -->
+
+        <main>
+            <!-- Hero 區塊 (首圖/主打區塊) -->
+            <section id="home" class="h-[85vh] md:h-[95vh] bg-gray-900 text-white flex items-center justify-center relative overflow-hidden">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-black/20 z-10"></div>
+                <div class="absolute inset-0 z-0">
+                    <img src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?q=80&w=2084&auto=format&fit=crop" class="w-full h-full object-cover" alt="Hero background image">
+                </div>
+                <div class="text-center z-20 px-4 animate-fade-in-up">
+                    <h1 class="text-4xl md:text-6xl font-extrabold mb-4 leading-tight tracking-tight">打造您的品牌專屬一頁式網站</h1>
+                    <p class="text-lg md:text-xl text-gray-200 max-w-3xl mx-auto mb-8">客製靜態網站 × SEO × 數據驅動。</p>
+                    <div class="space-y-4 md:space-y-0 md:space-x-4">
+                        <a href="#templates" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-full text-lg transition-all transform hover:scale-105 inline-block shadow-lg">
+                            極致速度．卓越安全．超高轉換率
+                        </a>
                     </div>
                 </div>
-            </footer>
-        `
-    });
+            </section>
 
-    // HomePage Component
-    const HomePage = defineComponent({
-        emits: ['navigate'],
-        setup(props, { emit }) {
-            const reviews = ref([
-                { text: "Sense Web 團隊非常專業，他們為我們量身打造的網站超出了預期！溝通順暢，成果驚人。", author: "王小姐", title: "小型企業主" },
-                { text: "從零開始到網站上線，Sense Web 都提供了無微不至的協助。強烈推薦！", author: "陳先生", title: "新創公司 CEO" },
-                { text: "我們的電子名片設計獨特又實用，讓我的業務推廣更有效率。", author: "李設計師", title: "自由職業者" },
-            ]);
-            const currentReview = ref(0);
-            let reviewInterval = null;
-            const startReviewCarousel = () => {
-                reviewInterval = setInterval(() => {
-                    currentReview.value = (currentReview.value + 1) % reviews.value.length;
-                }, 5000);
-            };
-            onMounted(() => startReviewCarousel());
-            onUnmounted(() => { if (reviewInterval) clearInterval(reviewInterval); });
-            return { reviews, currentReview, emit };
-        },
-        template: `
-            <div class="home-page space-y-16">
-                <section class="text-center py-20 px-4 bg-gradient-to-br from-purple-800 to-indigo-900 rounded-xl shadow-2xl animate-fade-in-up">
-                    <h1 class="text-5xl md:text-7xl font-extrabold text-white mb-6 leading-tight">
-                        將您的想法轉化為<br class="hidden md:inline">令人驚嘆的線上體驗。
-                    </h1>
-                    <p class="text-xl md:text-2xl text-gray-200 mb-10 max-w-3xl mx-auto">
-                        Sense Web 專注於提供創新、響應式且高效的網站解決方案，助您在數位世界中脫穎而出。
-                    </p>
-                    <div class="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-6">
-                        <button @click="$emit('navigate', 'ContactPage')" class="btn-primary">立即諮詢您的專案</button>
-                        <button @click="$emit('navigate', 'PricingPage')" class="btn-secondary">查看價格方案</button>
-                    </div>
-                </section>
-                <section class="py-12">
-                    <h2 class="text-4xl font-bold text-center text-white mb-12">我們的服務</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                        <div @click="$emit('navigate', 'OnepagePage')" class="card group cursor-pointer transform hover:scale-105 transition-all duration-300">
-                            <div class="text-purple-400 mb-4 text-5xl text-center">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/><line x1="10" x2="8" y1="9" y2="9"/></svg>
+            <!-- 範本展示區塊 -->
+            <section id="templates" class="py-20 bg-white">
+                <div class="container mx-auto px-6">
+                    <h2 class="text-3xl md:text-4xl font-bold text-center mb-4 scroll-fade-in">五大風格範本，任您挑選</h2>
+                    <p class="text-center text-gray-600 mb-12 max-w-2xl mx-auto scroll-fade-in">每個範本都經過精心設計，以滿足不同行業的需求。點擊「試用預覽」開始您的客製化之旅。</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
+                        <div v-for="(template, index) in templates" :key="template.id" class="scroll-fade-in" :style="{'transition-delay': `${index * 100}ms`}">
+                           <div class="bg-white rounded-xl shadow-lg hover:shadow-2xl overflow-hidden transform hover:-translate-y-2 transition-all duration-300 h-full flex flex-col cursor-pointer" @click="selectTemplateAndScroll(template)">
+                                <div class="w-full h-56 bg-gray-200">
+                                    <img :src="template.thumbnail" :alt="template.name" class="w-full h-full object-cover">
+                                </div>
+                                <div class="p-6 flex-grow flex flex-col">
+                                    <h3 class="text-xl font-bold mb-2">{{ template.name }}</h3>
+                                    <p class="text-gray-600 text-sm mb-4 flex-grow">{{ template.keywords }}</p>
+                                    <div class="mt-auto">
+                                        <a href="#customization" class="w-full text-center bg-gray-800 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg transition-colors flex items-center justify-center">
+                                            <ion-icon name="color-wand-outline" class="mr-2"></ion-icon>
+                                            試用預覽
+                                        </a>
+                                    </div>
+                                </div>
                             </div>
-                            <h3 class="text-xl font-semibold text-white mb-2 text-center">一頁式網站</h3>
-                            <p class="text-gray-400 text-center">快速建立品牌形象、產品銷售頁、活動頁面。</p>
-                        </div>
-                        <div @click="$emit('navigate', 'MultipagePage')" class="card group cursor-pointer transform hover:scale-105 transition-all duration-300">
-                            <div class="text-green-400 mb-4 text-5xl text-center">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="2" x2="22" y1="11" y2="11"/><line x1="12" x2="12" y1="3" y2="21"/><path d="M2 17h20"/></svg>
-                            </div>
-                            <h3 class="text-xl font-semibold text-white mb-2 text-center">多頁式形象官網</h3>
-                            <p class="text-gray-400 text-center">專業企業門面，展示品牌故事、產品與服務。</p>
-                        </div>
-                        <div @click="$emit('navigate', 'CustomPage')" class="card group cursor-pointer transform hover:scale-105 transition-all duration-300">
-                            <div class="text-blue-400 mb-4 text-5xl text-center">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto"><path d="M12 20V10"/><path d="M18.5 14.5L12 20L5.5 14.5"/><path d="M4.5 12.5L12 4L19.5 12.5"/></svg>
-                            </div>
-                            <h3 class="text-xl font-semibold text-white mb-2 text-center">客製網站與系統</h3>
-                            <p class="text-gray-400 text-center">滿足複雜需求，整合專屬業務流程系統。</p>
-                        </div>
-                        <div @click="$emit('navigate', 'EcardPage')" class="card group cursor-pointer transform hover:scale-105 transition-all duration-300">
-                            <div class="text-red-400 mb-4 text-5xl text-center">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
-                            </div>
-                            <h3 class="text-xl font-semibold text-white mb-2 text-center">電子名片</h3>
-                            <p class="text-gray-400 text-center">數位化名片，快速分享個人或品牌資訊。</p>
                         </div>
                     </div>
-                </section>
-                <section class="py-12 bg-gray-800 rounded-xl shadow-xl">
-                    <h2 class="text-4xl font-bold text-center text-white mb-12">我們的優勢</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 px-4">
-                        <div class="flex flex-col items-center text-center p-6 bg-gray-700 rounded-lg shadow-md">
-                            <div class="text-purple-400 mb-4 text-5xl">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-rocket"><path d="M4.5 16.5c-1.5 1.5-2.5 3-2.5 5s.5 2.5 2.5 2.5c2 0 3.5-1 5-2.5L20.5 9.5c1.5-1.5 2.5-3 2.5-5s-.5-2.5-2.5-2.5c-2 0-3.5 1-5 2.5L4.5 16.5z"/><path d="M9.5 7.5l5 5"/><circle cx="10" cy="10" r="2"/></svg>
-                            </div>
-                            <h3 class="text-2xl font-semibold text-white mb-2">極速開發</h3>
-                            <p class="text-gray-400">高效流程與專業團隊，確保您的網站快速上線。</p>
-                        </div>
-                        <div class="flex flex-col items-center text-center p-6 bg-gray-700 rounded-lg shadow-md">
-                            <div class="text-green-400 mb-4 text-5xl">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-responsive"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" x2="16" y1="21" y2="21"/><line x1="12" x2="12" y1="17" y2="21"/></svg>
-                            </div>
-                            <h3 class="text-2xl font-semibold text-white mb-2">響應式設計</h3>
-                            <p class="text-gray-400">確保網站在任何裝置上都能完美顯示。</p>
-                        </div>
-                        <div class="flex flex-col items-center text-center p-6 bg-gray-700 rounded-lg shadow-md">
-                            <div class="text-yellow-400 mb-4 text-5xl">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-lightbulb"><path d="M15 14c.2-.84.5-1.54.9-2.2L22 2v0l-3.35 3.35A1.5 1.5 0 0 0 16 5.5l-3 3-1.5 1.5c-.8.8-1.74 1.28-2.7 1.53c-1.37.35-2.78.29-4-.05c-1.75-.48-3.26-1.55-4.25-3.05l-.5-.75c-.2-.3-.45-.64-.75-1a.5.5 0 0 0-.85.3c-.6.95-.9 2-.9 3.05c0 4.15 2.8 7.2 7 8.5C12 21 15 22 17 22h.5c.28 0 .5-.22.5-.5V21h-2l-1 1h-2.5c-4.5 0-7.5-3-7.5-7.5c0-1.05.3-2.05.9-3.05a.5.5 0 0 0-.85-.3c-.3.35-.55.69-.75 1l-.5.75c-1 1.5-2.5 2.5-4.25 3.05C4.22 14.58 2.81 14.65 1.44 14.3Z"/></svg>
-                            </div>
-                            <h3 class="text-2xl font-semibold text-white mb-2">創新解決方案</h3>
-                            <p class="text-gray-400">運用最新技術，為您打造獨特且具競爭力的網站。</p>
-                        </div>
-                    </div>
-                </section>
-                <section class="py-12 text-center bg-gray-800 rounded-xl shadow-xl">
-                    <h2 class="text-4xl font-bold text-white mb-12">成功案例</h2>
-                    <div class="text-gray-400 text-lg">
-                        <p>此處將展示客戶的成功案例，預計以動畫滑動卡片形式呈現。</p>
-                        <p>敬請期待！</p>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
-                            <img src="https://placehold.co/400x250/374151/D1D5DB?text=案例一" alt="成功案例一" class="rounded-lg shadow-md mx-auto">
-                            <img src="https://placehold.co/400x250/374151/D1D5DB?text=案例二" alt="成功案例二" class="rounded-lg shadow-md mx-auto">
-                            <img src="https://placehold.co/400x250/374151/D1D5DB?text=案例三" alt="成功案例三" class="rounded-lg shadow-md mx-auto">
-                        </div>
-                    </div>
-                </section>
-                <section class="py-16 text-center bg-purple-700 rounded-xl shadow-2xl">
-                    <h2 class="text-4xl font-bold text-white mb-6">準備好打造您的線上門面了嗎？</h2>
-                    <p class="text-xl text-gray-200 mb-8">查看我們的靈活價格方案，找到最適合您需求的解決方案。</p>
-                    <button @click="$emit('navigate', 'PricingPage')" class="btn-secondary bg-white text-purple-700 hover:bg-gray-100">查看所有方案</button>
-                </section>
-                <section class="py-12 bg-gray-800 rounded-xl shadow-xl">
-                    <h2 class="text-4xl font-bold text-center text-white mb-12">客戶怎麼說</h2>
-                    <div class="relative max-w-4xl mx-auto overflow-hidden">
-                        <div class="flex transition-transform duration-500 ease-in-out" :style="{ transform: 'translateX(-' + (currentReview * 100) + '%)' }">
-                            <div v-for="(review, index) in reviews" :key="index" class="min-w-full flex-shrink-0 p-6 text-center">
-                                <p class="italic text-gray-300 text-lg mb-4">"{{ review.text }}"</p>
-                                <p class="font-semibold text-white">- {{ review.author }}</p>
-                                <p class="text-gray-500 text-sm">{{ review.title }}</p>
-                            </div>
-                        </div>
-                        <div class="flex justify-center mt-6 space-x-2">
-                            <button v-for="(review, index) in reviews" :key="index" @click="currentReview = index"
-                                :class="{'bg-purple-600': currentReview === index, 'bg-gray-600': currentReview !== index}"
-                                class="w-3 h-3 rounded-full transition-colors duration-300"></button>
-                        </div>
-                    </div>
-                </section>
+                </div>
+            </section>
 
-                <!-- Google Form Section -->
-                <section class="py-12 bg-gray-800 rounded-xl shadow-xl">
-                    <h2 class="text-4xl font-bold text-center text-white mb-12">立即填寫表單，開始您的專案！</h2>
-                    <div class="max-w-3xl mx-auto px-4">
-                        <div class="iframe-container">
-                            <iframe src="https://docs.google.com/forms/d/e/1FAIpQLScHvZi0hPsC6PL9wtbHGLLUgMCZEPy4hO0HJ__StyxapHJyGw/viewform?embedded=true" frameborder="0" marginheight="0" marginwidth="0">載入中…</iframe>
+            <!-- 客製化預覽與設定區塊 -->
+            <section id="customization" class="py-20 bg-gray-100" v-if="currentTemplate.config">
+                <div class="container mx-auto px-6">
+                    <h2 class="text-3xl md:text-4xl font-bold text-center mb-12 scroll-fade-in">即時預覽與客製化</h2>
+                    <div class="flex flex-col lg:flex-row gap-8">
+                        <!-- 設定面板 -->
+                        <div class="w-full lg:w-1/3 bg-white p-6 rounded-xl shadow-lg scroll-fade-in sticky top-24 self-start">
+                            <h3 class="text-2xl font-bold mb-6 border-b pb-4">設定面板: {{ currentTemplate.name }}</h3>
+                            
+                            <!-- 響應式切換按鈕 -->
+                            <div class="mb-6">
+                                <h4 class="font-bold mb-3 text-gray-700">預覽模式</h4>
+                                <div class="flex justify-center bg-gray-200 rounded-lg p-1">
+                                    <button @click="previewMode = 'mobile'" :class="{'bg-blue-600 text-white shadow': previewMode === 'mobile'}" class="w-full py-2 rounded-md transition-all text-xl"><ion-icon name="phone-portrait-outline"></ion-icon></button>
+                                    <button @click="previewMode = 'tablet'" :class="{'bg-blue-600 text-white shadow': previewMode === 'tablet'}" class="w-full py-2 rounded-md transition-all text-xl"><ion-icon name="tablet-portrait-outline"></ion-icon></button>
+                                    <button @click="previewMode = 'desktop'" :class="{'bg-blue-600 text-white shadow': previewMode === 'desktop'}" class="w-full py-2 rounded-md transition-all text-xl"><ion-icon name="desktop-outline"></ion-icon></button>
+                                </div>
+                            </div>
+                            
+                            <!-- 區塊內容編輯器 -->
+                             <div>
+                                <h4 class="font-bold mb-3 text-gray-700">內容編輯</h4>
+                                <div class="space-y-2 max-h-[50vh] overflow-y-auto pr-2">
+                                    <div v-for="(section, key) in currentTemplate.config.sections" :key="key" class="border rounded-lg bg-gray-50 overflow-hidden">
+                                        <div class="flex justify-between items-center cursor-pointer p-3" @click="toggleSectionEditor(key)">
+                                            <h5 class="font-semibold capitalize">{{ section.name }}</h5>
+                                            <div class="flex items-center space-x-3">
+                                                <!-- 區塊啟用/禁用開關 -->
+                                                <label class="relative inline-flex items-center cursor-pointer">
+                                                    <input type="checkbox" v-model="section.active" class="sr-only peer" @click.stop>
+                                                    <div class="w-11 h-6 bg-gray-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                                                </label>
+                                                <!-- 展開/收合圖示 -->
+                                                <ion-icon :name="activeEditor === key ? 'chevron-up-outline' : 'chevron-down-outline'" class="transition-transform duration-300"></ion-icon>
+                                            </div>
+                                        </div>
+                                        <!-- 區塊編輯表單 -->
+                                        <div v-show="activeEditor === key" class="px-3 pb-3 bg-white border-t space-y-3">
+                                            <div v-if="section.title !== undefined"><label class="text-sm font-medium text-gray-600">標題</label><input type="text" v-model="section.title" class="w-full p-2 border rounded-md text-sm"></div>
+                                            <div v-if="section.text !== undefined"><label class="text-sm font-medium text-gray-600">內文</label><textarea v-model="section.text" class="w-full p-2 border rounded-md text-sm" rows="3"></textarea></div>
+                                            <div v-if="section.buttonText !== undefined"><label class="text-sm font-medium text-gray-600">按鈕文字</label><input type="text" v-model="section.buttonText" class="w-full p-2 border rounded-md text-sm"></div>
+                                            <div v-if="section.image !== undefined"><label class="text-sm font-medium text-gray-600">圖片 URL</label><input type="text" v-model="section.image" class="w-full p-2 border rounded-md text-sm"></div>
+                                            <div v-if="section.imagePosition !== undefined"><label class="text-sm font-medium text-gray-600">圖片位置</label><select v-model="section.imagePosition" class="w-full p-2 border rounded-lg bg-gray-50"><option value="left">左側</option><option value="right">右側</option></select></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- 風格設定區塊 -->
+                             <div class="mt-6 pt-4 border-t">
+                                <h4 class="font-bold mb-3 text-gray-700">風格設定</h4>
+                                <!-- 主題色票選擇 -->
+                                <div class="mb-4">
+                                    <h5 class="font-semibold mb-2 text-sm">主題色票</h5>
+                                    <div class="grid grid-cols-4 gap-2">
+                                        <div v-for="(color, key) in currentTemplate.config.colors" :key="key" class="flex flex-col items-center">
+                                            <input type="color" v-model="currentTemplate.config.colors[key]" class="w-10 h-10 rounded-full cursor-pointer border-2 border-white shadow-sm">
+                                            <span class="mt-1 capitalize text-xs text-gray-500">{{ colorLabels[key] }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- 字體風格選擇 -->
+                                <div>
+                                    <h5 class="font-semibold mb-2 text-sm">字體風格</h5>
+                                    <select v-model="currentTemplate.config.font" class="w-full p-2 border rounded-lg bg-gray-50"><option v-for="font in availableFonts" :key="font.value" :value="font.value">{{ font.name }}</option></select>
+                                </div>
+                            </div>
+
+                            <!-- 「完成客製」按鈕已移除，客製化效果直接在預覽區塊中顯示 -->
+                        </div>
+                        
+                        <!-- 即時預覽區塊 -->
+                        <div class="w-full lg:w-2/3 scroll-fade-in" :style="{'transition-delay': '200ms'}">
+                           <div class="bg-gray-800 p-2 rounded-xl shadow-2xl h-full flex items-center justify-center">
+                               <div class="preview-container bg-white overflow-y-auto rounded-lg" :class="{ 'w-[375px] h-[720px]': previewMode === 'mobile', 'w-[768px] h-[1024px]': previewMode === 'tablet', 'w-full min-h-[80vh]': previewMode === 'desktop'}">
+                                    <!-- 預覽內容，動態綁定字體和顏色變數 -->
+                                   <div :class="`preview-font-${currentTemplate.config.font}`" :style="templateStyleVariables" class="h-full text-sm md:text-base flex flex-col">
+                                       <div class="flex-grow">
+                                           <!-- 通用 Hero Section (範本共用) -->
+                                           <div v-if="visibleSections.hero" class="h-[45vh] flex items-center justify-center text-center p-4 relative bg-cover bg-center" :style="{ color: 'var(--color-text-light)', backgroundImage: `url(${visibleSections.hero.image})` }">
+                                               <div class="absolute inset-0 bg-black/50"></div>
+                                               <div class="relative z-10"><h2 class="text-3xl md:text-4xl font-bold mb-2" :style="{ color: 'var(--color-text-light)' }">{{ visibleSections.hero.title }}</h2><p class="mb-4 text-base md:text-lg">{{ visibleSections.hero.text }}</p><button :style="{ backgroundColor: 'var(--color-accent)', color: 'var(--color-text-light)' }" class="py-2 px-6 rounded font-bold shadow-md">{{ visibleSections.hero.buttonText }}</button></div>
+                                           </div>
+                            
+                                           <!-- Corporate 範本特有區塊 -->
+                                           <template v-if="currentTemplate.id === 'corporate'">
+                                               <div v-if="visibleSections.about" class="p-8 md:p-12 grid md:grid-cols-2 gap-8 items-center"><div :class="{'md:order-2': visibleSections.about.imagePosition === 'right'}"><img :src="visibleSections.about.image" class="rounded-lg shadow-xl aspect-video object-cover" alt="About Us image"></div><div><h3 class="text-2xl font-bold mb-3" :style="{ color: 'var(--color-primary)' }">{{ visibleSections.about.title }}</h3><p class="whitespace-pre-wrap text-gray-600">{{ visibleSections.about.text }}</p></div></div>
+                                               <div v-if="visibleSections.services" class="bg-gray-100 p-8 md:p-12 text-center"><h3 class="text-2xl font-bold mb-6" :style="{ color: 'var(--color-primary)' }">{{ visibleSections.services.title }}</h3><div class="grid md:grid-cols-3 gap-6"><div v-for="i in 3" :key="'corp-service-'+i" class="bg-white p-6 rounded-lg shadow-md"><ion-icon name="business-outline" class="text-4xl mb-3" :style="{ color: 'var(--color-accent)' }"></ion-icon><h4 class="font-bold mb-2">服務項目 {{i}}</h4><p class="text-sm text-gray-500">這裡是服務的簡短描述。</p></div></div></div>
+                                               <div v-if="visibleSections.team" class="p-8 md:p-12"><h3 class="text-2xl font-bold text-center mb-6" :style="{ color: 'var(--color-primary)' }">{{ visibleSections.team.title }}</h3><div class="grid md:grid-cols-3 gap-8"><div v-for="i in 3" :key="'corp-team-'+i" class="text-center"><img :src="`https://i.pravatar.cc/150?img=${i+20}`" class="w-24 h-24 rounded-full mx-auto mb-4 shadow-lg" alt="'Team member ' + i"><h4 class="font-bold">團隊成員 {{i}}</h4><p class="text-sm text-gray-500">成員職稱</p></div></div></div>
+                                               <div v-if="visibleSections.testimonials" class="bg-gray-100 p-8 md:p-12"><h3 class="text-2xl font-bold text-center mb-6" :style="{ color: 'var(--color-primary)' }">{{ visibleSections.testimonials.title }}</h3><div class="grid md:grid-cols-2 gap-8"><div v-for="i in 2" :key="'corp-testi-'+i" class="bg-white p-6 rounded-lg shadow-md"><div class="flex items-center mb-4"><img :src="`https://i.pravatar.cc/50?img=${i+1}`" class="w-12 h-12 rounded-full mr-4" alt="'Customer ' + i"><div><p class="font-bold">客戶名稱 {{i}}</p><p class="text-sm text-gray-500">客戶職稱</p></div></div><p class="text-gray-600 italic">"{{ visibleSections.testimonials.text }}"</p></div></div></div>
+                                           </template>
+                            
+                                           <!-- Portfolio 範本特有區塊 -->
+                                              <template v-if="currentTemplate.id === 'portfolio'">
+                                                    <div v-if="visibleSections.gallery" class="p-8 md:p-12"><h3 class="text-2xl font-bold mb-6 text-center" :style="{ color: 'var(--color-primary)' }">{{ visibleSections.gallery.title }}</h3><div class="columns-2 md:columns-3 gap-4"><img v-for="(img, i) in portfolioImages" :key="'port-img-'+i" :src="img" class="w-full h-auto mb-4 rounded-lg shadow-md break-inside-avoid" :alt="'Portfolio image ' + i"></div></div>
+                                                    <div v-if="visibleSections.about_me" class="p-8 md:p-12 bg-gray-100 grid md:grid-cols-3 gap-8 items-center"><div class="md:col-span-1"><img :src="visibleSections.about_me.image" class="w-40 h-40 rounded-full shadow-xl mx-auto object-cover" alt="About Me image"></div><div class="md:col-span-2"><h3 class="text-2xl font-bold mb-3" :style="{ color: 'var(--color-primary)' }">{{ visibleSections.about_me.title }}</h3><p class="whitespace-pre-wrap text-gray-600">{{ visibleSections.about_me.text }}</p></div></div>
+                                                    <div v-if="visibleSections.skills" class="p-8 md:p-12"><h3 class="text-2xl font-bold text-center mb-6" :style="{ color: 'var(--color-primary)' }">{{ visibleSections.skills.title }}</h3><p class="text-center text-gray-600 max-w-2xl mx-auto mb-8">{{ visibleSections.skills.text }}</p><div class="flex flex-wrap justify-center gap-4"><span v-for="i in 5" :key="'skill-'+i" class="bg-white shadow-md rounded-full px-4 py-2 text-sm font-semibold">技能 {{i}}</span></div></div>
+                                              </template>
+                                            
+                                              <!-- 團購廣告範本特有區塊 (原電子商務範本) -->
+                                              <template v-if="currentTemplate.id === 'group_buy_ad'">
+                                                    <div v-if="visibleSections.offer_details" class="p-8 md:p-12"><h3 class="text-2xl font-bold text-center mb-6" :style="{ color: 'var(--color-primary)' }">{{ visibleSections.offer_details.title }}</h3><p class="whitespace-pre-wrap text-gray-600 text-center max-w-2xl mx-auto">{{ visibleSections.offer_details.text }}</p></div>
+                                                    <div v-if="visibleSections.how_it_works" class="bg-gray-100 p-8 md:p-12"><h3 class="text-2xl font-bold text-center mb-6" :style="{ color: 'var(--color-primary)' }">{{ visibleSections.how_it_works.title }}</h3><div class="grid md:grid-cols-3 gap-8"><div v-for="i in 3" :key="'how-it-works-'+i" class="text-center"><ion-icon :name="['happy-outline', 'share-social-outline', 'cube-outline'][i-1]" class="text-5xl mb-3" :style="{ color: 'var(--color-accent)' }"></ion-icon><h4 class="font-bold mb-2">步驟 {{i}}</h4><p class="text-sm text-gray-600">{{ ['選擇數量', '邀請好友', '坐等收貨'][i-1] }}</p></div></div></div>
+                                                    <div v-if="visibleSections.countdown" class="p-8 md:p-12 text-center bg-blue-600 text-white"><h3 class="text-2xl font-bold mb-4">{{ visibleSections.countdown.title }}</h3><p class="text-5xl font-extrabold mb-4">{{ visibleSections.countdown.text }}</p><p class="text-gray-200">此為靜態示意，實際倒數計時功能需額外開發。</p></div>
+                                                    <div v-if="visibleSections.call_to_action" class="bg-gray-50 p-8 md:p-12 text-center"><h3 class="text-2xl font-bold mb-4" :style="{ color: 'var(--color-primary)' }">{{ visibleSections.call_to_action.title }}</h3><p class="text-gray-600 mb-6">{{ visibleSections.call_to_action.text }}</p><button class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-full text-lg transition-all transform hover:scale-105 inline-block shadow-lg">
+                                                        <ion-icon name="arrow-forward-circle-outline" class="mr-2"></ion-icon>{{ visibleSections.call_to_action.buttonText }}</button></div>
+                                              </template>
+                                            
+                                              <!-- Event 範本特有區塊 -->
+                                              <template v-if="currentTemplate.id === 'event'">
+                                                    <div v-if="visibleSections.agenda" class="p-8 md:p-12"><h3 class="text-2xl font-bold text-center mb-6" :style="{ color: 'var(--color-primary)' }">{{ visibleSections.agenda.title }}</h3><p class="whitespace-pre-wrap text-gray-600 text-center max-w-md mx-auto">{{ visibleSections.agenda.text }}</p></div>
+                                                    <div v-if="visibleSections.speakers" class="bg-gray-100 p-8 md:p-12"><h3 class="text-2xl font-bold text-center mb-6" :style="{ color: 'var(--color-primary)' }">{{ visibleSections.speakers.title }}</h3><div class="grid md:grid-cols-3 gap-8"><div v-for="i in 3" :key="'speaker-'+i" class="text-center"><img :src="`https://i.pravatar.cc/150?img=${i+10}`" class="w-32 h-32 rounded-full mx-auto mb-4 shadow-lg" :alt="'Speaker ' + i"><h4 class="font-bold">講者姓名 {{i}}</h4><p class="text-sm text-gray-500">講者職稱</p></div></div></div>
+                                                    <div v-if="visibleSections.sponsors" class="p-8 md:p-12"><h3 class="text-2xl font-bold text-center mb-6" :style="{ color: 'var(--color-primary)' }">{{ visibleSections.sponsors.title }}</h3><div class="flex justify-center items-center gap-8 flex-wrap"><img v-for="i in 4" :key="'sponsor-'+i" :src="`https://via.placeholder.com/150x60/cccccc/888888?text=Sponsor${i}`" class="h-12" :alt="'Sponsor ' + i"></div></div>
+                                                    <div v-if="visibleSections.location" class="bg-gray-100 p-8 md:p-12 text-center"><h3 class="text-2xl font-bold mb-4" :style="{ color: 'var(--color-primary)' }">{{ visibleSections.location.title }}</h3><p class="whitespace-pre-wrap text-gray-600">{{ visibleSections.location.text }}</p><div class="w-full h-64 bg-gray-300 mt-4 rounded-lg flex items-center justify-center text-gray-500">地圖預覽區塊</div></div>
+                                              </template>
+                                            
+                                              <!-- Blog 範本特有區塊 -->
+                                              <template v-if="currentTemplate.id === 'blog'">
+                                                    <div v-if="visibleSections.featured_post" class="p-8 md:p-12 bg-gray-50"><h3 class="text-2xl font-bold mb-4" :style="{ color: 'var(--color-primary)' }">{{ visibleSections.featured_post.title }}</h3><div class="flex flex-col md:flex-row gap-6 items-center"><img :src="visibleSections.featured_post.image" class="w-full md:w-1/3 h-auto rounded-lg shadow-md" alt="Featured post image"><div class="flex-1"><p class="text-gray-600 leading-relaxed">{{ visibleSections.featured_post.text }}</p><a href="#" class="inline-block mt-4 font-bold" :style="{color: 'var(--color-accent)'}">繼續閱讀 &rarr;</a></div></div></div>
+                                                    <div v-if="visibleSections.posts" class="p-8 md:p-12"><h3 class="text-2xl font-bold mb-6" :style="{ color: 'var(--color-primary)' }">{{ visibleSections.posts.title }}</h3><div class="space-y-4"><div v-for="i in 3" :key="'post-'+i" class="border-b pb-4"><h4 class="font-bold text-xl">文章標題 {{ i }}</h4><p class="text-sm text-gray-500">發布日期: 2025-06-1{{5-i}}</p></div></div></div>
+                                                    <div v-if="visibleSections.about" class="p-8 md:p-12 bg-gray-100"><h3 class="text-2xl font-bold mb-4" :style="{ color: 'var(--color-primary)' }">{{ visibleSections.about.title }}</h3><p class="whitespace-pre-wrap text-gray-600">{{ visibleSections.about.text }}</p></div>
+                                                    <div v-if="visibleSections.subscribe" class="bg-gray-800 text-white p-8 md:p-12 text-center"><h3 class="text-2xl font-bold mb-2">{{ visibleSections.subscribe.title }}</h3><p class="text-gray-300 mb-6">{{ visibleSections.subscribe.text }}</p><div class="flex max-w-md mx-auto"><input type="email" placeholder="請輸入您的 Email" class="w-full p-3 rounded-l-md text-gray-800"><button class="bg-yellow-600 hover:bg-yellow-700 text-white font-bold p-3 rounded-r-md">訂閱</button></div></div>
+                                              </template>
+                                            </div>
+                                            
+                                            <!-- 可編輯的通用 Footer (範本共用) -->
+                                            <footer v-if="visibleSections.footer" class="p-8 text-center text-sm" :style="{ backgroundColor: 'var(--color-primary)', color: 'var(--color-text-light)' }">
+                                                <p>{{ visibleSections.footer.text }}</p>
+                                            </footer>
+                                       </div>
+                                   </div>
+                               </div>
+                           </div>
                         </div>
                     </div>
-                </section>
+                </div>
+            </section>
+            
+            <!-- --- 3. 詳細方案區 --- -->
+            <section id="pricing" class="py-16 md:py-24 bg-gray-100">
+                <div class="max-w-7xl mx-auto px-6">
+                    <h2 class="text-3xl md:text-4xl font-bold text-center mb-12 relative pb-4">
+                        我們的解決方案
+                        <span class="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-24 h-1 bg-purple-500 rounded-full"></span>
+                    </h2>
+
+                    <!-- 網站建置 -->
+                    <div class="mb-16 scroll-fade-in">
+                        <h3 class="text-2xl md:text-3xl font-semibold text-center mb-8">網站建置方案</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                            <!-- 一頁式網站 -->
+                            <div class="bg-white rounded-2xl shadow-md p-8 flex flex-col text-center transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+                                <div class="flex-shrink-0 mb-4 rounded-xl overflow-hidden shadow-sm">
+                                    <img src="https://placehold.co/400x300/F0F8FF/333333?text=One+Page+Site" alt="一頁式網站" class="w-full h-48 object-cover">
+                                </div>
+                                <h4 class="text-2xl font-bold mb-3">一頁式網站</h4>
+                                <p class="text-gray-600 mb-4 flex-grow">快速上線，聚焦單一重點的銷售頁面或品牌展示頁</p>
+                                <p class="text-gray-600 mb-4 flex-grow">預計時程：2-4 週</p>
+                                <div class="text-4xl font-extrabold text-indigo-700 mb-6">NT$6,000/次</div>
+                                <ul class="text-gray-700 mb-8 text-left">
+                                    <li class="flex items-start mb-2">
+                                        <svg class="w-5 h-5 text-green-500 mr-2 flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                        響應式設計
+                                    </li>
+                                    <li class="flex items-start mb-2">
+                                        <svg class="w-5 h-5 text-green-500 mr-2 flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                        SEO 基本優化
+                                    </li>
+                                    <li class="flex items-start mb-2">
+                                        <svg class="w-5 h-5 text-green-500 mr-2 flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                        Google Analytics
+                                    </li>
+                                    <li class="flex items-start mb-2">
+                                        <svg class="w-5 h-5 text-green-500 mr-2 flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                        一次改版
+                                    </li>
+                                </ul>
+                                <button class="mt-auto bg-indigo-600 text-white font-bold py-3 px-6 rounded-full hover:bg-indigo-700 transition-colors shadow-md">
+                                    立即諮詢
+                                </button>
+                            </div>
+                            <!-- 企業官網 -->
+                            <div class="bg-white rounded-2xl shadow-md p-8 flex flex-col text-center transition-all duration-300 hover:shadow-lg hover:-translate-y-1 border-2 border-indigo-500 relative">
+                                <span class="absolute top-0 right-0 -mt-4 -mr-4 bg-yellow-400 text-gray-900 text-xs font-bold px-3 py-1 rounded-full rotate-12 shadow-lg">推薦</span>
+                                <div class="flex-shrink-0 mb-4 rounded-xl overflow-hidden shadow-sm">
+                                    <img src="https://placehold.co/400x300/F0F8FF/333333?text=Corporate+Website" alt="企業官網" class="w-full h-48 object-cover">
+                                </div>
+                                <h4 class="text-2xl font-bold mb-3">企業官網</h4>
+                                <p class="text-gray-600 mb-4 flex-grow">多頁面展示，全面介紹企業產品、服務及品牌故事</p>
+                                <p class="text-gray-600 mb-4 flex-grow">預計時程：4-8 週</p>
+                                <div class="text-4xl font-extrabold text-indigo-700 mb-6">NT$25,000起</div>
+                                <ul class="text-gray-700 mb-8 text-left">
+                                    <li class="flex items-start mb-2">
+                                        <svg class="w-5 h-5 text-green-500 mr-2 flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                        響應式設計
+                                    </li>
+                                    <li class="flex items-start mb-2">
+                                        <svg class="w-5 h-5 text-green-500 mr-2 flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                        SEO 進階優化
+                                    </li>
+                                    <li class="flex items-start mb-2">
+                                        <svg class="w-5 h-5 text-green-500 mr-2 flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                        多頁面內容 (最多5頁)
+                                    </li>
+                                    <li class="flex items-start mb-2">
+                                        <svg class="w-5 h-5 text-green-500 mr-2 flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                        部落格/新聞區塊
+                                    </li>
+                                    <li class="flex items-start mb-2">
+                                        <svg class="w-5 h-5 text-green-500 mr-2 flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                        兩次改版
+                                    </li>
+                                </ul>
+                                <button class="mt-auto bg-indigo-600 text-white font-bold py-3 px-6 rounded-full hover:bg-indigo-700 transition-colors shadow-md">
+                                    立即諮詢
+                                </button>
+                            </div>
+                            <!-- 客製化開發 -->
+                            <div class="bg-white rounded-2xl shadow-md p-8 flex flex-col text-center transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+                                <div class="flex-shrink-0 mb-4 rounded-xl overflow-hidden shadow-sm">
+                                    <img src="https://placehold.co/400x300/F0F8FF/333333?text=Custom+Development" alt="客製化開發" class="w-full h-48 object-cover">
+                                </div>
+                                <h4 class="text-2xl font-bold mb-3">客製化開發</h4>
+                                <p class="text-gray-600 mb-4 flex-grow">根據您的需求，從零開始打造專屬網站功能</p>
+                                <p class="text-600 mb-4 flex-grow">預計時程：依需求而定</p>
+                                <div class="text-4xl font-extrabold text-indigo-700 mb-6">報價</div>
+                                <ul class="text-gray-700 mb-8 text-left">
+                                    <li class="flex items-start mb-2">
+                                        <svg class="w-5 h-5 text-green-500 mr-2 flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                        完全客製化設計
+                                    </li>
+                                    <li class="flex items-start mb-2">
+                                        <svg class="w-5 h-5 text-green-500 mr-2 flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                        系統功能開發 (購物車、會員系統等)
+                                    </li>
+                                    <li class="flex items-start mb-2">
+                                        <svg class="w-5 h-5 text-green-500 mr-2 flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                        定期功能維護
+                                    </li>
+                                    <li class="flex items-start mb-2">
+                                        <svg class="w-5 h-5 text-green-500 mr-2 flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                        專案經理全程協助
+                                    </li>
+                                </ul>
+                                <button class="mt-auto bg-indigo-600 text-white font-bold py-3 px-6 rounded-full hover:bg-indigo-700 transition-colors shadow-md">
+                                    立即諮詢
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <!-- --- 9. 行動召喚（Final CTA） --- -->
+    <section id="contact" class="py-16 md:py-24 bg-gradient-to-br from-purple-800 to-indigo-900 text-white relative overflow-hidden">
+        <!-- 背景漸層 + 50 % 白色星星 SVG scatter Placeholder -->
+        <div class="absolute inset-0 z-0 opacity-50"
+            style="background-image: url('data:image/svg+xml,%3Csvg width=\'100\' height=\'100\' viewBox=\'0 0 100 100\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'%23ffffff\' opacity=\'0.2\'%3E%3Ccircle cx=\'25\' cy=\'25\' r=\'2\'/%3E%3Ccircle cx=\'75\' cy=\'75\' r=\'2\'/%3E%3Ccircle cx=\'20\' cy=\'80\' r=\'1\'/%3E%3Ccircle cx=\'80\' cy=\'20\' r=\'1\'/%3E%3C/g%3E%3C/svg%3E'); background-size: 50px;">
+        </div>
+
+        <div class="relative z-10 max-w-4xl mx-auto px-6 text-center">
+            <h2 class="text-3xl md:text-5xl font-extrabold leading-tight mb-4">立即讓網站進化！</h2>
+            <p class="text-lg md:text-xl mb-8 opacity-90">提供 30 分鐘免費諮詢，讓您的網站煥然一新。</p>
+            <div class="flex flex-col sm:flex-row justify-center gap-4">
+                <a href="https://line.me/ti/p/ken96385255" target="_blank"
+                    class="bg-green-500 text-white px-8 py-4 rounded-full font-bold shadow-lg hover:bg-green-600 transition-colors duration-300 flex items-center justify-center">
+                    <i class="fab fa-line text-xl mr-2"></i> LINE 諮詢
+                </a>
             </div>
-        `
+        </div>
+    </section>
+            <!-- 8. 聯絡表單（Contact / CTA） -->
+        <section id="contact" class="section-padding bg-gray-900 text-white">
+            <div class="max-w-4xl mx-auto px-6 text-center">
+                <h2 class="text-white text-3xl md:text-4xl font-semibold mb-4 relative">
+                    <span class="inline-block relative"><br>
+                        聯絡我們
+                        <span class="absolute left-1/2 transform -translate-x-1/2 bottom-0 w-24 h-1 bg-yellow-400 rounded-full -mb-4"></span>
+                    </span>
+                </h2>
+                <p class="text-gray-200 text-base md:text-lg max-w-2xl mx-auto mb-16">
+                    請留下您的聯絡資訊，我們將儘速與您聯繫。
+                </p>
+
+                <form action="https://formspree.io/f/xblyjogo" method="POST" class="bg-gray-800 p-8 md:p-12 rounded-lg shadow-xl text-left">
+    <div class="row grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Name Field -->
+        <div class="form-group position-relative">
+            <input type="text" 
+                   name="name" 
+                   class="w-full px-4 py-3 rounded-md bg-gray-700 text-white border border-gray-600 focus:border-blue-500 focus:ring-blue-500 peer"
+                   id="name" 
+                   placeholder="姓名"
+                   required>
+            <label for="name" 
+                   class="absolute left-4 -top-2.5 text-sm bg-gray-800 px-1 transition-all text-white
+                  peer-placeholder-shown:text-white peer-placeholder-shown:text-base 
+                  peer-placeholder-shown:top-3.5 peer-focus:-top-2.5 peer-focus:text-sm 
+                  peer-focus:text-white">
+                姓名 <span class="text-red-400">*</span>
+            </label>
+        </div>
+
+        <!-- Email Field -->
+        <div class="form-group position-relative">
+            <input type="email" 
+                   name="email" 
+                   class="w-full px-4 py-3 rounded-md bg-gray-700 text-white border border-gray-600 focus:border-blue-500 focus:ring-blue-500 peer"
+                   id="email" 
+                   placeholder="電子郵件"
+                   required>
+            <label for="email" 
+                   class="absolute left-4 -top-2.5 text-sm bg-gray-800 px-1 transition-all text-white
+                  peer-placeholder-shown:text-white peer-placeholder-shown:text-base 
+                  peer-placeholder-shown:top-3.5 peer-focus:-top-2.5 peer-focus:text-sm 
+                  peer-focus:text-white">
+                電子郵件 <span class="text-red-400">*</span>
+            </label>
+        </div>
+    </div>
+
+    <!-- Subject Field -->
+    <div class="form-group position-relative mt-6">
+        <select name="subject" 
+                class="w-full px-4 py-3 rounded-md bg-gray-700 text-white border border-gray-600 focus:border-blue-500 focus:ring-blue-500"
+                id="subject" 
+                required>
+            <option value="" class="text-white">選擇主旨</option>
+            <option value="job-application" class="text-white">需求諮詢</option>
+            <option value="business" class="text-white">客製開發討論</option>
+            <option value="business" class="text-white">現有網站轉移</option>
+            <option value="other" class="text-white">其他問題</option>
+        </select>
+        <label for="subject" 
+               class="absolute left-4 -top-2.5 text-sm bg-gray-800 px-1 text-white">
+            主旨<span class="text-red-400">*</span>
+        </label>
+    </div>
+
+    <!-- Message Field -->
+    <div class="form-group position-relative mt-6">
+        <textarea name="message" 
+                  rows="6" 
+                  class="w-full px-4 py-3 rounded-md bg-gray-700 text-white border border-gray-600 focus:border-blue-500 focus:ring-blue-500 peer"
+                  placeholder="訊息內容"
+                  required></textarea>
+        <label for="message" 
+               class="absolute left-4 -top-2.5 text-sm bg-gray-800 px-1 transition-all text-white">
+            訊息內容<span class="text-red-400">*</span>
+        </label>
+    </div>
+
+    <!-- Status Messages -->
+    <div class="my-6">
+        <div class="loading hidden text-blue-400">Sending message...</div>
+        <div class="error-message hidden text-red-400">Something went wrong. Please try again.</div>
+        <div class="sent-message hidden text-green-400">Your message has been sent successfully!</div>
+    </div>
+
+    <!-- Submit Button -->
+    <div class="text-center">
+        <button type="submit" 
+                class="bg-yellow-400 hover:bg-yellow-500 text-white font-semibold px-8 py-4 rounded-md text-lg shadow-lg transition duration-300 inline-flex items-center">
+            Send Message 
+            <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+            </svg>
+        </button>
+    </div>
+</form>
+
+<!-- Add this JavaScript for form handling -->
+<script>
+    const form = document.querySelector('form');
+    const loadingMessage = document.querySelector('.loading');
+    const errorMessage = document.querySelector('.error-message');
+    const sentMessage = document.querySelector('.sent-message');
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        // Show loading message
+        loadingMessage.classList.remove('hidden');
+        errorMessage.classList.add('hidden');
+        sentMessage.classList.add('hidden');
+
+        try {
+            const response = await fetch(form.action, {
+                method: 'POST',
+                body: new FormData(form),
+                headers: {
+                    'Accept': 'application/json'
+                }
+            });
+
+            if (response.ok) {
+                // Show success message
+                form.reset();
+                loadingMessage.classList.add('hidden');
+                sentMessage.classList.remove('hidden');
+            } else {
+                throw new Error('Network response was not ok.');
+            }
+        } catch (error) {
+            // Show error message
+            loadingMessage.classList.add('hidden');
+            errorMessage.classList.remove('hidden');
+        }
     });
+</script>
+            </div>
+        </section>
+        </main>
 
-    // OnepagePage Component
-    const OnepagePage = defineComponent({
-        emits: ['navigate'],
-        setup(props, { emit }) {
-            const websiteDescription = ref('');
-            const generatedContent = ref(null);
-            const loading = ref(false);
-            const error = ref(null);
+        <!-- 頁腳 (通用) -->
+    <footer class="footer">
+    <div class="footer-container">
+        <div class="footer-section">
+            <a href="#" class="footer-logo">
+                <img src="assets/img/store_logo.png" alt="Store Logo" class="logo-img">
+            </a>
+            <h4>關於我們</h4>
+            <ul>
+                <li><a href="#">公司介紹</a></li>
+                <li><a href="#">隱私權政策</a></li>
+                <li><a href="#">服務條款</a></li>
+            </ul>
+        </div>
+        <div class="footer-section">
+            <h4>客戶服務</h4>
+            <ul>
+                <li><a href="#">常見問題</a></li>
+                <li><a href="#">聯絡我們</a></li>
+                <li><a href="#">退換貨政策</a></li>
+            </ul>
+        </div>
+        <div class="footer-section">
+            <h4>追蹤我們</h4>
+            <div class="social-links">
+                <a href="#" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+                <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                <a href="#" aria-label="Line"><i class="fab fa-line"></i></a>
+            </div>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>&copy; 2025 數轉工作室 All rights reserved.</p>
+    </div>
+</footer>
+    </div>
 
-            const generateContent = async () => {
-                loading.value = true;
-                generatedContent.value = null;
-                error.value = null;
+    <script>
+        const { createApp, ref, computed, onMounted } = Vue;
 
-                const prompt = `根據以下網站描述，為我生成一個一頁式網站的內容建議。請提供 Hero 標語、網站介紹、服務說明和行動呼籲 (Call to Action) 文案。請以 JSON 格式回傳，包含 heroSlogan, introduction, services, callToAction 欄位。
-                網站描述: ${websiteDescription.value}`;
+        createApp({
+            setup() {
+                // 導覽列連結資料
+                const navLinks = ref([
+                    { name: '首頁', href: '#home' },
+                    { name: '範本', href: '#templates' },
+                    { name: '客製化', href: '#customization' },
+                    { name: '方案', href: '#pricing' },
+                    // 移除了服務流程和常見問題的導覽列連結
+                ]);
 
-                let chatHistory = [];
-                chatHistory.push({ role: "user", parts: [{ text: prompt }] });
-
-                const payload = {
-                    contents: chatHistory,
-                    generationConfig: {
-                        responseMimeType: "application/json",
-                        responseSchema: {
-                            type: "OBJECT",
-                            properties: {
-                                "heroSlogan": { "type": "STRING" },
-                                "introduction": { "type": "STRING" },
-                                "services": { "type": "STRING" },
-                                "callToAction": { "type": "STRING" }
+                // 範本資料，包含預覽圖、名稱、關鍵字以及客製化設定的初始值
+                const templates = ref([
+                    {
+                        id: 'corporate',
+                        name: '企業品牌',
+                        thumbnail: 'https://placehold.co/400x300/e0f2f7/0288d1?text=Corporate',
+                        keywords: '現代企業、專業服務、公司介紹、形象網站',
+                        config: {
+                            colors: {
+                                primary: '#1e3a8a', // Indigo 800
+                                accent: '#2563eb',  // Blue 600
+                                textDark: '#1f2937', // Gray 900
+                                textLight: '#f9fafb' // Gray 50
                             },
-                            "propertyOrdering": ["heroSlogan", "introduction", "services", "callToAction"]
+                            font: 'inter',
+                            sections: {
+                                hero: {
+                                    name: 'Hero Section', active: true,
+                                    title: '領先科技，共創未來',
+                                    text: '我們提供創新的解決方案，助力您的事業達到新高峰。',
+                                    buttonText: '了解更多',
+                                    image: 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?q=80&w=2084&auto=format&fit=crop'
+                                },
+                                about: {
+                                    name: 'About Us', active: true,
+                                    title: '關於我們',
+                                    text: 'PageCraft 致力於提供高品質的網站建置服務，幫助企業打造專業且具吸引力的線上形象。我們相信每個品牌都有其獨特的故事，而我們的使命就是透過精心的設計和創新的技術，將這些故事完美呈現。\n\n我們擁有一支充滿熱情與經驗的團隊，從概念發想到最終實施，每一個環節都力求完美。選擇 PageCraft，您不僅獲得一個網站，更是一個強大的數位品牌資產。',
+                                    image: 'https://images.unsplash.com/photo-1589998059171-ee29c2005a76?q=80&w=2070&auto=format&fit=crop',
+                                    imagePosition: 'left' // 'left' or 'right'
+                                },
+                                services: {
+                                    name: 'Our Services', active: true,
+                                    title: '我們的服務',
+                                    text: '我們提供全方位的數位解決方案。'
+                                },
+                                team: {
+                                    name: 'Our Team', active: true,
+                                    title: '專業團隊',
+                                    text: '認識我們充滿活力的團隊。'
+                                },
+                                testimonials: {
+                                    name: 'Testimonials', active: true,
+                                    title: '客戶證言',
+                                    text: '選擇 PageCraft，讓您的事業在數位時代中脫穎而出！'
+                                },
+                                footer: {
+                                    name: 'Footer', active: true,
+                                    text: '版權所有 &copy; 2025 您的公司名稱. All Rights Reserved.'
+                                }
+                            }
+                        }
+                    },
+                    {
+                        id: 'portfolio',
+                        name: '個人作品集',
+                        thumbnail: 'https://placehold.co/400x300/dcedc8/33691e?text=Portfolio',
+                        keywords: '設計師、攝影師、藝術家、個人品牌、線上履歷',
+                        config: {
+                            colors: {
+                                primary: '#33691e', // Lime 800
+                                accent: '#689f38',  // Light Green 800
+                                textDark: '#212121', // Gray 900
+                                textLight: '#f1f8e9' // Lime 50
+                            },
+                            font: 'roboto',
+                            sections: {
+                                hero: {
+                                    name: 'Hero Section', active: true,
+                                    title: '創意無限，光影交織',
+                                    text: '我是一位充滿熱情的設計師，透過視覺藝術講述故事。',
+                                    buttonText: '我的作品',
+                                    image: 'https://images.unsplash.com/photo-1499750310107-5fcd6cd6f08c?q=80&w=2070&auto=format&fit=crop'
+                                },
+                                gallery: {
+                                    name: 'Gallery', active: true,
+                                    title: '我的作品',
+                                    text: '瀏覽我最新的作品集。'
+                                },
+                                about_me: {
+                                    name: 'About Me', active: true,
+                                    title: '關於我',
+                                    text: '我從小就對視覺藝術充滿熱情。透過多年的學習和實踐，我掌握了多種設計工具和技巧，並將它們應用於各種專案中。我喜歡挑戰不同的設計風格，並相信好的設計能夠傳達強大的訊息。\n\n我的目標是創造出既美觀又實用的作品，幫助客戶實現他們的目標。期待與您合作，共同創造令人驚豔的視覺體驗。',
+                                    image: 'https://i.pravatar.cc/300?img=15'
+                                },
+                                skills: {
+                                    name: 'Skills', active: true,
+                                    title: '我的技能',
+                                    text: '以下是我擅長的領域和技能。'
+                                },
+                                footer: {
+                                    name: 'Footer', active: true,
+                                    text: '© 2025 [您的姓名]. All rights reserved.'
+                                }
+                            }
+                        }
+                    },
+                    {
+                        id: 'group_buy_ad',
+                        name: '團購廣告',
+                        thumbnail: 'https://placehold.co/400x300/ffe0b2/e65100?text=Group+Buy',
+                        keywords: '促銷、限時優惠、電子商務、商品推廣',
+                        config: {
+                            colors: {
+                                primary: '#e65100', // Orange 900
+                                accent: '#ff8f00',  // Amber 800
+                                textDark: '#212121', // Gray 900
+                                textLight: '#fff3e0' // Orange 50
+                            },
+                            font: 'noto-serif-tc',
+                            sections: {
+                                hero: {
+                                    name: 'Hero Section', active: true,
+                                    title: '【限時團購】暢銷商品，手刀搶購！',
+                                    text: '把握最後機會，超值優惠不等人！',
+                                    buttonText: '立即搶購',
+                                    image: 'https://images.unsplash.com/photo-1542831371-d13c03569766?q=80&w=2070&auto=format&fit=crop'
+                                },
+                                offer_details: {
+                                    name: 'Offer Details', active: true,
+                                    title: '商品介紹',
+                                    text: '這是一款您不容錯過的優質商品，採用最新技術打造，品質保證，深受廣大用戶喜愛。無論是送禮自用，都是您的最佳選擇。立即加入團購，享受前所未有的優惠價格！數量有限，售完為止，趕快行動吧！'
+                                },
+                                how_it_works: {
+                                    name: 'How It Works', active: true,
+                                    title: '如何參與團購',
+                                    text: '輕鬆三步驟，超值商品帶回家！'
+                                },
+                                countdown: {
+                                    name: 'Countdown', active: true,
+                                    title: '距優惠結束還有',
+                                    text: '00天00時00分00秒'
+                                },
+                                call_to_action: {
+                                    name: 'Call to Action', active: true,
+                                    title: '心動不如馬上行動！',
+                                    text: '立即點擊下方按鈕，將這份超值好物帶回家！',
+                                    buttonText: '立即購買'
+                                },
+                                footer: {
+                                    name: 'Footer', active: true,
+                                    text: '活動期間：2025/06/01 - 2025/06/30'
+                                }
+                            }
+                        }
+                    },
+                    {
+                        id: 'event',
+                        name: '活動宣傳',
+                        thumbnail: 'https://placehold.co/400x300/e3f2fd/1976d2?text=Event',
+                        keywords: '研討會、講座、演唱會、課程、報名',
+                        config: {
+                            colors: {
+                                primary: '#1976d2', // Blue 700
+                                accent: '#2196f3',  // Blue 500
+                                textDark: '#212121', // Gray 900
+                                textLight: '#e3f2fd' // Blue 50
+                            },
+                            font: 'inter',
+                            sections: {
+                                hero: {
+                                    name: 'Hero Section', active: true,
+                                    title: '2025 創新科技論壇',
+                                    text: '掌握未來趨勢，與業界精英共同探討最新科技發展。',
+                                    buttonText: '立即報名',
+                                    image: 'https://images.unsplash.com/photo-1531051056583-ad53e5e1e79b?q=80&w=2070&auto=format&fit=crop'
+                                },
+                                agenda: {
+                                    name: 'Agenda', active: true,
+                                    title: '活動議程',
+                                    text: '精彩內容不容錯過！'
+                                },
+                                speakers: {
+                                    name: 'Speakers', active: true,
+                                    title: '特邀講者',
+                                    text: '聆聽各領域頂尖專家的洞見。'
+                                },
+                                sponsors: {
+                                    name: 'Sponsors', active: true,
+                                    title: '感謝贊助商',
+                                    text: '感謝以下合作夥伴的大力支持。'
+                                },
+                                location: {
+                                    name: 'Location', active: true,
+                                    title: '活動地點',
+                                    text: '台北國際會議中心'
+                                },
+                                footer: {
+                                    name: 'Footer', active: true,
+                                    text: '聯絡我們：info@event.com | 02-1234-5678'
+                                }
+                            }
+                        }
+                    },
+                    {
+                        id: 'blog',
+                        name: '個人部落格',
+                        thumbnail: 'https://placehold.co/400x300/f3e5f5/880e4f?text=Blog',
+                        keywords: '內容創作、知識分享、個人見解、文章',
+                        config: {
+                            colors: {
+                                primary: '#880e4f', // Pink 900
+                                accent: '#e91e63',  // Pink 500
+                                textDark: '#212121', // Gray 900
+                                textLight: '#fce4ec' // Pink 50
+                            },
+                            font: 'roboto',
+                            sections: {
+                                hero: {
+                                    name: 'Hero Section', active: true,
+                                    title: '探索知識，分享生活',
+                                    text: '在這裡，我將分享我的思考、學習心得和對世界的觀察。',
+                                    buttonText: '閱讀最新文章',
+                                    image: 'https://images.unsplash.com/photo-1456324504439-d88927e57c61?q=80&w=2070&auto=format&fit=crop'
+                                },
+                                featured_post: {
+                                    name: 'Featured Post', active: true,
+                                    title: '最新精選文章',
+                                    text: '本篇文章深入探討了人工智慧在當代社會中的應用與挑戰。從機器學習到深度學習，我們將帶您了解 AI 如何改變我們的生活，以及它可能帶來的潛在風險。透過案例分析和專家觀點，希望能為您提供一個全面的視角。',
+                                    image: 'https://images.unsplash.com/photo-1620712943543-ee2f1c84b16a?q=80&w=2070&auto=format&fit=crop'
+                                },
+                                posts: {
+                                    name: 'All Posts', active: true,
+                                    title: '所有文章',
+                                    text: '瀏覽我所有發表的文章。'
+                                },
+                                about: {
+                                    name: 'About Author', active: true,
+                                    title: '關於作者',
+                                    text: '您好，我是 [您的姓名]，一位熱愛知識分享的創作者。我的部落格主要關注科技、設計和生活哲學。我希望透過文字，激發讀者的思考，並為大家帶來有價值的資訊和啟發。歡迎訂閱我的電子報，獲得第一手更新！'
+                                },
+                                subscribe: {
+                                    name: 'Subscribe', active: true,
+                                    title: '訂閱我的電子報',
+                                    text: '獲取最新文章和獨家內容！'
+                                },
+                                footer: {
+                                    name: 'Footer', active: true,
+                                    text: '聯絡我：your_email@example.com'
+                                }
+                            }
                         }
                     }
+                ]);
+
+                // 當前選中的範本
+                const currentTemplate = ref(templates.value[0]); // 預設選取第一個範本
+
+                // 行動版選單開關狀態
+                const isMobileMenuOpen = ref(false);
+
+                // 預覽模式 ('mobile', 'tablet', 'desktop')
+                const previewMode = ref('desktop');
+
+                // 當前活躍的編輯區塊 (用於內容編輯面板)
+                const activeEditor = ref(null);
+
+                // 可用的字體選項
+                const availableFonts = ref([
+                    { name: 'Inter (現代)', value: 'inter' },
+                    { name: 'Roboto (簡潔)', value: 'roboto' },
+                    { name: '思源宋體 (優雅)', value: 'noto-serif-tc' }
+                ]);
+
+                // 顏色標籤映射，用於顯示色票名稱
+                const colorLabels = ref({
+                    primary: '主色',
+                    accent: '強調色',
+                    textDark: '深色文字',
+                    textLight: '淺色文字'
+                });
+
+                // 作品集範本的圖片陣列
+                const portfolioImages = ref([
+                    'https://images.unsplash.com/photo-1549490184-a82f342e616f?q=80&w=1887&auto=format&fit=crop',
+                    'https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=2070&auto=format&fit=crop',
+                    'https://images.unsplash.com/photo-1517694711087-abc7d6560411?q=80&w=2070&auto=format&fit=crop',
+                    'https://images.unsplash.com/photo-1521193089456-e970a00508a8?q=80&w=2070&auto=format&fit=crop',
+                    'https://images.unsplash.com/photo-1488197022204-cf648a74e50d?q=80&w=2070&auto=format&fit=crop',
+                    'https://images.unsplash.com/photo-1485827404704-61c6fe36f457?q=80&w=2070&auto=format&fit=crop'
+                ]);
+
+                // 移除了常見問題資料
+                // 移除了指引步驟資料
+
+                // 計算屬性：根據當前範本的顏色設定，產生 CSS 變數
+                const templateStyleVariables = computed(() => {
+                    const colors = currentTemplate.value.config.colors;
+                    return {
+                        '--color-primary': colors.primary,
+                        '--color-accent': colors.accent,
+                        '--color-text-dark': colors.textDark,
+                        '--color-text-light': colors.textLight,
+                    };
+                });
+
+                // 計算屬性：根據區塊的 active 狀態，只顯示活躍的區塊
+                const visibleSections = computed(() => {
+                    const sections = {};
+                    if (currentTemplate.value.config && currentTemplate.value.config.sections) {
+                        for (const key in currentTemplate.value.config.sections) {
+                            if (currentTemplate.value.config.sections[key].active) {
+                                sections[key] = currentTemplate.value.config.sections[key];
+                            }
+                        }
+                    }
+                    return sections;
+                });
+
+                // 方法：選擇範本並滾動到客製化區塊
+                const selectTemplateAndScroll = (template) => {
+                    currentTemplate.value = template;
+                    // 在 Vue 內部設定 activeEditor 為 null，防止展開所有區塊
+                    activeEditor.value = null; 
+                    setTimeout(() => {
+                        document.getElementById('customization').scrollIntoView({ behavior: 'smooth' });
+                    }, 100); // 給 Vue 更新 DOM 一點時間
                 };
 
-                const apiKey = ""; // Canvas will automatically provide this in runtime
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+                // 方法：切換編輯器區塊的展開/收合狀態
+                const toggleSectionEditor = (key) => {
+                    activeEditor.value = activeEditor.value === key ? null : key;
+                };
 
-                try {
-                    const response = await fetch(apiUrl, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
+                // 移除了 toggleFAQ 方法
+
+                // 在組件掛載後初始化滾動淡入動畫
+                onMounted(() => {
+                    const fadeInElements = document.querySelectorAll('.scroll-fade-in');
+
+                    const observer = new IntersectionObserver((entries) => {
+                        entries.forEach(entry => {
+                            if (entry.isIntersecting) {
+                                entry.target.classList.add('is-visible');
+                                observer.unobserve(entry.target); // 一旦可見，就停止觀察
+                            }
+                        });
+                    }, {
+                        threshold: 0.1 // 當元素 10% 可見時觸發
                     });
 
-                    if (!response.ok) {
-                        const errorData = await response.json();
-                        throw new Error(`API error: ${errorData.error.message || response.statusText}`);
-                    }
-
-                    const result = await response.json();
-                    if (result.candidates && result.candidates.length > 0 &&
-                        result.candidates[0].content && result.candidates[0].content.parts &&
-                        result.candidates[0].content.parts.length > 0) {
-                        const jsonString = result.candidates[0].content.parts[0].text;
-                        generatedContent.value = JSON.parse(jsonString);
-                    } else {
-                        error.value = "未能從 AI 獲取有效內容。";
-                    }
-                } catch (e) {
-                    console.error("生成內容時發生錯誤:", e);
-                    error.value = `生成內容時發生錯誤: ${e.message}`;
-                } finally {
-                    loading.value = false;
-                }
-            };
-
-            return { emit, websiteDescription, generatedContent, loading, error, generateContent };
-        },
-        template: `
-            <div class="onepage-page space-y-16">
-                <section class="text-center py-20 px-4 bg-gradient-to-br from-indigo-800 to-purple-900 rounded-xl shadow-2xl animate-fade-in-up">
-                    <h1 class="text-5xl md:text-6xl font-extrabold text-white mb-6 leading-tight">
-                        快速啟動您的線上形象：<br class="hidden md:inline">一頁式網站專家
-                    </h1>
-                    <p class="text-xl md:text-2xl text-gray-200 mb-10 max-w-3xl mx-auto">
-                        專為小型企業、新創公司及個人品牌設計，用簡潔高效的方式展示您的核心價值。
-                    </p>
-                    <button @click="$emit('navigate', 'ContactPage')" class="btn-primary">
-                        立即預約諮詢
-                    </button>
-                </section>
-                <section class="py-12 bg-gray-800 rounded-xl shadow-xl">
-                    <h2 class="text-4xl font-bold text-center text-white mb-12">誰適合一頁式網站？</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 px-4">
-                        <div class="flex flex-col items-center text-center p-6 bg-gray-700 rounded-lg shadow-md">
-                            <div class="text-teal-400 mb-4 text-5xl">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-briefcase"><rect width="20" height="14" x="2" y="7" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
-                            </div>
-                            <h3 class="text-2xl font-semibold text-white mb-2">小資族與新創</h3>
-                            <p class="text-gray-400">預算有限但想快速擁有專業形象。</p>
-                        </div>
-                        <div class="flex flex-col items-center text-center p-6 bg-gray-700 rounded-lg shadow-md">
-                            <div class="text-cyan-400 mb-4 text-5xl">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-paint-brush"><path d="M12 19V6H4v3a4 4 0 0 0 4 4h3"/><path d="M18 21v-7h-8v3a4 4 0 0 0 4 4h3"/><path d="M19 17v-2a4 4 0 0 0-4-4h-3"/><path d="M12 4V2h-2v2"/></svg>
-                            </div>
-                            <h3 class="text-2xl font-semibold text-white mb-2">藝術家與創作者</h3>
-                            <p class="text-gray-400">展示作品集、個人風格，無需複雜導航。</p>
-                        </div>
-                        <div class="flex flex-col items-center text-center p-6 bg-gray-700 rounded-lg shadow-md">
-                            <div class="text-orange-400 mb-4 text-5xl">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-shopping-cart"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57L22 4H6"/></svg>
-                            </div>
-                            <h3 class="text-2xl font-semibold text-white mb-2">產品銷售</h3>
-                            <p class="text-gray-400">專注於單一產品或服務的快速銷售頁。</p>
-                        </div>
-                    </div>
-                </section>
-                <section class="py-12 bg-gray-800 rounded-xl shadow-xl">
-                    <h2 class="text-4xl font-bold text-center text-white mb-12">一頁式網站常見架構</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 px-4">
-                        <div class="text-center">
-                            <h3 class="text-2xl font-semibold text-white mb-4">銷售頁</h3>
-                            <img src="https://placehold.co/600x400/4B5563/E5E7EB?text=銷售頁範例" alt="銷售頁範例" class="rounded-lg shadow-md mx-auto mb-4">
-                            <p class="text-gray-400">強調產品特色、優勢、客戶見證及行動呼籲，促使訪客快速轉換。</p>
-                        </div>
-                        <div class="text-center">
-                            <h3 class="text-2xl font-semibold text-white mb-4">作品集頁</h3>
-                            <img src="https://placehold.co/600x400/4B5563/E5E7EB?text=作品集頁範例" alt="作品集頁範例" class="rounded-lg shadow-md mx-auto mb-4">
-                            <p class="text-gray-400">簡潔呈現個人或團隊的作品，搭配精美圖片與簡短說明，一目瞭然。</p>
-                        </div>
-                    </div>
-                </section>
-                <section class="py-12 bg-gray-800 rounded-xl shadow-xl">
-                    <h2 class="text-4xl font-bold text-center text-white mb-12">核心功能</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 px-4">
-                        <div class="flex items-center space-x-4 p-4 bg-gray-700 rounded-lg shadow-md">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-purple-400 flex-shrink-0">
-                                <rect width="18" height="18" x="3" y="3" rx="2" ry="2"/>
-                                <circle cx="12" cy="12" r="3"/>
-                                <line x1="3" x2="21" y1="9" y2="9"/>
-                                <line x1="3" x2="21" y1="15" y2="15"/>
-                                <line x1="15" x2="15" y1="3" y2="21"/>
-                                <line x1="9" x2="9" y1="3" y2="21"/>
-                            </svg>
-                            <p class="text-gray-300 text-lg">圖片輪播</p>
-                        </div>
-                        <div class="flex items-center space-x-4 p-4 bg-gray-700 rounded-lg shadow-md">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-teal-400 flex-shrink-0">
-                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                                <polyline points="7 10 12 15 17 10"/>
-                                <line x1="12" x2="12" y1="15" y2="3"/>
-                            </svg>
-                            <p class="text-gray-300 text-lg">檔案下載</p>
-                        </div>
-                        <div class="flex items-center space-x-4 p-4 bg-gray-700 rounded-lg shadow-md">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-cyan-400 flex-shrink-0">
-                                <rect width="20" height="16" x="2" y="4" rx="2"/>
-                                <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
-                            </svg>
-                            <p class="text-gray-300 text-lg">聯絡表單</p>
-                        </div>
-                        <div class="flex items-center space-x-4 p-4 bg-gray-700 rounded-lg shadow-md">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-orange-400 flex-shrink-0">
-                                <path d="M3 17V3h18v14"/>
-                                <path d="M12 3v14"/>
-                                <path d="M12 17H3"/>
-                                <path d="M12 17h9"/>
-                                <path d="M16 21H8"/>
-                            </svg>
-                            <p class="text-gray-300 text-lg">文案編輯</p>
-                        </div>
-                        <div class="flex items-center space-x-4 p-4 bg-gray-700 rounded-lg shadow-md">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-tablet-smartphone">
-                                <path d="M18 10V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h2"/>
-                                <path d="M10 18v3a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-3"/>
-                                <circle cx="12" cy="19" r="1"/>
-                            </svg>
-                            <p class="text-gray-300 text-lg">響應式設計</p>
-                        </div>
-                        <div class="flex items-center space-x-4 p-4 bg-gray-700 rounded-lg shadow-md">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-red-400 flex-shrink-0">
-                                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-                            </svg>
-                            <p class="text-gray-300 text-lg">深色模式</p>
-                        </div>
-                    </div>
-                </section>
-                <section class="py-12 bg-gray-800 rounded-xl shadow-xl">
-                    <h2 class="text-4xl font-bold text-center text-white mb-12">AI 網站內容生成器</h2>
-                    <div class="max-w-3xl mx-auto px-4">
-                        <p class="text-gray-300 mb-6 text-center">輸入您的網站描述，讓 AI 為您生成 Hero 標語、介紹、服務說明和行動呼籲文案建議！</p>
-                        <textarea
-                            v-model="websiteDescription"
-                            placeholder="例如：我是一個銷售手工咖啡豆的獨立品牌，想建立一個展示咖啡豆來源和沖泡技巧的網站。"
-                            rows="6"
-                            class="w-full p-4 rounded-lg bg-gray-700 border border-gray-600 text-white focus:ring-purple-500 focus:border-purple-500 mb-4"
-                        ></textarea>
-                        <button @click="generateContent" :disabled="loading" class="btn-primary w-full flex items-center justify-center">
-                            <span v-if="loading" class="animate-spin mr-2">
-                                <svg class="w-5 h-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                </svg>
-                            </span>
-                            <span v-else>生成內容建議</span>
-                        </button>
-
-                        <div v-if="generatedContent" class="mt-8 p-6 bg-gray-700 rounded-lg shadow-md border border-purple-600">
-                            <h3 class="text-2xl font-semibold text-white mb-4">AI 生成的內容建議：</h3>
-                            <div class="space-y-4 text-gray-300 whitespace-pre-wrap">
-                                <p v-if="generatedContent.heroSlogan"><strong>Hero 標語:</strong> {{ generatedContent.heroSlogan }}</p>
-                                <p v-if="generatedContent.introduction"><strong>網站介紹:</strong> {{ generatedContent.introduction }}</p>
-                                <p v-if="generatedContent.services"><strong>服務說明:</strong> {{ generatedContent.services }}</p>
-                                <p v-if="generatedContent.callToAction"><strong>行動呼籲 (CTA):</strong> {{ generatedContent.callToAction }}</p>
-                            </div>
-                        </div>
-                        <p v-if="error" class="text-red-500 text-center mt-4">錯誤：{{ error }}</p>
-                    </div>
-                </section>
-                <section class="py-12 bg-gray-800 rounded-xl shadow-xl">
-                    <h2 class="text-4xl font-bold text-center text-white mb-12">一頁式網站套裝方案</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 px-4">
-                        <!-- 基本版 -->
-                        <div class="card flex flex-col items-center p-8 border-2 border-gray-700 hover:border-purple-600 transition duration-300 ease-in-out">
-                            <h3 class="text-3xl font-bold text-white mb-4">基本版</h3>
-                            <p class="text-purple-400 text-5xl font-extrabold mb-6">$8,000 NTD</p>
-                            <ul class="text-gray-300 text-lg space-y-3 mb-8 text-left w-full">
-                                <li class="flex items-center"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-green-500 mr-2"><polyline points="20 6 9 17 4 12"/></svg> 頁面設計 (1頁)</li>
-                                <li class="flex items-center"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-green-500 mr-2"><polyline points="20 6 9 17 4 12"/></svg> 響應式設計</li>
-                                <li class="flex items-center"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-green-500 mr-2"><polyline points="20 6 9 17 4 12"/></svg> 聯絡表單</li>
-                                <li class="flex items-center"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-green-500 mr-2"><polyline points="20 6 9 17 4 12"/></svg> 基本 SEO 優化</li>
-                                <li class="flex items-center text-gray-500"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><line x1="18" x2="6" y1="6" y2="18"/><line x1="6" x2="18" y1="6" y2="18"/></svg> 社群分享整合 (僅連結)</li>
-                            </ul>
-                            <button @click="$emit('navigate', 'ContactPage')" class="btn-primary w-full">選擇基本版</button>
-                        </div>
-
-                        <!-- 進階版 -->
-                        <div class="card flex flex-col items-center p-8 border-2 border-purple-600 bg-purple-900 bg-opacity-30 shadow-2xl">
-                            <h3 class="text-3xl font-bold text-white mb-4">進階版 (推薦！)</h3>
-                            <p class="text-yellow-400 text-5xl font-extrabold mb-6">$15,000 NTD</p>
-                            <ul class="text-gray-200 text-lg space-y-3 mb-8 text-left w-full">
-                                <li class="flex items-center"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-green-500 mr-2"><polyline points="20 6 9 17 4 12"/></svg> 包含基本版所有功能</li>
-                                <li class="flex items-center"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-green-500 mr-2"><polyline points="20 6 9 17 4 12"/></svg> 客製化動態效果</li>
-                                <li class="flex items-center"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-green-500 mr-2"><polyline points="20 6 9 17 4 12"/></svg> 圖片/影片輪播</li>
-                                <li class="flex items-center"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-green-500 mr-2"><polyline points="20 6 9 17 4 12"/></svg> 進階 SEO 優化</li>
-                                <li class="flex items-center"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-green-500 mr-2"><polyline points="20 6 9 17 4 12"/></svg> 社群分享整合 (自動抓取)</li>
-                            </ul>
-                            <button @click="$emit('navigate', 'ContactPage')" class="btn-primary w-full">選擇進階版</button>
-                        </div>
-                    </div>
-                    <div class="flex justify-center mt-8">
-                        <!-- 企業版 -->
-                        <div class="card flex flex-col items-center p-8 border-2 border-gray-700 hover:border-purple-600 transition duration-300 ease-in-out w-full md:w-1/2">
-                            <h3 class="text-3xl font-bold text-white mb-4">企業版</h3>
-                            <p class="text-blue-400 text-5xl font-extrabold mb-6">客製報價</p>
-                            <ul class="text-gray-300 text-lg space-y-3 mb-8 text-left w-full">
-                                <li class="flex items-center"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-green-500 mr-2"><polyline points="20 6 9 17 4 12"/></svg> 包含進階版所有功能</li>
-                                <li class="flex items-center"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-green-500 mr-2"><polyline points="20 6 9 17 4 12"/></svg> 專屬功能開發</li>
-                                <li class="flex items-center"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-green-500 mr-2"><polyline points="20 6 9 17 4 12"/></svg> 專業網站維護與更新</li>
-                                <li class="flex items-center"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-green-500 mr-2"><polyline points="20 6 9 17 4 12"/></svg> 優先技術支援</li>
-                                <li class="flex items-center"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-green-500 mr-2"><polyline points="20 6 9 17 4 12"/></svg> 網站數據分析報告</li>
-                            </ul>
-                            <button @click="$emit('navigate', 'ContactPage')" class="btn-primary w-full">聯絡我們客製</button>
-                        </div>
-                    </div>
-                </section>
-            </div>
-        `
-    });
-
-    // MultipagePage Component
-    const MultipagePage = defineComponent({
-        emits: ['navigate'],
-        template: `
-            <div class="multipage-page space-y-16">
-                <section class="text-center py-20 px-4 bg-gradient-to-br from-green-800 to-teal-900 rounded-xl shadow-2xl animate-fade-in-up">
-                    <h1 class="text-5xl md:text-6xl font-extrabold text-white mb-6 leading-tight">
-                        打造您的專業線上門面：<br class="hidden md:inline">多頁式形象官網
-                    </h1>
-                    <p class="text-xl md:text-2xl text-gray-200 mb-10 max-w-3xl mx-auto">
-                        為您的企業提供完整且深入的線上展示，提升品牌專業度與客戶信任。
-                    </p>
-                    <button @click="$emit('navigate', 'ContactPage')" class="btn-primary">
-                        立即預約諮詢
-                    </button>
-                </section>
-                <section class="py-12 bg-gray-800 rounded-xl shadow-xl">
-                    <h2 class="text-4xl font-bold text-center text-white mb-12">多頁式網站的優勢</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 px-4">
-                        <div class="flex flex-col items-center text-center p-6 bg-gray-700 rounded-lg shadow-md">
-                            <div class="text-purple-400 mb-4 text-5xl">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-building"><rect width="16" height="20" x="4" y="2" rx="2" ry="2"/><path d="M9 22v-4h6v4"/><path d="M8 6h.01"/><path d="M16 6h.01"/><path d="M12 6h.01"/><path d="M12 10h.01"/><path d="M12 14h.01"/><path d="M16 10h.01"/><path d="M16 14h.01"/><path d="M8 10h.01"/><path d="M8 14h.01"/></svg>
-                            </div>
-                            <h3 class="text-2xl font-semibold text-white mb-2">完整企業形象</h3>
-                            <p class="text-gray-400">提供多個頁面深入介紹公司、服務、產品、案例等。</p>
-                        </div>
-                        <div class="flex flex-col items-center text-center p-6 bg-gray-700 rounded-lg shadow-md">
-                            <div class="text-cyan-400 mb-4 text-5xl">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-bar-chart-2"><line x1="18" x2="18" y1="20" y2="10"/><line x1="12" x2="12" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="14"/></svg>
-                            </div>
-                            <h3 class="text-2xl font-semibold text-white mb-2">利於 SEO 排名</h3>
-                            <p class="text-gray-400">更多內容與關鍵字，有助於搜尋引擎優化。</p>
-                        </div>
-                        <div class="flex flex-col items-center text-center p-6 bg-gray-700 rounded-lg shadow-md">
-                            <div class="text-orange-400 mb-4 text-5xl">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-users"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-                            </div>
-                            <h3 class="text-2xl font-semibold text-white mb-2">提升客戶信任</h3>
-                            <p class="text-gray-400">詳細資訊與專業設計，建立客戶信任感。</p>
-                        </div>
-                    </div>
-                </section>
-                <section class="py-12 bg-gray-800 rounded-xl shadow-xl">
-                    <h2 class="text-4xl font-bold text-center text-white mb-12">常見頁面模組</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 px-4">
-                        <div class="text-center">
-                            <h3 class="text-2xl font-semibold text-white mb-4">關於我們</h3>
-                            <img src="https://placehold.co/600x400/4B5563/E5E7EB?text=關於我們範例" alt="關於我們範例" class="rounded-lg shadow-md mx-auto mb-4">
-                            <p class="text-gray-400">介紹公司歷史、願景、團隊成員，展現品牌故事。</p>
-                        </div>
-                        <div class="text-center">
-                            <h3 class="text-2xl font-semibold text-white mb-4">服務項目</h3>
-                            <img src="https://placehold.co/600x400/4B5563/E5E7EB?text=服務項目範例" alt="服務項目範例" class="rounded-lg shadow-md mx-auto mb-4">
-                            <p class="text-gray-400">詳細說明您的服務內容、流程與特色。</p>
-                        </div>
-                        <div class="text-center">
-                            <h3 class="text-2xl font-semibold text-white mb-4">最新消息/部落格</h3>
-                            <img src="https://placehold.co/600x400/4B5563/E5E7EB?text=部落格範例" alt="部落格範例" class="rounded-lg shadow-md mx-auto mb-4">
-                            <p class="text-gray-400">發布公司動態、行業資訊，提升網站活躍度。</p>
-                        </div>
-                        <div class="text-center">
-                            <h3 class="text-2xl font-semibold text-white mb-4">聯絡我們</h3>
-                            <img src="https://placehold.co/600x400/4B5563/E5E7EB?text=聯絡我們範例" alt="聯絡我們範例" class="rounded-lg shadow-md mx-auto mb-4">
-                            <p class="text-gray-400">提供多種聯絡方式，方便客戶快速聯繫。</p>
-                        </div>
-                    </div>
-                </section>
-            </div>
-        `
-    });
-
-    // CustomPage Component
-    const CustomPage = defineComponent({
-        emits: ['navigate'],
-        template: `
-            <div class="custom-page space-y-16">
-                <section class="text-center py-20 px-4 bg-gradient-to-br from-blue-800 to-indigo-900 rounded-xl shadow-2xl animate-fade-in-up">
-                    <h1 class="text-5xl md:text-6xl font-extrabold text-white mb-6 leading-tight">
-                        您的願景，我們的代碼：<br class="hidden md:inline">客製網站與系統開發
-                    </h1>
-                    <p class="text-xl md:text-2xl text-gray-200 mb-10 max-w-3xl mx-auto">
-                        當標準方案無法滿足您的獨特需求時，我們提供從零開始的客製化解決方案。
-                    </p>
-                    <button @click="$emit('navigate', 'ContactPage')" class="btn-primary">
-                        立即預約諮詢
-                    </button>
-                </section>
-                <section class="py-12 bg-gray-800 rounded-xl shadow-xl">
-                    <h2 class="text-4xl font-bold text-center text-white mb-12">客製化服務範圍</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 px-4">
-                        <div class="flex flex-col items-center text-center p-6 bg-gray-700 rounded-lg shadow-md">
-                            <div class="text-purple-400 mb-4 text-5xl">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-shopping-bag"><path d="M6 2L3 7v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V7l-3-5Z"/><path d="M3 7h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
-                            </div>
-                            <h3 class="text-2xl font-semibold text-white mb-2">電子商務平台</h3>
-                            <p class="text-gray-400">從商品管理到金流串接，打造專屬電商系統。</p>
-                        </div>
-                        <div class="flex flex-col items-center text-center p-6 bg-gray-700 rounded-lg shadow-md">
-                            <div class="text-cyan-400 mb-4 text-5xl">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-database"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5V19A9 3 0 0 0 21 19V5"/><path d="M3 12A9 3 0 0 0 21 12"/></svg>
-                            </div>
-                            <h3 class="text-2xl font-semibold text-white mb-2">會員管理系統</h3>
-                            <p class="text-gray-400">客製化會員註冊、登入、權限管理等功能。</p>
-                        </div>
-                        <div class="flex flex-col items-center text-center p-6 bg-gray-700 rounded-lg shadow-md">
-                            <div class="text-orange-400 mb-4 text-5xl">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-workflow"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
-                            </div>
-                            <h3 class="text-2xl font-semibold text-white mb-2">內部管理系統</h3>
-                            <p class="text-gray-400">開發符合企業流程的 CRM, ERP 等系統。</p>
-                        </div>
-                        <div class="flex flex-col items-center text-center p-6 bg-gray-700 rounded-lg shadow-md">
-                            <div class="text-red-400 mb-4 text-5xl">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-gamepad-2"><path d="M6 12H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h2"/><path d="M18 12h2a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-2"/><path d="M12 18V20a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-2"/><path d="M12 6V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v2"/><path d="M12 10a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2z"/></svg>
-                            </div>
-                            <h3 class="text-2xl font-semibold text-white mb-2">互動式應用</h3>
-                            <p class="text-gray-400">遊戲、線上工具、互動式展示等。</p>
-                        </div>
-                    </div>
-                </section>
-            </div>
-        `
-    });
-
-    // EcardPage Component
-    const EcardPage = defineComponent({
-        emits: ['navigate'],
-        template: `
-            <div class="ecard-page space-y-16">
-                <section class="text-center py-20 px-4 bg-gradient-to-br from-red-800 to-purple-900 rounded-xl shadow-2xl animate-fade-in-up">
-                    <h1 class="text-5xl md:text-6xl font-extrabold text-white mb-6 leading-tight">
-                        告別紙本，擁抱數位：<br class="hidden md:inline">專屬您的電子名片
-                    </h1>
-                    <p class="text-xl md:text-2xl text-gray-200 mb-10 max-w-3xl mx-auto">
-                        快速分享您的聯絡資訊、社群連結、作品集，讓您的專業形象隨身攜帶。
-                    </p>
-                    <button @click="$emit('navigate', 'ContactPage')" class="btn-primary">
-                        立即預約製作
-                    </button>
-                </section>
-                <section class="py-12 bg-gray-800 rounded-xl shadow-xl">
-                    <h2 class="text-4xl font-bold text-center text-white mb-12">電子名片優勢</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 px-4">
-                        <div class="flex flex-col items-center text-center p-6 bg-gray-700 rounded-lg shadow-md">
-                            <div class="text-purple-400 mb-4 text-5xl">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-share-2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.59 13.51 6.83 3.42"/><path d="m8.59 10.49 6.83-3.42"/></svg>
-                            </div>
-                            <h3 class="text-2xl font-semibold text-white mb-2">輕鬆分享</h3>
-                            <p class="text-gray-400">透過連結、QR Code 快速分享，無需實體卡片。</p>
-                        </div>
-                        <div class="flex flex-col items-center text-center p-6 bg-gray-700 rounded-lg shadow-md">
-                            <div class="text-cyan-400 mb-4 text-5xl">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-palette"><circle cx="13.5" cy="6.5" r=".5"/><circle cx="17.5" cy="10.5" r=".5"/><circle cx="8.5" cy="7.5" r=".5"/><circle cx="10.5" cy="12.5" r=".5"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.92 0 1.63-.4 2.3-.87a1.5 1.5 0 0 0 .7-.73c.1-.2.2-.4.3-.6.4-.9.7-1.9.7-3.4 0-1.5-.3-2.5-.7-3.4-.1-.2-.2-.4-.3-.6a1.5 1.5 0 0 0-.7-.73C13.63 2.4 12.92 2 12 2zm0 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16z"/></svg>
-                            </div>
-                            <h3 class="text-2xl font-semibold text-white mb-2">客製設計</h3>
-                            <p class="text-gray-400">多種模板與客製選項，展現獨特風格。</p>
-                        </div>
-                        <div class="flex flex-col items-center text-center p-6 bg-gray-700 rounded-lg shadow-md">
-                            <div class="text-orange-400 mb-4 text-5xl">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link-2"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"/><line x1="8" x2="16" y1="12" y2="12"/></svg>
-                            </div>
-                            <h3 class="text-2xl font-semibold text-white mb-2">多功能連結</h3>
-                            <p class="text-gray-400">整合電話、Email、社群、網站等所有重要連結。</p>
-                        </div>
-                    </div>
-                </section>
-            </div>
-        `
-    });
-
-    // PricingPage Component
-    const PricingPage = defineComponent({
-        emits: ['navigate'],
-        template: `
-            <div class="pricing-page space-y-16">
-                <section class="text-center py-20 px-4 bg-gradient-to-br from-yellow-700 to-orange-800 rounded-xl shadow-2xl animate-fade-in-up">
-                    <h1 class="text-5xl md:text-6xl font-extrabold text-white mb-6 leading-tight">
-                        透明彈性，滿足您的需求：<br class="hidden md:inline">網站建置價格方案
-                    </h1>
-                    <p class="text-xl md:text-2xl text-gray-200 mb-10 max-w-3xl mx-auto">
-                        從輕量級一頁式網站到複雜的客製系統，我們提供多樣化方案，確保您的投資物超所值。
-                    </p>
-                </section>
-                <section class="py-12 bg-gray-800 rounded-xl shadow-xl">
-                    <h2 class="text-4xl font-bold text-center text-white mb-12">我們的網站建置方案</h2>
-                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 px-4">
-                        <!-- 一頁式網站方案 -->
-                        <div class="card flex flex-col items-center p-8 border-2 border-gray-700 hover:border-purple-600 transition duration-300 ease-in-out">
-                            <h3 class="text-3xl font-bold text-white mb-4">一頁式網站</h3>
-                            <p class="text-purple-400 text-5xl font-extrabold mb-6">NT$ 8,000 起</p>
-                            <p class="text-gray-300 text-center mb-6">快速建立品牌形象、產品銷售頁、活動頁面。</p>
-                            <ul class="text-gray-300 text-lg space-y-3 mb-8 text-left w-full">
-                                <li class="flex items-center"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-green-500 mr-2"><polyline points="20 6 9 17 4 12"/></svg> 1 頁響應式設計</li>
-                                <li class="flex items-center"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-green-500 mr-2"><polyline points="20 6 9 17 4 12"/></svg> 聯絡表單</li>
-                                <li class="flex items-center"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-green-500 mr-2"><polyline points="20 6 9 17 4 12"/></svg> 基本 SEO</li>
-                                <li class="flex items-center text-gray-500"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><line x1="18" x2="6" y1="6" y2="18"/><line x1="6" x2="18" y1="6" y2="18"/></svg> 無後台管理</li>
-                            </ul>
-                            <button @click="$emit('navigate', 'OnepagePage')" class="btn-primary w-full">了解更多</button>
-                        </div>
-
-                        <!-- 多頁式網站方案 -->
-                        <div class="card flex flex-col items-center p-8 border-2 border-purple-600 bg-purple-900 bg-opacity-30 shadow-2xl">
-                            <h3 class="text-3xl font-bold text-white mb-4">多頁式形象官網 (推薦！)</h3>
-                            <p class="text-yellow-400 text-5xl font-extrabold mb-6">NT$ 25,000 起</p>
-                            <p class="text-gray-200 text-center mb-6">專業企業門面，展示品牌故事、產品與服務。</p>
-                            <ul class="text-gray-200 text-lg space-y-3 mb-8 text-left w-full">
-                                <li class="flex items-center"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-green-500 mr-2"><polyline points="20 6 9 17 4 12"/></svg> 5~10 頁響應式設計</li>
-                                <li class="flex items-center"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-green-500 mr-2"><polyline points="20 6 9 17 4 12"/></svg> 簡易後台管理</li>
-                                <li class="flex items-center"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-green-500 mr-2"><polyline points="20 6 9 17 4 12"/></svg> 進階 SEO 優化</li>
-                                <li class="flex items-center"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-green-500 mr-2"><polyline points="20 6 9 17 4 12"/></svg> 社群整合與數據追蹤</li>
-                            </ul>
-                            <button @click="$emit('navigate', 'MultipagePage')" class="btn-primary w-full">了解更多</button>
-                        </div>
-
-                        <!-- 客製網站方案 -->
-                        <div class="card flex flex-col items-center p-8 border-2 border-gray-700 hover:border-blue-600 transition duration-300 ease-in-out">
-                            <h3 class="text-3xl font-bold text-white mb-4">客製網站與系統</h3>
-                            <p class="text-blue-400 text-5xl font-extrabold mb-6">客製報價</p>
-                            <p class="text-gray-300 text-center mb-6">滿足複雜需求，整合專屬業務流程系統。</p>
-                            <ul class="text-gray-300 text-lg space-y-3 mb-8 text-left w-full">
-                                <li class="flex items-center"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-green-500 mr-2"><polyline points="20 6 9 17 4 12"/></svg> 依需求規劃頁面與功能</li>
-                                <li class="flex items-center"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-green-500 mr-2"><polyline points="20 6 9 17 4 12"/></svg> 專屬後台系統開發</li>
-                                <li class="flex items-center"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-green-500 mr-2"><polyline points="20 6 9 17 4 12"/></svg> 系統整合與擴充</li>
-                                <li class="flex items-center"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-green-500 mr-2"><polyline points="20 6 9 17 4 12"/></svg> 專業維護與技術支援</li>
-                            </ul>
-                            <button @click="$emit('navigate', 'CustomPage')" class="btn-primary w-full">了解更多</button>
-                        </div>
-                    </div>
-                </section>
-                <section class="py-12 bg-gray-800 rounded-xl shadow-xl">
-                    <h2 class="text-4xl font-bold text-center text-white mb-12">電子名片方案</h2>
-                    <div class="flex justify-center px-4">
-                        <div class="card flex flex-col items-center p-8 border-2 border-gray-700 hover:border-red-600 transition duration-300 ease-in-out w-full md:w-1/2">
-                            <h3 class="text-3xl font-bold text-white mb-4">電子名片</h3>
-                            <p class="text-red-400 text-5xl font-extrabold mb-6">NT$ 3,000 起</p>
-                            <p class="text-gray-300 text-center mb-6">數位化名片，快速分享個人或品牌資訊。</p>
-                            <ul class="text-gray-300 text-lg space-y-3 mb-8 text-left w-full">
-                                <li class="flex items-center"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-green-500 mr-2"><polyline points="20 6 9 17 4 12"/></svg> 個人/品牌資訊頁</li>
-                                <li class="flex items-center"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-green-500 mr-2"><polyline points="20 6 9 17 4 12"/></svg> 社群媒體連結</li>
-                                <li class="flex items-center"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-green-500 mr-2"><polyline points="20 6 9 17 4 12"/></svg> 聯絡方式快速撥號</li>
-                                <li class="flex items-center"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-green-500 mr-2"><polyline points="20 6 9 17 4 12"/></svg> 可嵌入作品集或簡介</li>
-                            </ul>
-                            <button @click="$emit('navigate', 'EcardPage')" class="btn-primary w-full">了解更多</button>
-                        </div>
-                    </div>
-                </section>
-                <section class="py-12 bg-gray-800 rounded-xl shadow-xl">
-                    <h2 class="text-4xl font-bold text-center text-white mb-12">常見問題</h2>
-                    <p class="text-center text-gray-300">對於我們的價格方案有疑問嗎？請參考我們的 <button @click="$emit('navigate', 'FaqPage')" class="text-purple-400 hover:underline">常見問題</button> 頁面。</p>
-                </section>
-            </div>
-        `
-    });
-
-    // FaqPage Component
-    const FaqPage = defineComponent({
-        emits: ['navigate'],
-        setup() {
-            const faqs = ref([
-                {
-                    question: "網站建置需要多長時間？",
-                    answer: "建置時間取決於網站的複雜度和功能需求。一頁式網站通常在 1-2 週內完成，多頁式網站可能需要 3-6 週，客製化系統則需依專案評估。我們會提供詳細的時程規劃。",
-                    isOpen: false
-                },
-                {
-                    question: "網站建置費用包含哪些？",
-                    answer: "費用通常包含網站設計、前端開發、後端功能開發（若有）、基本 SEO 優化、響應式設計。不包含網域註冊費、主機租用費、第三方付費軟體或服務費用（如金流串接手續費）。詳細費用會在報價單中列明。",
-                    isOpen: false
-                },
-                {
-                    question: "我需要提供什麼資料？",
-                    answer: "您需要提供網站內容（文字、圖片、影片）、品牌識別（Logo、CI 規範）、功能需求清單、目標受眾等。越詳細的資料有助於我們更精準地為您打造網站。",
-                    isOpen: false
-                },
-                {
-                    question: "網站上線後有提供維護服務嗎？",
-                    answer: "是的，我們提供網站上線後的維護與技術支援服務。基本方案包含一定期間的錯誤修復，進階方案和客製方案可選擇定期維護、內容更新、安全監控等服務。",
-                    isOpen: false
-                },
-                {
-                    question: "我可以自己更新網站內容嗎？",
-                    answer: "對於多頁式網站和客製化系統，我們會提供簡易的後台管理系統 (CMS)，讓您可以自行更新文字、圖片、新增文章等。一頁式網站通常不提供後台，內容更新需聯繫我們協助。",
-                    isOpen: false
-                }
-            ]);
-
-            const toggleFaq = (index) => {
-                faqs.value[index].isOpen = !faqs.value[index].isOpen;
-            };
-
-            return { faqs, toggleFaq };
-        },
-        template: `
-            <div class="faq-page space-y-16">
-                <section class="text-center py-20 px-4 bg-gradient-to-br from-gray-700 to-gray-900 rounded-xl shadow-2xl animate-fade-in-up">
-                    <h1 class="text-5xl md:text-6xl font-extrabold text-white mb-6 leading-tight">
-                        常見問題
-                    </h1>
-                    <p class="text-xl md:text-2xl text-gray-200 mb-10 max-w-3xl mx-auto">
-                        在這裡找到您對網站建置服務的疑問解答。
-                    </p>
-                </section>
-                <section class="py-12 bg-gray-800 rounded-xl shadow-xl">
-                    <div class="max-w-4xl mx-auto px-4 space-y-4">
-                        <div v-for="(faq, index) in faqs" :key="index" class="bg-gray-700 rounded-lg shadow-md overflow-hidden">
-                            <button @click="toggleFaq(index)" class="flex justify-between items-center w-full p-6 text-left text-white text-xl font-semibold focus:outline-none">
-                                {{ faq.question }}
-                                <svg :class="{'rotate-180': faq.isOpen}" class="w-6 h-6 text-purple-400 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                            </button>
-                            <Transition name="faq">
-                                <div v-if="faq.isOpen" class="px-6 pb-6 text-gray-300 text-lg border-t border-gray-600 pt-4">
-                                    {{ faq.answer }}
-                                </div>
-                            </Transition>
-                        </div>
-                    </div>
-                </section>
-            </div>
-        `
-    });
-
-    // ContactPage Component
-    const ContactPage = defineComponent({
-        emits: ['navigate'],
-        setup() {
-            const formData = reactive({
-                name: '',
-                email: '',
-                phone: '',
-                service: '',
-                message: ''
-            });
-
-            const submitForm = () => {
-                // In a real application, you would send this data to a backend server.
-                // For this demo, we'll just log it and show an alert.
-                console.log('Form Data Submitted:', formData);
-                alert('您的訊息已送出，我們會盡快與您聯繫！');
-                // Reset form
-                Object.assign(formData, {
-                    name: '',
-                    email: '',
-                    phone: '',
-                    service: '',
-                    message: ''
+                    fadeInElements.forEach(element => {
+                        observer.observe(element);
+                    });
                 });
-            };
 
-            return { formData, submitForm };
-        },
-        template: `
-            <div class="contact-page space-y-16">
-                <section class="text-center py-20 px-4 bg-gradient-to-br from-purple-800 to-pink-900 rounded-xl shadow-2xl animate-fade-in-up">
-                    <h1 class="text-5xl md:text-6xl font-extrabold text-white mb-6 leading-tight">
-                        聯絡我們與預約諮詢
-                    </h1>
-                    <p class="text-xl md:text-2xl text-gray-200 mb-10 max-w-3xl mx-auto">
-                        有任何網站建置需求或疑問？請填寫表單，我們將盡快與您聯繫。
-                    </p>
-                </section>
-                <section class="py-12 bg-gray-800 rounded-xl shadow-xl">
-                    <h2 class="text-4xl font-bold text-center text-white mb-12">填寫您的需求</h2>
-                    <div class="max-w-3xl mx-auto px-4">
-                        <form @submit.prevent="submitForm" class="space-y-6">
-                            <div>
-                                <label for="name" class="block text-gray-300 text-lg font-medium mb-2">您的姓名</label>
-                                <input type="text" id="name" v-model="formData.name" required
-                                    class="w-full p-3 rounded-lg bg-gray-700 border border-gray-600 text-white focus:ring-purple-500 focus:border-purple-500">
-                            </div>
-                            <div>
-                                <label for="email" class="block text-gray-300 text-lg font-medium mb-2">電子郵件</label>
-                                <input type="email" id="email" v-model="formData.email" required
-                                    class="w-full p-3 rounded-lg bg-gray-700 border border-gray-600 text-white focus:ring-purple-500 focus:border-purple-500">
-                            </div>
-                            <div>
-                                <label for="phone" class="block text-gray-300 text-lg font-medium mb-2">聯絡電話</label>
-                                <input type="tel" id="phone" v-model="formData.phone"
-                                    class="w-full p-3 rounded-lg bg-gray-700 border border-gray-600 text-white focus:ring-purple-500 focus:border-purple-500">
-                            </div>
-                            <div>
-                                <label for="service" class="block text-gray-300 text-lg font-medium mb-2">感興趣的服務</label>
-                                <select id="service" v-model="formData.service"
-                                    class="w-full p-3 rounded-lg bg-gray-700 border border-gray-600 text-white focus:ring-purple-500 focus:border-purple-500">
-                                    <option value="">請選擇</option>
-                                    <option value="onepage">一頁式網站</option>
-                                    <option value="multipage">多頁式網站</option>
-                                    <option value="custom">客製網站與系統</option>
-                                    <option value="ecard">電子名片</option>
-                                    <option value="other">其他</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label for="message" class="block text-gray-300 text-lg font-medium mb-2">您的訊息/需求描述</label>
-                                <textarea id="message" v-model="formData.message" rows="6" required
-                                    class="w-full p-3 rounded-lg bg-gray-700 border border-gray-600 text-white focus:ring-purple-500 focus:border-purple-500"></textarea>
-                            </div>
-                            <button type="submit" class="btn-primary w-full">送出訊息</button>
-                        </form>
-                    </div>
-                </section>
-                <section class="py-12 bg-gray-800 rounded-xl shadow-xl text-center">
-                    <h2 class="text-4xl font-bold text-white mb-6">您也可以直接聯繫我們</h2>
-                    <p class="text-xl text-gray-300 mb-4">Email: info@senseweb.com</p>
-                    <p class="text-xl text-gray-300">電話: +886 912 345 678</p>
-                </section>
-            </div>
-        `
-    });
-
-    // Main App Component
-    const App = defineComponent({
-        components: {
-            Navbar,
-            Footer,
-            HomePage,
-            OnepagePage,
-            MultipagePage,
-            CustomPage,
-            EcardPage,
-            PricingPage,
-            FaqPage,
-            ContactPage
-        },
-        setup() {
-            const currentPage = ref('HomePage'); // Initial page
-            const menuConfig = ref([]); // 用於儲存從 config.json 載入的選單配置
-
-            // 模擬從 config.json 載入數據
-            onMounted(async () => {
-                // 在實際應用中，您會從外部檔案 fetch 這個 JSON
-                // const response = await fetch('/config.json');
-                // const config = await response.json();
-                const mockConfig = {
-                    "navigation": [
-                        { "name": "首頁", "page": "HomePage" },
-                        { "name": "一頁式網站", "page": "OnepagePage" },
-                        { "name": "多頁式網站", "page": "MultipagePage" },
-                        { "name": "客製網站", "page": "CustomPage" },
-                        { "name": "電子名片", "page": "EcardPage" },
-                        { "name": "價格方案", "page": "PricingPage" },
-                        { "name": "常見問題", "page": "FaqPage" },
-                        { "name": "聯絡與預約", "page": "ContactPage", "isPrimaryButton": true }
-                    ]
+                return {
+                    navLinks,
+                    templates,
+                    currentTemplate,
+                    isMobileMenuOpen,
+                    previewMode,
+                    activeEditor,
+                    availableFonts,
+                    colorLabels,
+                    portfolioImages,
+                    // 移除了 faqItems, guideSteps
+                    templateStyleVariables,
+                    visibleSections,
+                    selectTemplateAndScroll,
+                    toggleSectionEditor,
+                    // 移除了 toggleFAQ
                 };
-                menuConfig.value = mockConfig.navigation;
-
-                // 確保初始頁面在配置中，否則預設為 HomePage
-                if (!menuConfig.value.some(item => item.page === currentPage.value)) {
-                    currentPage.value = 'HomePage';
-                }
-            });
-
-            const changePage = (page) => {
-                currentPage.value = page;
-                window.scrollTo({ top: 0, behavior: 'smooth' }); // Scroll to top on page change
-            };
-
-            const CurrentPageComponent = computed(() => {
-                switch (currentPage.value) {
-                    case 'HomePage': return HomePage;
-                    case 'OnepagePage': return OnepagePage;
-                    case 'MultipagePage': return MultipagePage;
-                    case 'CustomPage': return CustomPage;
-                    case 'EcardPage': return EcardPage;
-                    case 'PricingPage': return PricingPage;
-                    case 'FaqPage': return FaqPage;
-                    case 'ContactPage': return ContactPage;
-                    default: return HomePage;
-                }
-            });
-
-            return {
-                currentPage,
-                changePage,
-                CurrentPageComponent,
-                menuConfig // 將 menuConfig 暴露給模板
-            };
-        },
-        template: `
-            <div class="min-h-screen bg-gray-900 text-white">
-                <Navbar :currentPage="currentPage" :menuItems="menuConfig" @changePage="changePage" />
-                <main>
-                    <component :is="CurrentPageComponent" @navigate="changePage" />
-                </main>
-                <Footer @changePage="changePage" />
-            </div>
-        `
-    });
-
-    createApp(App).mount('#app');
-</script>
+            }
+        }).mount('#app');
+    </script>
 </body>
 </html>
