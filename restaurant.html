@@ -357,31 +357,83 @@
             <div class="container mx-auto px-4">
                 <!-- Fluid Typography for H2 -->
                 <h2 class="text-3xl sm:text-4xl md:text-5xl font-bold text-center text-orange-700 mb-8">{{ t('howToOrderTitle') }}</h2>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    <div class="bg-white p-6 rounded-xl shadow-md text-left">
+                <!-- Added h-full to the inner cards to ensure consistent height -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch">
+                    <!-- 電話點餐 (Phone Order) - Now includes In-Store Order content -->
+                    <div class="bg-white p-6 rounded-xl shadow-md text-left flex flex-col">
                         <div class="text-center mb-4">
                             <i class="fas fa-phone-alt text-4xl text-orange-500"></i>
                         </div>
-                        <!-- Fluid Typography for H3 -->
                         <h3 class="text-xl sm:text-2xl md:text-3xl font-semibold text-orange-800 mb-2">{{ t('phoneOrderTitle') }}</h3>
                         <p class="text-gray-600">{{ t('phoneOrderDesc') }}<a href="tel:+886-2-1234-5678" class="text-blue-600 hover:underline">+886-2-1234-5678</a></p>
+                        <h3 class="text-xl sm:text-2xl md:text-3xl font-semibold text-orange-800 mb-2 mt-4">{{ t('inStoreOrderTitle') }}</h3>
+                        <p class="text-gray-600 flex-grow">{{ t('inStoreOrderDesc') }}</p>
                     </div>
-                    <div class="bg-white p-6 rounded-xl shadow-md text-left">
+
+                    <!-- 留言訂單 (Order Form) - Moved to second position -->
+                    <div class="bg-white p-6 rounded-xl shadow-md text-left flex flex-col">
                         <div class="text-center mb-4">
-                            <i class="fab fa-whatsapp text-4xl text-orange-500"></i>
+                            <i class="fas fa-file-alt text-4xl text-orange-500"></i> <!-- Changed icon for form -->
                         </div>
-                        <!-- Fluid Typography for H3 -->
-                        <h3 class="text-xl sm:text-2xl md:text-3xl font-semibold text-orange-800 mb-2">{{ t('messagingAppTitle') }}</h3>
-                        <p class="text-gray-600">{{ t('messagingAppDesc') }}</p>
-                        <p class="text-sm text-gray-500 mt-2">{{ t('lineIdNote') }}</p>
+                        <h3 class="text-xl sm:text-2xl md:text-3xl font-semibold text-orange-800 mb-4">{{ t('orderFormTitle') }}</h3>
+                        <form @submit.prevent="submitOrder" class="flex flex-col flex-grow">
+                            <div class="mb-4">
+                                <label for="order-name" class="block text-gray-700 text-sm font-bold mb-2">{{ t('orderFormName') }}:</label>
+                                <input
+                                    type="text"
+                                    id="order-name"
+                                    v-model="orderName"
+                                    class="shadow appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
+                                    :placeholder="t('orderFormNamePlaceholder')"
+                                >
+                                <p v-if="orderValidationErrors.name" class="text-red-500 text-xs mt-1">{{ orderValidationErrors.name }}</p>
+                            </div>
+                            <div class="mb-4">
+                                <label for="order-contact" class="block text-gray-700 text-sm font-bold mb-2">{{ t('orderFormContact') }}:</label>
+                                <input
+                                    type="text"
+                                    id="order-contact"
+                                    v-model="orderContact"
+                                    class="shadow appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
+                                    :placeholder="t('orderFormContactPlaceholder')"
+                                >
+                                <p v-if="orderValidationErrors.contact" class="text-red-500 text-xs mt-1">{{ orderValidationErrors.contact }}</p>
+                            </div>
+                            <div class="mb-6 flex-grow">
+                                <label for="order-message" class="block text-gray-700 text-sm font-bold mb-2">{{ t('orderFormMessage') }}:</label>
+                                <textarea
+                                    id="order-message"
+                                    v-model="orderMessage"
+                                    rows="4"
+                                    class="shadow appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent resize-y h-full"
+                                    :placeholder="t('orderFormMessagePlaceholder')"
+                                ></textarea>
+                                <p v-if="orderValidationErrors.message" class="text-red-500 text-xs mt-1">{{ orderValidationErrors.message }}</p>
+                            </div>
+
+                            <p v-if="orderSuccessMessage" class="text-green-600 text-center mb-4">{{ orderSuccessMessage }}</p>
+
+                            <button
+                                type="submit"
+                                class="w-full bg-orange-500 text-white px-6 py-3 rounded-full font-semibold hover:bg-orange-600 transition duration-300 btn-hover-effect focus:outline-none focus:ring-2 focus:ring-orange-400 mt-auto"
+                                :aria-label="t('submitOrder')"
+                            >
+                                {{ t('submitOrder') }}
+                            </button>
+                        </form>
                     </div>
-                    <div class="bg-white p-6 rounded-xl shadow-md text-left">
-                        <div class="text-center mb-4">
-                            <i class="fas fa-store text-4xl text-orange-500"></i>
+
+                    <!-- 加入美味小館 LINE 官方帳號 (LINE Official Account) - Now in third position -->
+                    <div class="bg-amber-700 text-white p-6 rounded-xl shadow-md text-left flex flex-col items-center gap-4">
+                        <img src="https://placehold.co/100x100/4CAF50/FFFFFF?text=LINE+QR" alt="LINE Official Account QR Code" class="rounded-lg shadow-sm flex-shrink-0">
+                        <div class="text-center flex-grow">
+                            <h3 class="text-xl sm:text-2xl md:text-3xl font-bold mb-1">{{ t('lineOfficialAccountTitle') }}</h3>
+                            <p class="text-gray-200 text-sm mb-2">{{ t('lineOfficialAccountDesc') }}</p>
+                            <a href="https://line.me/R/ti/p/@yourlineid" target="_blank" class="inline-block bg-white text-orange-600 px-4 py-2 rounded-full text-sm font-semibold hover:bg-gray-100 transition duration-300 btn-hover-effect" aria-label="加入 LINE 官方帳號">
+                                <i class="fab fa-line mr-2"></i> {{ t('joinLineOfficialAccount') }}
+                            </a>
+                            <p class="text-sm text-amber-100 mt-2">{{ t('lineOffer') }}</p>
                         </div>
-                        <!-- Fluid Typography for H3 -->
-                        <h3 class="text-xl sm:text-2xl md:text-3xl font-semibold text-orange-800 mb-2">{{ t('inStoreOrderTitle') }}</h3>
-                        <p class="text-gray-600">{{ t('inStoreOrderDesc') }}</p>
                     </div>
                 </div>
                 <p class="text-center text-orange-600 text-lg font-medium mt-8">
@@ -398,34 +450,19 @@
                 <p class="mb-2 text-left">地址：台北市美味路123號</p>
                 <p class="mb-4 text-left">營業時間：週二至週日 11:00 AM - 9:00 PM</p>
 
-                <!-- Flex container for social links and LINE block -->
-                <div class="flex flex-col sm:flex-row sm:justify-between items-center gap-8 mt-8">
-                    <!-- Social Links -->
-                    <div class="flex justify-start space-x-6">
-                        <a href="#" class="text-white hover:text-amber-300 transition-colors duration-300 text-2xl" aria-label="Facebook">
-                            <i class="fab fa-facebook"></i>
-                        </a>
-                        <a href="#" class="text-white hover:text-amber-300 transition-colors duration-300 text-2xl" aria-label="Instagram">
-                            <i class="fab fa-instagram"></i>
-                        </a>
-                        <a href="#" class="text-white hover:text-amber-300 transition-colors duration-300 text-2xl" aria-label="LINE">
-                            <i class="fab fa-line"></i>
-                        </a>
-                    </div>
-
-                    <!-- Retention: LINE Official Account Join Section -->
-                    <div class="bg-amber-700 text-white p-4 rounded-lg shadow-md text-center flex flex-col sm:flex-row items-center gap-4">
-                        <img src="https://placehold.co/100x100/4CAF50/FFFFFF?text=LINE+QR" alt="LINE Official Account QR Code" class="rounded-lg shadow-sm flex-shrink-0">
-                        <div class="text-left flex-grow">
-                            <h3 class="text-lg sm:text-xl font-bold mb-1">{{ t('lineOfficialAccountTitle') }}</h3>
-                            <p class="text-xs sm:text-sm mb-2">{{ t('lineOfficialAccountDesc') }}</p>
-                            <a href="https://line.me/R/ti/p/@yourlineid" target="_blank" class="inline-block bg-white text-orange-600 px-4 py-2 rounded-full text-sm font-semibold hover:bg-gray-100 transition duration-300 btn-hover-effect" aria-label="加入 LINE 官方帳號">
-                                <i class="fab fa-line mr-2"></i> {{ t('joinLineOfficialAccount') }}
-                            </a>
-                            <p class="text-sm text-amber-100 mt-2">{{ t('lineOffer') }}</p>
-                        </div>
-                    </div>
+                <!-- Social Links - now left-aligned -->
+                <div class="flex justify-start space-x-6 mt-8">
+                    <a href="#" class="text-white hover:text-amber-300 transition-colors duration-300 text-2xl" aria-label="Facebook">
+                        <i class="fab fa-facebook"></i>
+                    </a>
+                    <a href="#" class="text-white hover:text-amber-300 transition-colors duration-300 text-2xl" aria-label="Instagram">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="#" class="text-white hover:text-amber-300 transition-colors duration-300 text-2xl" aria-label="LINE">
+                        <i class="fab fa-line"></i>
+                    </a>
                 </div>
+                <!-- LINE Official Account section removed from footer -->
             </div>
         </footer>
 
@@ -573,9 +610,6 @@
                         howToOrderTitle: '如何輕鬆點餐與支付？',
                         phoneOrderTitle: '電話點餐',
                         phoneOrderDesc: '撥打我們的熱線：',
-                        messagingAppTitle: '訊息應用程式',
-                        messagingAppDesc: '透過 WhatsApp 或 LINE 傳送您的訂單',
-                        lineIdNote: '(請提供您的LINE ID)',
                         inStoreOrderTitle: '到店點餐',
                         inStoreOrderDesc: '親臨本店享受美食，現場點餐',
                         paymentMethod: '所有支付均在線下完成',
@@ -602,7 +636,19 @@
                         sortByNameAsc: '名稱：A-Z',
                         caloriesPlaceholder: '例如：250 大卡',
                         allergenInfoPlaceholder: '例如：牛奶、堅果',
-                        priceValidationError: '價格必須是有效的正數。'
+                        priceValidationError: '價格必須是有效的正數。',
+                        orderFormTitle: '留言訂單',
+                        orderFormName: '姓名',
+                        orderFormNamePlaceholder: '請輸入您的姓名',
+                        orderFormContact: '聯絡方式',
+                        orderFormContactPlaceholder: '電話或 LINE ID',
+                        orderFormMessage: '訂單內容',
+                        orderFormMessagePlaceholder: '請輸入您想預訂的餐點和數量',
+                        submitOrder: '送出訂單',
+                        orderFormNameRequired: '姓名為必填項目。',
+                        orderFormContactRequired: '聯絡方式為必填項目。',
+                        orderFormMessageRequired: '訂單內容為必填項目。',
+                        orderSubmitSuccess: '訂單已送出，我們將盡快與您聯繫！'
                     },
                     'en': {
                         restaurantName: 'Delicious Bistro',
@@ -621,9 +667,6 @@
                         howToOrderTitle: 'How to Easily Order & Pay?',
                         phoneOrderTitle: 'Phone Order',
                         phoneOrderDesc: 'Call our hotline: ',
-                        messagingAppTitle: 'Messaging Apps',
-                        messagingAppDesc: 'Send your order via WhatsApp or LINE',
-                        lineIdNote: '(Please provide your LINE ID)',
                         inStoreOrderTitle: 'In-Store Order',
                         inStoreOrderDesc: 'Visit us to enjoy food, order on-site',
                         paymentMethod: 'All payments are made offline',
@@ -808,6 +851,14 @@
                 const searchQuery = ref(''); // New: Search query ref
                 const sortBy = ref('default'); // New: Sort by ref
 
+                // Order Form State
+                const orderName = ref('');
+                const orderContact = ref('');
+                const orderMessage = ref('');
+                const orderSuccessMessage = ref('');
+                const orderValidationErrors = ref({});
+
+
                 // Watch for language changes and update activeCategory to maintain consistency
                 watch(currentLang, (newLang) => {
                     // If the current active category is '全部' or 'All', update it to the new language's 'all'
@@ -971,6 +1022,43 @@
                     // window.open('https://line.me/ti/p/@yourlineid', '_blank');
                 };
 
+                // --- Order Form Submission Logic ---
+                const submitOrder = () => {
+                    orderValidationErrors.value = {}; // Clear previous errors
+                    orderSuccessMessage.value = ''; // Clear previous success message
+
+                    if (!orderName.value.trim()) {
+                        orderValidationErrors.value.name = t('orderFormNameRequired');
+                    }
+                    if (!orderContact.value.trim()) {
+                        orderValidationErrors.value.contact = t('orderFormContactRequired');
+                    }
+                    if (!orderMessage.value.trim()) {
+                        orderValidationErrors.value.message = t('orderFormMessageRequired');
+                    }
+
+                    if (Object.keys(orderValidationErrors.value).length > 0) {
+                        return; // Stop if validation fails
+                    }
+
+                    // Simulate API call or data submission
+                    console.log('Order Submitted:', {
+                        name: orderName.value,
+                        contact: orderContact.value,
+                        message: orderMessage.value
+                    });
+
+                    orderSuccessMessage.value = t('orderSubmitSuccess');
+                    orderName.value = '';
+                    orderContact.value = '';
+                    orderMessage.value = '';
+
+                    setTimeout(() => {
+                        orderSuccessMessage.value = '';
+                    }, 3000); // Clear success message after 3 seconds
+                };
+
+
                 // --- Scroll-to-Top Button Logic ---
                 const showScrollToTopButton = ref(false);
 
@@ -1019,8 +1107,13 @@
                     currentLang,
                     t,
                     formatCurrency,
-                    validationErrors, // Expose validation errors
-                    saveSuccessMessage, // Expose save success message
+                    validationErrors, // Expose validation errors for edit modal
+                    saveSuccessMessage, // Expose save success message for edit modal
+                    orderName, // Expose order form data
+                    orderContact,
+                    orderMessage,
+                    orderSuccessMessage, // Expose order form success message
+                    orderValidationErrors, // Expose order form validation errors
                     showScrollToTopButton, // Expose scroll to top button state
                     filterMenu,
                     editItem, // Still exposed for programmatic use
@@ -1028,6 +1121,7 @@
                     cancelEdit,
                     handleImageError,
                     handleOrderCall,
+                    submitOrder, // Expose order form submission function
                     scrollToTop // Expose scroll to top function
                 };
             }
