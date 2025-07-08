@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Attention: Updated Title for SEO -->
+    <title>台北咖啡甜點｜美味小館官方菜單</title>
+    <!-- PWA: Manifest Link -->
+    <link rel="manifest" href="/manifest.json">
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Vue.js CDN -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Custom styles for Inter font and animations */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden; /* Prevent horizontal scroll on body */
+        }
+
+        /* Header background gradient animation */
+        @keyframes gradient-animation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .header-bg-animated {
+            background: linear-gradient(270deg, #fbbf24, #f97316, #ea580c); /* Amber to Orange to Dark Orange */
+            background-size: 400% 400%;
+            animation: gradient-animation 15s ease infinite;
+        }
+
+        /* Button hover animation */
+        .btn-hover-effect {
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+        }
+        .btn-hover-effect:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 20px rgba(251, 191, 36, 0.4), 0 4px 8px rgba(251, 191, 36, 0.2);
+        }
+
+        /* Menu item fade-in animation */
+        .menu-item-enter-active, .menu-item-leave-active {
+            transition: all 0.5s ease-out;
+        }
+        .menu-item-enter-from, .menu-item-leave-to {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        .menu-item-enter-to, .menu-item-leave-from {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Staggered animation for menu items */
+        .staggered-enter-active {
+            transition: all 0.5s ease-out;
+            transition-delay: var(--stagger-delay); /* Use CSS variable for delay */
+        }
+
+        /* Modal animation */
+        .modal-enter-active, .modal-leave-active {
+            transition: all 0.3s ease-in-out;
+        }
+        .modal-enter-from, .modal-leave-to {
+            opacity: 0;
+            transform: translateY(50px);
+        }
+        .modal-enter-to, .modal-leave-from {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Ensure body doesn't scroll when modal is open */
+        body.overflow-hidden {
+            overflow: hidden;
+        }
+
+        /* Ribbon style for seasonal/chef recommended */
+        .ribbon {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background-color: #ef4444; /* Red */
+            color: white;
+            padding: 0.25rem 1rem;
+            font-size: 0.75rem; /* text-xs */
+            font-weight: bold;
+            transform: translateY(-50%) translateX(50%) rotate(45deg);
+            transform-origin: 100% 0%;
+            z-index: 10;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        .ribbon-seasonal {
+            background-color: #10b981; /* Green */
+        }
+        .ribbon-chef {
+            background-color: #f97316; /* Orange */
+        }
+    </style>
+
+    <!-- SEO: OG / Twitter Card Meta Tags -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="美味小館｜手作甜點・精品咖啡">
+    <meta property="og:image" content="https://placehold.co/1200x630/FDBA74/654321?text=美味小館">
+    <meta property="og:description" content="台北民生社區．每日手作千層、香醇拿鐵。立即預訂享加購飲品 8 折！">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="美味小館｜手作甜點・精品咖啡">
+    <meta name="twitter:description" content="台北民生社區．每日手作千層、香醇拿鐵。立即預訂享加購飲品 8 折！">
+    <meta name="twitter:image" content="https://placehold.co/1200x630/FDBA74/654321?text=美味小館">
+
+    <!-- SEO: JSON-LD for Restaurant -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Restaurant",
+      "name": "美味小館",
+      "image": "https://placehold.co/600x400/FDBA74/654321?text=美味小館",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "美味路123號",
+        "addressLocality": "台北市",
+        "addressRegion": "TW",
+        "postalCode": "100",
+        "addressCountry": "TW"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": 25.0478,
+        "longitude": 121.5170
+      },
+      "url": "https://your-restaurant-website.com",
+      "telephone": "+886-2-1234-5678",
+      "priceRange": "NT$100 - NT$500",
+      "openingHoursSpecification": [
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": [
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday",
+            "Saturday",
+            "Sunday"
+          ],
+          "opens": "11:00",
+          "closes": "21:00"
+        }
+      ],
+      "servesCuisine": ["咖啡", "甜點", "輕食"],
+      "acceptsReservations": "False"
+    }
+    </script>
+    <!--
+    SEO: JSON-LD for MenuItem - Note for dynamic generation:
+    For optimal SEO with MenuItem schema, each individual menu item's JSON-LD should be dynamically generated
+    and included on the page. This is best achieved with Server-Side Rendering (SSR) frameworks like Nuxt.js or Next.js,
+    where the server can pre-render the schema for each item based on your CMS data.
+    Example structure for a single MenuItem:
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "MenuItem",
+      "name": "經典拿鐵",
+      "description": "濃郁的義式濃縮咖啡與香醇牛奶完美融合，口感絲滑。",
+      "image": "https://placehold.co/400x300/FDBA74/654321?text=經典拿鐵",
+      "offers": {
+        "@type": "Offer",
+        "priceCurrency": "TWD",
+        "price": "120",
+        "availability": "https://schema.org/InStoreOnly"
+      },
+      "nutrition": {
+        "@type": "NutritionInformation",
+        "calories": "200 calories"
+      },
+      "suitableForDiet": [
+        "https://schema.org/GlutenFreeDiet" // Example, adjust based on actual allergenInfo
+      ],
+      "hasMenuSection": {
+        "@type": "MenuSection",
+        "name": "咖啡"
+      },
+      "partOfMenu": {
+        "@type": "Menu",
+        "name": "美味小館菜單"
+      }
+    }
+    </script>
+    -->
+</head>
+<body class="bg-amber-50 text-gray-800">
+
+    <div id="app" class="min-h-screen flex flex-col">
+        <!-- Header Section -->
+        <header class="header-bg-animated text-white py-8 shadow-lg relative overflow-hidden">
+            <div class="container mx-auto px-4 relative z-10">
+                <!-- Fluid Typography for H1 -->
+                <h1 class="text-4xl sm:text-5xl md:text-6xl font-extrabold mb-4 drop-shadow-lg text-left">{{ t('restaurantName') }}</h1>
+                <p class="text-xl font-light mb-4 opacity-90 text-left">{{ t('tagline') }}</p>
+
+                <!-- Interest: Social Proof Badges -->
+                <div class="flex items-center gap-4 mb-6 text-amber-100 text-sm sm:text-base">
+                    <span class="flex items-center bg-white bg-opacity-20 rounded-full px-3 py-1">
+                        <i class="fas fa-star text-yellow-300 mr-1"></i> 4.8 Google {{ t('googleRating') }}
+                    </span>
+                    <span class="flex items-center bg-white bg-opacity-20 rounded-full px-3 py-1">
+                        <i class="fas fa-redo-alt mr-1"></i> 70% {{ t('customerReturnRate') }}
+                    </span>
+                </div>
+
+                <!-- Interest: Limited Time Offer -->
+                <div class="bg-amber-700 text-white p-3 rounded-lg shadow-md mb-8 text-center text-sm sm:text-base">
+                    <i class="fas fa-clock mr-2"></i> {{ t('limitedOffer') }}
+                </div>
+
+                <!-- Language Selector -->
+                <div class="absolute top-4 right-4">
+                    <select v-model="currentLang" class="bg-white text-orange-600 rounded-md px-3 py-1 focus:outline-none focus:ring-2 focus:ring-amber-300">
+                        <option value="zh-TW">繁體中文</option>
+                        <option value="en">English</option>
+                    </select>
+                </div>
+
+                <!-- Category Navigation -->
+                <nav class="flex flex-wrap justify-center gap-4 mt-8">
+                    <button
+                        v-for="cat in categories"
+                        :key="cat"
+                        @click="filterMenu(cat)"
+                        :class="{
+                            'bg-white text-orange-600 shadow-md': activeCategory === cat,
+                            'bg-orange-500 text-white hover:bg-orange-600': activeCategory !== cat
+                        }"
+                        class="px-6 py-3 rounded-full font-semibold transition duration-300 btn-hover-effect focus:outline-none focus:ring-4 focus:ring-amber-300 focus:ring-opacity-75"
+                        :aria-label="t('filterByCategory', { category: cat })"
+                    >
+                        {{ t(cat.toLowerCase().replace(' ', '')) }}
+                    </button>
+                </nav>
+            </div>
+        </header>
+
+        <!-- Main Content - Menu Section -->
+        <main class="flex-grow container mx-auto px-4 py-12 lg:py-20" id="menu-section">
+            <!-- Fluid Typography for H2 -->
+            <h2 class="text-3xl sm:text-4xl md:text-5xl font-bold text-center text-orange-700 mb-12 drop-shadow-sm">{{ t('ourMenu') }}</h2>
+
+            <div v-if="isLoading" class="text-center text-orange-700 text-2xl">
+                <i class="fas fa-spinner fa-spin mr-2"></i>{{ t('loadingMenu') }}
+            </div>
+            <!-- Outer grid container with auto-rows-fr and content-start -->
+            <div v-else class="grid gap-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 auto-rows-fr content-start">
+                <transition-group name="staggered" tag="div" class="contents"> <!-- 'contents' to make transition-group not interfere with grid -->
+                    <!-- Semantic Tag: article for each menu item -->
+                    <article
+                        v-for="(item, index) in filteredMenuItems"
+                        :key="item.id"
+                        class="flex flex-col h-full bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden transform hover:-translate-y-1 relative"
+                        :style="{'--stagger-delay': `${index * 0.1}s`}"
+                    >
+                        <!-- Desire: Chef Recommended / Seasonal Ribbons -->
+                        <div v-if="item.isChefRecommended" class="ribbon ribbon-chef">{{ t('chefRecommended') }}</div>
+                        <div v-if="item.isSeasonal" class="ribbon ribbon-seasonal">{{ t('seasonalLimited') }}</div>
+
+                        <!-- Semantic Tag: figure for image and figcaption for overlay -->
+                        <figure class="aspect-video image-hover-container w-full bg-gray-200 flex items-center justify-center text-gray-500 text-lg font-medium">
+                            <img
+                                :src="item.image"
+                                :alt="item.name"
+                                class="w-full h-full object-cover"
+                                @error="handleImageError(item, $event)"
+                            >
+                            <figcaption class="image-hover-overlay">
+                                <!-- Price removed from image overlay as per request -->
+                            </figcaption>
+                        </figure>
+                        <div class="p-6 flex flex-col grow"> <!-- grow to make this section take available space -->
+                            <!-- Fluid Typography for H3 -->
+                            <h3 class="text-xl sm:text-2xl font-semibold text-orange-800 mb-2">{{ item.name }}</h3>
+                            <p class="text-gray-600 text-sm mb-4 line-clamp-3">{{ item.description }}</p>
+                        </div>
+                        <!-- Footer for price and button, pushed to bottom -->
+                        <footer class="flex items-center justify-between px-6 pb-6">
+                            <span class="text-orange-700 font-bold text-xl">{{ formatCurrency(item.price) }}</span>
+                            <button
+                                @click="editItem(item)"
+                                class="bg-amber-500 text-white px-4 py-2 rounded-full text-sm font-medium hover:bg-amber-600 transition duration-300 btn-hover-effect focus:outline-none focus:ring-2 focus:ring-amber-400"
+                                :aria-label="t('editItem', { itemName: item.name })"
+                            >
+                                {{ t('edit') }}
+                            </button>
+                        </footer>
+                    </article>
+                </transition-group>
+            </div>
+        </main>
+
+        <!-- Order Information Section -->
+        <section class="bg-amber-100 py-12 lg:py-20">
+            <div class="container mx-auto px-4">
+                <!-- Fluid Typography for H2 -->
+                <h2 class="text-3xl sm:text-4xl md:text-5xl font-bold text-center text-orange-700 mb-8">{{ t('howToOrderTitle') }}</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="bg-white p-6 rounded-xl shadow-md text-left">
+                        <div class="text-center mb-4">
+                            <i class="fas fa-phone-alt text-4xl text-orange-500"></i>
+                        </div>
+                        <!-- Fluid Typography for H3 -->
+                        <h3 class="text-xl sm:text-2xl md:text-3xl font-semibold text-orange-800 mb-2">{{ t('phoneOrderTitle') }}</h3>
+                        <p class="text-gray-600">{{ t('phoneOrderDesc') }}<a href="tel:+886-2-1234-5678" class="text-blue-600 hover:underline">+886-2-1234-5678</a></p>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-md text-left">
+                        <div class="text-center mb-4">
+                            <i class="fab fa-whatsapp text-4xl text-orange-500"></i>
+                        </div>
+                        <!-- Fluid Typography for H3 -->
+                        <h3 class="text-xl sm:text-2xl md:text-3xl font-semibold text-orange-800 mb-2">{{ t('messagingAppTitle') }}</h3>
+                        <p class="text-gray-600">{{ t('messagingAppDesc') }}</p>
+                        <p class="text-sm text-gray-500 mt-2">{{ t('lineIdNote') }}</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-md text-left">
+                        <div class="text-center mb-4">
+                            <i class="fas fa-store text-4xl text-orange-500"></i>
+                        </div>
+                        <!-- Fluid Typography for H3 -->
+                        <h3 class="text-xl sm:text-2xl md:text-3xl font-semibold text-orange-800 mb-2">{{ t('inStoreOrderTitle') }}</h3>
+                        <p class="text-gray-600">{{ t('inStoreOrderDesc') }}</p>
+                    </div>
+                </div>
+                <p class="text-center text-orange-600 text-lg font-medium mt-8">
+                    <i class="fas fa-money-bill-wave mr-2"></i>{{ t('paymentMethod') }}
+                </p>
+            </div>
+        </section>
+
+        <!-- Footer Section -->
+        <footer class="bg-orange-800 text-white py-8">
+            <div class="container mx-auto px-4">
+                <!-- Copyright and basic info -->
+                <p class="mb-4 text-left">{{ t('copyright', { year: 2025, restaurant: t('restaurantName') }) }}</p>
+                <p class="mb-2 text-left">{{ t('address') }}</p>
+                <p class="mb-4 text-left">{{ t('openingHours') }}</p>
+
+                <!-- Flex container for social links and LINE block -->
+                <div class="flex flex-col sm:flex-row sm:justify-between items-center gap-8 mt-8">
+                    <!-- Social Links -->
+                    <div class="flex justify-start space-x-6">
+                        <a href="#" class="text-white hover:text-amber-300 transition-colors duration-300 text-2xl" aria-label="Facebook">
+                            <i class="fab fa-facebook"></i>
+                        </a>
+                        <a href="#" class="text-white hover:text-amber-300 transition-colors duration-300 text-2xl" aria-label="Instagram">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="text-white hover:text-amber-300 transition-colors duration-300 text-2xl" aria-label="LINE">
+                            <i class="fab fa-line"></i>
+                        </a>
+                    </div>
+
+                    <!-- Retention: LINE Official Account Join Section -->
+                    <div class="bg-amber-700 text-white p-4 rounded-lg shadow-md text-center flex flex-col sm:flex-row items-center gap-4">
+                        <img src="https://placehold.co/100x100/4CAF50/FFFFFF?text=LINE+QR" alt="LINE Official Account QR Code" class="rounded-lg shadow-sm flex-shrink-0">
+                        <div class="text-left flex-grow">
+                            <h3 class="text-lg sm:text-xl font-bold mb-1">{{ t('lineOfficialAccountTitle') }}</h3>
+                            <p class="text-xs sm:text-sm mb-2">{{ t('lineOfficialAccountDesc') }}</p>
+                            <a href="https://line.me/R/ti/p/@yourlineid" target="_blank" class="inline-block bg-white text-orange-600 px-4 py-2 rounded-full text-sm font-semibold hover:bg-gray-100 transition duration-300 btn-hover-effect" aria-label="加入 LINE 官方帳號">
+                                <i class="fab fa-line mr-2"></i> {{ t('joinLineOfficialAccount') }}
+                            </a>
+                            <p class="text-sm text-amber-100 mt-2">{{ t('lineOffer') }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+        <!-- Action: Sticky CTA Button -->
+        <button
+            @click="handleOrderCall"
+            class="fixed bottom-6 right-6 bg-orange-600 text-white p-4 rounded-full shadow-lg hover:bg-orange-700 transition duration-300 btn-hover-effect z-40 flex items-center justify-center text-lg font-bold"
+            aria-label="立即點餐"
+        >
+            <i class="fas fa-phone-alt mr-2"></i> {{ t('orderNow') }}
+        </button>
+
+        <!-- Edit Modal -->
+        <transition name="modal">
+            <div v-if="showEditModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+                <div class="bg-white rounded-xl shadow-2xl p-8 w-full max-w-lg transform transition-all duration-300 scale-100 opacity-100">
+                    <h3 class="text-3xl font-bold text-orange-700 mb-6 text-center">{{ t('editProductInfo') }}</h3>
+
+                    <div class="mb-4">
+                        <label for="edit-name" class="block text-gray-700 text-sm font-bold mb-2">{{ t('productName') }}:</label>
+                        <input
+                            type="text"
+                            id="edit-name"
+                            v-model="editedItem.name"
+                            class="shadow appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
+                        >
+                    </div>
+                    <div class="mb-4">
+                        <label for="edit-description" class="block text-gray-700 text-sm font-bold mb-2">{{ t('description') }}:</label>
+                        <textarea
+                            id="edit-description"
+                            v-model="editedItem.description"
+                            rows="3"
+                            class="shadow appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent resize-y"
+                        ></textarea>
+                    </div>
+                    <div class="mb-4">
+                        <label for="edit-price" class="block text-gray-700 text-sm font-bold mb-2">{{ t('price') }}:</label>
+                        <input
+                            type="number"
+                            id="edit-price"
+                            v-model.number="editedItem.price"
+                            class="shadow appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
+                        >
+                    </div>
+                    <div class="mb-4">
+                        <label for="edit-calories" class="block text-gray-700 text-sm font-bold mb-2">{{ t('calories') }}:</label>
+                        <input
+                            type="text"
+                            id="edit-calories"
+                            v-model="editedItem.calories"
+                            class="shadow appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
+                            placeholder="例如：250 大卡"
+                        >
+                    </div>
+                    <div class="mb-6">
+                        <label for="edit-allergenInfo" class="block text-gray-700 text-sm font-bold mb-2">{{ t('allergenInfo') }}:</label>
+                        <input
+                            type="text"
+                            id="edit-allergenInfo"
+                            v-model="editedItem.allergenInfo"
+                            class="shadow appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
+                            placeholder="例如：牛奶、堅果"
+                        >
+                    </div>
+                    <div class="mb-6">
+                        <label for="edit-category" class="block text-gray-700 text-sm font-bold mb-2">{{ t('category') }}:</label>
+                        <select
+                            id="edit-category"
+                            v-model="editedItem.category"
+                            class="shadow appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
+                        >
+                            <option v-for="cat in categories.slice(1)" :key="cat" :value="cat">{{ t(cat.toLowerCase().replace(' ', '')) }}</option>
+                        </select>
+                    </div>
+
+                    <div class="flex justify-end gap-4">
+                        <button
+                            @click="cancelEdit"
+                            class="bg-gray-300 text-gray-800 px-6 py-3 rounded-full font-semibold hover:bg-gray-400 transition duration-300 focus:outline-none focus:ring-2 focus:ring-gray-500"
+                            :aria-label="t('cancel')"
+                        >
+                            {{ t('cancel') }}
+                        </button>
+                        <button
+                            @click="saveEditedItem"
+                            class="bg-orange-500 text-white px-6 py-3 rounded-full font-semibold hover:bg-orange-600 transition duration-300 btn-hover-effect focus:outline-none focus:ring-2 focus:ring-orange-400"
+                            :aria-label="t('save')"
+                        >
+                            {{ t('save') }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </transition>
+
+    </div>
+
+    <script>
+        const { createApp, ref, computed, onMounted, nextTick, watch } = Vue;
+
+        // --- GA4 Placeholder (In a real app, use gtag.js) ---
+        // For demonstration purposes, we'll define a dummy gtag function.
+        // In a real application, you would include the Google Analytics 4 script
+        // from your GA4 property.
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-XXXXXXXXXX'); // Replace with your actual GA4 Measurement ID
+
+        createApp({
+            setup() {
+                // --- Internationalization (i18n) ---
+                const currentLang = ref('zh-TW'); // Default language
+                const translations = {
+                    'zh-TW': {
+                        restaurantName: '美味小館',
+                        tagline: '品味生活，從這裡開始',
+                        googleRating: 'Google 評價',
+                        customerReturnRate: '顧客回訪率',
+                        limitedOffer: '今天16:00前線上預訂，第2杯咖啡半價！',
+                        all: '全部',
+                        coffee: '咖啡',
+                        dessert: '甜點',
+                        lightmeal: '輕食',
+                        ourMenu: '我們的菜單',
+                        loadingMenu: '載入菜單中...',
+                        chefRecommended: '主廚推薦',
+                        seasonalLimited: '季節限定',
+                        howToOrderTitle: '如何輕鬆點餐與支付？',
+                        phoneOrderTitle: '電話點餐',
+                        phoneOrderDesc: '撥打我們的熱線：',
+                        messagingAppTitle: '訊息應用程式',
+                        messagingAppDesc: '透過 WhatsApp 或 LINE 傳送您的訂單',
+                        lineIdNote: '(請提供您的LINE ID)',
+                        inStoreOrderTitle: '到店點餐',
+                        inStoreOrderDesc: '親臨本店享受美食，現場點餐',
+                        paymentMethod: '所有支付均在線下完成',
+                        lineOfficialAccountTitle: '加入美味小館 LINE 官方帳號',
+                        lineOfficialAccountDesc: '掃描 QR Code 或點擊按鈕，立即加入獲得獨家優惠！',
+                        joinLineOfficialAccount: '立即加入',
+                        lineOffer: '加 LINE 官方帳號送 30 元折扣碼！',
+                        orderNow: '立即點餐',
+                        edit: '編輯',
+                        editProductInfo: '編輯產品資訊',
+                        productName: '產品名稱',
+                        description: '描述',
+                        price: '價格',
+                        calories: '卡路里',
+                        allergenInfo: '過敏原資訊',
+                        category: '類別',
+                        cancel: '取消',
+                        save: '儲存',
+                        filterByCategory: '篩選 {category} 類別',
+                        editItem: '編輯 {itemName} 項目'
+                    },
+                    'en': {
+                        restaurantName: 'Delicious Bistro',
+                        tagline: 'Savor Life, Starting Here',
+                        googleRating: 'Google Rating',
+                        customerReturnRate: 'Customer Return Rate',
+                        limitedOffer: 'Order online before 4 PM today for 50% off your second coffee!',
+                        all: 'All',
+                        coffee: 'Coffee',
+                        dessert: 'Dessert',
+                        lightmeal: 'Light Meal',
+                        ourMenu: 'Our Menu',
+                        loadingMenu: 'Loading menu...',
+                        chefRecommended: 'Chef\'s Pick',
+                        seasonalLimited: 'Seasonal Limited',
+                        howToOrderTitle: 'How to Easily Order & Pay?',
+                        phoneOrderTitle: 'Phone Order',
+                        phoneOrderDesc: 'Call our hotline: ',
+                        messagingAppTitle: 'Messaging Apps',
+                        messagingAppDesc: 'Send your order via WhatsApp or LINE',
+                        lineIdNote: '(Please provide your LINE ID)',
+                        inStoreOrderTitle: 'In-Store Order',
+                        inStoreOrderDesc: 'Visit us to enjoy food, order on-site',
+                        paymentMethod: 'All payments are made offline',
+                        lineOfficialAccountTitle: 'Join Delicious Bistro LINE Official Account',
+                        lineOfficialAccountDesc: 'Scan the QR code or click the button to join now and get exclusive offers!',
+                        joinLineOfficialAccount: 'Join Now',
+                        lineOffer: 'Add LINE Official Account for a NT$30 discount code!',
+                        orderNow: 'Order Now',
+                        edit: 'Edit',
+                        editProductInfo: 'Edit Product Information',
+                        productName: 'Product Name',
+                        description: 'Description',
+                        price: 'Price',
+                        calories: 'Calories',
+                        allergenInfo: 'Allergen Information',
+                        category: 'Category',
+                        cancel: 'Cancel',
+                        save: 'Save',
+                        filterByCategory: 'Filter by {category} category',
+                        editItem: 'Edit {itemName} item'
+                    }
+                };
+
+                // Translation function
+                const t = (key, params = {}) => {
+                    let text = translations[currentLang.value][key] || key;
+                    for (const param in params) {
+                        text = text.replace(`{${param}}`, params[param]);
+                    }
+                    return text;
+                };
+
+                // Currency formatter
+                const formatCurrency = (amount) => {
+                    return new Intl.NumberFormat(currentLang.value === 'zh-TW' ? 'zh-TW' : 'en-US', {
+                        style: 'currency',
+                        currency: 'TWD', // Taiwan Dollar
+                        minimumFractionDigits: 0,
+                        maximumFractionDigits: 0
+                    }).format(amount);
+                };
+
+                // --- Headless CMS Simulation ---
+                const menuItems = ref([]);
+                const isLoading = ref(true);
+
+                // Simulate fetching data from a CMS
+                const fetchMenuItems = async () => {
+                    isLoading.value = true;
+                    // In a real application, you would fetch data from your CMS API here:
+                    // const response = await fetch('YOUR_STRAPI_OR_DIRECTUS_API_ENDPOINT/menu-items');
+                    // const data = await response.json();
+                    // menuItems.value = data;
+
+                    // For this example, we'll use a static array after a delay
+                    await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate network delay
+                    menuItems.value = [
+                        {
+                            id: 1,
+                            name: '經典拿鐵',
+                            description: '濃郁的義式濃縮咖啡與香醇牛奶完美融合，口感絲滑。',
+                            price: 120,
+                            category: '咖啡',
+                            image: 'https://placehold.co/400x300/FDBA74/654321?text=經典拿鐵',
+                            isChefRecommended: true, // Desire: Chef Recommended
+                            isSeasonal: false,
+                            calories: '200 大卡', // Desire: Calories
+                            allergenInfo: '牛奶' // Desire: Allergen Info
+                        },
+                        {
+                            id: 2,
+                            name: '焦糖瑪奇朵',
+                            description: '香草風味糖漿、牛奶、濃縮咖啡，最後淋上焦糖醬，層次豐富。',
+                            price: 140,
+                            category: '咖啡',
+                            image: 'https://placehold.co/400x300/FDBA74/654321?text=焦糖瑪奇朵',
+                            isChefRecommended: false,
+                            isSeasonal: false,
+                            calories: '250 大卡',
+                            allergenInfo: '牛奶'
+                        },
+                        {
+                            id: 3,
+                            name: '美式咖啡',
+                            description: '簡單純粹的義式濃縮咖啡加水，清爽提神。',
+                            price: 100,
+                            category: '咖啡',
+                            image: 'https://placehold.co/400x300/FDBA74/654321?text=美式咖啡',
+                            isChefRecommended: false,
+                            isSeasonal: false,
+                            calories: '10 大卡',
+                            allergenInfo: '無'
+                        },
+                        {
+                            id: 4,
+                            name: '提拉米蘇',
+                            description: '經典義大利甜點，咖啡浸泡的手指餅乾、馬斯卡彭乳酪和可可粉的完美結合。',
+                            price: 180,
+                            category: '甜點',
+                            image: 'https://placehold.co/400x300/FDBA74/654321?text=提拉米蘇',
+                            isChefRecommended: false,
+                            isSeasonal: true, // Desire: Seasonal Limited
+                            calories: '350 大卡',
+                            allergenInfo: '雞蛋、牛奶、麩質'
+                        },
+                        {
+                            id: 5,
+                            name: '法式千層蛋糕',
+                            description: '薄如蟬翼的餅皮層層堆疊，搭配香濃奶油，口感細膩。',
+                            price: 160,
+                            category: '甜點',
+                            image: 'https://placehold.co/400x300/FDBA74/654321?text=法式千層蛋糕',
+                            isChefRecommended: true,
+                            isSeasonal: false,
+                            calories: '300 大卡',
+                            allergenInfo: '雞蛋、牛奶、麩質'
+                        },
+                        {
+                            id: 6,
+                            name: '檸檬塔',
+                            description: '酸甜清爽的檸檬餡搭配酥脆塔皮，解膩又開胃。',
+                            price: 150,
+                            category: '甜點',
+                            image: 'https://placehold.co/400x300/FDBA74/654321?text=檸檬塔',
+                            isChefRecommended: false,
+                            isSeasonal: false,
+                            calories: '280 大卡',
+                            allergenInfo: '雞蛋、麩質'
+                        },
+                        {
+                            id: 7,
+                            name: '煙燻鮭魚三明治',
+                            description: '新鮮煙燻鮭魚搭配奶油乳酪、生菜和番茄，健康美味。',
+                            price: 220,
+                            category: '輕食',
+                            image: 'https://placehold.co/400x300/FDBA74/654321?text=煙燻鮭魚三明治',
+                            isChefRecommended: false,
+                            isSeasonal: true,
+                            calories: '400 大卡',
+                            allergenInfo: '麩質、魚類、牛奶'
+                        },
+                        {
+                            id: 8,
+                            name: '總匯沙拉',
+                            description: '多種新鮮蔬菜、雞胸肉、水煮蛋和特製醬汁，均衡營養。',
+                            price: 190,
+                            category: '輕食',
+                            image: 'https://placehold.co/400x300/FDBA74/654321?text=總匯沙拉',
+                            isChefRecommended: false,
+                            isSeasonal: false,
+                            calories: '320 大卡',
+                            allergenInfo: '雞蛋'
+                        }
+                    ];
+                    isLoading.value = false;
+                };
+
+                onMounted(fetchMenuItems); // Fetch data when component mounts
+
+                // Categories for filtering (now dynamic based on fetched data or hardcoded fallback)
+                const categories = computed(() => {
+                    const uniqueCategories = new Set(menuItems.value.map(item => item.category));
+                    // Map original category names to translated names for display
+                    const translatedCategories = Array.from(uniqueCategories).map(cat => {
+                        // Find the key in zh-TW translations that matches the category
+                        const key = Object.keys(translations['zh-TW']).find(k => translations['zh-TW'][k] === cat);
+                        // Return the translated category name based on currentLang
+                        return t(key);
+                    });
+                    return [t('all'), ...translatedCategories];
+                });
+
+                // Currently active category, default to '全部'
+                const activeCategory = ref(t('all'));
+
+                // Watch for language changes and update activeCategory to maintain consistency
+                watch(currentLang, (newLang) => {
+                    // If the current active category is '全部' or 'All', update it to the new language's 'all'
+                    if (activeCategory.value === translations['zh-TW']['all'] || activeCategory.value === translations['en']['all']) {
+                        activeCategory.value = t('all');
+                    } else {
+                        // For other categories, find the original (zh-TW) category name
+                        const originalCategoryKey = Object.keys(translations['zh-TW']).find(key => translations['zh-TW'][key] === activeCategory.value || translations['en'][key] === activeCategory.value);
+                        if (originalCategoryKey) {
+                            activeCategory.value = t(originalCategoryKey); // Set to translated category in new language
+                        }
+                    }
+                });
+
+
+                // State for the edit modal
+                const showEditModal = ref(false);
+                const editingItem = ref(null); // The original item being edited
+                const editedItem = ref({ // A copy of the item data for the form
+                    id: null,
+                    name: '',
+                    description: '',
+                    price: 0,
+                    category: '',
+                    image: '',
+                    calories: '',
+                    allergenInfo: ''
+                });
+
+                // Computed property to filter menu items based on activeCategory
+                const filteredMenuItems = computed(() => {
+                    if (activeCategory.value === t('all')) {
+                        return menuItems.value;
+                    }
+                    // To filter, we need the original (zh-TW) category name from the current translated activeCategory
+                    const originalCategoryName = Object.keys(translations['zh-TW']).find(key => translations['zh-TW'][key] === activeCategory.value || translations['en'][key] === activeCategory.value);
+                    if (originalCategoryName) {
+                        return menuItems.value.filter(item => item.category === translations['zh-TW'][originalCategoryName]);
+                    }
+                    return []; // Should not happen if categories are correctly mapped
+                });
+
+
+                // Method to filter menu items by category and scroll to menu section
+                const filterMenu = (category) => {
+                    activeCategory.value = category;
+                    // Smooth scroll to the menu section
+                    nextTick(() => {
+                        const menuSection = document.getElementById('menu-section');
+                        if (menuSection) {
+                            menuSection.scrollIntoView({ behavior: 'smooth' });
+                        }
+                    });
+                };
+
+                // Method to open the edit modal and populate with item data
+                const editItem = (item) => {
+                    editingItem.value = item; // Store reference to original item
+                    // Create a deep copy for editing to avoid direct mutation
+                    editedItem.value = { ...item };
+                    showEditModal.value = true;
+                    document.body.classList.add('overflow-hidden'); // Disable body scroll
+                };
+
+                // Method to save edited item data
+                const saveEditedItem = () => {
+                    if (editingItem.value) {
+                        // Find the index of the original item and update it
+                        const index = menuItems.value.findIndex(item => item.id === editingItem.value.id);
+                        if (index !== -1) {
+                            // Update the original item's properties
+                            menuItems.value[index].name = editedItem.value.name;
+                            menuItems.value[index].description = editedItem.value.description;
+                            menuItems.value[index].price = editedItem.value.price;
+                            menuItems.value[index].calories = editedItem.value.calories;
+                            menuItems.value[index].allergenInfo = editedItem.value.allergenInfo;
+                            // When saving, ensure the category is stored in its original (zh-TW) form
+                            const originalCategoryKey = Object.keys(translations[currentLang.value]).find(key => translations[currentLang.value][key] === editedItem.value.category);
+                            if (originalCategoryKey) {
+                                menuItems.value[index].category = translations['zh-TW'][originalCategoryKey];
+                            }
+                            // Image is not editable in this version, so it remains the same
+                        }
+                    }
+                    showEditModal.value = false; // Close modal
+                    editingItem.value = null; // Clear editing state
+                    document.body.classList.remove('overflow-hidden'); // Re-enable body scroll
+                };
+
+                // Method to cancel editing and close the modal
+                const cancelEdit = () => {
+                    showEditModal.value = false;
+                    editingItem.value = null; // Clear editing state
+                    document.body.classList.remove('overflow-hidden'); // Re-enable body scroll
+                };
+
+                // Handle image loading errors, replace with placeholder
+                const handleImageError = (item, event) => {
+                    event.target.src = `https://placehold.co/400x300/BDB76B/FFFFFF?text=${item.name}`; // Fallback image with item name
+                    event.target.onerror = null; // Prevent infinite loop if fallback also fails
+                };
+
+                // Action: Handle sticky CTA click (phone call + GA4 event)
+                const handleOrderCall = () => {
+                    // Simulate GA4 event
+                    if (typeof gtag === 'function') {
+                        gtag('event', 'order_call', {
+                            'event_category': 'Engagement',
+                            'event_label': 'Phone Call Button Click'
+                        });
+                        console.log('GA4 Event: order_call triggered');
+                    } else {
+                        console.warn('GA4 gtag function not found. Event not tracked.');
+                    }
+
+                    // Direct phone call (for mobile devices)
+                    window.location.href = 'tel:+886-2-1234-5678';
+                    // For LINE, you might open a specific LINE URL or show a QR code/ID
+                    // window.open('https://line.me/ti/p/@yourlineid', '_blank');
+                };
+
+
+                // --- PWA Service Worker Registration ---
+                // Service Workers require specific hosting conditions (same origin)
+                // and may not function correctly in this environment (e.g., served from blob: URLs).
+                // Therefore, the Service Worker registration is commented out to prevent errors.
+                /*
+                onMounted(() => {
+                    if ('serviceWorker' in navigator) {
+                        navigator.serviceWorker.register('/service-worker.js')
+                            .then(reg => console.log('Service Worker registered!', reg))
+                            .catch(err => console.error('Service Worker registration failed:', err));
+                    }
+                });
+                */
+
+                return {
+                    menuItems,
+                    categories,
+                    activeCategory,
+                    showEditModal,
+                    editedItem,
+                    filteredMenuItems,
+                    isLoading,
+                    currentLang,
+                    t,
+                    formatCurrency,
+                    filterMenu,
+                    editItem,
+                    saveEditedItem,
+                    cancelEdit,
+                    handleImageError,
+                    handleOrderCall // Expose to template
+                };
+            }
+        }).mount('#app');
+    </script>
+    <!--
+    --- PWA: manifest.json 內容範例 ---
+    請將此內容保存為專案根目錄下的 `manifest.json` 檔案。
+
+    {
+      "name": "美味小館菜單",
+      "short_name": "美味菜單",
+      "description": "美味小館的線上菜單，離線也能瀏覽！",
+      "start_url": "/",
+      "display": "standalone",
+      "background_color": "#fef3c7",
+      "theme_color": "#f97316",
+      "icons": [
+        {
+          "src": "/icons/icon-192x192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        },
+        {
+          "src": "/icons/icon-512x512.png",
+          "sizes": "512x512",
+          "type": "image/png"
+        }
+      ]
+    }
+
+    --- PWA: service-worker.js 內容範例 ---
+    請將此內容保存為專案根目錄下的 `service-worker.js` 檔案。
+
+    const CACHE_NAME = 'delicious-bistro-cache-v1';
+    const urlsToCache = [
+      '/',
+      '/index.html',
+      '/manifest.json',
+      'https://cdn.tailwindcss.com',
+      'https://unpkg.com/vue@3/dist/vue.global.prod.js',
+      'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css'
+      // Add other static assets and common image placeholders here
+    ];
+
+    self.addEventListener('install', event => {
+      event.waitUntil(
+        caches.open(CACHE_NAME)
+          .then(cache => {
+            console.log('Opened cache');
+            return cache.addAll(urlsToCache);
+          })
+      );
+    });
+
+    self.addEventListener('fetch', event => {
+      event.respondWith(
+        caches.match(event.request)
+          .then(response => {
+            // Cache hit - return response
+            if (response) {
+              return response;
+            }
+            // If not in cache, fetch from network
+            return fetch(event.request).then(
+              function(response) {
+                // Check if we received a valid response
+                if(!response || response.status !== 200 || response.type !== 'basic') {
+                  return response;
+                }
+
+                // IMPORTANT: Clone the response. A response is a stream
+                // and can only be consumed once. We must clone it so that
+                // the browser can consume the original response and we can
+                // consume the clone.
+                var responseToCache = response.clone();
+
+                caches.open(CACHE_NAME)
+                  .then(function(cache) {
+                    cache.put(event.request, responseToCache);
+                  });
+
+                return response;
+              }
+            );
+          })
+      );
+    });
+
+    self.addEventListener('activate', event => {
+      const cacheWhitelist = [CACHE_NAME];
+      event.waitUntil(
+        caches.keys().then(cacheNames => {
+          return Promise.all(
+            cacheNames.map(cacheName => {
+              if (cacheWhitelist.indexOf(cacheName) === -1) {
+                return caches.delete(cacheName);
+              }
+            })
+          );
+        })
+      );
+    });
+
+    --- SEO / SSR 提示 ---
+    對於更進階的 SEO 和首屏效能優化，建議使用 Vue.js 的伺服器端渲染 (SSR) 框架，例如 Nuxt.js (搭配 `nuxt generate` 進行靜態輸出) 或 Vite SSR。這些工具可以在建構時預渲染頁面內容，使其對搜尋引擎更友好，並提供更快的初始載入速度。
+    -->
+</body>
+</html>
