@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>豪華團購咖啡豆 - 精緻廣告頁面</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
+    <!-- 
+    Palette: Energetic & Playful 
+    #0D1B2A (Gunmetal) - Main Background
+    #1B263B (Oxford Blue) - Card Background
+    #415A77 (Yankees Blue) - Secondary Accent / Borders
+    #778DA9 (Shadow Blue) - Primary Accent / Buttons
+    #E0E1DD (Platinum) - Text Color
+    -->
+    <style>
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #0D1B2A;
+            color: #E0E1DD;
+        }
+        .card {
+            background-color: #1B263B;
+            border-radius: 0.75rem; /* rounded-lg */
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* shadow-md */
+            padding: 1.5rem; /* p-6 */
+            margin-bottom: 1.5rem; /* mb-6 */
+        }
+        .btn-primary {
+            background-color: #778DA9;
+            color: #0D1B2A;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem; /* rounded-md */
+            font-weight: 700; /* font-bold */
+            transition: background-color 0.3s ease;
+        }
+        .btn-primary:hover {
+            background-color: #415A77;
+        }
+        input[type="text"], input[type="tel"], input[type="number"], select, textarea {
+            background-color: #0D1B2A;
+            border: 1px solid #415A77;
+            color: #E0E1DD;
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.375rem; /* rounded-md */
+            width: 100%;
+        }
+        input[type="text"]:focus, input[type="tel"]:focus, input[type="number"]:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #778DA9;
+            box-shadow: 0 0 0 2px rgba(119, 141, 169, 0.5);
+        }
+        .error-message {
+            color: #F94144; /* A contrasting red for errors */
+            font-size: 0.875rem; /* text-sm */
+            margin-top: 0.25rem;
+        }
+        .accent-text {
+            color: #778DA9;
+        }
+        .text-highlight {
+            color: #F9C74F; /* A contrasting yellow for highlights */
+        }
+        .faq-item {
+            border-bottom: 1px solid #415A77;
+        }
+        .faq-question {
+            cursor: pointer;
+            padding: 1rem 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+            color: #E0E1DD;
+        }
+        .faq-answer {
+            padding-bottom: 1rem;
+            color: #A0AEC0; /* Slightly lighter gray for answer text */
+            display: none;
+        }
+        .faq-question svg {
+            transition: transform 0.3s ease;
+        }
+        .faq-question[aria-expanded="true"] svg {
+            transform: rotate(180deg);
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <div class="container mx-auto px-4 py-8 max-w-4xl">
+
+        <!-- Hero Section -->
+        <section class="text-center mb-16 relative overflow-hidden rounded-xl shadow-lg">
+            <img src="https://placehold.co/1200x600/1B263B/778DA9?text=Premium+Coffee+Experience" alt="豪華咖啡豆體驗" class="w-full h-auto object-cover object-center absolute inset-0 filter brightness-50">
+            <div class="relative z-10 p-8 md:p-16 flex flex-col justify-center items-center h-full min-h-[300px] sm:min-h-[350px] md:min-h-[400px]">
+                <h1 class="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight leading-tight text-white drop-shadow-lg">
+                    探索極致風味：<br class="sm:hidden">豪華團購咖啡豆
+                </h1>
+                <p class="text-xl sm:text-2xl md:text-3xl mt-4 text-highlight drop-shadow-lg">
+                    限量供應，立即預訂，品味非凡！
+                </p>
+                <a href="#order-form-section" class="btn-primary mt-8 text-lg sm:text-xl px-6 sm:px-8 py-2 sm:py-3 transform hover:scale-105 transition-transform duration-300">
+                    立即搶購！
+                </a>
+            </div>
+        </section>
+
+        <!-- Product Section - Carousel -->
+        <section id="product-details" class="card mb-16">
+            <h2 class="text-3xl md:text-4xl font-bold text-white mb-8 text-center">精選咖啡，為您而生</h2>
+            <div class="relative w-full overflow-hidden">
+                <div id="productCarousel" class="flex transition-transform duration-500 ease-in-out">
+                    <!-- Product Slide 1 -->
+                    <div class="w-full flex-shrink-0 grid grid-cols-1 md:grid-cols-2 gap-8 items-center p-4">
+                        <div>
+                            <img src="https://placehold.co/600x400/415A77/E0E1DD?text=Deluxe+Coffee+Beans+Product+1" alt="豪華團購咖啡豆產品圖1" class="rounded-lg w-full h-auto object-cover shadow-md">
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold text-white mb-3">精選高品質阿拉比卡咖啡豆</h3>
+                            <p class="text-lg text-[#E0E1DD] mb-4">
+                                我們的阿拉比卡咖啡豆，來自世界頂級產區，經過嚴格篩選與中度烘焙，完美保留了咖啡豆最原始的風味與香氣。每一口都充滿堅果與巧克力的豐富層次，尾韻帶有淡淡的焦糖甜感，無論是手沖細品或義式濃縮，都能帶給您非凡的咖啡體驗。
+                            </p>
+                            <div class="flex items-baseline mb-4">
+                                <span class="text-4xl sm:text-5xl font-black text-highlight">NT$ 350</span>
+                                <span class="text-base sm:text-lg text-gray-400 line-through ml-3">原價 NT$ 500</span>
+                            </div>
+                            <p class="text-lg text-white font-bold mb-2">截團倒數：<span id="countdown1" class="accent-text"></span></p>
+                            <p class="text-sm sm:text-md text-gray-300">
+                                每包 250 克，新鮮烘焙，數量有限，售完為止！
+                            </p>
+                        </div>
+                    </div>
+                    <!-- Product Slide 2 -->
+                    <div class="w-full flex-shrink-0 grid grid-cols-1 md:grid-cols-2 gap-8 items-center p-4">
+                        <div>
+                            <img src="https://placehold.co/600x400/1B263B/778DA9?text=Ethiopian+Yirgacheffe" alt="衣索比亞耶加雪菲" class="rounded-lg w-full h-auto object-cover shadow-md">
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold text-white mb-3">衣索比亞 耶加雪菲 - 花果香調</h3>
+                            <p class="text-lg text-[#E0E1DD] mb-4">
+                                來自衣索比亞耶加雪菲的精品咖啡豆，以其獨特的花香、柑橘和莓果風味聞名。淺中度烘焙完美展現其明亮的酸度和清新的口感，是喜愛果香咖啡的您的最佳選擇。
+                            </p>
+                            <div class="flex items-baseline mb-4">
+                                <span class="text-4xl sm:text-5xl font-black text-highlight">NT$ 420</span>
+                                <span class="text-base sm:text-lg text-gray-400 line-through ml-3">原價 NT$ 600</span>
+                            </div>
+                            <p class="text-lg text-white font-bold mb-2">截團倒數：<span id="countdown2" class="accent-text"></span></p>
+                            <p class="text-sm sm:text-md text-gray-300">
+                                每包 250 克，限量批次，風味獨特！
+                            </p>
+                        </div>
+                    </div>
+                    <!-- Product Slide 3 -->
+                    <div class="w-full flex-shrink-0 grid grid-cols-1 md:grid-cols-2 gap-8 items-center p-4">
+                        <div>
+                            <img src="https://placehold.co/600x400/0D1B2A/E0E1DD?text=Brazilian+Santos" alt="巴西聖多士" class="rounded-lg w-full h-auto object-cover shadow-md">
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold text-white mb-3">巴西 聖多士 - 經典平衡</h3>
+                            <p class="text-lg text-[#E0E1DD] mb-4">
+                                巴西聖多士咖啡豆以其圓潤的口感、低酸度和柔和的堅果風味而聞名。深度烘焙使其帶有濃郁的巧克力和焦糖香氣，非常適合製作濃縮咖啡或作為牛奶咖啡的基底。
+                            </p>
+                            <div class="flex items-baseline mb-4">
+                                <span class="text-4xl sm:text-5xl font-black text-highlight">NT$ 280</span>
+                                <span class="text-base sm:text-lg text-gray-400 line-through ml-3">原價 NT$ 400</span>
+                            </div>
+                            <p class="text-lg text-white font-bold mb-2">截團倒數：<span id="countdown3" class="accent-text"></span></p>
+                            <p class="text-sm sm:text-md text-gray-300">
+                                每包 250 克，日常必備，經濟實惠！
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Carousel Navigation -->
+                <button id="prevBtn" class="absolute top-1/2 left-4 -translate-y-1/2 bg-gray-800 bg-opacity-50 text-white p-2 rounded-full hover:bg-opacity-75 transition-colors duration-300 z-20">
+                    &#10094;
+                </button>
+                <button id="nextBtn" class="absolute top-1/2 right-4 -translate-y-1/2 bg-gray-800 bg-opacity-50 text-white p-2 rounded-full hover:bg-opacity-75 transition-colors duration-300 z-20">
+                    &#10095;
+                </button>
+                <!-- Carousel Dots -->
+                <div id="carouselDots" class="absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-2 z-20">
+                    <span class="dot w-3 h-3 bg-white rounded-full cursor-pointer opacity-50" data-slide="0"></span>
+                    <span class="dot w-3 h-3 bg-white rounded-full cursor-pointer opacity-50" data-slide="1"></span>
+                    <span class="dot w-3 h-3 bg-white rounded-full cursor-pointer opacity-50" data-slide="2"></span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Why Choose Us Section -->
+        <section class="card mb-16">
+            <h2 class="text-3xl md:text-4xl font-bold text-white mb-8 text-center">為何選擇我們的咖啡？</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+                <div class="p-4">
+                    <div class="text-4xl sm:text-5xl accent-text mb-4">✨</div>
+                    <h3 class="text-xl font-bold text-white mb-2">嚴選產地</h3>
+                    <p class="text-gray-300 text-base sm:text-lg">只選用全球最佳咖啡產區的頂級阿拉比卡豆，確保每一顆豆子的品質。</p>
+                </div>
+                <div class="p-4">
+                    <div class="text-4xl sm:text-5xl accent-text mb-4">🔥</div>
+                    <h3 class="text-xl font-bold text-white mb-2">專業烘焙</h3>
+                    <p class="text-gray-300 text-base sm:text-lg">由經驗豐富的烘焙師精準掌握火候，呈現咖啡豆最完美的風味輪廓。</p>
+                </div>
+                <div class="p-4">
+                    <div class="text-4xl sm:text-5xl accent-text mb-4">📦</div>
+                    <h3 class="text-xl font-bold text-white mb-2">新鮮直送</h3>
+                    <p class="text-gray-300 text-base sm:text-lg">下單後新鮮烘焙，確保您收到的是最新鮮、香氣最飽滿的咖啡豆。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Customer Testimonials Section -->
+        <section class="card mb-16">
+            <h2 class="text-3xl md:text-4xl font-bold text-white mb-8 text-center">客戶真實好評</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="bg-[#0D1B2A] p-6 rounded-lg shadow-inner">
+                    <p class="text-base sm:text-lg italic text-gray-300 mb-4">
+                        "這是我喝過最棒的團購咖啡！香氣濃郁，口感順滑，每天早上都期待著這杯咖啡。線下付款也很方便，非常推薦！"
+                    </p>
+                    <p class="font-bold accent-text text-base sm:text-lg">- 陳小姐，咖啡愛好者</p>
+                </div>
+                <div class="bg-[#0D1B2A] p-6 rounded-lg shadow-inner">
+                    <p class="text-base sm:text-lg italic text-gray-300 mb-4">
+                        "之前買過別家的團購，品質不穩定。這家的咖啡豆真的沒話說，每次都讓我驚艷。客服也很親切，會持續回購！"
+                    </p>
+                    <p class="font-bold accent-text text-base sm:text-lg">- 王先生，辦公室團購主</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- How It Works Section -->
+        <section class="card mb-16">
+            <h2 class="text-3xl md:text-4xl font-bold text-white mb-8 text-center">團購流程：簡單三步驟</h2>
+            <div class="flex flex-col md:flex-row justify-center items-center space-y-8 md:space-y-0 md:space-x-12 text-center">
+                <div class="flex flex-col items-center">
+                    <div class="w-16 h-16 sm:w-20 sm:h-20 bg-[#778DA9] rounded-full flex items-center justify-center text-3xl sm:text-4xl font-bold text-[#0D1B2A] mb-4 shadow-lg">1</div>
+                    <h3 class="text-xl font-bold text-white mb-2">填寫訂單</h3>
+                    <p class="text-gray-300 text-base sm:text-lg">在頁面下方填寫您的團購資訊。</p>
+                </div>
+                <div class="text-4xl sm:text-5xl accent-text hidden md:block">→</div>
+                <div class="flex flex-col items-center">
+                    <div class="w-16 h-16 sm:w-20 sm:h-20 bg-[#778DA9] rounded-full flex items-center justify-center text-3xl sm:text-4xl font-bold text-[#0D1B2A] mb-4 shadow-lg">2</div>
+                    <h3 class="text-xl font-bold text-white mb-2">線下付款</h3>
+                    <p class="text-gray-300 text-base sm:text-lg">依照指示完成銀行轉帳或行動支付。</p>
+                </div>
+                <div class="text-4xl sm:text-5xl accent-text hidden md:block">→</div>
+                <div class="flex flex-col items-center">
+                    <div class="w-16 h-16 sm:w-20 sm:h-20 bg-[#778DA9] rounded-full flex items-center justify-center text-3xl sm:text-4xl font-bold text-[#0D1B2A] mb-4 shadow-lg">3</div>
+                    <h3 class="text-xl font-bold text-white mb-2">等待收貨</h3>
+                    <p class="text-gray-300 text-base sm:text-lg">確認付款後，我們將安排出貨或取貨。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Order Form Section - Main CTA -->
+        <section id="order-form-section" class="card mb-16">
+            <h2 class="text-3xl md:text-4xl font-bold text-white mb-6 text-center">立即預訂，享受優惠！</h2>
+            <p class="text-lg text-gray-300 mb-8 text-center">請填寫以下表單，完成您的團購訂單。數量有限，把握機會！</p>
+            <form id="orderForm" class="space-y-4">
+                <div>
+                    <label for="name" class="block text-white text-base sm:text-lg font-bold mb-2">姓名 <span class="text-[#F94144]">*</span></label>
+                    <input type="text" id="name" name="name" placeholder="請輸入您的姓名" required class="w-full">
+                    <p id="nameError" class="error-message hidden">請輸入姓名。</p>
+                </div>
+                <div>
+                    <label for="phone" class="block text-white text-base sm:text-lg font-bold mb-2">聯絡電話 <span class="text-[#F94144]">*</span></label>
+                    <input type="tel" id="phone" name="phone" placeholder="請輸入您的手機號碼 (例如: 0912345678)" required class="w-full">
+                    <p id="phoneError" class="error-message hidden">請輸入有效的10位數字手機號碼。</p>
+                </div>
+                <div>
+                    <label for="quantity" class="block text-white text-base sm:text-lg font-bold mb-2">訂購數量 <span class="text-[#F94144]">*</span></label>
+                    <input type="number" id="quantity" name="quantity" min="1" value="1" required class="w-full">
+                    <p id="quantityError" class="error-message hidden">數量必須至少為1。</p>
+                </div>
+                <div>
+                    <label for="pickupOption" class="block text-white text-base sm:text-lg font-bold mb-2">取貨方式 <span class="text-[#F94144]">*</span></label>
+                    <select id="pickupOption" name="pickupOption" required class="w-full">
+                        <option value="">請選擇取貨方式</option>
+                        <option value="自行取貨">自行取貨 (台北市信義區)</option>
+                        <option value="宅配">宅配 (運費另計)</option>
+                    </select>
+                    <p id="pickupOptionError" class="error-message hidden">請選擇取貨方式。</p>
+                </div>
+                <div>
+                    <label for="notes" class="block text-white text-base sm:text-lg font-bold mb-2">備註 (選填)</label>
+                    <textarea id="notes" name="notes" rows="3" placeholder="如有特殊需求請在此說明" class="w-full"></textarea>
+                </div>
+                <button type="submit" class="btn-primary w-full text-lg sm:text-xl py-2 sm:py-3 transform hover:scale-105 transition-transform duration-300">
+                    確認訂購並查看付款方式
+                </button>
+            </form>
+        </section>
+
+        <!-- Order Confirmation / Offline Payment Instructions Section (Hidden by default) -->
+        <section id="confirmation-section" class="card hidden">
+            <h2 class="text-2xl font-bold text-white mb-4 text-center">🎉 訂購成功！</h2>
+            <p class="text-base sm:text-lg text-[#E0E1DD] mb-6 text-center">您的訂購資訊已提交。請依照以下說明完成線下付款。</p>
+
+            <div class="space-y-6">
+                <div>
+                    <h3 class="text-xl font-bold text-highlight mb-3">1. 銀行轉帳</h3>
+                    <ul class="list-disc list-inside text-base sm:text-lg text-gray-300 space-y-1">
+                        <li>銀行名稱: 臺灣銀行</li>
+                        <li>銀行代碼: 004</li>
+                        <li>帳號: <span class="font-bold text-white">1234-5678-9012</span></li>
+                        <li>戶名: <span class="font-bold text-white">團購小組</span></li>
+                    </ul>
+                    <p class="text-sm text-gray-400 mt-2">請於轉帳後保留交易明細，以便核對。</p>
+                </div>
+
+                <div>
+                    <h3 class="text-xl font-bold text-highlight mb-3">2. 行動支付 (LINE Pay / 街口支付)</h3>
+                    <p class="text-base sm:text-lg text-gray-300 mb-2">請掃描以下 QR Code 進行支付：</p>
+                    <div class="flex justify-center">
+                        <img src="https://placehold.co/200x200/415A77/E0E1DD?text=LINE+Pay+QR" alt="LINE Pay QR Code" class="w-40 h-40 sm:w-48 sm:h-48 rounded-md">
+                    </div>
+                    <p class="text-sm text-gray-400 mt-2 text-center">（此為示意圖，請使用實際收款QR Code）</p>
+                </div>
+
+                <div>
+                    <h3 class="text-xl font-bold text-highlight mb-3">3. 到店支付</h3>
+                    <ul class="list-disc list-inside text-base sm:text-lg text-gray-300 space-y-1">
+                        <li>地址: 台北市信義區忠孝東路五段123號</li>
+                        <li>營業時間: 週一至週五 10:00 - 18:00</li>
+                        <li>支付方式: 現金 / 信用卡 / 行動支付</li>
+                    </ul>
+                    <p class="text-sm text-gray-400 mt-2">請告知店員您的訂購姓名與電話。</p>
+                </div>
+            </div>
+
+            <p class="text-center text-lg sm:text-xl text-[#F9C74F] font-bold mt-8 mb-4">重要提醒：</p>
+            <p class="text-center text-base sm:text-lg text-white">請務必於下單後 <span class="text-[#F94144] font-bold">24 小時內</span>完成付款，並將付款證明截圖傳送至我們的：</p>
+            <p class="text-center text-base sm:text-lg text-highlight font-bold mt-2">LINE 客服 (LINE ID: @groupbuycoffee) 或 Email (groupbuy@example.com)</p>
+            <p class="text-center text-sm sm:text-md text-gray-400 mt-4">我們將在收到付款證明後盡快為您確認訂單。</p>
+
+            <div class="text-center mt-8">
+                <button type="button" onclick="location.reload()" class="btn-primary text-base sm:text-lg px-5 sm:px-6 py-2">返回首頁</button>
+            </div>
+        </section>
+
+        <!-- FAQ Section -->
+        <section class="card mb-16">
+            <h2 class="text-3xl md:text-4xl font-bold text-white mb-8 text-center">常見問題</h2>
+            <div class="space-y-4">
+                <div class="faq-item">
+                    <div class="faq-question" aria-expanded="false" role="button" tabindex="0">
+                        <span>咖啡豆的烘焙程度是什麼？</span>
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </div>
+                    <div class="faq-answer">
+                        <p class="text-base sm:text-lg">我們的咖啡豆是中度烘焙，旨在完美呈現阿拉比卡豆的堅果與巧克力香氣，同時保留其原始的甜感。</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question" aria-expanded="false" role="button" tabindex="0">
+                        <span>如何確認我的訂單是否成功？</span>
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </div>
+                    <div class="faq-answer">
+                        <p class="text-base sm:text-lg">提交訂單後，頁面會顯示訂購成功訊息及付款指引。請務必依照指示完成線下付款並提供付款證明，我們將在核對後盡快通知您訂單確認。</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question" aria-expanded="false" role="button" tabindex="0">
+                        <span>如果我選擇宅配，運費如何計算？</span>
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </div>
+                    <div class="faq-answer">
+                        <p class="text-base sm:text-lg">宅配運費將依據您的訂購數量和地區另行計算。在您提交訂單後，我們的客服會與您聯繫並告知具體運費金額。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="text-center py-8 text-gray-400 text-sm">
+            <p>&copy; 2025 豪華團購咖啡豆. 版權所有.</p>
+            <p class="mt-2">聯絡我們：<span class="accent-text">groupbuy@example.com</span> | 電話：<span class="accent-text">09XX-XXX-XXX</span></p>
+        </footer>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Carousel Logic
+            const productCarousel = document.getElementById('productCarousel');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const carouselDots = document.getElementById('carouselDots');
+            const slides = productCarousel.children;
+            let currentSlide = 0;
+            const totalSlides = slides.length;
+
+            function updateCarousel() {
+                productCarousel.style.transform = `translateX(-${currentSlide * 100}%)`;
+                Array.from(carouselDots.children).forEach((dot, index) => {
+                    if (index === currentSlide) {
+                        dot.classList.add('opacity-100');
+                        dot.classList.remove('opacity-50');
+                    } else {
+                        dot.classList.add('opacity-50');
+                        dot.classList.remove('opacity-100');
+                    }
+                });
+            }
+
+            prevBtn.addEventListener('click', () => {
+                currentSlide = (currentSlide === 0) ? totalSlides - 1 : currentSlide - 1;
+                updateCarousel();
+            });
+
+            nextBtn.addEventListener('click', () => {
+                currentSlide = (currentSlide === totalSlides - 1) ? 0 : currentSlide + 1;
+                updateCarousel();
+            });
+
+            Array.from(carouselDots.children).forEach(dot => {
+                dot.addEventListener('click', (event) => {
+                    currentSlide = parseInt(event.target.dataset.slide);
+                    updateCarousel();
+                });
+            });
+
+            updateCarousel(); // Initialize carousel position and dots
+
+            // Countdown Timer
+            const countdownElement1 = document.getElementById('countdown1');
+            const countdownElement2 = document.getElementById('countdown2');
+            const countdownElement3 = document.getElementById('countdown3');
+
+            const endDate1 = new Date();
+            endDate1.setDate(endDate1.getDate() + 3); // Product 1 ends in 3 days
+            endDate1.setHours(23, 59, 59, 999);
+
+            const endDate2 = new Date();
+            endDate2.setDate(endDate2.getDate() + 5); // Product 2 ends in 5 days
+            endDate2.setHours(23, 59, 59, 999);
+
+            const endDate3 = new Date();
+            endDate3.setDate(endDate3.getDate() + 7); // Product 3 ends in 7 days
+            endDate3.setHours(23, 59, 59, 999);
+
+            function updateAllCountdowns() {
+                updateSingleCountdown(countdownElement1, endDate1);
+                updateSingleCountdown(countdownElement2, endDate2);
+                updateSingleCountdown(countdownElement3, endDate3);
+            }
+
+            function updateSingleCountdown(element, endDate) {
+                if (!element) return; // Ensure element exists
+                const now = new Date().getTime();
+                const distance = endDate.getTime() - now;
+
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                if (distance < 0) {
+                    element.innerHTML = "團購已結束！";
+                } else {
+                    element.innerHTML = `${days} 天 ${hours} 小時 ${minutes} 分 ${seconds} 秒`;
+                }
+            }
+
+            const countdownIntervals = setInterval(updateAllCountdowns, 1000);
+            updateAllCountdowns(); // Initial call to display immediately
+
+
+            // Form Handling
+            const orderForm = document.getElementById('orderForm');
+            const orderFormSection = document.getElementById('order-form-section');
+            const confirmationSection = document.getElementById('confirmation-section');
+
+            orderForm.addEventListener('submit', function (event) {
+                event.preventDefault(); // Prevent default form submission
+
+                let isValid = true;
+
+                // Simple validation for Name
+                const nameInput = document.getElementById('name');
+                const nameError = document.getElementById('nameError');
+                if (nameInput.value.trim() === '') {
+                    nameError.classList.remove('hidden');
+                    isValid = false;
+                } else {
+                    nameError.classList.add('hidden');
+                }
+
+                // Simple validation for Phone (10 digits, starts with 09)
+                const phoneInput = document.getElementById('phone');
+                const phoneError = document.getElementById('phoneError');
+                const phonePattern = /^09\d{8}$/; // Taiwanese mobile number pattern
+                if (!phonePattern.test(phoneInput.value.trim())) {
+                    phoneError.classList.remove('hidden');
+                    isValid = false;
+                } else {
+                    phoneError.classList.add('hidden');
+                }
+
+                // Simple validation for Quantity
+                const quantityInput = document.getElementById('quantity');
+                const quantityError = document.getElementById('quantityError');
+                const quantity = parseInt(quantityInput.value, 10);
+                if (isNaN(quantity) || quantity < 1) {
+                    quantityError.classList.remove('hidden');
+                    isValid = false;
+                } else {
+                    quantityError.classList.add('hidden');
+                }
+
+                // Simple validation for Pickup Option
+                const pickupOptionSelect = document.getElementById('pickupOption');
+                const pickupOptionError = document.getElementById('pickupOptionError');
+                if (pickupOptionSelect.value === '') {
+                    pickupOptionError.classList.remove('hidden');
+                    isValid = false;
+                } else {
+                    pickupOptionError.classList.add('hidden');
+                }
+
+                if (isValid) {
+                    // For this specific request (no external integration),
+                    // we simply hide the form and show the confirmation.
+                    orderFormSection.classList.add('hidden');
+                    confirmationSection.classList.remove('hidden');
+                    // Scroll to the confirmation section
+                    confirmationSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+
+            // FAQ Accordion Logic
+            const faqQuestions = document.querySelectorAll('.faq-question');
+            faqQuestions.forEach(question => {
+                question.addEventListener('click', () => {
+                    const answer = question.nextElementSibling;
+                    const isExpanded = question.getAttribute('aria-expanded') === 'true';
+
+                    // Close all other open answers
+                    faqQuestions.forEach(otherQuestion => {
+                        if (otherQuestion !== question && otherQuestion.getAttribute('aria-expanded') === 'true') {
+                            otherQuestion.setAttribute('aria-expanded', 'false');
+                            otherQuestion.nextElementSibling.style.display = 'none';
+                        }
+                    });
+
+                    // Toggle current answer
+                    if (isExpanded) {
+                        question.setAttribute('aria-expanded', 'false');
+                        answer.style.display = 'none';
+                    } else {
+                        question.setAttribute('aria-expanded', 'true');
+                        answer.style.display = 'block';
+                    }
+                });
+            });
+        });
+    </script>
+
+</body>
+</html>
