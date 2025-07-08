@@ -102,6 +102,17 @@
         .ribbon-chef {
             background-color: #f97316; /* Orange */
         }
+
+        /* Skeleton loading animation */
+        .skeleton {
+            animation: pulse 1.5s infinite ease-in-out;
+        }
+
+        @keyframes pulse {
+            0% { background-color: #e0e0e0; }
+            50% { background-color: #f0f0f0; }
+            100% { background-color: #e0e0e0; }
+        }
     </style>
 
     <!-- SEO: OG / Twitter Card Meta Tags -->
@@ -251,15 +262,54 @@
             <!-- Fluid Typography for H2 -->
             <h2 class="text-3xl sm:text-4xl md:text-5xl font-bold text-center text-orange-700 mb-12 drop-shadow-sm">{{ t('ourMenu') }}</h2>
 
-            <div v-if="isLoading" class="text-center text-orange-700 text-2xl">
-                <i class="fas fa-spinner fa-spin mr-2"></i>{{ t('loadingMenu') }}
+            <!-- Menu Search and Sort Controls -->
+            <div class="flex flex-col sm:flex-row justify-between items-center mb-8 gap-4">
+                <div class="relative w-full sm:w-1/2 lg:w-1/3">
+                    <input
+                        type="text"
+                        v-model="searchQuery"
+                        :placeholder="t('searchPlaceholder')"
+                        class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
+                        aria-label="搜尋菜單項目"
+                    >
+                    <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                </div>
+                <div class="w-full sm:w-auto">
+                    <select
+                        v-model="sortBy"
+                        class="w-full sm:w-auto px-4 py-2 border border-gray-300 rounded-full shadow-sm bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
+                        aria-label="排序菜單"
+                    >
+                        <option value="default">{{ t('sortByDefault') }}</option>
+                        <option value="priceAsc">{{ t('sortByPriceAsc') }}</option>
+                        <option value="priceDesc">{{ t('sortByPriceDesc') }}</option>
+                        <option value="nameAsc">{{ t('sortByNameAsc') }}</option>
+                    </select>
+                </div>
             </div>
-            <!-- Outer grid container with auto-rows-fr and content-start -->
+
+            <!-- Menu Items Grid -->
+            <div v-if="isLoading" class="grid gap-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 auto-rows-fr content-start">
+                <!-- Skeleton Loading Cards -->
+                <article v-for="n in 8" :key="n" class="flex flex-col h-full bg-white rounded-xl shadow-lg overflow-hidden relative">
+                    <div class="aspect-video w-full bg-gray-200 skeleton"></div>
+                    <div class="p-6 flex flex-col grow">
+                        <div class="h-6 bg-gray-300 rounded w-3/4 mb-2 skeleton"></div>
+                        <div class="h-4 bg-gray-200 rounded w-full mb-4 skeleton"></div>
+                        <div class="h-4 bg-gray-200 rounded w-5/6 skeleton"></div>
+                    </div>
+                    <footer class="flex items-center justify-between px-6 pb-6">
+                        <div class="h-5 bg-gray-300 rounded w-1/4 skeleton"></div>
+                        <div class="h-10 bg-gray-300 rounded-full w-1/4 skeleton"></div>
+                    </footer>
+                </article>
+            </div>
+            <!-- Actual Menu Items -->
             <div v-else class="grid gap-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 auto-rows-fr content-start">
                 <transition-group name="staggered" tag="div" class="contents"> <!-- 'contents' to make transition-group not interfere with grid -->
                     <!-- Semantic Tag: article for each menu item -->
                     <article
-                        v-for="(item, index) in filteredMenuItems"
+                        v-for="(item, index) in filteredAndSortedMenuItems"
                         :key="item.id"
                         class="flex flex-col h-full bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden transform hover:-translate-y-1 relative"
                         :style="{'--stagger-delay': `${index * 0.1}s`}"
@@ -288,13 +338,14 @@
                         <!-- Footer for price and button, pushed to bottom -->
                         <footer class="flex items-center justify-between px-6 pb-6">
                             <span class="text-orange-700 font-bold text-xl">{{ formatCurrency(item.price) }}</span>
-                            <button
+                            <!-- Removed the edit button as it's for administrators only -->
+                            <!-- <button
                                 @click="editItem(item)"
                                 class="bg-amber-500 text-white px-4 py-2 rounded-full text-sm font-medium hover:bg-amber-600 transition duration-300 btn-hover-effect focus:outline-none focus:ring-2 focus:ring-amber-400"
                                 :aria-label="t('editItem', { itemName: item.name })"
                             >
                                 {{ t('edit') }}
-                            </button>
+                            </button> -->
                         </footer>
                     </article>
                 </transition-group>
@@ -387,7 +438,19 @@
             <i class="fas fa-phone-alt mr-2"></i> {{ t('orderNow') }}
         </button>
 
-        <!-- Edit Modal -->
+        <!-- Scroll-to-Top Button -->
+        <transition name="fade">
+            <button
+                v-if="showScrollToTopButton"
+                @click="scrollToTop"
+                class="fixed bottom-24 right-6 bg-orange-500 text-white p-3 rounded-full shadow-lg hover:bg-orange-600 transition duration-300 btn-hover-effect z-40"
+                aria-label="滾動到頂部"
+            >
+                <i class="fas fa-arrow-up text-xl"></i>
+            </button>
+        </transition>
+
+        <!-- Edit Modal (Still present for administrator use, just not triggered by a front-end button) -->
         <transition name="modal">
             <div v-if="showEditModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
                 <div class="bg-white rounded-xl shadow-2xl p-8 w-full max-w-lg transform transition-all duration-300 scale-100 opacity-100">
@@ -419,6 +482,7 @@
                             v-model.number="editedItem.price"
                             class="shadow appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
                         >
+                        <p v-if="validationErrors.price" class="text-red-500 text-xs mt-1">{{ validationErrors.price }}</p>
                     </div>
                     <div class="mb-4">
                         <label for="edit-calories" class="block text-gray-700 text-sm font-bold mb-2">{{ t('calories') }}:</label>
@@ -427,7 +491,7 @@
                             id="edit-calories"
                             v-model="editedItem.calories"
                             class="shadow appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
-                            placeholder="例如：250 大卡"
+                            :placeholder="t('caloriesPlaceholder')"
                         >
                     </div>
                     <div class="mb-6">
@@ -437,7 +501,7 @@
                             id="edit-allergenInfo"
                             v-model="editedItem.allergenInfo"
                             class="shadow appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
-                            placeholder="例如：牛奶、堅果"
+                            :placeholder="t('allergenInfoPlaceholder')"
                         >
                     </div>
                     <div class="mb-6">
@@ -450,6 +514,8 @@
                             <option v-for="cat in categories.slice(1)" :key="cat" :value="cat">{{ t(cat.toLowerCase().replace(' ', '')) }}</option>
                         </select>
                     </div>
+
+                    <p v-if="saveSuccessMessage" class="text-green-600 text-center mb-4">{{ saveSuccessMessage }}</p>
 
                     <div class="flex justify-end gap-4">
                         <button
@@ -528,8 +594,15 @@
                         category: '類別',
                         cancel: '取消',
                         save: '儲存',
-                        filterByCategory: '篩選 {category} 類別',
-                        editItem: '編輯 {itemName} 項目'
+                        saveSuccess: '儲存成功！',
+                        searchPlaceholder: '搜尋菜單...',
+                        sortByDefault: '預設排序',
+                        sortByPriceAsc: '價格：由低到高',
+                        sortByPriceDesc: '價格：由高到低',
+                        sortByNameAsc: '名稱：A-Z',
+                        caloriesPlaceholder: '例如：250 大卡',
+                        allergenInfoPlaceholder: '例如：牛奶、堅果',
+                        priceValidationError: '價格必須是有效的正數。'
                     },
                     'en': {
                         restaurantName: 'Delicious Bistro',
@@ -569,8 +642,15 @@
                         category: 'Category',
                         cancel: 'Cancel',
                         save: 'Save',
-                        filterByCategory: 'Filter by {category} category',
-                        editItem: 'Edit {itemName} item'
+                        saveSuccess: 'Save successful!',
+                        searchPlaceholder: 'Search menu...',
+                        sortByDefault: 'Default Sort',
+                        sortByPriceAsc: 'Price: Low to High',
+                        sortByPriceDesc: 'Price: High to Low',
+                        sortByNameAsc: 'Name: A-Z',
+                        caloriesPlaceholder: 'e.g., 250 kcal',
+                        allergenInfoPlaceholder: 'e.g., Milk, Nuts',
+                        priceValidationError: 'Price must be a valid positive number.'
                     }
                 };
 
@@ -606,7 +686,7 @@
                     // menuItems.value = data;
 
                     // For this example, we'll use a static array after a delay
-                    await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate network delay
+                    await new Promise(resolve => setTimeout(resolve, 1500)); // Simulate network delay for skeleton
                     menuItems.value = [
                         {
                             id: 1,
@@ -615,10 +695,10 @@
                             price: 120,
                             category: '咖啡',
                             image: 'https://placehold.co/400x300/FDBA74/654321?text=經典拿鐵',
-                            isChefRecommended: true, // Desire: Chef Recommended
+                            isChefRecommended: true,
                             isSeasonal: false,
-                            calories: '200 大卡', // Desire: Calories
-                            allergenInfo: '牛奶' // Desire: Allergen Info
+                            calories: '200 大卡',
+                            allergenInfo: '牛奶'
                         },
                         {
                             id: 2,
@@ -652,7 +732,7 @@
                             category: '甜點',
                             image: 'https://placehold.co/400x300/FDBA74/654321?text=提拉米蘇',
                             isChefRecommended: false,
-                            isSeasonal: true, // Desire: Seasonal Limited
+                            isSeasonal: true,
                             calories: '350 大卡',
                             allergenInfo: '雞蛋、牛奶、麩質'
                         },
@@ -725,6 +805,8 @@
 
                 // Currently active category, default to '全部'
                 const activeCategory = ref(t('all'));
+                const searchQuery = ref(''); // New: Search query ref
+                const sortBy = ref('default'); // New: Sort by ref
 
                 // Watch for language changes and update activeCategory to maintain consistency
                 watch(currentLang, (newLang) => {
@@ -738,6 +820,42 @@
                             activeCategory.value = t(originalCategoryKey); // Set to translated category in new language
                         }
                     }
+                });
+
+                // Combined filtering and sorting logic
+                const filteredAndSortedMenuItems = computed(() => {
+                    let items = menuItems.value;
+
+                    // 1. Filter by category
+                    if (activeCategory.value !== t('all')) {
+                        const originalCategoryName = Object.keys(translations['zh-TW']).find(key => translations['zh-TW'][key] === activeCategory.value || translations['en'][key] === activeCategory.value);
+                        if (originalCategoryName) {
+                            items = items.filter(item => item.category === translations['zh-TW'][originalCategoryName]);
+                        }
+                    }
+
+                    // 2. Filter by search query
+                    if (searchQuery.value) {
+                        const query = searchQuery.value.toLowerCase();
+                        items = items.filter(item =>
+                            item.name.toLowerCase().includes(query) ||
+                            item.description.toLowerCase().includes(query) ||
+                            item.category.toLowerCase().includes(query) ||
+                            (item.calories && item.calories.toLowerCase().includes(query)) ||
+                            (item.allergenInfo && item.allergenInfo.toLowerCase().includes(query))
+                        );
+                    }
+
+                    // 3. Sort
+                    if (sortBy.value === 'priceAsc') {
+                        items.sort((a, b) => a.price - b.price);
+                    } else if (sortBy.value === 'priceDesc') {
+                        items.sort((a, b) => b.price - a.price);
+                    } else if (sortBy.value === 'nameAsc') {
+                        items.sort((a, b) => a.name.localeCompare(b.name));
+                    }
+                    // 'default' or any other value means no specific sorting
+                    return items;
                 });
 
 
@@ -754,19 +872,8 @@
                     calories: '',
                     allergenInfo: ''
                 });
-
-                // Computed property to filter menu items based on activeCategory
-                const filteredMenuItems = computed(() => {
-                    if (activeCategory.value === t('all')) {
-                        return menuItems.value;
-                    }
-                    // To filter, we need the original (zh-TW) category name from the current translated activeCategory
-                    const originalCategoryName = Object.keys(translations['zh-TW']).find(key => translations['zh-TW'][key] === activeCategory.value || translations['en'][key] === activeCategory.value);
-                    if (originalCategoryName) {
-                        return menuItems.value.filter(item => item.category === translations['zh-TW'][originalCategoryName]);
-                    }
-                    return []; // Should not happen if categories are correctly mapped
-                });
+                const validationErrors = ref({}); // New: Validation errors ref
+                const saveSuccessMessage = ref(''); // New: Save success message ref
 
 
                 // Method to filter menu items by category and scroll to menu section
@@ -782,16 +889,27 @@
                 };
 
                 // Method to open the edit modal and populate with item data
+                // This function is still available for programmatic use (e.g., console, admin panel)
                 const editItem = (item) => {
                     editingItem.value = item; // Store reference to original item
                     // Create a deep copy for editing to avoid direct mutation
                     editedItem.value = { ...item };
+                    validationErrors.value = {}; // Clear previous errors
+                    saveSuccessMessage.value = ''; // Clear previous success message
                     showEditModal.value = true;
                     document.body.classList.add('overflow-hidden'); // Disable body scroll
                 };
 
                 // Method to save edited item data
                 const saveEditedItem = () => {
+                    validationErrors.value = {}; // Clear previous errors
+
+                    // Basic validation for price
+                    if (editedItem.value.price <= 0 || isNaN(editedItem.value.price)) {
+                        validationErrors.value.price = t('priceValidationError');
+                        return; // Stop if validation fails
+                    }
+
                     if (editingItem.value) {
                         // Find the index of the original item and update it
                         const index = menuItems.value.findIndex(item => item.id === editingItem.value.id);
@@ -810,15 +928,21 @@
                             // Image is not editable in this version, so it remains the same
                         }
                     }
-                    showEditModal.value = false; // Close modal
-                    editingItem.value = null; // Clear editing state
-                    document.body.classList.remove('overflow-hidden'); // Re-enable body scroll
+                    saveSuccessMessage.value = t('saveSuccess'); // Show success message
+                    setTimeout(() => {
+                        showEditModal.value = false; // Close modal after a delay
+                        editingItem.value = null; // Clear editing state
+                        document.body.classList.remove('overflow-hidden'); // Re-enable body scroll
+                        saveSuccessMessage.value = ''; // Clear success message
+                    }, 1500); // Close after 1.5 seconds
                 };
 
                 // Method to cancel editing and close the modal
                 const cancelEdit = () => {
                     showEditModal.value = false;
                     editingItem.value = null; // Clear editing state
+                    validationErrors.value = {}; // Clear errors
+                    saveSuccessMessage.value = ''; // Clear success message
                     document.body.classList.remove('overflow-hidden'); // Re-enable body scroll
                 };
 
@@ -847,6 +971,26 @@
                     // window.open('https://line.me/ti/p/@yourlineid', '_blank');
                 };
 
+                // --- Scroll-to-Top Button Logic ---
+                const showScrollToTopButton = ref(false);
+
+                const handleScroll = () => {
+                    showScrollToTopButton.value = window.scrollY > 200; // Show button after scrolling 200px
+                };
+
+                const scrollToTop = () => {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                };
+
+                onMounted(() => {
+                    window.addEventListener('scroll', handleScroll);
+                });
+
+                // Clean up event listener when component unmounts (optional for single-page app but good practice)
+                Vue.onUnmounted(() => {
+                    window.removeEventListener('scroll', handleScroll);
+                });
+
 
                 // --- PWA Service Worker Registration ---
                 // Service Workers require specific hosting conditions (same origin)
@@ -866,19 +1010,25 @@
                     menuItems,
                     categories,
                     activeCategory,
+                    searchQuery, // Expose search query
+                    sortBy,      // Expose sort by
                     showEditModal,
                     editedItem,
-                    filteredMenuItems,
+                    filteredAndSortedMenuItems, // Use combined computed property
                     isLoading,
                     currentLang,
                     t,
                     formatCurrency,
+                    validationErrors, // Expose validation errors
+                    saveSuccessMessage, // Expose save success message
+                    showScrollToTopButton, // Expose scroll to top button state
                     filterMenu,
-                    editItem,
+                    editItem, // Still exposed for programmatic use
                     saveEditedItem,
                     cancelEdit,
                     handleImageError,
-                    handleOrderCall // Expose to template
+                    handleOrderCall,
+                    scrollToTop // Expose scroll to top function
                 };
             }
         }).mount('#app');
