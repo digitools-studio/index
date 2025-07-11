@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2025 創新科技論壇</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Vue 3 CDN -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <!-- Google Fonts - Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        /* Custom CSS for animations */
+        @keyframes fade-in-down {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fade-in-up {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes bounce-once {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            20% {
+                transform: translateY(-6px);
+            }
+            40% {
+                transform: translateY(0);
+            }
+            60% {
+                transform: translateY(-3px);
+            }
+            80% {
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fade-in-down {
+            animation: fade-in-down 1s ease-out forwards;
+        }
+
+        .animate-fade-in-up {
+            animation: fade-in-up 1s ease-out forwards;
+            animation-delay: 0.3s; /* Delay for a staggered effect */
+        }
+
+        .animate-bounce-once {
+            animation: bounce-once 1.5s ease-in-out 1; /* Play once */
+        }
+
+        .bg-pattern {
+            background-image: url("data:image/svg+xml,%3Csvg width='6' height='6' viewBox='0 0 6 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.4' fill-rule='evenodd'%3E%3Cpath d='M5 0h1L0 6V5zM6 5v1H5z'/%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        /* Icon styling for inline SVGs */
+        .flex.items-center svg {
+            width: 18px;
+            height: 18px;
+            margin-right: 0.5rem; /* Equivalent to mr-2 */
+            color: var(--tw-text-blue-500); /* Equivalent to text-blue-500 */
+            flex-shrink: 0; /* Prevent icon from shrinking */
+        }
+
+        .flex.items-start > div.text-blue-500 svg {
+            width: 24px;
+            height: 24px;
+            margin-right: 1rem; /* Equivalent to mr-4 */
+            margin-top: 0.25rem; /* Equivalent to mt-1 */
+        }
+
+        .text-red-500.flex.items-center.justify-center svg {
+            width: 28px;
+            height: 28px;
+            margin-right: 0.75rem; /* Equivalent to mr-3 */
+        }
+
+        .text-blue-400.flex.items-center.justify-center svg {
+            width: 20px;
+            height: 20px;
+            margin-right: 0.5rem; /* Equivalent to mr-2 */
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <div id="app"></div>
+
+    <script type="module">
+        const { createApp, ref, reactive } = Vue;
+
+        // Speaker Card Component
+        const SpeakerCard = {
+            props: ['name', 'title', 'company', 'bio', 'imageUrl'],
+            methods: {
+                handleImageError(event) {
+                    event.target.onerror = null;
+                    event.target.src = "https://placehold.co/120x120/A78BFA/ffffff?text=Speaker";
+                }
+            },
+            template: `
+                <div class="flex flex-col items-center text-center bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-200">
+                    <img
+                        :src="imageUrl"
+                        :alt="name"
+                        class="w-32 h-32 rounded-full mb-4 object-cover border-4 border-blue-400 shadow-md"
+                        @error="handleImageError"
+                    />
+                    <h3 class="text-xl font-semibold text-gray-900 mb-1">{{ name }}</h3>
+                    <p class="text-blue-600 font-medium mb-2">{{ title }}</p>
+                    <p class="text-gray-700 text-sm italic mb-3">{{ company }}</p>
+                    <p class="text-gray-600 text-sm leading-relaxed">{{ bio }}</p>
+                </div>
+            `
+        };
+
+        // Agenda Item Component
+        const AgendaItem = {
+            props: ['time', 'title', 'description'],
+            template: `
+                <div class="flex items-start bg-gray-50 p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 border border-gray-100">
+                    <div class="text-blue-500 mr-4 mt-1 flex-shrink-0">
+                        <slot></slot> <!-- Slot for icon -->
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-semibold text-blue-700 mb-2">{{ time }}</h3>
+                        <p class="text-gray-800 font-medium">{{ title }}</p>
+                        <p v-if="description" class="text-gray-600 text-sm mt-1">{{ description }}</p>
+                    </div>
+                </div>
+            `
+        };
+
+        // Icon Components (Inline SVG)
+        const ClockIcon = {
+            template: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-clock"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`
+        };
+        const MicIcon = {
+            template: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-mic"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg>`
+        };
+        const CoffeeIcon = {
+            template: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-coffee"><path d="M10 2v6a3 3 0 0 0 3 3h4a3 3 0 0 0 3-3V2H10Z"/><path d="M2 21v-3a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v3H2Z"/><path d="M10 10v1c0 1.1.9 2 2 2h2a2 2 0 0 0 2-2v-1"/></svg>`
+        };
+        const BriefcaseIcon = {
+            template: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-briefcase"><rect width="20" height="14" x="2" y="7" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>`
+        };
+        const MapPinIcon = {
+            template: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-map-pin"><path d="M12 18.3a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9Z"/><path d="M12 22s8-4 8-10A8 8 0 0 0 4 12c0 6 8 10 8 10Z"/></svg>`
+        };
+        const MailIcon = {
+            template: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-mail"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>`
+        };
+        const PhoneIcon = {
+            template: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-phone"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.63A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 1 .7 2.81 2 2 0 0 1-1.11 2.27L8 12.67a19.9 19.9 0 0 0 6.34 6.34l1.78-1.79a2 2 0 0 1 2.27-1.11 12.84 12.84 0 0 1 2.81.7A2 2 0 0 1 22 16.92z"/></svg>`
+        };
+        const UserIcon = {
+            template: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`
+        };
+        const BuildingIcon = {
+            template: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-building"><rect width="16" height="20" x="4" y="2" rx="2" ry="2"/><path d="M9.5 16h5"/><path d="M9.5 12h5"/><path d="M9.5 8h5"/></svg>`
+        };
+        const JobBriefcaseIcon = { // Renamed from Briefcase to avoid conflict with AgendaItem icon
+            template: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-briefcase"><rect width="20" height="14" x="2" y="7" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>`
+        };
+
+        const App = {
+            name: 'App',
+            components: {
+                SpeakerCard,
+                AgendaItem,
+                ClockIcon,
+                MicIcon,
+                CoffeeIcon,
+                BriefcaseIcon,
+                MapPinIcon,
+                MailIcon,
+                PhoneIcon,
+                UserIcon,
+                BuildingIcon,
+                JobBriefcaseIcon,
+            },
+            setup() {
+                // Reactive data for the form
+                const formData = reactive({
+                    name: '',
+                    email: '',
+                    phone: '',
+                    company: '',
+                    jobTitle: '',
+                });
+
+                // Reactive flags for form submission status
+                const formSubmitted = ref(false);
+                const formError = ref('');
+
+                // Handles image loading errors, replacing with a placeholder
+                const handleImageError = (event) => {
+                    event.target.onerror = null; // Prevents infinite loop if placeholder also fails
+                    // Determine appropriate placeholder based on alt text or context
+                    const altText = event.target.alt;
+                    let placeholderText = 'Image';
+                    if (altText.includes('贊助商')) {
+                        placeholderText = altText;
+                    } else if (altText.includes('地圖')) {
+                        placeholderText = '地圖預覽區塊';
+                    } else {
+                        placeholderText = 'Speaker'; // Default for speaker images
+                    }
+                    event.target.src = `https://placehold.co/${event.target.width || 120}x${event.target.height || 120}/E5E7EB/6B7280?text=${placeholderText}`;
+                };
+
+                // Handles form submission
+                const handleSubmit = () => {
+                    formError.value = ''; // Clear previous errors
+
+                    // Basic validation
+                    if (!formData.name || !formData.email || !formData.phone) {
+                        formError.value = '請填寫所有必填欄位 (姓名、Email、電話)。';
+                        return;
+                    }
+                    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+                        formError.value = '請輸入有效的 Email 地址。';
+                        return;
+                    }
+                    if (!/^\d+$/.test(formData.phone)) {
+                        formError.value = '請輸入有效的電話號碼。';
+                        return;
+                    }
+
+                    // In a real application, you would send this data to a backend server.
+                    console.log('報名表單提交:', formData);
+                    formSubmitted.value = true;
+                    // Clear form after submission
+                    formData.name = '';
+                    formData.email = '';
+                    formData.phone = '';
+                    formData.company = '';
+                    formData.jobTitle = '';
+
+                    // Hide success message after a few seconds
+                    setTimeout(() => {
+                        formSubmitted.value = false;
+                    }, 5000);
+                };
+
+                return {
+                    formData,
+                    formSubmitted,
+                    formError,
+                    handleImageError,
+                    handleSubmit,
+                };
+            },
+            template: `
+                <div class="min-h-screen bg-gray-100 font-sans text-gray-800">
+                    <!-- Hero Section -->
+                    <header class="bg-gradient-to-r from-blue-600 to-purple-700 text-white py-20 px-4 sm:px-6 lg:px-8 text-center rounded-b-3xl shadow-2xl relative overflow-hidden">
+                        <div class="absolute inset-0 bg-pattern opacity-10"></div>
+                        <div class="max-w-4xl mx-auto relative z-10">
+                            <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold mb-4 animate-fade-in-down drop-shadow-lg">
+                                2025 創新科技論壇
+                            </h1>
+                            <p class="text-lg sm:text-xl lg:text-2xl mb-8 animate-fade-in-up leading-relaxed">
+                                掌握未來趨勢，與業界精英共同探討最新科技發展。
+                                <br />
+                                共同開啟創新思維，引領產業變革！
+                            </p>
+                            <a href="#registration" class="inline-block">
+                                <button class="bg-white text-blue-700 hover:bg-blue-100 font-bold py-3 px-8 rounded-full shadow-xl transform transition duration-300 hover:scale-105 focus:outline-none focus:ring-4 focus:ring-blue-300 animate-bounce-once">
+                                    立即報名
+                                </button>
+                            </a>
+                        </div>
+                    </header>
+
+                    <!-- Event Agenda Section -->
+                    <section id="agenda" class="py-16 px-4 sm:px-6 lg:px-8 bg-white shadow-xl rounded-2xl mx-4 sm:mx-6 lg:mx-auto max-w-6xl mt-12 border border-gray-200">
+                        <h2 class="text-3xl sm:text-4xl font-bold text-center text-gray-900 mb-4">
+                            活動議程
+                        </h2>
+                        <p class="text-xl text-center text-gray-600 mb-10">
+                            精彩內容不容錯過！提前規劃您的參與，掌握每個關鍵時刻。
+                        </p>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <AgendaItem time="上午 09:00 - 09:30" title="報到與交流" description="歡迎所有與會者，領取資料並進行自由交流。">
+                                <ClockIcon />
+                            </AgendaItem>
+                            <AgendaItem time="上午 09:30 - 10:30" title="開幕致詞與主題演講" description="AI的未來趨勢：人工智慧如何重塑產業格局。">
+                                <MicIcon />
+                            </AgendaItem>
+                            <AgendaItem time="上午 10:30 - 11:00" title="茶歇與展覽" description="享受茶點，參觀最新科技產品與解決方案展示。">
+                                <CoffeeIcon />
+                            </AgendaItem>
+                            <AgendaItem time="上午 11:00 - 12:00" title="專題討論" description="區塊鏈技術的應用與挑戰：從理論到實踐。">
+                                <BriefcaseIcon />
+                            </AgendaItem>
+                            <AgendaItem time="中午 12:00 - 13:30" title="午餐" description="提供精緻午餐，讓您在輕鬆氛圍中繼續交流。">
+                                <CoffeeIcon />
+                            </AgendaItem>
+                            <AgendaItem time="下午 13:30 - 15:00" title="分組研討" description="物聯網與智慧城市：打造更智能的未來生活。">
+                                <MapPinIcon />
+                            </AgendaItem>
+                            <AgendaItem time="下午 15:00 - 15:30" title="茶歇與自由交流" description="再次提供茶點，讓與會者有更多時間進行深度交流。">
+                                <CoffeeIcon />
+                            </AgendaItem>
+                            <AgendaItem time="下午 15:30 - 16:30" title="閉幕演講" description="量子計算的突破與展望：下一個科技前沿。">
+                                <MicIcon />
+                            </AgendaItem>
+                            <AgendaItem time="下午 16:30 - 17:00" title="圓滿結束" description="感謝您的參與，期待下次再見！">
+                                <ClockIcon />
+                            </AgendaItem>
+                        </div>
+                    </section>
+
+                    <!-- Featured Speakers Section -->
+                    <section id="speakers" class="py-16 px-4 sm:px-6 lg:px-8 bg-gray-50 shadow-xl rounded-2xl mx-4 sm:mx-6 lg:mx-auto max-w-6xl mt-12 border border-gray-200">
+                        <h2 class="text-3xl sm:text-4xl font-bold text-center text-gray-900 mb-10">
+                            特邀講者
+                        </h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                            <SpeakerCard
+                                name="陳大明"
+                                title="AI研究首席科學家"
+                                company="未來科技研究院"
+                                bio="陳博士在人工智慧領域深耕二十餘載，專精於機器學習與自然語言處理，其研究成果多次發表於國際頂級期刊。"
+                                imageUrl="https://placehold.co/120x120/A78BFA/ffffff?text=陳大明"
+                            />
+                            <SpeakerCard
+                                name="林小華"
+                                title="區塊鏈技術總監"
+                                company="鏈動創新公司"
+                                bio="林總監是區塊鏈技術的先驅者，擁有豐富的區塊鏈項目開發與管理經驗，致力於推動區塊鏈在金融領域的應用。"
+                                imageUrl="https://placehold.co/120x120/60A5FA/ffffff?text=林小華"
+                            />
+                            <SpeakerCard
+                                name="王美玲"
+                                title="物聯網解決方案架構師"
+                                company="智慧城市聯盟"
+                                bio="王架構師專注於物聯網與智慧城市解決方案的設計與實施，對智慧交通、智慧能源等領域有獨到見解。"
+                                imageUrl="https://placehold.co/120x120/34D399/ffffff?text=王美玲"
+                            />
+                        </div>
+                    </section>
+
+                    <!-- Registration Form Section -->
+                    <section id="registration" class="py-16 px-4 sm:px-6 lg:px-8 bg-blue-50 shadow-xl rounded-2xl mx-4 sm:mx-6 lg:mx-auto max-w-6xl mt-12 border border-blue-200">
+                        <h2 class="text-3xl sm:text-4xl font-bold text-center text-blue-800 mb-10">
+                            立即報名
+                        </h2>
+                        <p class="text-center text-gray-700 mb-8 max-w-2xl mx-auto">
+                            請填寫以下資訊完成報名，我們將會寄送確認信至您的信箱。名額有限，請盡早報名！
+                        </p>
+
+                        <form @submit.prevent="handleSubmit" class="max-w-md mx-auto bg-white p-8 rounded-lg shadow-lg border border-gray-200">
+                            <div v-if="formSubmitted" class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
+                                <strong class="font-bold">成功！</strong>
+                                <span class="block sm:inline"> 您的報名已提交，感謝您的參與！</span>
+                            </div>
+                            <div v-if="formError" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+                                <strong class="font-bold">錯誤！</strong>
+                                <span class="block sm:inline"> {{ formError }}</span>
+                            </div>
+
+                            <div class="mb-6">
+                                <label for="name" class="block text-gray-700 text-sm font-bold mb-2 flex items-center">
+                                    <UserIcon /> 姓名 <span class="text-red-500 ml-1">*</span>
+                                </label>
+                                <input
+                                    type="text"
+                                    id="name"
+                                    name="name"
+                                    v-model="formData.name"
+                                    class="shadow appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200"
+                                    placeholder="您的姓名"
+                                    required
+                                />
+                            </div>
+
+                            <div class="mb-6">
+                                <label for="email" class="block text-gray-700 text-sm font-bold mb-2 flex items-center">
+                                    <MailIcon /> Email <span class="text-red-500 ml-1">*</span>
+                                </label>
+                                <input
+                                    type="email"
+                                    id="email"
+                                    name="email"
+                                    v-model="formData.email"
+                                    class="shadow appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200"
+                                    placeholder="您的Email地址"
+                                    required
+                                />
+                            </div>
+
+                            <div class="mb-6">
+                                <label for="phone" class="block text-gray-700 text-sm font-bold mb-2 flex items-center">
+                                    <PhoneIcon /> 電話 <span class="text-red-500 ml-1">*</span>
+                                </label>
+                                <input
+                                    type="tel"
+                                    id="phone"
+                                    name="phone"
+                                    v-model="formData.phone"
+                                    class="shadow appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200"
+                                    placeholder="您的電話號碼"
+                                    required
+                                />
+                            </div>
+
+                            <div class="mb-6">
+                                <label for="company" class="block text-gray-700 text-sm font-bold mb-2 flex items-center">
+                                    <BuildingIcon /> 公司/組織
+                                </label>
+                                <input
+                                    type="text"
+                                    id="company"
+                                    name="company"
+                                    v-model="formData.company"
+                                    class="shadow appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200"
+                                    placeholder="您的公司或組織名稱"
+                                />
+                            </div>
+
+                            <div class="mb-8">
+                                <label for="jobTitle" class="block text-gray-700 text-sm font-bold mb-2 flex items-center">
+                                    <JobBriefcaseIcon /> 職稱
+                                </label>
+                                <input
+                                    type="text"
+                                    id="jobTitle"
+                                    name="jobTitle"
+                                    v-model="formData.jobTitle"
+                                    class="shadow appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200"
+                                    placeholder="您的職稱"
+                                />
+                            </div>
+
+                            <div class="flex items-center justify-center">
+                                <button
+                                    type="submit"
+                                    class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-full focus:outline-none focus:ring-4 focus:ring-blue-300 transition-all duration-300 transform hover:scale-105 shadow-md"
+                                >
+                                    提交報名
+                                </button>
+                            </div>
+                        </form>
+                    </section>
+
+                    <!-- Sponsors Section -->
+                    <section id="sponsors" class="py-16 px-4 sm:px-6 lg:px-8 bg-white shadow-xl rounded-2xl mx-4 sm:mx-6 lg:mx-auto max-w-6xl mt-12 border border-gray-200">
+                        <h2 class="text-3xl sm:text-4xl font-bold text-center text-gray-900 mb-10">
+                            感謝贊助商
+                        </h2>
+                        <div class="flex flex-wrap justify-center items-center gap-8">
+                            <img
+                                src="https://placehold.co/150x80/E0F2FE/2563EB?text=創新科技"
+                                alt="創新科技"
+                                class="h-20 object-contain rounded-md shadow-sm hover:scale-105 transition-transform duration-300"
+                                @error="handleImageError"
+                            />
+                            <img
+                                src="https://placehold.co/150x80/FFE4E6/DC2626?text=智慧未來"
+                                alt="智慧未來"
+                                class="h-20 object-contain rounded-md shadow-sm hover:scale-105 transition-transform duration-300"
+                                @error="handleImageError"
+                            />
+                            <img
+                                src="https://placehold.co/150x80/D1FAE5/059669?text=數位轉型"
+                                alt="數位轉型"
+                                class="h-20 object-contain rounded-md shadow-sm hover:scale-105 transition-transform duration-300"
+                                @error="handleImageError"
+                            />
+                            <img
+                                src="https://placehold.co/150x80/FFFBEB/D97706?text=領航者"
+                                alt="領航者"
+                                class="h-20 object-contain rounded-md shadow-sm hover:scale-105 transition-transform duration-300"
+                                @error="handleImageError"
+                            />
+                        </div>
+                    </section>
+
+                    <!-- Location Section -->
+                    <section id="location" class="py-16 px-4 sm:px-6 lg:px-8 bg-gray-50 shadow-xl rounded-2xl mx-4 sm:mx-6 lg:mx-auto max-w-6xl mt-12 border border-gray-200">
+                        <h2 class="text-3xl sm:text-4xl font-bold text-center text-gray-900 mb-6">
+                            活動地點
+                        </h2>
+                        <p class="text-xl text-center text-blue-700 mb-8 flex items-center justify-center">
+                            <MapPinIcon class="mr-3 text-red-500" />
+                            台北國際會議中心
+                        </p>
+                        <div class="relative w-full h-64 sm:h-80 md:h-96 bg-gray-200 rounded-lg overflow-hidden shadow-lg border-2 border-gray-300">
+                            <img
+                                src="https://placehold.co/800x400/E5E7EB/6B7280?text=地圖預覽區塊"
+                                alt="地圖預覽"
+                                class="w-full h-full object-cover"
+                                @error="handleImageError"
+                            />
+                            <div class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-40 text-white text-2xl font-bold">
+                                地圖預覽區塊
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Contact Us Footer -->
+                    <footer class="bg-gray-900 text-white py-10 px-4 sm:px-6 lg:px-8 mt-12 rounded-t-3xl shadow-inner">
+                        <div class="max-w-4xl mx-auto text-center">
+                            <h2 class="text-2xl sm:text-3xl font-bold mb-4">聯絡我們</h2>
+                            <p class="text-lg sm:text-xl flex items-center justify-center mb-2">
+                                <MailIcon class="mr-2 text-blue-400" />
+                                Email: <a href="mailto:info@event.com" class="text-blue-400 hover:underline ml-2">info@event.com</a>
+                            </p>
+                            <p class="text-lg sm:text-xl flex items-center justify-center">
+                                <PhoneIcon class="mr-2 text-blue-400" />
+                                電話: <a href="tel:0212345678" class="text-blue-400 hover:underline ml-2">02-1234-5678</a>
+                            </p>
+                            <p class="text-sm text-gray-500 mt-6">
+                                © 2025 創新科技論壇. All rights reserved.
+                            </p>
+                        </div>
+                    </footer>
+                </div>
+            `
+        };
+
+        // Mount the Vue application
+        createApp(App).mount('#app');
+    </script>
+</body>
+</html>
