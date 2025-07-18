@@ -1,0 +1,12 @@
+/* main.css */
+html {
+    scroll-behavior: smooth;
+}
+body {
+    font-family: 'Inter', '微軟正黑體', sans-serif;
+}
+/* ...其餘自訂樣式... */
+.preview-font-inter { font-family: 'Inter', sans-serif; }
+.preview-font-roboto { font-family: 'Roboto', sans-serif; }
+.preview-font-serif { font-family: 'Noto Serif TC', serif; }
+/* ...其餘 CSS ... */
