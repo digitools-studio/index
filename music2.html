@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>品牌名｜古典・流行鋼琴樂譜分享平台</title>
+    <meta name="description" content="提供古典、流行與原創鋼琴樂譜，附演奏影音示範。簡約現代風格，一頁覽盡所有樂譜資訊，支援中英文切換，立即聯絡取得樂譜！">
+
+    <!-- 這裡示範 hreflang 標記，在實際部署時，每個語言頁面應指向對應的 URL -->
+    <!-- <link rel="alternate" hreflang="en" href="https://mysite.com/en/"> -->
+    <!-- <link rel="alternate" hreflang="zh-Hant" href="https://mysite.com/zh/"> -->
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class', // 啟用深色模式
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'sans': ['Noto Sans TC', 'Inter', 'ui-sans-serif', 'system-ui'],
+                    },
+                    colors: {
+                        brand: {
+                            500: '#5A5862', // 主色
+                            700: '#3D3B43', // 深色
+                        },
+                        accent: {
+                            500: '#C76A2C', // 強調色
+                        }
+                    },
+                    animation: {
+                        'fade-in-up': 'fadeInUp 0.8s ease-out forwards',
+                    },
+                    keyframes: {
+                        fadeInUp: {
+                            '0%': { opacity: 0, transform: 'translateY(20px)' },
+                            '100%': { opacity: 1, transform: 'translateY(0)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* 確保所有元素平滑過渡 */
+        * {
+            transition: all 0.3s ease-in-out;
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #F7F5F0;
+            color: #333;
+        }
+        .dark body {
+            background-color: #121212;
+            color: #E0E0E0;
+        }
+        .hero-bg {
+            /* 模擬影片背景效果 */
+            background-image: url('https://placehold.co/1920x1080/4F4D52/FFF?text=Dynamic+Piano+Performance+Video');
+            background-size: cover;
+            background-position: center;
+        }
+        .video-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%; /* 16:9 比例 */
+            height: 0;
+            overflow: hidden;
+        }
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+
+    <!-- JSON-LD 結構化資料，動態根據語言切換內容 -->
+    <script type="application/ld+json" id="schema-ld">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "XX樂譜網站",
+      "url": "https://mysite.com",
+      "logo": "https://placehold.co/100x40/5A5862/FFF?text=Logo",
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "telephone": "+886-900-000-000",
+        "email": "contact@mysite.com",
+        "contactType": "customer service"
+      },
+      "sameAs": [
+        "https://www.facebook.com/yourbrand",
+        "https://www.instagram.com/yourbrand"
+      ]
+    }
+    </script>
+</head>
+<body class="bg-gray-100 dark:bg-zinc-900 text-gray-800 dark:text-gray-100">
+
+    <div id="app" class="relative">
+        <!-- 固定導航列 -->
+        <header class="fixed top-0 left-0 right-0 z-50 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-sm shadow-sm py-4">
+            <nav class="container mx-auto px-6 flex justify-between items-center">
+                <a href="#hero" class="text-brand-700 dark:text-gray-100 font-bold text-2xl">
+                    <span v-if="language === 'zh'">樂譜網站</span>
+                    <span v-else>Brand Name</span>
+                </a>
+                <div class="flex items-center space-x-4 md:space-x-6">
+                    <ul class="hidden md:flex space-x-6 text-brand-700 dark:text-gray-100">
+                        <li><a href="#about" class="hover:text-accent-500">
+                            <span v-if="language === 'zh'">關於我們</span><span v-else>About</span>
+                        </a></li>
+                        <li><a href="#videos" class="hover:text-accent-500">
+                            <span v-if="language === 'zh'">影音展示</span><span v-else>Videos</span>
+                        </a></li>
+                        <li><a href="#sheet-music" class="hover:text-accent-500">
+                            <span v-if="language === 'zh'">精選樂譜</span><span v-else>Scores</span>
+                        </a></li>
+                        <li><a href="#contact" class="hover:text-accent-500">
+                            <span v-if="language === 'zh'">聯絡我們</span><span v-else>Contact</span>
+                        </a></li>
+                    </ul>
+                    <!-- 深色模式切換按鈕 -->
+                    <button @click="toggleDarkMode" class="p-2 rounded-full text-brand-500 dark:text-white hover:text-accent-500 dark:hover:text-accent-500">
+                        <svg v-if="darkMode" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sun"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+                        <svg v-else xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-moon"><path d="M12 3a6.364 6.364 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+                    </button>
+                    <!-- 語言切換按鈕 -->
+                    <button @click="toggleLanguage" class="flex items-center space-x-1 text-brand-500 hover:text-accent-500 font-bold p-2 rounded-full border border-brand-500/20 dark:text-white dark:border-white/20 dark:hover:text-accent-500">
+                        <span v-if="language === 'zh'" class="text-xs">EN</span>
+                        <span v-else class="text-xs">中</span>
+                    </button>
+                </div>
+            </nav>
+        </header>
+
+        <main>
+            <!-- Hero 首屏區 -->
+            <section id="hero" class="hero-bg h-screen flex items-center justify-center text-center text-white relative">
+                <div class="absolute inset-0 bg-black/50"></div>
+                <div class="z-10 p-4 animate-fade-in-up">
+                    <h1 class="text-4xl md:text-6xl font-bold mb-4 leading-tight">
+                        <span v-if="language === 'zh'">精選古典・流行鋼琴樂譜</span>
+                        <span v-else>Classical & Pop Piano Sheet Music</span>
+                    </h1>
+                    <p class="text-lg md:text-xl max-w-2xl mx-auto mb-8">
+                        <span v-if="language === 'zh'">一頁覽盡所有樂譜資訊，隨時瀏覽下載。</span>
+                        <span v-else>Browse and download our curated collection of piano scores.</span>
+                    </p>
+                    <a href="#sheet-music" class="bg-accent-500 text-white font-bold py-3 px-8 rounded-full shadow-lg hover:bg-accent-700 transition-colors active:scale-95">
+                        <span v-if="language === 'zh'">立即瀏覽樂譜</span>
+                        <span v-else>Browse Scores Now</span>
+                    </a>
+                </div>
+            </section>
+
+            <!-- 關於我們區 -->
+            <section id="about" class="py-20 md:py-32 container mx-auto px-6">
+                <div class="max-w-4xl mx-auto text-center animate-fade-in-up">
+                    <h2 class="text-3xl md:text-4xl font-bold text-brand-700 dark:text-gray-100 mb-8">
+                        <span v-if="language === 'zh'">我們的理念</span>
+                        <span v-else>Our Philosophy</span>
+                    </h2>
+                    <p class="text-lg text-brand-500 dark:text-gray-300 leading-relaxed mb-6">
+                        <span v-if="language === 'zh'">我們相信音樂的魔力應該被分享。因此我們精心挑選並編排了豐富的鋼琴樂譜，涵蓋古典、流行與原創作品，希望讓每一位愛樂者都能輕鬆彈奏出動人的旋律。</span>
+                        <span v-else>We believe in the power of music to connect people. Our mission is to provide a curated collection of piano sheet music, from classical and pop to original compositions, making it easy for every music lover to find and play their favorite tunes.</span>
+                    </p>
+                    <a href="#contact" class="text-accent-500 hover:text-brand-700 dark:hover:text-gray-100 font-bold text-sm underline">
+                        <span v-if="language === 'zh'">聯絡我們瞭解更多</span>
+                        <span v-else>Contact Us to Learn More</span>
+                    </a>
+                </div>
+            </section>
+
+            <!-- 影音展示區 -->
+            <section id="videos" class="py-20 md:py-32 bg-gray-100 dark:bg-zinc-800">
+                <div class="container mx-auto px-6 animate-fade-in-up">
+                    <h2 class="text-3xl md:text-4xl font-bold text-center text-brand-700 dark:text-gray-100 mb-12">
+                        <span v-if="language === 'zh'">精選影音展示</span>
+                        <span v-else>Video Highlights</span>
+                    </h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        <div v-for="video in videos[language]" :key="video.id" class="rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-shadow bg-white dark:bg-zinc-700 animate-fade-in-up">
+                            <div class="video-container">
+                                <iframe :src="video.embedUrl" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen class="w-full"></iframe>
+                            </div>
+                            <div class="p-6">
+                                <h3 class="text-xl font-bold text-brand-700 dark:text-gray-100 mb-2">{{ video.title }}</h3>
+                                <p class="text-sm text-brand-500 dark:text-gray-300 mb-4 line-clamp-2">{{ video.description }}</p>
+                                <a :href="video.watchUrl" target="_blank" class="text-sm font-semibold text-accent-500 hover:underline">
+                                    <span v-if="language === 'zh'">觀看完整演奏 →</span>
+                                    <span v-else>Watch Full Performance →</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 樂譜作品區 -->
+            <section id="sheet-music" class="py-20 md:py-32 container mx-auto px-6">
+                <div class="animate-fade-in-up">
+                    <h2 class="text-3xl md:text-4xl font-bold text-center text-brand-700 dark:text-gray-100 mb-12">
+                        <span v-if="language === 'zh'">我們的樂譜作品</span>
+                        <span v-else>Our Sheet Music Collection</span>
+                    </h2>
+                    
+                    <!-- 搜尋與篩選功能 -->
+                    <div class="mb-10 text-center flex flex-col md:flex-row items-center justify-center gap-4">
+                        <input
+                            v-model="searchQuery"
+                            type="text"
+                            :placeholder="language === 'zh' ? '搜尋樂譜...' : 'Search scores...'"
+                            class="w-full md:w-1/3 px-4 py-3 rounded-full border border-gray-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-brand-700 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-accent-500 transition-all"
+                        >
+                        <div class="inline-flex rounded-full bg-gray-200 dark:bg-zinc-700 p-1 flex-wrap justify-center">
+                            <button
+                                @click="filterDifficulty = ''"
+                                :class="{'bg-white dark:bg-zinc-600 shadow-md': filterDifficulty === ''}"
+                                class="px-4 py-2 rounded-full text-sm font-semibold text-brand-700 dark:text-gray-100 hover:bg-white dark:hover:bg-zinc-600 hover:shadow-md transition-all active:scale-95"
+                            >
+                                <span v-if="language === 'zh'">所有難度</span>
+                                <span v-else>All</span>
+                            </button>
+                            <button
+                                v-for="difficulty in (language === 'zh' ? Object.keys(difficultyMap) : Object.values(difficultyMap))"
+                                :key="difficulty"
+                                @click="filterDifficulty = difficulty"
+                                :class="{'bg-white dark:bg-zinc-600 shadow-md': filterDifficulty === difficulty}"
+                                class="px-4 py-2 rounded-full text-sm font-semibold text-brand-700 dark:text-gray-100 hover:bg-white dark:hover:bg-zinc-600 hover:shadow-md transition-all active:scale-95"
+                            >
+                                {{ difficulty }}
+                            </button>
+                        </div>
+                    </div>
+
+                    <div v-for="(categoryData, category) in filteredSheetMusic[language]" :key="category" :id="category" class="mb-16">
+                        <h3 v-if="categoryData.length > 0" class="text-2xl font-bold text-brand-700 dark:text-gray-100 border-b-2 border-accent-500 pb-2 mb-6 animate-fade-in-up">
+                            <span v-if="language === 'zh'">{{ categoryMap[category].zh }}</span>
+                            <span v-else>{{ categoryMap[category].en }}</span>
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                            <div
+                                v-for="sheet in categoryData"
+                                :key="sheet.id"
+                                @click="openModal(sheet)"
+                                class="bg-white dark:bg-zinc-800 rounded-xl overflow-hidden shadow-lg hover:shadow-xl hover:scale-105 transition-all flex flex-col cursor-pointer animate-fade-in-up"
+                            >
+                                <img :src="sheet.image" :alt="sheet.title" class="w-full h-48 object-cover">
+                                <div class="p-6 flex-grow flex flex-col">
+                                    <h3 class="text-xl font-bold text-brand-700 dark:text-gray-100 mb-1">{{ sheet.title }}</h3>
+                                    <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">{{ sheet.composer }}</p>
+                                    <p class="text-sm text-brand-500 dark:text-gray-300 mb-4 flex-grow line-clamp-3">{{ sheet.description }}</p>
+                                    <div class="flex items-center justify-between mt-auto">
+                                        <div class="text-sm text-gray-500 dark:text-gray-400">
+                                            <span v-if="language === 'zh'">難度：</span><span v-else>Level: </span>
+                                            <span class="font-semibold">{{ sheet.difficulty }}</span>
+                                        </div>
+                                        <div class="bg-accent-500 text-white font-bold py-2 px-6 rounded-full hover:bg-accent-700 transition-colors active:scale-95">
+                                            <span v-if="language === 'zh'">索取樂譜</span>
+                                            <span v-else>Get Score</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- CTA 橫幅區 -->
+            <section class="bg-brand-700 dark:bg-zinc-900 py-16">
+                <div class="container mx-auto px-6 text-center animate-fade-in-up">
+                    <h2 class="text-3xl md:text-4xl font-bold text-white mb-6 leading-tight">
+                        <span v-if="language === 'zh'">準備好彈奏屬於你的旋律了嗎？</span>
+                        <span v-else>Ready to Play Your Melody?</span>
+                    </h2>
+                    <a href="#contact" class="bg-accent-500 text-white font-bold py-3 px-8 rounded-full shadow-lg hover:bg-accent-700 transition-colors text-lg active:scale-95">
+                        <span v-if="language === 'zh'">立即聯絡我們</span>
+                        <span v-else>Contact Us Now</span>
+                    </a>
+                </div>
+            </section>
+            
+            <!-- 聯絡我們／頁腳區 -->
+            <section id="contact" class="py-20 md:py-32 container mx-auto px-6">
+                <footer class="grid grid-cols-1 md:grid-cols-2 gap-12 animate-fade-in-up">
+                    <div class="text-brand-700 dark:text-gray-100">
+                        <h2 class="text-3xl md:text-4xl font-bold mb-6">
+                            <span v-if="language === 'zh'">聯絡我們</span>
+                            <span v-else>Contact Us</span>
+                        </h2>
+                        <p class="text-lg mb-6 text-brand-500 dark:text-gray-300">
+                            <span v-if="language === 'zh'">填寫表單或使用以下方式與我們聯絡，我們將盡快回覆。</span>
+                            <span v-else>Fill out the form or use the contact methods below, and we'll get back to you as soon as possible.</span>
+                        </p>
+                        <ul class="space-y-2 text-sm text-brand-500 dark:text-gray-400">
+                            <li><strong>Email:</strong> contact@mysite.com</li>
+                            <li><strong>Tel:</strong> +886-900-000-000</li>
+                            <li>
+                                <a href="#" target="_blank" class="flex items-center space-x-2 hover:text-accent-500">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-facebook"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+                                    <span>Facebook</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" target="_blank" class="flex items-center space-x-2 hover:text-accent-500">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-instagram"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
+                                    <span>Instagram</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div>
+                        <form class="space-y-4">
+                            <div>
+                                <label for="name" class="block text-sm font-medium text-brand-700 dark:text-gray-100 mb-1">
+                                    <span v-if="language === 'zh'">您的姓名</span>
+                                    <span v-else>Your Name</span>
+                                </label>
+                                <input type="text" id="name" class="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 focus:outline-none focus:ring-2 focus:ring-accent-500" required>
+                            </div>
+                            <div>
+                                <label for="email" class="block text-sm font-medium text-brand-700 dark:text-gray-100 mb-1">
+                                    <span v-if="language === 'zh'">電子郵件</span>
+                                    <span v-else>Email</span>
+                                </label>
+                                <input type="email" id="email" class="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 focus:outline-none focus:ring-2 focus:ring-accent-500" required>
+                            </div>
+                            <div>
+                                <label for="message" class="block text-sm font-medium text-brand-700 dark:text-gray-100 mb-1">
+                                    <span v-if="language === 'zh'">您的訊息</span>
+                                    <span v-else>Your Message</span>
+                                </label>
+                                <textarea id="message" rows="4" class="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 focus:outline-none focus:ring-2 focus:ring-accent-500" required></textarea>
+                            </div>
+                            <button type="submit" class="w-full bg-brand-700 dark:bg-accent-500 text-white font-bold py-3 px-8 rounded-full hover:bg-brand-500 dark:hover:bg-accent-700 transition-colors active:scale-95">
+                                <span v-if="language === 'zh'">送出詢問</span>
+                                <span v-else>Send Message</span>
+                            </button>
+                        </form>
+                    </div>
+                </footer>
+                <div class="text-center text-sm text-gray-500 dark:text-gray-400 mt-12">
+                    <p>&copy; 2024 Your Brand. All rights reserved.</p>
+                </div>
+            </section>
+        </main>
+        
+        <!-- 樂譜詳情彈出視窗 (Modal / Lightbox) -->
+        <div v-if="showModal" class="fixed inset-0 z-[100] bg-black/80 flex items-center justify-center p-4" @click.self="closeModal">
+            <div class="bg-white dark:bg-zinc-800 rounded-2xl overflow-hidden shadow-2xl max-w-4xl w-full max-h-[90vh] flex flex-col">
+                <!-- 關閉按鈕 -->
+                <div class="flex justify-end p-4">
+                    <button @click="closeModal" class="text-gray-500 dark:text-gray-400 hover:text-brand-700 dark:hover:text-gray-100">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                    </button>
+                </div>
+
+                <div v-if="selectedSheet" class="p-6 md:p-8 flex-grow overflow-y-auto">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <!-- 左側：樂譜圖片與資訊 -->
+                        <div class="flex flex-col space-y-4">
+                            <img :src="selectedSheet.image" :alt="selectedSheet.title" class="w-full h-auto rounded-lg shadow-md">
+                            <h3 class="text-3xl font-bold text-brand-700 dark:text-gray-100">{{ selectedSheet.title }}</h3>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">{{ selectedSheet.composer }}</p>
+                            <p class="text-sm text-brand-500 dark:text-gray-300">
+                                <span v-if="language === 'zh'">描述：</span><span v-else>Description: </span>
+                                {{ selectedSheet.description }}
+                            </p>
+                            <div class="flex items-center space-x-4 text-sm text-gray-500 dark:text-gray-400">
+                                <div>
+                                    <span v-if="language === 'zh'">難度：</span><span v-else>Level: </span>
+                                    <span class="font-semibold">{{ selectedSheet.difficulty }}</span>
+                                </div>
+                                <div>
+                                    <span v-if="language === 'zh'">曲風：</span><span v-else>Genre: </span>
+                                    <span class="font-semibold">{{ categoryMap[selectedSheet.category][language] }}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 右側：影片與聯絡按鈕 -->
+                        <div class="flex flex-col space-y-6">
+                            <div class="video-container rounded-lg shadow-md" v-if="selectedSheet.videoUrl">
+                                <iframe :src="selectedSheet.videoUrl" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                            </div>
+                            <div class="flex justify-center">
+                                <a href="#contact" @click="closeModal" class="bg-accent-500 text-white font-bold py-3 px-8 rounded-full shadow-lg hover:bg-accent-700 transition-colors text-lg active:scale-95">
+                                    <span v-if="language === 'zh'">索取樂譜</span>
+                                    <span v-else>Get Score</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Vue.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@3"></script>
+    <script>
+        const { createApp, reactive, onMounted, ref, computed } = Vue;
+
+        createApp({
+            setup() {
+                // 狀態管理
+                const language = ref('zh');
+                const darkMode = ref(false); // 深色模式狀態
+                const activeCategory = ref('classical');
+                const searchQuery = ref(''); // 搜尋關鍵字
+                const filterDifficulty = ref(''); // 難度篩選
+                const showModal = ref(false); // 彈出視窗狀態
+                const selectedSheet = ref(null); // 點擊的樂譜資料
+
+                // 網站所有內容，以語言為鍵值組織
+                const content = reactive({
+                    zh: {
+                        metaTitle: '品牌名｜古典・流行鋼琴樂譜分享平台',
+                        metaDescription: '提供古典、流行與原創鋼琴樂譜，附演奏影音示範。簡約現代風格，一頁覽盡所有樂譜資訊，支援中英文切換，立即聯絡取得樂譜！',
+                        hero: { h1: '精選古典・流行鋼琴樂譜', p: '一頁覽盡所有樂譜資訊，隨時瀏覽下載。', cta: '立即瀏覽樂譜', },
+                        about: { h2: '我們的理念', p: '我們相信音樂的魔力應該被分享。因此我們精心挑選並編排了豐富的鋼琴樂譜，涵蓋古典、流行與原創作品，希望讓每一位愛樂者都能輕鬆彈奏出動人的旋律。', cta: '聯絡我們瞭解更多', },
+                        videos: { h2: '精選影音展示', },
+                        sheetMusic: { h2: '我們的樂譜作品', },
+                        ctaBanner: { h2: '準備好彈奏屬於你的旋律了嗎？', cta: '立即聯絡我們', },
+                        contact: { h2: '聯絡我們', p: '填寫表單或使用以下方式與我們聯絡，我們將盡快回覆。', },
+                        footer: { p: '© 2024 Your Brand. All rights reserved.' }
+                    },
+                    en: {
+                        metaTitle: 'Brand Name – Classical, Pop & Original Piano Sheet Music',
+                        metaDescription: 'Discover classical, pop, and original piano sheet music with video performances. A modern one-page catalog of sheet music in English & Chinese – contact us to get your sheet music offline!',
+                        hero: { h1: 'Classical & Pop Piano Sheet Music', p: 'Browse and download our curated collection of piano scores.', cta: 'Browse Scores Now', },
+                        about: { h2: 'Our Philosophy', p: 'We believe in the power of music to connect people. Our mission is to provide a curated collection of piano sheet music, from classical and pop to original compositions, making it easy for every music lover to find and play their favorite tunes.', cta: 'Contact Us to Learn More', },
+                        videos: { h2: 'Video Highlights', },
+                        sheetMusic: { h2: 'Our Sheet Music Collection', },
+                        ctaBanner: { h2: 'Ready to Play Your Melody?', cta: 'Contact Us Now', },
+                        contact: { h2: 'Contact Us', p: 'Fill out the form or use the contact methods below, and we\'ll get back to you as soon as possible.', },
+                        footer: { p: '© 2024 Your Brand. All rights reserved.' }
+                    }
+                });
+
+                const categoryMap = {
+                    classical: { zh: '古典鋼琴譜', en: 'Classical Scores' },
+                    pop: { zh: '流行改編譜', en: 'Pop Arrangements' },
+                    original: { zh: '原創作品譜', en: 'Original Compositions' }
+                };
+
+                const difficultyMap = {
+                    '簡單': 'Easy',
+                    '中等': 'Intermediate',
+                    '中等偏難': 'Intermediate-Advanced',
+                    '難': 'Hard'
+                };
+
+                const videos = reactive({
+                    zh: [
+                        { id: 1, title: '月光奏鳴曲第1樂章 演奏示範', description: '鋼琴家演奏貝多芬月光奏鳴曲，第1樂章，對應樂譜教學。', embedUrl: 'https://www.youtube.com/embed/j1u9h9S952o', watchUrl: 'https://www.youtube.com/watch?v=j1u9h9S952o' },
+                        { id: 2, title: '周杰倫 - 說好的幸福呢 鋼琴版', description: '周杰倫經典流行歌曲《說好的幸福呢》鋼琴改編版，附樂譜。', embedUrl: 'https://www.youtube.com/embed/lA9K8x3R7Xw', watchUrl: 'https://www.youtube.com/watch?v=lA9K8x3R7Xw' },
+                        { id: 3, title: '自創曲 - 晨曦之光 鋼琴演奏', description: '溫暖動人的原創鋼琴曲，展現創作者的獨特風格與情感。', embedUrl: 'https://www.youtube.com/embed/Uo0hN_xR9A8', watchUrl: 'https://www.youtube.com/watch?v=Uo0hN_xR9A8' },
+                    ],
+                    en: [
+                        { id: 1, title: 'Moonlight Sonata 1st Movement', description: 'A pianist performing the 1st movement of Beethoven\'s Moonlight Sonata, with sheet music tutorial.', embedUrl: 'https://www.youtube.com/embed/j1u9h9S952o', watchUrl: 'https://www.youtube.com/watch?v=j1u9h9S952o' },
+                        { id: 2, title: 'Jay Chou - The Promised Happiness Piano Cover', description: 'A beautiful piano arrangement of Jay Chou\'s famous pop song "The Promised Happiness".', embedUrl: 'https://www.youtube.com/embed/lA9K8x3R7Xw', watchUrl: 'https://www.youtube.com/watch?v=lA9K8x3R7Xw' },
+                        { id: 3, title: 'Original Composition - Light of Dawn', description: 'A warm and touching original piano piece, showcasing a unique style and emotion.', embedUrl: 'https://www.youtube.com/embed/Uo0hN_xR9A8', watchUrl: 'https://www.youtube.com/watch?v=Uo0hN_xR9A8' },
+                    ],
+                });
+                
+                // 樂譜資料，新增了影片URL和分類資訊，方便篩選與彈出視窗顯示
+                // 擴充了更多資料，尤其是不同難度的樂曲，以便測試篩選功能
+                const sheetMusicData = reactive({
+                    zh: {
+                        classical: [
+                            { id: 1, title: '夜曲 Op.9 No.2', composer: 'Frédéric Chopin', description: '蕭邦著名的降E大調夜曲，溫柔流暢的旋律，適合中級學習者。', difficulty: '中等', category: 'classical', image: 'https://placehold.co/400x300/e0e0e0/333333?text=Chopin+-+Nocturne+Op.9+No.2', videoUrl: 'https://www.youtube.com/embed/YI78X0gW1S4' },
+                            { id: 2, title: '月光奏鳴曲第1樂章', composer: 'Ludwig van Beethoven', description: '貝多芬的經典之作，充滿詩意與冥想氛圍，是鋼琴家必學曲目。', difficulty: '中等', category: 'classical', image: 'https://placehold.co/400x300/d0d0d0/333333?text=Beethoven+-+Moonlight+Sonata', videoUrl: 'https://www.youtube.com/embed/j1u9h9S952o' },
+                            { id: 3, title: '土耳其進行曲', composer: 'Wolfgang Amadeus Mozart', description: '莫札特A大調鋼琴奏鳴曲第11號的第三樂章，旋律輕快活潑。', difficulty: '中等', category: 'classical', image: 'https://placehold.co/400x300/c0c0c0/333333?text=Mozart+-+Turkish+March', videoUrl: 'https://www.youtube.com/embed/dP9S6VpI1Cg' },
+                            { id: 7, title: '小星星變奏曲', composer: 'Wolfgang Amadeus Mozart', description: '莫札特根據法國民謠《媽媽請聽我說》創作的鋼琴變奏曲，適合初學者。', difficulty: '簡單', category: 'classical', image: 'https://placehold.co/400x300/f0f0f0/333333?text=Mozart+-+Twinkle+Twinkle', videoUrl: 'https://www.youtube.com/embed/Q3yJjH97yQc' },
+                            { id: 8, title: '革命練習曲', composer: 'Frédéric Chopin', description: '蕭邦著名的練習曲，左手快速音階的技巧要求很高，難度極高。', difficulty: '難', category: 'classical', image: 'https://placehold.co/400x300/b0b0b0/ffffff?text=Chopin+-+Revolutionary+Etude', videoUrl: 'https://www.youtube.com/embed/v-5qYxQ70-g' },
+                        ],
+                        pop: [
+                            { id: 4, title: '說好的幸福呢', composer: '周杰倫', description: '鋼琴獨奏改編版，保留歌曲情感的同時增加了彈奏的層次感。', difficulty: '中等偏難', category: 'pop', image: 'https://placehold.co/400x300/a0a0a0/ffffff?text=Jay+Chou+-+The+Promised+Happiness', videoUrl: 'https://www.youtube.com/embed/lA9K8x3R7Xw' },
+                            { id: 5, title: '披星戴月的想你', composer: '告五人', description: '告五人熱門歌曲鋼琴譜，簡單而優雅，適合初級至中級練習。', difficulty: '簡單', category: 'pop', image: 'https://placehold.co/400x300/b0b0b0/ffffff?text=Accusefive+-+Pining+For+You', videoUrl: 'https://www.youtube.com/embed/z44qP5J-K9A' },
+                            { id: 9, title: '我的心裡只有你沒有他', composer: 'Leo Si', description: '經典老歌的爵士鋼琴改編版，和弦變化豐富，彈奏起來充滿韻味。', difficulty: '中等偏難', category: 'pop', image: 'https://placehold.co/400x300/959595/ffffff?text=My+Heart+Belongs+to+You', videoUrl: 'https://www.youtube.com/embed/lK0nNf24f_Q' },
+                        ],
+                        original: [
+                            { id: 6, title: '晨曦之光', composer: '自創作品', description: '創作者的原創作品，旋律溫暖療癒，適合所有程度的愛樂者。', difficulty: '簡單', category: 'original', image: 'https://placehold.co/400x300/909090/ffffff?text=Original+Composition', videoUrl: 'https://www.youtube.com/embed/Uo0hN_xR9A8' },
+                            { id: 10, title: '冬日戀曲', composer: '自創作品', description: '一首充滿冬日氛圍的原創樂曲，帶有淡淡的憂鬱與浪漫氣息。', difficulty: '中等', category: 'original', image: 'https://placehold.co/400x300/808080/ffffff?text=Original+Winter+Love+Song', videoUrl: 'https://www.youtube.com/embed/Q5jYpB20e7g' }
+                        ]
+                    },
+                    en: {
+                        classical: [
+                            { id: 1, title: 'Nocturne Op.9 No.2', composer: 'Frédéric Chopin', description: 'Chopin\'s famous Nocturne in E-flat major, with a gentle and flowing melody. Suitable for intermediate players.', difficulty: 'Intermediate', category: 'classical', image: 'https://placehold.co/400x300/e0e0e0/333333?text=Chopin+-+Nocturne+Op.9+No.2', videoUrl: 'https://www.youtube.com/embed/YI78X0gW1S4' },
+                            { id: 2, title: 'Moonlight Sonata 1st Movement', composer: 'Ludwig van Beethoven', description: 'Beethoven\'s classic masterpiece, full of poetic and meditative atmosphere. A must-learn for pianists.', difficulty: 'Intermediate', category: 'classical', image: 'https://placehold.co/400x300/d0d0d0/333333?text=Beethoven+-+Moonlight+Sonata', videoUrl: 'https://www.youtube.com/embed/j1u9h9S952o' },
+                            { id: 3, title: 'Rondo alla Turca', composer: 'Wolfgang Amadeus Mozart', description: 'The third movement of Mozart\'s Piano Sonata No. 11 in A major, with a lively and cheerful melody.', difficulty: 'Intermediate', category: 'classical', image: 'https://placehold.co/400x300/c0c0c0/333333?text=Mozart+-+Turkish+March', videoUrl: 'https://www.youtube.com/embed/dP9S6VpI1Cg' },
+                            { id: 7, title: 'Twinkle Twinkle Little Star Variations', composer: 'Wolfgang Amadeus Mozart', description: 'A piano variation of the French folk song "Ah, vous dirai-je, maman" by Mozart, suitable for beginners.', difficulty: 'Easy', category: 'classical', image: 'https://placehold.co/400x300/f0f0f0/333333?text=Mozart+-+Twinkle+Twinkle', videoUrl: 'https://www.youtube.com/embed/Q3yJjH97yQc' },
+                            { id: 8, title: 'Revolutionary Etude', composer: 'Frédéric Chopin', description: 'Chopin\'s famous etude, known for its rapid left-hand passages and high technical demands. Extremely difficult.', difficulty: 'Hard', category: 'classical', image: 'https://placehold.co/400x300/b0b0b0/ffffff?text=Chopin+-+Revolutionary+Etude', videoUrl: 'https://www.youtube.com/embed/v-5qYxQ70-g' },
+                        ],
+                        pop: [
+                            { id: 4, title: 'The Promised Happiness', composer: 'Jay Chou', description: 'A piano solo arrangement that retains the song\'s emotion while adding layers of complexity. Intermediate to advanced level.', difficulty: 'Intermediate-Advanced', category: 'pop', image: 'https://placehold.co/400x300/a0a0a0/ffffff?text=Jay+Chou+-+The+Promised+Happiness', videoUrl: 'https://www.youtube.com/embed/lA9K8x3R7Xw' },
+                            { id: 5, title: 'Pining For You with the Stars and Moon', composer: 'Accusefive', description: 'Piano sheet music for Accusefive\'s popular song, simple and elegant. Suitable for beginner to intermediate players.', difficulty: 'Easy', category: 'pop', image: 'https://placehold.co/400x300/b0b0b0/ffffff?text=Accusefive+-+Pining+For+You', videoUrl: 'https://www.youtube.com/embed/z44qP5J-K9A' },
+                            { id: 9, title: 'My Heart Belongs to You', composer: 'Leo Si', description: 'A jazz piano arrangement of the classic old song, rich in chord changes and full of character.', difficulty: 'Intermediate-Advanced', category: 'pop', image: 'https://placehold.co/400x300/959595/ffffff?text=My+Heart+Belongs+to+You', videoUrl: 'https://www.youtube.com/embed/lK0nNf24f_Q' },
+                        ],
+                        original: [
+                            { id: 6, title: 'Light of Dawn', composer: 'Original Composition', description: 'The creator\'s original piece, with a warm and healing melody. Suitable for all levels.', difficulty: 'Easy', category: 'original', image: 'https://placehold.co/400x300/909090/ffffff?text=Original+Composition', videoUrl: 'https://www.youtube.com/embed/Uo0hN_xR9A8' },
+                            { id: 10, title: 'Winter Love Song', composer: 'Original Composition', description: 'An original piece filled with a winter atmosphere, with a touch of melancholy and romance.', difficulty: 'Intermediate', category: 'original', image: 'https://placehold.co/400x300/808080/ffffff?text=Original+Winter+Love+Song', videoUrl: 'https://www.youtube.com/embed/Q5jYpB20e7g' }
+                        ]
+                    }
+                });
+
+                // 過濾後的樂譜資料，使用 computed property 實現動態篩選
+                const filteredSheetMusic = computed(() => {
+                    // 只針對中文進行搜尋與篩選
+                    if (language.value === 'zh') {
+                        const currentLangData = sheetMusicData['zh'];
+                        const filteredData = {};
+                        const difficultyFilter = filterDifficulty.value;
+
+                        for (const category in currentLangData) {
+                            filteredData[category] = currentLangData[category].filter(sheet => {
+                                const search = searchQuery.value.trim().toLowerCase();
+                                const matchesSearch =
+                                    sheet.title.toLowerCase().includes(search) ||
+                                    sheet.description.toLowerCase().includes(search) ||
+                                    sheet.composer.toLowerCase().includes(search);
+
+                                let matchesDifficulty = true;
+                                if (difficultyFilter) {
+                                    matchesDifficulty = sheet.difficulty === difficultyFilter;
+                                }
+                                return matchesSearch && matchesDifficulty;
+                            });
+                        }
+                        return { zh: filteredData, en: sheetMusicData['en'] }; // 英文直接回傳原始資料
+                    } else {
+                        // 英文模式下不做搜尋與篩選，直接顯示全部
+                        return { zh: sheetMusicData['zh'], en: sheetMusicData['en'] };
+                    }
+                });
+
+                // 語言切換方法
+                const toggleLanguage = () => {
+                    language.value = language.value === 'zh' ? 'en' : 'zh';
+                    updateMetaTags();
+                    updateSchemaLd();
+                };
+
+                // 深色模式切換方法
+                const toggleDarkMode = () => {
+                    darkMode.value = !darkMode.value;
+                    document.documentElement.classList.toggle('dark', darkMode.value);
+                };
+
+                // 彈出視窗相關方法
+                const openModal = (sheet) => {
+                    selectedSheet.value = sheet;
+                    showModal.value = true;
+                };
+
+                const closeModal = () => {
+                    showModal.value = false;
+                    selectedSheet.value = null;
+                };
+
+                // 更新 Meta 標籤
+                const updateMetaTags = () => {
+                    document.title = content[language.value].metaTitle;
+                    document.querySelector('meta[name="description"]').content = content[language.value].metaDescription;
+                    document.documentElement.lang = language.value === 'zh' ? 'zh-Hant' : 'en';
+                };
+
+                // 更新 Schema LD
+                const updateSchemaLd = () => {
+                    const schemaScript = document.getElementById('schema-ld');
+                    let organization = {
+                        "@context": "https://schema.org",
+                        "@type": "Organization",
+                        "name": language.value === 'zh' ? "XX樂譜網站" : "Brand Name",
+                        "url": "https://mysite.com",
+                        "logo": "https://placehold.co/100x40/5A5862/FFF?text=Logo",
+                        "contactPoint": {
+                            "@type": "ContactPoint",
+                            "telephone": "+886-900-000-000",
+                            "email": "contact@mysite.com",
+                            "contactType": "customer service"
+                        }
+                    };
+
+                    const videoSchema = videos[language.value].map(video => ({
+                         "@context": "https://schema.org",
+                         "@type": "VideoObject",
+                         "name": video.title,
+                         "description": video.description,
+                         "uploadDate": "2024-01-01",
+                         "contentUrl": video.watchUrl,
+                         "embedUrl": video.embedUrl,
+                         "inLanguage": language.value === 'zh' ? "zh-TW" : "en-US"
+                    }));
+
+                    const sheetMusicSchema = Object.values(sheetMusicData[language.value]).flat().map(sheet => ({
+                         "@context": "https://schema.org",
+                         "@type": "SheetMusic",
+                         "name": sheet.title,
+                         "description": sheet.description,
+                         "image": sheet.image,
+                         "inLanguage": language.value === 'zh' ? "zh-TW" : "en-US",
+                         "publisher": {
+                            "@type": "Organization",
+                            "name": language.value === 'zh' ? "XX樂譜網站" : "Brand Name"
+                         }
+                    }));
+
+                    // 合併所有 schema 數據
+                    const combinedSchema = [organization, ...videoSchema, ...sheetMusicSchema];
+                    schemaScript.textContent = JSON.stringify(combinedSchema, null, 2);
+                };
+
+                // 滾動到指定分類
+                const scrollToCategory = (category) => {
+                    activeCategory.value = category;
+                    const el = document.getElementById(category);
+                    if (el) {
+                        window.scrollTo({
+                            top: el.offsetTop - 80, // 考慮導航列高度
+                            behavior: 'smooth'
+                        });
+                    }
+                };
+
+                // 頁面載入時執行
+                onMounted(() => {
+                    // 初始載入時設定語言相關內容
+                    updateMetaTags();
+                    updateSchemaLd();
+
+                    // 監聽滾動事件，更新 activeCategory
+                    const sections = ['classical', 'pop', 'original'];
+                    const observer = new IntersectionObserver((entries) => {
+                        entries.forEach(entry => {
+                            if (entry.isIntersecting) {
+                                activeCategory.value = entry.target.id;
+                            }
+                        });
+                    }, { rootMargin: '-50% 0px -50% 0px' }); // 在頁面中間時觸發
+
+                    sections.forEach(sectionId => {
+                        const el = document.getElementById(sectionId);
+                        if (el) {
+                            observer.observe(el);
+                        }
+                    });
+                });
+
+                return {
+                    language,
+                    darkMode,
+                    videos,
+                    sheetMusic: sheetMusicData,
+                    categoryMap,
+                    difficultyMap,
+                    activeCategory,
+                    searchQuery,
+                    filterDifficulty,
+                    filteredSheetMusic,
+                    showModal,
+                    selectedSheet,
+                    toggleLanguage,
+                    toggleDarkMode,
+                    scrollToCategory,
+                    openModal,
+                    closeModal
+                };
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>

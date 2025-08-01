@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的音樂世界</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Vue.js CDN -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+    <!-- Tone.js CDN for audio playback -->
+    <script src="https://unpkg.com/tone"></script>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body { font-family: 'Inter', sans-serif; overflow-x: hidden; }
+        .parallax-section { background-attachment: fixed; background-position: center; background-repeat: no-repeat; background-size: cover; position: relative; overflow: hidden; }
+        .overlay { background-color: rgba(0, 0, 0, 0.6); }
+        .hero-video { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: -1; }
+        .fade-in-up { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease-out, transform 0.6s ease-out; }
+        .fade-in-up.visible { opacity: 1; transform: translateY(0); }
+        .scale-in { opacity: 0; transform: scale(0.9); transition: opacity 0.6s ease-out, transform 0.6s ease-out; }
+        .scale-in.visible { opacity: 1; transform: scale(1); }
+        .aspect-w-16 { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; }
+        .aspect-w-16 iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+        #interactive-sheet-canvas { display: block; width: 100%; border-radius: 1rem; box-shadow: 0 0 40px rgba(124, 58, 237, 0.5); }
+        .particle-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1; }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-100">
+
+    <div id="app"></div>
+
+    <script type="module">
+        const { createApp, ref, onMounted, computed, reactive, watch } = Vue;
+
+        // Tone.js setup
+        const synth = new Tone.PolySynth(Tone.Synth, {
+            oscillator: { type: "sine" },
+            envelope: { attack: 0.005, decay: 0.1, sustain: 0.3, release: 1 }
+        }).toDestination();
+
+        let visualizerCanvas, visualizerCtx;
+        let animationFrameId = null;
+
+        const demoNotes = [
+            { note: 'C4', duration: '4n', text: 'C' },
+            { note: 'D4', duration: '8n', text: 'D' },
+            { note: 'E4', duration: '8n', text: 'E' },
+            { note: 'F4', duration: '4n', text: 'F' },
+            { note: 'G4', duration: '8n', text: 'G' },
+            { note: 'A4', duration: '8n', text: 'A' },
+            { note: 'B4', duration: '4n', text: 'B' },
+            { note: 'C5', duration: '2n', text: 'C' },
+        ];
+
+        const worksData = [
+            {
+                id: 'work1',
+                title: '星際漫遊',
+                description: '一首融合電子與管弦樂的史詩級作品，帶你穿越浩瀚宇宙。這首曲子展現了宏大的宇宙觀，以及對未知世界的探索精神。',
+                videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+                sheetMusic: [
+                    'https://placehold.co/800x1100/1a202c/ffffff?text=星際漫遊樂譜頁面1',
+                    'https://placehold.co/800x1100/1a202c/ffffff?text=星際漫遊樂譜頁面2',
+                ]
+            },
+            {
+                id: 'work2',
+                title: '城市脈動',
+                description: '捕捉都市的喧囂與寧靜，展現現代生活的節奏感。這首曲子以多變的節奏和豐富的音色，描繪了都市中人們的忙碌與片刻的寧靜。',
+                videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+                sheetMusic: [
+                    'https://placehold.co/800x1100/1a202c/ffffff?text=城市脈動樂譜頁面A',
+                    'https://placehold.co/800x1100/1a202c/ffffff?text=城市脈動樂譜頁面B',
+                ]
+            },
+        ];
+
+        const tutorialsData = [
+            {
+                title: '如何閱讀樂譜',
+                description: '從基礎音符、節奏到拍號，帶你輕鬆讀懂樂譜。',
+                videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+                thumbnailUrl: 'https://placehold.co/600x337/1a202c/ffffff?text=閱讀樂譜'
+            },
+            {
+                title: '基礎和弦教學',
+                description: '掌握最常用的 C、G、Am、F 和弦，為你的彈奏打下基礎。',
+                videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+                thumbnailUrl: 'https://placehold.co/600x337/1a202c/ffffff?text=基礎和弦'
+            },
+            {
+                title: '作曲入門指南',
+                description: '從旋律創作到和聲編寫，一步步帶你寫出自己的第一首歌。',
+                videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+                thumbnailUrl: 'https://placehold.co/600x337/1a202c/ffffff?text=作曲入門'
+            }
+        ];
+
+        const App = {
+            setup() {
+                const showModal = ref(false);
+                const modalTitle = ref('');
+                const modalType = ref('');
+                const formName = ref('');
+                const formEmail = ref('');
+                const formMessage = ref('');
+                const interactiveMode = ref('demo');
+                const generationKeyword = ref('');
+                const generatedMelody = ref([]);
+                const countdownDate = ref(new Date('2025-12-31T23:59:59').getTime());
+                const timeLeft = reactive({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+                const isGenerating = ref(false);
+                const currentWork = ref(null);
+                const currentSheetPageIndex = ref(0);
+                const canvasRef = ref(null);
+                const currentNoteIndex = ref(-1);
+                const isPlaying = ref(false);
+
+                const highlightBeam = reactive({ x: 0, width: 0 });
+
+                const currentMelody = computed(() => {
+                    return interactiveMode.value === 'demo' ? demoNotes : generatedMelody.value;
+                });
+
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('visible');
+                        } else {
+                            entry.target.classList.remove('visible');
+                        }
+                    });
+                }, { threshold: 0.1 });
+
+                const updateCountdown = () => {
+                    const now = new Date().getTime();
+                    const distance = countdownDate.value - now;
+                    timeLeft.days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                    timeLeft.hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    timeLeft.minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                    timeLeft.seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                    if (distance < 0) {
+                        clearInterval(countdownInterval);
+                        timeLeft.days = timeLeft.hours = timeLeft.minutes = timeLeft.seconds = 0;
+                    }
+                };
+                let countdownInterval;
+
+                const drawCanvas = () => {
+                    if (!visualizerCtx || !visualizerCanvas) return;
+                    const { width, height } = visualizerCanvas;
+                    visualizerCtx.clearRect(0, width, height);
+                    visualizerCtx.clearRect(0, 0, width, height);
+
+                    const notes = currentMelody.value;
+                    if (!notes || notes.length === 0) return;
+
+                    const noteRadius = 15;
+                    const totalWidth = width * 0.8;
+                    const startX = (width - totalWidth) / 2;
+                    const spacing = totalWidth / (notes.length - 1 || 1);
+
+                    if (isPlaying.value) {
+                        const beamX = startX + spacing * currentNoteIndex.value + highlightBeam.width / 2;
+                        visualizerCtx.beginPath();
+                        const gradient = visualizerCtx.createLinearGradient(beamX, 0, beamX + highlightBeam.width, 0);
+                        gradient.addColorStop(0, 'rgba(124, 58, 237, 0)');
+                        gradient.addColorStop(0.5, 'rgba(124, 58, 237, 0.5)');
+                        gradient.addColorStop(1, 'rgba(124, 58, 237, 0)');
+                        visualizerCtx.fillStyle = gradient;
+                        visualizerCtx.fillRect(beamX, 0, highlightBeam.width, height);
+                    }
+
+                    notes.forEach((note, index) => {
+                        const noteX = startX + index * spacing;
+                        const noteY = height / 2;
+                        const isCurrent = index === currentNoteIndex.value;
+                        const bounceOffset = isCurrent ? Math.sin(Date.now() / 100) * 10 : 0;
+
+                        if (isCurrent) {
+                            const gradient = visualizerCtx.createRadialGradient(noteX, noteY + bounceOffset, noteRadius * 0.5, noteX, noteY + bounceOffset, noteRadius * 2);
+                            gradient.addColorStop(0, 'rgba(124, 58, 237, 0.8)');
+                            gradient.addColorStop(1, 'rgba(124, 58, 237, 0)');
+                            visualizerCtx.fillStyle = gradient;
+                            visualizerCtx.fillRect(noteX - noteRadius * 2, noteY - noteRadius * 2 + bounceOffset, noteRadius * 4, noteRadius * 4);
+                        }
+
+                        visualizerCtx.beginPath();
+                        visualizerCtx.arc(noteX, noteY + bounceOffset, noteRadius, 0, Math.PI * 2);
+                        visualizerCtx.fillStyle = isCurrent ? '#a78bfa' : '#4f46e5';
+                        visualizerCtx.fill();
+                        visualizerCtx.strokeStyle = isCurrent ? '#c4b5fd' : '#818cf8';
+                        visualizerCtx.lineWidth = 3;
+                        visualizerCtx.stroke();
+                        visualizerCtx.closePath();
+
+                        visualizerCtx.fillStyle = '#fff';
+                        visualizerCtx.textAlign = 'center';
+                        visualizerCtx.textBaseline = 'middle';
+                        visualizerCtx.font = 'bold 16px Inter, sans-serif';
+                        visualizerCtx.fillText(note.text || note.note, noteX, noteY + bounceOffset);
+                    });
+                };
+
+                const animate = () => {
+                    drawCanvas();
+                    animationFrameId = requestAnimationFrame(animate);
+                };
+
+                const resizeCanvas = () => {
+                    if (!visualizerCanvas) return;
+                    visualizerCanvas.width = visualizerCanvas.offsetWidth;
+                    visualizerCanvas.height = 200;
+                    drawCanvas();
+                };
+
+                const playMelody = () => {
+                    if (isPlaying.value) {
+                        Tone.Transport.stop();
+                        isPlaying.value = false;
+                        currentNoteIndex.value = -1;
+                        return;
+                    }
+                    Tone.start();
+                    isPlaying.value = true;
+                    currentNoteIndex.value = -1;
+                    const notes = currentMelody.value.map(note => note.note);
+                    const durations = currentMelody.value.map(note => note.duration);
+
+                    let noteTime = 0;
+                    const sequence = new Tone.Sequence((time, noteIndex) => {
+                        synth.triggerAttackRelease(notes[noteIndex], durations[noteIndex], time);
+                        Tone.Draw.schedule(() => {
+                            currentNoteIndex.value = noteIndex;
+                        }, time);
+                    }, Array.from(notes.keys()), "4n");
+
+                    sequence.loop = false;
+                    sequence.start(0);
+                    Tone.Transport.start();
+
+                    Tone.Transport.scheduleOnce(() => {
+                        isPlaying.value = false;
+                        currentNoteIndex.value = -1;
+                    }, `+${sequence.duration}`);
+                };
+
+                const toggleInteractiveMode = (mode) => {
+                    interactiveMode.value = mode;
+                    if (mode === 'demo') {
+                        generatedMelody.value = [];
+                    }
+                    if (isPlaying.value) {
+                        Tone.Transport.stop();
+                        isPlaying.value = false;
+                    }
+                    currentNoteIndex.value = -1;
+                };
+
+                // --- AI 旋律生成功能已關閉 ---
+                /*
+                const generateMelody = async () => {
+                    // AI 旋律生成功能已關閉
+                    alert('AI 旋律生成功能暫不開放。');
+                };
+                */
+                // 改為前端隨機產生簡單旋律
+                const generateMelody = () => {
+                    if (!generationKeyword.value.trim()) {
+                        alert('請輸入關鍵字以生成旋律！');
+                        return;
+                    }
+                    isGenerating.value = true;
+                    setTimeout(() => {
+                        // 產生 8~12 個隨機音符
+                        const notesArr = ['C4','D4','E4','F4','G4','A4','B4','C5','D5','E5'];
+                        const durationsArr = ['4n','8n','8n','4n','2n'];
+                        const melody = [];
+                        const len = Math.floor(Math.random() * 5) + 8;
+                        for(let i=0;i<len;i++){
+                            melody.push({
+                                note: notesArr[Math.floor(Math.random()*notesArr.length)],
+                                duration: durationsArr[Math.floor(Math.random()*durationsArr.length)],
+                                text: notesArr[Math.floor(Math.random()*notesArr.length)].replace(/\d/,'')
+                            });
+                        }
+                        generatedMelody.value = melody;
+                        isGenerating.value = false;
+                    }, 800);
+                };
+
+                const openModal = (type, title, workData = null) => {
+                    modalType.value = type;
+                    modalTitle.value = title;
+                    showModal.value = true;
+                    if (type === 'workDetail' && workData) {
+                        currentWork.value = workData;
+                        currentSheetPageIndex.value = 0;
+                    } else {
+                        currentWork.value = null;
+                    }
+                };
+
+                const submitForm = () => {
+                    showModal.value = false;
+                    formName.value = '';
+                    formEmail.value = '';
+                    formMessage.value = '';
+                };
+
+                const prevSheetPage = () => {
+                    if (currentWork.value && currentSheetPageIndex.value > 0) {
+                        currentSheetPageIndex.value--;
+                    }
+                };
+                const nextSheetPage = () => {
+                    if (currentWork.value && currentSheetPageIndex.value < currentWork.value.sheetMusic.length - 1) {
+                        currentSheetPageIndex.value++;
+                    }
+                };
+
+                onMounted(() => {
+                    updateCountdown();
+                    countdownInterval = setInterval(updateCountdown, 1000);
+                    document.querySelectorAll('.fade-in-up, .scale-in').forEach(el => {
+                        observer.observe(el);
+                    });
+                    visualizerCanvas = canvasRef.value;
+                    if (visualizerCanvas) {
+                        visualizerCtx = visualizerCanvas.getContext('2d');
+                        window.addEventListener('resize', resizeCanvas);
+                        resizeCanvas();
+                        animate();
+                    }
+                });
+
+                watch(currentMelody, () => { resizeCanvas(); });
+
+                return {
+                    showModal, modalTitle, modalType, formName, formEmail, formMessage,
+                    interactiveMode, generationKeyword, generatedMelody, timeLeft, isGenerating,
+                    worksData, tutorialsData, currentWork, currentSheetPageIndex,
+                    toggleInteractiveMode, generateMelody, openModal, submitForm,
+                    prevSheetPage, nextSheetPage, currentMelody, canvasRef, playMelody, isPlaying,
+                };
+            },
+            template: `
+                <!-- 懸浮音樂播放器 (Placeholder) -->
+                <div class="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 bg-gray-800 bg-opacity-90 p-3 rounded-full shadow-lg flex items-center space-x-4">
+                    <button class="text-gray-300 hover:text-white text-xl"><i class="fas fa-backward"></i></button>
+                    <button class="text-white text-3xl"><i class="fas fa-play-circle"></i></button>
+                    <button class="text-gray-300 hover:text-white text-xl"><i class="fas fa-forward"></i></button>
+                    <span class="text-gray-400 text-sm">0:00 / 3:45</span>
+                </div>
+
+                <!-- 動態背景區 (Dynamic Hero) -->
+                <section id="hero" class="relative h-screen flex items-center justify-center text-center overflow-hidden">
+                    <video autoplay loop muted class="hero-video">
+                        <source src="https://assets.mixkit.co/videos/preview/mixkit-abstract-light-movement-1025-large.mp4" type="video/mp4">
+                        您的瀏覽器不支持影片標籤。
+                    </video>
+                    <div class="absolute inset-0 bg-gradient-to-br from-purple-900 to-blue-900 opacity-70"></div>
+                    <canvas id="particle-canvas" class="particle-bg"></canvas>
+                    <div class="relative z-10 p-8 rounded-lg max-w-4xl mx-auto fade-in-up">
+                        <h1 class="text-5xl md:text-7xl font-extrabold text-white leading-tight mb-6 drop-shadow-lg">
+                            立即體驗我的音樂世界
+                        </h1>
+                        <button @click="openModal('contact', '預約創作服務')"
+                                class="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-bold py-4 px-8 rounded-full shadow-lg transform transition duration-300 ease-in-out hover:scale-105">
+                            生成你的專屬旋律
+                            <i class="fas fa-arrow-right ml-2"></i>
+                        </button>
+                    </div>
+                </section>
+
+                <!-- 互動樂譜區 (Interactive Sheet Section) -->
+                <section id="interactive-sheet" class="py-20 px-4 bg-gray-900 text-center relative z-20">
+                    <div class="container mx-auto max-w-5xl bg-gray-800 p-10 rounded-2xl shadow-2xl border border-gray-700">
+                        <h2 class="text-4xl font-bold text-white mb-12 fade-in-up">互動樂譜區</h2>
+
+                        <div class="flex justify-center mb-8 scale-in">
+                            <button @click="toggleInteractiveMode('demo')"
+                                    :class="{'bg-purple-600': interactiveMode === 'demo', 'bg-gray-700': interactiveMode !== 'demo'}"
+                                    class="py-3 px-6 rounded-l-full text-white font-semibold transition duration-300 hover:bg-purple-700">
+                                示範曲目
+                            </button>
+                            <button @click="toggleInteractiveMode('generate')"
+                                    :class="{'bg-purple-600': interactiveMode === 'generate', 'bg-gray-700': interactiveMode !== 'generate'}"
+                                    class="py-3 px-6 rounded-r-full text-white font-semibold transition duration-300 hover:bg-purple-700">
+                                創作生成
+                            </button>
+                        </div>
+
+                        <div class="bg-gray-800 p-8 rounded-xl shadow-2xl mb-12 fade-in-up">
+                            <h3 class="text-2xl font-semibold text-white mb-6">點擊播放，感受旋律！</h3>
+                            
+                            <!-- Canvas for dynamic note visualization -->
+                            <canvas id="interactive-sheet-canvas" ref="canvasRef"></canvas>
+                            
+                            <div class="mt-8 flex justify-center items-center space-x-4">
+                                <button @click="playMelody"
+                                        class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-full shadow-md transition duration-300 ease-in-out transform hover:scale-105">
+                                    <i :class="{'fa-play': !isPlaying, 'fa-stop': isPlaying}" class="fas mr-2"></i>
+                                    {{ isPlaying ? '停止播放' : '播放旋律' }}
+                                </button>
+                            </div>
+                            
+                            <p v-if="interactiveMode === 'demo'" class="text-gray-300 text-lg mt-8">
+                                樂譜摘要：此為基礎示範曲目，展示了C大調的基礎音階與和弦進行。適合初學者練習指法與音感。
+                            </p>
+                            <div v-else class="mt-8">
+                                <div class="flex flex-col md:flex-row items-center justify-center mb-6 space-y-4 md:space-y-0 md:space-x-4">
+                                    <input type="text" v-model="generationKeyword" placeholder="輸入名字或心情關鍵字 (例如：快樂, 夢幻)"
+                                           class="w-full md:w-2/3 p-3 rounded-lg bg-gray-700 text-white border border-gray-600 focus:outline-none focus:border-purple-500">
+                                    <button @click="generateMelody" :disabled="isGenerating"
+                                            class="w-full md:w-1/3 bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-lg shadow-md transition duration-300 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed">
+                                        <span v-if="isGenerating">生成中...</span>
+                                        <span v-else>生成旋律</span>
+                                    </button>
+                                </div>
+                                <div v-if="currentMelody.length > 0" class="mt-4 text-gray-300 text-lg">
+                                    <p>這是根據您的關鍵字隨機生成的旋律示範。希望您喜歡！</p>
+                                </div>
+                                <div v-else-if="!isGenerating" class="mt-4 text-gray-400">
+                                    輸入關鍵字後，點擊「生成旋律」按鈕，即可獲得專屬旋律。
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-12 flex flex-col md:flex-row justify-center space-y-4 md:space-y-0 md:space-x-6 fade-in-up">
+                            <button @click="openModal('sheet', '索取完整樂譜')"
+                                    class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-full shadow-lg transform transition duration-300 hover:scale-105">
+                                索取完整樂譜
+                                <i class="fas fa-file-alt ml-2"></i>
+                            </button>
+                            <button @click="openModal('contact', '預約創作服務')"
+                                    class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-8 rounded-full shadow-lg transform transition duration-300 hover:scale-105">
+                                預約創作服務
+                                <i class="fas fa-calendar-alt ml-2"></i>
+                            </button>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- 音樂教學課程區 -->
+                <section id="tutorials" class="py-20 bg-gray-950">
+                    <div class="container mx-auto px-4 max-w-6xl">
+                        <h2 class="text-4xl font-bold text-white mb-12 text-center fade-in-up">音樂教學課程</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                            <div v-for="tutorial in tutorialsData" :key="tutorial.title" class="bg-gray-800 rounded-xl shadow-2xl overflow-hidden scale-in">
+                                <div class="aspect-w-16 aspect-h-9">
+                                    <img :src="tutorial.thumbnailUrl" :alt="tutorial.title" class="object-cover w-full h-full">
+                                </div>
+                                <div class="p-6">
+                                    <h3 class="text-2xl font-bold text-white mb-2">{{ tutorial.title }}</h3>
+                                    <p class="text-gray-300 mb-4">{{ tutorial.description }}</p>
+                                    <a :href="tutorial.videoUrl" target="_blank"
+                                       class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-full inline-flex items-center transition duration-300 hover:scale-105">
+                                        觀看影片
+                                        <i class="fas fa-play-circle ml-2"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 作品展示流 (Parallax Showcase) -->
+                <section id="showcase" class="py-20 bg-gray-900">
+                    <div class="container mx-auto px-4 max-w-6xl">
+                        <h2 class="text-4xl font-bold text-white mb-12 text-center fade-in-up">作品展示流</h2>
+                        <div v-for="work in worksData" :key="work.id"
+                             class="parallax-section h-[60vh] md:h-[80vh] flex items-center justify-center rounded-xl overflow-hidden mb-16 shadow-2xl fade-in-up"
+                             :style="{ backgroundImage: 'url(' + work.sheetMusic[0] + ')' }">
+                            <div class="overlay absolute inset-0 flex flex-col items-center justify-center p-8 text-center">
+                                <h3 class="text-5xl font-extrabold text-white mb-4 drop-shadow-lg">{{ work.title }}</h3>
+                                <p class="text-xl text-gray-200 mb-8 max-w-2xl">
+                                    {{ work.description }}
+                                </p>
+                                <div class="flex space-x-4">
+                                    <button class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-full shadow-lg transition duration-300 hover:scale-105">
+                                        <i class="fas fa-play mr-2"></i> 10秒試聽
+                                    </button>
+                                    <button @click="openModal('workDetail', work.title, work)"
+                                            class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-full shadow-lg transition duration-300 hover:scale-105">
+                                        了解更多
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 粉絲與媒體證言區 (Testimonials & Press) -->
+                <section id="testimonials" class="py-20 px-4 bg-gray-950 text-center">
+                    <div class="container mx-auto max-w-6xl">
+                        <h2 class="text-4xl font-bold text-white mb-12 fade-in-up">粉絲與媒體證言</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+                            <div class="bg-gray-800 p-8 rounded-xl shadow-2xl scale-in">
+                                <img src="https://placehold.co/80x80/666666/ffffff?text=粉絲1" alt="粉絲頭像" class="w-20 h-20 rounded-full mx-auto mb-6 border-4 border-purple-500">
+                                <p class="text-gray-300 italic mb-6 text-lg">
+                                    「他的音樂總是能觸動我的靈魂深處，每次聆聽都是一場心靈的洗禮。」
+                                </p>
+                                <p class="font-semibold text-white text-xl">- 王小明, 忠實粉絲</p>
+                            </div>
+                            <div class="bg-gray-800 p-8 rounded-xl shadow-2xl scale-in">
+                                <img src="https://placehold.co/80x80/666666/ffffff?text=媒體1" alt="媒體圖標" class="w-20 h-20 rounded-full mx-auto mb-6 border-4 border-blue-500">
+                                <p class="text-gray-300 italic mb-6 text-lg">
+                                    「這是一位極具前瞻性的音樂家，他的作品為現代音樂注入了新的活力。」
+                                </p>
+                                <p class="font-semibold text-white text-xl">- 音樂評論雜誌</p>
+                            </div>
+                            <div class="bg-gray-800 p-8 rounded-xl shadow-2xl scale-in">
+                                <img src="https://placehold.co/80x80/666666/ffffff?text=合作1" alt="合作夥伴圖標" class="w-20 h-20 rounded-full mx-auto mb-6 border-4 border-green-500">
+                                <p class="text-gray-300 italic mb-6 text-lg">
+                                    「與他合作的經驗非常愉快，他的專業與創意讓我們的項目提升到新的高度。」
+                                </p>
+                                <p class="font-semibold text-white text-xl">- 某知名樂團</p>
+                            </div>
+                        </div>
+
+                        <div class="mt-12 flex flex-col md:flex-row justify-center space-y-4 md:space-y-0 md:space-x-6 fade-in-up">
+                            <a href="#" target="_blank" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-8 rounded-full shadow-lg transform transition duration-300 hover:scale-105 flex items-center justify-center">
+                                <i class="fas fa-users mr-2"></i> 加入社群
+                            </a>
+                            <a href="#" target="_blank" class="bg-pink-600 hover:bg-pink-700 text-white font-bold py-3 px-8 rounded-full shadow-lg transform transition duration-300 hover:scale-105 flex items-center justify-center">
+                                <i class="fab fa-instagram mr-2"></i> 追蹤我的 Instagram
+                            </a>
+                            <a href="#" target="_blank" class="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-8 rounded-full shadow-lg transform transition duration-300 hover:scale-105 flex items-center justify-center">
+                                <i class="fab fa-youtube mr-2"></i> 訂閱我的 YouTube
+                            </a>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 倒數/優惠區 (Countdown & Offers) -->
+                <section id="countdown" class="py-20 px-4 bg-gray-900 text-center relative overflow-hidden">
+                    <div class="absolute inset-0 bg-gradient-to-br from-blue-900 to-purple-900 opacity-30"></div>
+                    <div class="relative z-10 container mx-auto max-w-4xl fade-in-up">
+                        <h2 class="text-4xl font-bold text-white mb-8">新譜本即將發布！</h2>
+                        <p class="text-xl text-gray-300 mb-10">
+                            限時早鳥優惠，立即預約，搶先體驗！
+                        </p>
+                        <div class="flex justify-center space-x-6 mb-12 text-white font-mono">
+                            <div class="bg-gray-800 p-6 rounded-xl shadow-xl scale-in">
+                                <div class="text-6xl font-bold">{{ timeLeft.days }}</div>
+                                <div class="text-lg mt-2">天</div>
+                            </div>
+                            <div class="bg-gray-800 p-6 rounded-xl shadow-xl scale-in">
+                                <div class="text-6xl font-bold">{{ timeLeft.hours }}</div>
+                                <div class="text-lg mt-2">小時</div>
+                            </div>
+                            <div class="bg-gray-800 p-6 rounded-xl shadow-xl scale-in">
+                                <div class="text-6xl font-bold">{{ timeLeft.minutes }}</div>
+                                <div class="text-lg mt-2">分鐘</div>
+                            </div>
+                            <div class="bg-gray-800 p-6 rounded-xl shadow-xl scale-in">
+                                <div class="text-6xl font-bold">{{ timeLeft.seconds }}</div>
+                                <div class="text-lg mt-2">秒</div>
+                            </div>
+                        </div>
+                        <button @click="openModal('sheet', '預約新譜本')"
+                                class="bg-orange-500 hover:bg-orange-600 text-white font-bold py-4 px-10 rounded-full shadow-lg transform transition duration-300 hover:scale-105">
+                            立即預約，搶先體驗！
+                            <i class="fas fa-gift ml-2"></i>
+                        </button>
+                    </div>
+                </section>
+
+                <!-- Footer -->
+                <footer class="bg-gray-950 py-12 px-4 text-gray-400 text-center">
+                    <div class="container mx-auto max-w-6xl">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+                            <div>
+                                <h3 class="text-white text-lg font-semibold mb-4">聯絡方式</h3>
+                                <p>Email: info@yourmusic.com</p>
+                                <p>電話: +886 912 345 678</p>
+                                <p>地址: 台灣台北市某某區某某路123號</p>
+                            </div>
+                            <div>
+                                <h3 class="text-white text-lg font-semibold mb-4">社群連結</h3>
+                                <div class="flex justify-center space-x-6 text-2xl">
+                                    <a href="#" target="_blank" class="hover:text-white transition duration-300"><i class="fab fa-facebook"></i></a>
+                                    <a href="#" target="_blank" class="hover:text-white transition duration-300"><i class="fab fa-instagram"></i></a>
+                                    <a href="#" target="_blank" class="hover:text-white transition duration-300"><i class="fab fa-youtube"></i></a>
+                                    <a href="#" target="_blank" class="hover:text-white transition duration-300"><i class="fab fa-twitter"></i></a>
+                                </div>
+                            </div>
+                            <div>
+                                <h3 class="text-white text-lg font-semibold mb-4">隱私政策</h3>
+                                <p><a href="#" class="hover:text-white transition duration-300">隱私權政策</a></p>
+                                <p><a href="#" class="hover:text-white transition duration-300">服務條款</a></p>
+                            </div>
+                        </div>
+                        <div class="border-t border-gray-800 pt-8 mt-8">
+                            <h3 class="text-white text-lg font-semibold mb-4">通用諮詢表單</h3>
+                            <button @click="openModal('contact', '通用諮詢')"
+                                    class="bg-gray-700 hover:bg-gray-600 text-white font-bold py-3 px-8 rounded-full shadow-lg transform transition duration-300 hover:scale-105">
+                                填寫諮詢表單
+                                <i class="fas fa-envelope ml-2"></i>
+                            </button>
+                        </div>
+                        <p class="mt-8 text-sm">&copy; 2025 我的音樂世界. All rights reserved.</p>
+                    </div>
+                </footer>
+
+                <!-- 模態框 (Modal) -->
+                <div v-if="showModal" class="fixed inset-0 flex items-center justify-center z-50 p-4">
+                    <div class="modal-overlay absolute inset-0" @click="showModal = false"></div>
+                    <div class="bg-gray-800 rounded-xl shadow-2xl p-8 w-full relative z-10"
+                         :class="{'max-w-md': modalType !== 'workDetail', 'max-w-6xl': modalType === 'workDetail'}">
+                        <button @click="showModal = false" class="absolute top-4 right-4 text-gray-400 hover:text-white text-2xl">
+                            <i class="fas fa-times"></i>
+                        </button>
+                        <h3 class="text-3xl font-bold text-white mb-6 text-center">{{ modalTitle }}</h3>
+
+                        <!-- 聯絡/索取樂譜表單 (原模態框內容) -->
+                        <div v-if="modalType === 'contact' || modalType === 'sheet'">
+                            <form @submit.prevent="submitForm" class="space-y-6">
+                                <div>
+                                    <label for="name" class="block text-gray-300 text-sm font-bold mb-2">姓名</label>
+                                    <input type="text" id="name" v-model="formName" required
+                                           class="shadow appearance-none border rounded-lg w-full py-3 px-4 text-gray-100 leading-tight focus:outline-none focus:shadow-outline bg-gray-700 border-gray-600">
+                                </div>
+                                <div>
+                                    <label for="email" class="block text-gray-300 text-sm font-bold mb-2">電子郵件</label>
+                                    <input type="email" id="email" v-model="formEmail" required
+                                           class="shadow appearance-none border rounded-lg w-full py-3 px-4 text-gray-100 leading-tight focus:outline-none focus:shadow-outline bg-gray-700 border-gray-600">
+                                </div>
+                                <div v-if="modalType === 'contact' || modalType === 'sheet'">
+                                    <label for="message" class="block text-gray-300 text-sm font-bold mb-2">訊息</label>
+                                    <textarea id="message" v-model="formMessage" rows="5"
+                                              class="shadow appearance-none border rounded-lg w-full py-3 px-4 text-gray-100 leading-tight focus:outline-none focus:shadow-outline bg-gray-700 border-gray-600"></textarea>
+                                </div>
+                                <button type="submit"
+                                        class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-4 rounded-lg focus:outline-none focus:shadow-outline transition duration-300 ease-in-out">
+                                    提交
+                                </button>
+                            </form>
+                        </div>
+
+                        <!-- 作品詳情模態框內容 (新增) -->
+                        <div v-else-if="modalType === 'workDetail' && currentWork" class="grid grid-cols-1 lg:grid-cols-2 gap-8 overflow-y-auto max-h-[80vh]">
+                            <!-- 左側: 影片和樂譜預覽 -->
+                            <div>
+                                <h4 class="text-2xl font-bold text-white mb-4">{{ currentWork.title }}</h4>
+                                <div class="aspect-w-16 aspect-h-9 mb-6 rounded-lg overflow-hidden">
+                                    <iframe :src="currentWork.videoUrl" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen class="w-full h-full"></iframe>
+                                </div>
+
+                                <h5 class="text-xl font-bold text-white mb-4">預覽樂譜</h5>
+                                <div class="relative bg-gray-700 rounded-lg overflow-hidden flex items-center justify-center h-96 mb-4">
+                                    <img :src="currentWork.sheetMusic[currentSheetPageIndex]" alt="Sheet Music Preview" class="max-w-full max-h-full object-contain">
+                                    <button @click="prevSheetPage" :disabled="currentSheetPageIndex === 0"
+                                            class="absolute left-2 top-1/2 -translate-y-1/2 bg-gray-900 bg-opacity-70 text-white p-2 rounded-full hover:bg-opacity-90 disabled:opacity-50 disabled:cursor-not-allowed">
+                                        <i class="fas fa-chevron-left"></i>
+                                    </button>
+                                    <button @click="nextSheetPage" :disabled="currentSheetPageIndex === currentWork.sheetMusic.length - 1"
+                                            class="absolute right-2 top-1/2 -translate-y-1/2 bg-gray-900 bg-opacity-70 text-white p-2 rounded-full hover:bg-opacity-90 disabled:opacity-50 disabled:cursor-not-allowed">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </button>
+                                    <div class="absolute bottom-2 text-sm text-gray-300">
+                                        {{ currentSheetPageIndex + 1 }} / {{ currentWork.sheetMusic.length }}
+                                    </div>
+                                </div>
+                                <p class="text-gray-300 text-sm mb-4">{{ currentWork.description }}</p>
+                            </div>
+
+                            <!-- 右側: 聯絡表單 -->
+                            <div>
+                                <h5 class="text-xl font-bold text-white mb-4">聯絡我們以獲取更多資訊</h5>
+                                <form @submit.prevent="submitForm" class="space-y-6">
+                                    <div>
+                                        <label for="work-name" class="block text-gray-300 text-sm font-bold mb-2">姓名</label>
+                                        <input type="text" id="work-name" v-model="formName" required
+                                               class="shadow appearance-none border rounded-lg w-full py-3 px-4 text-gray-100 leading-tight focus:outline-none focus:shadow-outline bg-gray-700 border-gray-600">
+                                    </div>
+                                    <div>
+                                        <label for="work-email" class="block text-gray-300 text-sm font-bold mb-2">電子郵件</label>
+                                        <input type="email" id="work-email" v-model="formEmail" required
+                                               class="shadow appearance-none border rounded-lg w-full py-3 px-4 text-gray-100 leading-tight focus:outline-none focus:shadow-outline bg-gray-700 border-gray-600">
+                                    </div>
+                                    <div>
+                                        <label for="work-message" class="block text-gray-300 text-sm font-bold mb-2">訊息</label>
+                                        <textarea id="work-message" v-model="formMessage" rows="5"
+                                                  class="shadow appearance-none border rounded-lg w-full py-3 px-4 text-gray-100 leading-tight focus:outline-none focus:shadow-outline bg-gray-700 border-gray-600"></textarea>
+                                    </div>
+                                    <button type="submit"
+                                            class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-4 rounded-lg focus:outline-none focus:shadow-outline transition duration-300 ease-in-out">
+                                        提交
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        };
+
+        createApp(App).mount('#app');
+
+        // Particle animation logic
+        (function() {
+            const canvas = document.getElementById('particle-canvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            let particles = [];
+            let width, height;
+            function resizeCanvas() {
+                width = canvas.width = window.innerWidth;
+                height = canvas.height = window.innerHeight;
+            }
+            function createParticles() {
+                particles = [];
+                for (let i = 0; i < 50; i++) {
+                    particles.push({
+                        x: Math.random() * width,
+                        y: Math.random() * height,
+                        vx: (Math.random() - 0.5) * 0.5,
+                        vy: (Math.random() - 0.5) * 0.5,
+                        radius: Math.random() * 2 + 1,
+                        color: `rgba(255, 255, 255, ${Math.random() * 0.5})`
+                    });
+                }
+            }
+            function drawParticles() {
+                ctx.clearRect(0, 0, width, height);
+                for (let i = 0; i < particles.length; i++) {
+                    const p = particles[i];
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2, false);
+                    ctx.fillStyle = p.color;
+                    ctx.fill();
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    if (p.x < 0 || p.x > width) p.vx *= -1;
+                    if (p.y < 0 || p.y > height) p.vy *= -1;
+                }
+                requestAnimationFrame(drawParticles);
+            }
+            window.addEventListener('resize', resizeCanvas);
+            resizeCanvas();
+            createParticles();
+            drawParticles();
+        })();
+    </script>
+</body>
+</html>
