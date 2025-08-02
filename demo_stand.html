@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>陽光市集攤位</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* 自定義平滑滾動 */
+        html {
+            scroll-behavior: smooth;
+        }
+        /* 隱藏滾動條 */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+        /* 簡單的按鈕動畫 */
+        .animated-btn {
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        .animated-btn:hover {
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 10px 20px rgba(253, 186, 116, 0.4);
+        }
+        /* 模態視窗進入/離開動畫 */
+        .modal-enter-active, .modal-leave-active {
+            transition: opacity 0.3s ease;
+        }
+        .modal-enter-from, .modal-leave-to {
+            opacity: 0;
+        }
+        .modal-content-enter-active, .modal-content-leave-active {
+            transition: transform 0.3s ease-out;
+        }
+        .modal-content-enter-from, .modal-content-leave-to {
+            transform: translateY(20px);
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-amber-50 to-orange-100 text-gray-800">
+
+    <div id="app">
+        <!-- 導航欄 (Header) -->
+        <header class="fixed top-0 left-0 w-full z-50 bg-white/70 backdrop-blur-md shadow-lg rounded-b-3xl">
+            <nav class="container mx-auto px-4 py-3 flex justify-between items-center">
+                <a href="#" class="text-3xl font-bold text-amber-500">
+                    陽光市集
+                </a>
+                <ul class="hidden lg:flex space-x-6 text-lg font-semibold">
+                    <li v-for="link in navLinks" :key="link.id">
+                        <a :href="`#${link.id}`" class="text-gray-600 hover:text-amber-500 transition-colors duration-300">
+                            {{ link.text }}
+                        </a>
+                    </li>
+                </ul>
+                <button class="lg:hidden p-2 rounded-lg text-gray-600 hover:bg-amber-100 transition-colors duration-300" @click="toggleMobileMenu">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                        <path v-if="!isMobileMenuOpen" fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path>
+                        <path v-else fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                    </svg>
+                </button>
+            </nav>
+            <!-- 手機版選單 -->
+            <transition name="modal-content">
+                <div v-if="isMobileMenuOpen" class="lg:hidden bg-white/90 backdrop-blur-md shadow-md rounded-b-2xl p-4">
+                    <ul class="flex flex-col space-y-4 text-center text-lg font-semibold">
+                        <li v-for="link in navLinks" :key="link.id">
+                            <a :href="`#${link.id}`" @click="toggleMobileMenu" class="text-gray-600 hover:text-amber-500 transition-colors duration-300 block py-2 rounded-lg hover:bg-amber-100">
+                                {{ link.text }}
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </transition>
+        </header>
+        
+        <main class="mt-16">
+            <!-- 英雄區塊 (Hero Section) -->
+            <section id="home" class="relative h-screen flex flex-col justify-center items-center text-center px-4 overflow-hidden">
+                <div class="absolute inset-0 bg-[url('https://placehold.co/1920x1080/fdba74/fff?text=Hero+Image')] bg-cover bg-center opacity-70"></div>
+                <div class="relative z-10 text-white drop-shadow-2xl">
+                    <h1 class="text-5xl md:text-7xl font-bold mb-4">陽光市集</h1>
+                    <p class="text-lg md:text-2xl mb-8 font-medium">手工與溫暖的交匯，每一件都是心意的結晶。</p>
+                    <a href="#products" class="animated-btn px-8 py-4 bg-amber-500 text-white rounded-full font-bold text-lg shadow-xl hover:bg-amber-600 transition-colors duration-300">
+                        探索我們的商品
+                    </a>
+                </div>
+            </section>
+
+            <!-- 關於我們 (About Us) -->
+            <section id="about" class="container mx-auto px-4 py-20">
+                <div class="max-w-4xl mx-auto flex flex-col md:flex-row items-center gap-12 p-8 bg-white/70 backdrop-blur-lg rounded-3xl shadow-xl">
+                    <div class="md:w-1/2">
+                        <img src="https://placehold.co/600x400/fdba74/fff?text=About+Us+Image" alt="關於我們圖片" class="rounded-2xl shadow-lg">
+                    </div>
+                    <div class="md:w-1/2 text-center md:text-left">
+                        <h2 class="text-4xl font-bold text-amber-500 mb-6">關於我們</h2>
+                        <p class="text-lg leading-relaxed text-gray-700">
+                            我們的故事始於對手工藝的熱情，以及對美好生活的嚮往。陽光市集不僅是一個攤位，更是一個分享溫暖與創意的平台。我們相信，每一件用心製作的商品，都承載著獨特的溫度與故事。
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 商品區塊 (Products Section) -->
+            <section id="products" class="container mx-auto px-4 py-20">
+                <h2 class="text-4xl font-bold text-center text-amber-500 mb-12">我們的商品</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div v-for="product in products" :key="product.id" class="group bg-white/70 backdrop-blur-lg rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300 overflow-hidden">
+                        <img :src="product.image" :alt="product.name" class="w-full h-56 object-cover rounded-t-3xl transition-transform duration-300 group-hover:scale-110">
+                        <div class="p-6 text-center">
+                            <h3 class="text-2xl font-bold text-amber-500 mb-2">{{ product.name }}</h3>
+                            <p class="text-gray-600 mb-4">{{ product.description }}</p>
+                            <button @click="showProductDetails(product)" class="animated-btn w-full px-4 py-3 bg-amber-500 text-white rounded-full font-semibold hover:bg-amber-600 transition-colors duration-300">
+                                了解更多
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 預購與客製化服務 (Customization Form) -->
+            <section id="custom" class="container mx-auto px-4 py-20">
+                <h2 class="text-4xl font-bold text-center text-amber-500 mb-12">預購與客製化服務</h2>
+                <div class="max-w-xl mx-auto p-8 bg-white/70 backdrop-blur-lg rounded-3xl shadow-xl">
+                    <form @submit.prevent="submitCustomizationForm">
+                        <div class="mb-6">
+                            <label for="custom-name" class="block text-gray-700 font-semibold mb-2">姓名</label>
+                            <input type="text" id="custom-name" name="custom-name" placeholder="您的姓名" class="w-full p-3 rounded-lg bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-transparent transition-all duration-300">
+                        </div>
+                        <div class="mb-6">
+                            <label for="custom-email" class="block text-gray-700 font-semibold mb-2">Email</label>
+                            <input type="email" id="custom-email" name="custom-email" placeholder="您的電子郵件" class="w-full p-3 rounded-lg bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-transparent transition-all duration-300">
+                        </div>
+                        <div class="mb-6">
+                            <label for="custom-product" class="block text-gray-700 font-semibold mb-2">欲客製化商品</label>
+                            <select id="custom-product" name="custom-product" class="w-full p-3 rounded-lg bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-transparent transition-all duration-300">
+                                <option value="" disabled selected>請選擇商品</option>
+                                <option v-for="option in customizationOptions" :key="option.value" :value="option.value">{{ option.text }}</option>
+                            </select>
+                        </div>
+                        <div class="mb-6">
+                            <label for="custom-details" class="block text-gray-700 font-semibold mb-2">客製化需求說明</label>
+                            <textarea id="custom-details" name="custom-details" rows="4" placeholder="請詳細描述您的客製化需求（例如：刻字內容、顏色、尺寸等）" class="w-full p-3 rounded-lg bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-transparent transition-all duration-300"></textarea>
+                        </div>
+                        <div class="mb-6">
+                            <label for="custom-image" class="block text-gray-700 font-semibold mb-2">上傳參考圖片 (選填)</label>
+                            <input type="file" id="custom-image" name="custom-image" class="w-full p-3 rounded-lg bg-gray-50 border border-gray-200 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-amber-100 file:text-amber-700 hover:file:bg-amber-200 transition-colors duration-300">
+                        </div>
+                        <div class="text-center">
+                            <button type="submit" class="animated-btn w-full px-8 py-4 bg-amber-500 text-white rounded-full font-bold text-lg shadow-xl hover:bg-amber-600 transition-colors duration-300">
+                                送出客製化需求
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+            <!-- 攤位行事曆與活動 (Events Section) -->
+            <section id="events" class="container mx-auto px-4 py-20">
+                <h2 class="text-4xl font-bold text-center text-amber-500 mb-12">攤位行事曆與活動</h2>
+                <div class="max-w-4xl mx-auto space-y-6">
+                    <div v-for="event in events" :key="event.id" class="flex flex-col md:flex-row items-center p-6 bg-white/70 backdrop-blur-lg rounded-3xl shadow-xl transition-transform duration-300 hover:scale-[1.02]">
+                        <div class="bg-amber-500 text-white p-4 rounded-xl text-center font-bold flex-shrink-0">
+                            <div class="text-2xl">{{ event.date.day }}</div>
+                            <div class="text-sm">{{ event.date.month }}</div>
+                        </div>
+                        <div class="flex-grow md:ml-6 mt-4 md:mt-0 text-center md:text-left">
+                            <h3 class="text-2xl font-bold text-amber-600">{{ event.name }}</h3>
+                            <p class="text-gray-700 mt-2">{{ event.location }}</p>
+                            <p class="text-gray-500 text-sm mt-1">{{ event.time }}</p>
+                        </div>
+                        <a :href="event.link" target="_blank" class="animated-btn mt-4 md:mt-0 px-6 py-2 bg-amber-200 text-amber-700 rounded-full font-semibold hover:bg-amber-300 transition-colors duration-300">
+                            了解更多
+                        </a>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 部落格/品牌故事區 (Blog Section) -->
+            <section id="blog" class="container mx-auto px-4 py-20">
+                <h2 class="text-4xl font-bold text-center text-amber-500 mb-12">品牌故事與創作分享</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div v-for="post in blogPosts" :key="post.id" class="group bg-white/70 backdrop-blur-lg rounded-3xl shadow-xl transition-all duration-300 hover:shadow-2xl overflow-hidden">
+                        <img :src="post.image" :alt="post.title" class="w-full h-56 object-cover rounded-t-3xl transition-transform duration-300 group-hover:scale-110">
+                        <div class="p-6">
+                            <h3 class="text-2xl font-bold text-amber-600 mb-2">{{ post.title }}</h3>
+                            <p class="text-gray-600 line-clamp-3 mb-4">{{ post.excerpt }}</p>
+                            <button class="animated-btn px-4 py-2 bg-amber-500 text-white rounded-full font-semibold hover:bg-amber-600 transition-colors duration-300">
+                                閱讀更多
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 近期成果區塊 (Results Section) -->
+            <section id="results" class="container mx-auto px-4 py-20">
+                <h2 class="text-4xl font-bold text-center text-amber-500 mb-12">近期成果</h2>
+                <div class="flex flex-wrap justify-center gap-4 mb-8">
+                    <button
+                        v-for="category in categories"
+                        :key="category.value"
+                        @click="setCategory(category.value)"
+                        :class="{
+                            'bg-amber-500 text-white': currentCategory === category.value,
+                            'bg-amber-100 text-amber-700 hover:bg-amber-200': currentCategory !== category.value
+                        }"
+                        class="px-6 py-3 rounded-full font-semibold transition-colors duration-300"
+                    >
+                        {{ category.text }}
+                    </button>
+                </div>
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 max-w-6xl mx-auto">
+                    <div v-for="result in filteredResults" :key="result.id" class="overflow-hidden rounded-xl shadow-md transition-transform duration-300 hover:scale-105">
+                        <img :src="result.image" :alt="result.alt" class="w-full h-48 object-cover">
+                    </div>
+                </div>
+            </section>
+
+            <!-- 顧客好評 (Testimonials) -->
+            <section id="testimonials" class="container mx-auto px-4 py-20">
+                <h2 class="text-4xl font-bold text-center text-amber-500 mb-12">顧客好評</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+                    <blockquote v-for="testimonial in testimonials" :key="testimonial.id" class="p-8 bg-white/70 backdrop-blur-lg rounded-3xl shadow-xl border-l-4 border-amber-500">
+                        <p class="text-lg italic leading-relaxed text-gray-700 mb-4">"{{ testimonial.quote }}"</p>
+                        <footer class="font-semibold text-right text-gray-600">— {{ testimonial.author }}</footer>
+                    </blockquote>
+                </div>
+            </section>
+
+            <!-- 聯絡我們 (Contact Form) -->
+            <section id="contact" class="container mx-auto px-4 py-20">
+                <h2 class="text-4xl font-bold text-center text-amber-500 mb-12">聯絡我們</h2>
+                <div class="max-w-xl mx-auto p-8 bg-white/70 backdrop-blur-lg rounded-3xl shadow-xl">
+                    <form @submit.prevent="submitForm">
+                        <div class="mb-6">
+                            <label for="name" class="block text-gray-700 font-semibold mb-2">姓名</label>
+                            <input type="text" id="name" name="name" placeholder="您的姓名" class="w-full p-3 rounded-lg bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-transparent transition-all duration-300">
+                        </div>
+                        <div class="mb-6">
+                            <label for="email" class="block text-gray-700 font-semibold mb-2">Email</label>
+                            <input type="email" id="email" name="email" placeholder="您的電子郵件" class="w-full p-3 rounded-lg bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-transparent transition-all duration-300">
+                        </div>
+                        <div class="mb-6">
+                            <label for="subject" class="block text-gray-700 font-semibold mb-2">主旨</label>
+                            <select id="subject" name="subject" class="w-full p-3 rounded-lg bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-transparent transition-all duration-300">
+                                <option value="" disabled selected>請選擇一個主題</option>
+                                <option value="product">產品諮詢</option>
+                                <option value="collaboration">合作提案</option>
+                                <option value="feedback">意見回饋</option>
+                                <option value="other">其他</option>
+                            </select>
+                        </div>
+                        <div class="mb-6">
+                            <label for="message" class="block text-gray-700 font-semibold mb-2">訊息</label>
+                            <textarea id="message" name="message" rows="4" placeholder="您的訊息" class="w-full p-3 rounded-lg bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-transparent transition-all duration-300"></textarea>
+                        </div>
+                        <div class="text-center">
+                            <button type="submit" class="animated-btn w-full px-8 py-4 bg-amber-500 text-white rounded-full font-bold text-lg shadow-xl hover:bg-amber-600 transition-colors duration-300">
+                                送出訊息
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+        </main>
+        
+        <!-- 頁腳 (Footer) -->
+        <footer class="bg-amber-500 text-white py-12 rounded-t-3xl">
+            <div class="container mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-left">
+                <!-- 品牌資訊 -->
+                <div>
+                    <h3 class="text-3xl font-bold mb-4">陽光市集</h3>
+                    <p class="text-sm opacity-80">
+                        我們專注於手工藝品與生活小物，為您的生活注入溫暖與美好。
+                    </p>
+                    <div class="flex justify-center md:justify-start space-x-4 mt-4">
+                        <!-- 社群媒體圖標 -->
+                        <a href="#" class="hover:text-gray-200 transition-colors duration-300"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2.163c3.204 0 3.584.013 4.854.07a8.412 8.412 0 002.825.526c1.196.223 1.944.57 2.65 1.276a5.578 5.578 0 001.276 2.651c.224.706.568 1.455.526 2.825-.058 1.27-.07 1.65-.07 4.854 0 3.204.013 3.584.07 4.854a8.412 8.412 0 00-.526 2.825c-.223 1.196-.57 1.944-1.276 2.65a5.578 5.578 0 00-2.651 1.276c-.706.224-1.455.568-2.825.526-1.27-.058-1.65-.07-4.854-.07-3.204 0-3.584.013-4.854.07a8.412 8.412 0 00-2.825-.526c-1.196-.223-1.944-.57-2.65-1.276a5.578 5.578 0 00-1.276-2.651c-.224-.706-.568-1.455-.526-2.825.058-1.27.07-1.65.07-4.854 0-3.204-.013-3.584-.07-4.854a8.412 8.412 0 00.526-2.825c.223-1.196.57-1.944 1.276-2.65a5.578 5.578 0 002.651-1.276c.706-.224 1.455-.568 2.825-.526 1.27.058 1.65.07 4.854.07zM12 4.14a7.86 7.86 0 00-1.91.31c-.96.226-1.554.49-2.07.697-.677.265-1.034.61-1.517 1.093a3.578 3.578 0 00-1.093 1.517c-.207.516-.47 1.11-.697 2.07a7.86 7.86 0 00-.31 1.91c-.056 1.18-.066 1.515-.066 3.99s.01 2.81.066 3.99a7.86 7.86 0 00.31 1.91c.227.96.49 1.554.697 2.07a3.578 3.578 0 001.093 1.517c.483.483.848.848 1.517 1.093.516.207 1.11.47 2.07.697a7.86 7.86 0 001.91.31c1.18.056 1.515.066 3.99.066s2.81-.01 3.99-.066a7.86 7.86 0 001.91-.31c.96-.227 1.554-.49 2.07-.697a3.578 3.578 0 001.517-1.093c.483-.483.848-.848 1.093-1.517.207-.516.47-1.11.697-2.07a7.86 7.86 0 00.31-1.91c.056-1.18.066-1.515.066-3.99s-.01-2.81-.066-3.99a7.86 7.86 0 00-.31-1.91c-.227-.96-.49-1.554-.697-2.07a3.578 3.578 0 00-1.517-1.093c-.483-.483-.848-.848-1.093-1.517-.207-.516-.47-1.11-.697-2.07a7.86 7.86 0 00-1.91-.31c-1.18-.056-1.515-.066-3.99-.066zM12 7.5a4.5 4.5 0 100 9 4.5 4.5 0 000-9zM12 15a3 3 0 110-6 3 3 0 010 6zM16.5 6a1.5 1.5 0 100 3 1.5 1.5 0 000-3z" fill-rule="evenodd" clip-rule="evenodd"></path></svg></a>
+                        <a href="#" class="hover:text-gray-200 transition-colors duration-300"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M23.954 4.56a10.428 10.428 0 01-2.92.8c1.688-1.002 2.977-2.593 3.593-4.492a10.231 10.231 0 01-3.25.986A5.201 5.201 0 0017.5 2c-2.905 0-5.25 2.345-5.25 5.25a5.225 5.225 0 00.14 1.173-14.862 14.862 0 01-10.771-5.449c-.588 1.01-1.097 2.18-1.097 3.428 0 1.815.922 3.422 2.324 4.364a5.19 5.19 0 01-2.376-.653v.068a5.25 5.25 0 004.21 5.148 5.23 5.23 0 01-2.36.088 5.253 5.253 0 004.896 3.642 10.533 10.533 0 01-6.526 2.22c-.424 0-.847-.024-1.265-.074a14.897 14.897 0 008.064 2.36C19.34 22.001 24 16.577 24 9.948c0-.166-.003-.332-.01-.497A17.151 17.151 0 0023.954 4.56z"></path></svg></a>
+                        <a href="#" class="hover:text-gray-200 transition-colors duration-300"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm-1.897 18.056V9.923H7.834v8.133h-3.92V6.638h3.92V8.12a4.428 4.428 0 014.072-2.12c2.973 0 5.215 1.954 5.215 6.136v5.922h-3.918V12.18c0-1.127-.402-1.921-1.423-1.921-.774 0-1.233.518-1.437 1.025-.074.18-.093.418-.093.655v6.117h-3.917z"></path></svg></a>
+                    </div>
+                </div>
+                <!-- 快速連結 -->
+                <div>
+                    <h3 class="text-xl font-bold mb-4">快速連結</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#home" class="hover:text-gray-200 transition-colors duration-300">首頁</a></li>
+                        <li><a href="#about" class="hover:text-gray-200 transition-colors duration-300">關於我們</a></li>
+                        <li><a href="#products" class="hover:text-gray-200 transition-colors duration-300">商品</a></li>
+                        <li><a href="#custom" class="hover:text-gray-200 transition-colors duration-300">客製化</a></li>
+                        <li><a href="#events" class="hover:text-gray-200 transition-colors duration-300">行事曆</a></li>
+                        <li><a href="#blog" class="hover:text-gray-200 transition-colors duration-300">品牌故事</a></li>
+                        <li><a href="#results" class="hover:text-gray-200 transition-colors duration-300">近期成果</a></li>
+                        <li><a href="#testimonials" class="hover:text-gray-200 transition-colors duration-300">顧客好評</a></li>
+                        <li><a href="#contact" class="hover:text-gray-200 transition-colors duration-300">聯絡我們</a></li>
+                    </ul>
+                </div>
+                <!-- 聯絡資訊 -->
+                <div>
+                    <h3 class="text-xl font-bold mb-4">聯絡資訊</h3>
+                    <p class="text-sm opacity-80">
+                        電話: (02) 1234-5678<br>
+                        Email: info@sunny-market.com<br>
+                        地址: 台北市陽光路123號
+                    </p>
+                </div>
+            </div>
+            <div class="border-t border-amber-400 mt-8 pt-8 text-center text-sm opacity-80">
+                &copy; 2024 陽光市集. All rights reserved.
+                <a href="#home" class="block mt-2 hover:text-gray-200 transition-colors duration-300">回到頂部</a>
+            </div>
+        </footer>
+
+        <!-- 產品細節模態視窗 (Product Modal) -->
+        <transition name="modal">
+            <div v-if="showModal" @click.self="showModal = false" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900 bg-opacity-50">
+                <transition name="modal-content">
+                    <div v-if="showModal" class="bg-white rounded-3xl shadow-2xl max-w-4xl w-full p-8 relative overflow-y-auto no-scrollbar max-h-[90vh]">
+                        <button @click="showModal = false" class="absolute top-4 right-4 text-gray-500 hover:text-gray-800 transition-colors duration-300 text-3xl font-bold">&times;</button>
+                        <div v-if="selectedProduct" class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div class="space-y-4">
+                                <img :src="selectedProduct.image" :alt="selectedProduct.name" class="w-full h-80 object-cover rounded-2xl shadow-lg">
+                                <div class="grid grid-cols-3 gap-2">
+                                    <img v-for="(img, index) in selectedProduct.moreImages" :key="index" :src="img" :alt="`${selectedProduct.name}圖片 ${index+1}`" class="w-full h-24 object-cover rounded-lg cursor-pointer hover:scale-105 transition-transform duration-300">
+                                </div>
+                            </div>
+                            <div class="flex flex-col justify-center">
+                                <h3 class="text-4xl font-bold text-amber-500 mb-4">{{ selectedProduct.name }}</h3>
+                                <p class="text-gray-600 text-lg mb-6 leading-relaxed">{{ selectedProduct.details }}</p>
+                                <button class="animated-btn px-8 py-4 bg-amber-500 text-white rounded-full font-bold text-lg hover:bg-amber-600 transition-colors duration-300">
+                                    加入購物車
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </transition>
+            </div>
+        </transition>
+    </div>
+
+    <!-- Vue.js CDN -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script>
+        const { createApp, ref, computed } = Vue;
+
+        const app = createApp({
+            setup() {
+                // 導航欄連結
+                const navLinks = ref([
+                    { id: 'home', text: '首頁' },
+                    { id: 'about', text: '關於我們' },
+                    { id: 'products', text: '商品' },
+                    { id: 'custom', text: '客製化' },
+                    { id: 'events', text: '行事曆' },
+                    { id: 'blog', text: '品牌故事' },
+                    { id: 'results', text: '近期成果' },
+                    { id: 'testimonials', text: '顧客好評' },
+                    { id: 'contact', text: '聯絡我們' },
+                ]);
+
+                // 商品資料
+                const products = ref([
+                    {
+                        id: 1,
+                        name: '手作香氛蠟燭',
+                        description: '天然精油，溫暖療癒，為空間增添香氣。',
+                        image: 'https://placehold.co/600x400/fdba74/fff?text=Candle',
+                        details: '這款手作香氛蠟燭採用純天然大豆蠟和高品質精油，燃燒時無煙無害。溫暖的光芒與療癒的香氣，能有效舒緩壓力，為您的居家空間帶來一抹寧靜與美好。',
+                        moreImages: [
+                            'https://placehold.co/600x400/fcd34d/fff?text=Candle+1',
+                            'https://placehold.co/600x400/f9a8d4/fff?text=Candle+2',
+                            'https://placehold.co/600x400/e9d5ff/fff?text=Candle+3'
+                        ]
+                    },
+                    {
+                        id: 2,
+                        name: '編織質感托特包',
+                        description: '手工編織，獨特紋理，輕巧耐用。',
+                        image: 'https://placehold.co/600x400/fcd34d/fff?text=Bag',
+                        details: '這款托特包由資深工匠手工編織而成，每一條編線都充滿了匠心。採用環保材質，輕巧耐用，獨特的紋理讓您在任何場合都能展現出眾品味。',
+                        moreImages: [
+                            'https://placehold.co/600x400/fdba74/fff?text=Bag+1',
+                            'https://placehold.co/600x400/f9a8d4/fff?text=Bag+2',
+                            'https://placehold.co/600x400/e9d5ff/fff?text=Bag+3'
+                        ]
+                    },
+                    {
+                        id: 3,
+                        name: '木質雕刻杯墊',
+                        description: '溫潤木紋，精緻雕刻，實用又美觀。',
+                        image: 'https://placehold.co/600x400/f9a8d4/fff?text=Coaster',
+                        details: '每一片木質杯墊都經過精心挑選與打磨，保留了最自然的木紋。精緻的雕刻圖案為您的桌面增添藝術氣息，不僅實用，更是獨一無二的裝飾品。',
+                        moreImages: [
+                            'https://placehold.co/600x400/fdba74/fff?text=Coaster+1',
+                            'https://placehold.co/600x400/fcd34d/fff?text=Coaster+2',
+                            'https://placehold.co/600x400/e9d5ff/fff?text=Coaster+3'
+                        ]
+                    },
+                ]);
+
+                // 顧客好評資料
+                const testimonials = ref([
+                    { id: 1, quote: '商品的品質非常好，包裝也很精緻，感受到賣家的用心！', author: '林小姐' },
+                    { id: 2, quote: '非常喜歡這個手作蠟燭，香味很自然，點燃後整個房間都溫暖了起來。', author: '陳先生' },
+                ]);
+
+                // 客製化服務選項
+                const customizationOptions = ref([
+                    { value: 'candle', text: '手作香氛蠟燭' },
+                    { value: 'bag', text: '編織托特包' },
+                    { value: 'coaster', text: '木質雕刻杯墊' },
+                    { value: 'other', text: '其他' },
+                ]);
+
+                // 行事曆活動資料
+                const events = ref([
+                    { id: 1, name: '春日手作市集', location: '台北華山文創園區', date: { day: '15', month: '五月' }, time: '10:00 - 18:00', link: '#' },
+                    { id: 2, name: '夏日文創展', location: '松山文創園區', date: { day: '22', month: '六月' }, time: '11:00 - 19:00', link: '#' },
+                    { id: 3, name: '親子手作工作坊', location: '陽光市集工作室', date: { day: '10', month: '七月' }, time: '14:00 - 16:00', link: '#' },
+                ]);
+
+                // 部落格文章資料
+                const blogPosts = ref([
+                    {
+                        id: 1,
+                        title: '第一盞燈的誕生：品牌故事',
+                        image: 'https://placehold.co/600x400/a3e635/fff?text=Blog+1',
+                        excerpt: '我們相信，每個手作物件都有其獨特的靈魂。陽光市集從一個小小的想法開始，至今我們依然秉持著這份初心，用雙手創造每一個溫暖的作品。'
+                    },
+                    {
+                        id: 2,
+                        title: '挑選最天然的材料',
+                        image: 'https://placehold.co/600x400/818cf8/fff?text=Blog+2',
+                        excerpt: '從大豆蠟到精油，我們堅持使用對環境友善、對人體無害的天然材料，讓您在享受產品的同時，也能安心無憂。'
+                    },
+                    {
+                        id: 3,
+                        title: '手作教學：客製化香氛蠟燭',
+                        image: 'https://placehold.co/600x400/f472b6/fff?text=Blog+3',
+                        excerpt: '想親手製作屬於自己的香氛蠟燭嗎？我們將在這裡分享一些簡單的步驟和技巧，讓您也能成為一位小小手作師。'
+                    }
+                ]);
+
+                // 近期成果照片與分類
+                const resultsPhotos = ref([
+                    { id: 1, image: 'https://placehold.co/400x300/a855f7/fff?text=市集攤位+1', alt: '市集攤位照片', category: 'market' },
+                    { id: 2, image: 'https://placehold.co/400x300/fcd34d/fff?text=客製化作品+1', alt: '客戶客製化作品合影', category: 'custom' },
+                    { id: 3, image: 'https://placehold.co/400x300/60a5fa/fff?text=工作坊+1', alt: '現場手作教學', category: 'workshop' },
+                    { id: 4, image: 'https://placehold.co/400x300/f472b6/fff?text=市集攤位+2', alt: '攤位全景', category: 'market' },
+                    { id: 5, image: 'https://placehold.co/400x300/4ade80/fff?text=客製化作品+2', alt: '特寫客製化產品照片', category: 'custom' },
+                    { id: 6, image: 'https://placehold.co/400x300/fbbf24/fff?text=工作坊+2', alt: '市集人潮', category: 'workshop' },
+                ]);
+
+                // 成果篩選分類
+                const categories = ref([
+                    { value: 'all', text: '全部' },
+                    { value: 'market', text: '市集攤位' },
+                    { value: 'custom', text: '客製化作品' },
+                    { value: 'workshop', text: '工作坊' }
+                ]);
+
+                // 篩選功能狀態
+                const currentCategory = ref('all');
+                
+                // 根據類別篩選成果照片
+                const filteredResults = computed(() => {
+                    if (currentCategory.value === 'all') {
+                        return resultsPhotos.value;
+                    }
+                    return resultsPhotos.value.filter(photo => photo.category === currentCategory.value);
+                });
+
+                // 模態視窗狀態管理
+                const showModal = ref(false);
+                const selectedProduct = ref(null);
+
+                // 手機版選單狀態
+                const isMobileMenuOpen = ref(false);
+
+                // 顯示產品細節模態視窗
+                const showProductDetails = (product) => {
+                    selectedProduct.value = product;
+                    showModal.value = true;
+                };
+
+                // 提交一般聯絡表單的虛擬方法
+                const submitForm = () => {
+                    alert('聯絡表單已提交，感謝您的訊息！');
+                    // 這裡可以加入實際的表單提交邏輯
+                };
+
+                // 提交客製化表單的虛擬方法
+                const submitCustomizationForm = () => {
+                    alert('客製化需求已提交，我們會盡快與您聯絡！');
+                    // 這裡可以加入實際的表單提交邏輯
+                };
+
+                // 切換手機版選單
+                const toggleMobileMenu = () => {
+                    isMobileMenuOpen.value = !isMobileMenuOpen.value;
+                };
+
+                // 設定成果照片篩選類別
+                const setCategory = (category) => {
+                    currentCategory.value = category;
+                };
+
+                return {
+                    navLinks,
+                    products,
+                    testimonials,
+                    customizationOptions,
+                    events,
+                    blogPosts,
+                    resultsPhotos,
+                    showModal,
+                    selectedProduct,
+                    showProductDetails,
+                    submitForm,
+                    submitCustomizationForm,
+                    isMobileMenuOpen,
+                    toggleMobileMenu,
+                    categories,
+                    currentCategory,
+                    filteredResults,
+                    setCategory,
+                };
+            }
+        });
+
+        app.mount('#app');
+    </script>
+</body>
+</html>
