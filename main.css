@@ -9,4 +9,50 @@ body {
 .preview-font-inter { font-family: 'Inter', sans-serif; }
 .preview-font-roboto { font-family: 'Roboto', sans-serif; }
 .preview-font-serif { font-family: 'Noto Serif TC', serif; }
-/* ...其餘 CSS ... */
+/* ===== Footer Theme (Tech) ===== */
+:root{
+  --bg:#0b1020;           /* 深藍黑底 */
+  --card:#0f172a;         /* 區塊背景 */
+  --text:#e2e8f0;         /* 主字色 */
+  --muted:#94a3b8;        /* 次字色 */
+  --accent:#22d3ee;       /* 霓虹藍綠 */
+  --accent-2:#7c3aed;     /* 補色紫 */
+  --border:rgba(255,255,255,.08);
+}
+
+.footer{
+  background:
+    radial-gradient(1200px 450px at 90% -10%, rgba(34,211,238,.15), transparent 70%),
+    radial-gradient(900px 350px at -10% 20%, rgba(124,58,237,.12), transparent 70%),
+    var(--bg);
+  color: var(--text);
+  position: relative;
+  overflow: hidden;
+  border-top: 1px solid var(--border);
+}
+
+/* CTA (glassmorphism) */
+.footer-cta{
+  max-width:1200px; margin:0 auto; padding:18px 20px;
+  display:flex; align-items:center; justify-content:space-between; gap:16px;
+  background: linear-gradient(135deg, rgba(34,211,238,.16), rgba(124,58,237,.16));
+  border:1px solid var(--border);
+  border-radius:16px;
+  backdrop-filter: blur(4px);
+  transform: translateY(-16px);
+}
+.footer-cta .cta-title{ font-size:1.05rem; letter-spacing:.2px; }
+.cta-actions{ display:flex; gap:10px; flex-wrap:wrap; }
+
+.btn{
+  display:inline-flex; align-items:center; gap:8px;
+  padding:10px 14px; border-radius:10px; font-weight:600;
+  text-decoration:none; transition: all .2s ease; border:1px solid var(--border);
+}
+.btn-primary{ background: linear-gradient(90deg, var(--accent), #60a5fa); color:#04121a; }
+.btn-primary:hover{ transform: translateY(-1px); filter: brightness(1.05); }
+.btn-outline{ color: var(--text); background: rgba(255,255,255,.02); }
+.btn-outline:hover{ border-color: rgba(255,255,255,.2); background: rgba(255,255,255,.06); }
+.btn-full{ display:flex; justify-content:center; width:100%; margin-top:8px;
+  background: linear-gradient(90deg, var(--accent), #60a5fa); color:#04121a; }
+
