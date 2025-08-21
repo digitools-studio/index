@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>電子名片生成器</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@3"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #f3f4f6;
+        }
+        .card-container {
+            transition: all 0.5s ease-in-out;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        .gradient-tech { background-image: linear-gradient(to right, #001f3f, #1a237e); }
+        .gradient-business { background-image: linear-gradient(to right, #333333, #4b5869); }
+        .gradient-art { background-image: linear-gradient(to right, #8b0000, #4b0082); }
+        .gradient-gradient { background-image: linear-gradient(to right, #87ceeb, #add8e6); }
+        .glow-text {
+            text-shadow: 0 0 8px currentColor, 0 0 16px currentColor, 0 0 24px currentColor;
+        }
+        .pulse-text {
+            animation: pulse-glow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @keyframes pulse-glow {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.03); }
+        }
+        .tab-button.active {
+            border-bottom: 3px solid currentColor;
+            color: #4b5563;
+        }
+        .tab-button:not(.active) {
+            color: #9ca3af;
+        }
+        .scroll-container {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .scroll-container::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+
+<div id="app" class="flex flex-col min-h-screen">
+    <div class="container mx-auto p-4 md:p-8 flex-grow">
+        <!-- 主標題 -->
+        <h1 class="text-3xl md:text-4xl font-black text-center text-gray-800 mb-8">電子名片生成器</h1>
+
+        <!-- 介面切換按鈕 -->
+        <div class="flex justify-center gap-4 mb-8">
+            <button @click="toggleView('form')" :class="{'bg-gray-800 text-white': view === 'form', 'bg-white text-gray-800': view !== 'form'}" class="px-6 py-3 rounded-lg font-bold shadow-md transition-colors">編輯名片</button>
+            <button @click="toggleView('display')" :class="{'bg-gray-800 text-white': view === 'display', 'bg-white text-gray-800': view !== 'display'}" class="px-6 py-3 rounded-lg font-bold shadow-md transition-colors">預覽名片</button>
+        </div>
+
+        <!-- 提示訊息 -->
+        <div v-if="showNotification" class="fixed top-20 left-1/2 -translate-x-1/2 z-50 bg-green-500 text-white px-6 py-3 rounded-lg shadow-xl animate-fade-in-down transition-transform duration-300">
+            {{ notificationMessage }}
+        </div>
+
+        <!-- 編輯表單 -->
+        <div v-if="view === 'form'" class="bg-white rounded-xl shadow-lg p-6 md:p-8 max-w-4xl mx-auto">
+            <div class="mb-6">
+                <label for="template" class="block text-lg font-bold text-gray-800 mb-2">選擇設計模板</label>
+                <select v-model="cardData.selectedTemplateId" @change="updateTemplate" id="template" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <option value="tech-futuristic">科技未來感</option>
+                    <option value="minimal-business">簡約商務風</option>
+                    <option value="creative-art">創意藝術風</option>
+                    <option value="modern-gradient">現代漸變風</option>
+                </select>
+            </div>
+            
+            <div class="mb-8">
+                <div class="flex flex-wrap border-b border-gray-200 mb-4">
+                    <button @click="toggleFormTab('personal')" :class="{'text-gray-900 border-gray-900': formTab === 'personal'}" class="tab-button text-lg font-bold px-4 py-2 border-b-2">個人與聯絡</button>
+                    <button @click="toggleFormTab('style')" :class="{'text-gray-900 border-gray-900': formTab === 'style'}" class="tab-button text-lg font-bold px-4 py-2 border-b-2">設計與風格</button>
+                    <button @click="toggleFormTab('modules')" :class="{'text-gray-900 border-gray-900': formTab === 'modules'}" class="tab-button text-lg font-bold px-4 py-2 border-b-2">模組編輯</button>
+                </div>
+                
+                <!-- Tab Content -->
+                <div v-show="formTab === 'personal'" class="space-y-4">
+                    <h2 class="text-xl font-bold mb-4">個人與聯絡資訊</h2>
+                    <div>
+                        <label for="name" class="block text-sm font-medium text-gray-700">姓名</label>
+                        <input type="text" id="name" v-model="cardData.name" class="w-full mt-1 px-3 py-2 border rounded-md">
+                    </div>
+                    <div>
+                        <label for="title" class="block text-sm font-medium text-gray-700">職稱</label>
+                        <input type="text" id="title" v-model="cardData.title" class="w-full mt-1 px-3 py-2 border rounded-md">
+                    </div>
+                    <div>
+                        <label for="phone" class="block text-sm font-medium text-gray-700">電話</label>
+                        <input type="text" id="phone" v-model="cardData.contact.phone" class="w-full mt-1 px-3 py-2 border rounded-md">
+                    </div>
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+                        <input type="email" id="email" v-model="cardData.contact.email" class="w-full mt-1 px-3 py-2 border rounded-md">
+                    </div>
+                    <div>
+                        <label for="companyName" class="block text-sm font-medium text-gray-700">公司名稱</label>
+                        <input type="text" id="companyName" v-model="cardData.contact.companyName" class="w-full mt-1 px-3 py-2 border rounded-md">
+                    </div>
+                    <div>
+                        <label for="companyUrl" class="block text-sm font-medium text-gray-700">公司網址</label>
+                        <input type="url" id="companyUrl" v-model="cardData.contact.companyUrl" class="w-full mt-1 px-3 py-2 border rounded-md">
+                    </div>
+                    <div>
+                        <label for="avatarUrl" class="block text-sm font-medium text-gray-700">頭像圖片網址</label>
+                        <input type="url" id="avatarUrl" v-model="cardData.image.avatar" class="w-full mt-1 px-3 py-2 border rounded-md">
+                    </div>
+                    <div>
+                        <label for="logoUrl" class="block text-sm font-medium text-gray-700">公司 Logo 圖片網址</label>
+                        <input type="url" id="logoUrl" v-model="cardData.image.logo" class="w-full mt-1 px-3 py-2 border rounded-md">
+                    </div>
+                </div>
+
+                <div v-show="formTab === 'style'" class="space-y-4">
+                    <h2 class="text-xl font-bold mb-4">設計與風格</h2>
+                    <div>
+                        <label for="textColor" class="block text-sm font-medium text-gray-700">主要文字顏色</label>
+                        <input type="color" id="textColor" v-model="cardData.style.textColor" class="w-full mt-1 h-10">
+                    </div>
+                    <div>
+                        <label for="accentColor" class="block text-sm font-medium text-gray-700">強調色</label>
+                        <input type="color" id="accentColor" v-model="cardData.style.accentColor" class="w-full mt-1 h-10">
+                    </div>
+                    <div>
+                        <label for="customCss" class="block text-sm font-medium text-gray-700">自訂 CSS (進階)</label>
+                        <textarea id="customCss" v-model="cardData.style.customCss" rows="5" class="w-full mt-1 px-3 py-2 border rounded-md"></textarea>
+                    </div>
+                </div>
+                
+                <div v-show="formTab === 'modules'" class="space-y-6">
+                    <h2 class="text-xl font-bold mb-4">模組編輯</h2>
+                    
+                    <!-- 關於我模組 -->
+                    <div class="border p-4 rounded-lg bg-gray-50">
+                        <label class="flex items-center space-x-2 font-medium text-gray-800">
+                            <input type="checkbox" v-model="cardData.modules.about.enabled" class="form-checkbox">
+                            <span>關於我 / 品牌簡介</span>
+                        </label>
+                        <div v-if="cardData.modules.about.enabled" class="mt-4 space-y-2">
+                            <div>
+                                <label class="block text-sm text-gray-600">簡介內容</label>
+                                <textarea v-model="cardData.modules.about.content" rows="4" class="w-full mt-1 px-3 py-2 border rounded-md"></textarea>
+                            </div>
+                            <div>
+                                <label class="block text-sm text-gray-600">語音自介網址 (MP3)</label>
+                                <input type="url" v-model="cardData.modules.about.audioUrl" class="w-full mt-1 px-3 py-2 border rounded-md">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 產品服務模組 -->
+                    <div class="border p-4 rounded-lg bg-gray-50">
+                        <label class="flex items-center space-x-2 font-medium text-gray-800">
+                            <input type="checkbox" v-model="cardData.modules.products.enabled" class="form-checkbox">
+                            <span>產品服務</span>
+                        </label>
+                        <div v-if="cardData.modules.products.enabled" class="mt-4 space-y-4">
+                            <div v-for="(product, index) in cardData.modules.products.items" :key="index" class="border p-4 rounded-lg bg-white">
+                                <h4 class="font-bold">產品 {{ index + 1 }}</h4>
+                                <div>
+                                    <label class="block text-sm text-gray-600">產品名稱</label>
+                                    <input type="text" v-model="product.name" class="w-full mt-1 px-3 py-2 border rounded-md">
+                                </div>
+                                <div>
+                                    <label class="block text-sm text-gray-600">產品描述</label>
+                                    <input type="text" v-model="product.description" class="w-full mt-1 px-3 py-2 border rounded-md">
+                                </div>
+                                <div>
+                                    <label class="block text-sm text-gray-600">產品圖片網址</label>
+                                    <input type="url" v-model="product.imageUrl" class="w-full mt-1 px-3 py-2 border rounded-md">
+                                </div>
+                                <button @click="removeModuleItem('products', index)" class="mt-2 bg-red-500 text-white text-sm px-3 py-1 rounded-md">移除</button>
+                            </div>
+                            <button @click="addModuleItem('products')" class="mt-4 bg-green-500 text-white px-4 py-2 rounded-lg">新增產品</button>
+                        </div>
+                    </div>
+
+                    <!-- 作品集模組 -->
+                     <div class="border p-4 rounded-lg bg-gray-50">
+                        <label class="flex items-center space-x-2 font-medium text-gray-800">
+                            <input type="checkbox" v-model="cardData.modules.portfolio.enabled" class="form-checkbox">
+                            <span>作品集</span>
+                        </label>
+                        <div v-if="cardData.modules.portfolio.enabled" class="mt-4 space-y-4">
+                            <div v-for="(item, index) in cardData.modules.portfolio.items" :key="index" class="border p-4 rounded-lg bg-white">
+                                <h4 class="font-bold">作品 {{ index + 1 }}</h4>
+                                <div>
+                                    <label class="block text-sm text-gray-600">專案名稱</label>
+                                    <input type="text" v-model="item.name" class="w-full mt-1 px-3 py-2 border rounded-md">
+                                </div>
+                                <div>
+                                    <label class="block text-sm text-gray-600">專案描述</label>
+                                    <input type="text" v-model="item.description" class="w-full mt-1 px-3 py-2 border rounded-md">
+                                </div>
+                                <div>
+                                    <label class="block text-sm text-gray-600">專案圖片網址</label>
+                                    <input type="url" v-model="item.imageUrl" class="w-full mt-1 px-3 py-2 border rounded-md">
+                                </div>
+                                <button @click="removeModuleItem('portfolio', index)" class="mt-2 bg-red-500 text-white text-sm px-3 py-1 rounded-md">移除</button>
+                            </div>
+                            <button @click="addModuleItem('portfolio')" class="mt-4 bg-green-500 text-white px-4 py-2 rounded-lg">新增作品</button>
+                        </div>
+                    </div>
+
+                    <!-- 文件下載模組 -->
+                    <div class="border p-4 rounded-lg bg-gray-50">
+                        <label class="flex items-center space-x-2 font-medium text-gray-800">
+                            <input type="checkbox" v-model="cardData.modules.docs.enabled" class="form-checkbox">
+                            <span>文件/PDF 下載</span>
+                        </label>
+                        <div v-if="cardData.modules.docs.enabled" class="mt-4 space-y-4">
+                            <div v-for="(item, index) in cardData.modules.docs.items" :key="index" class="border p-4 rounded-lg bg-white">
+                                <h4 class="font-bold">文件 {{ index + 1 }}</h4>
+                                <div>
+                                    <label class="block text-sm text-gray-600">檔案名稱</label>
+                                    <input type="text" v-model="item.name" class="w-full mt-1 px-3 py-2 border rounded-md">
+                                </div>
+                                <div>
+                                    <label class="block text-sm text-gray-600">檔案連結 (PDF URL)</label>
+                                    <input type="url" v-model="item.url" class="w-full mt-1 px-3 py-2 border rounded-md">
+                                </div>
+                                <button @click="removeModuleItem('docs', index)" class="mt-2 bg-red-500 text-white text-sm px-3 py-1 rounded-md">移除</button>
+                            </div>
+                            <button @click="addModuleItem('docs')" class="mt-4 bg-green-500 text-white px-4 py-2 rounded-lg">新增文件</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <button @click="generateCard" class="w-full py-3 bg-indigo-600 text-white font-bold rounded-lg shadow-lg hover:bg-indigo-700 transition-colors">生成並預覽名片</button>
+        </div>
+
+        <!-- 名片預覽 -->
+        <div v-if="view === 'display'" class="max-w-xl mx-auto rounded-3xl overflow-hidden shadow-2xl card-container" :style="customCss">
+            <!-- 名片頂部區塊 -->
+            <div :class="selectedTemplateBg" class="p-8 flex flex-col items-center text-center relative text-white">
+                <div v-if="cardData.image.logo" class="absolute top-4 left-4">
+                    <img :src="cardData.image.logo" alt="Company Logo" class="h-10 w-auto rounded-lg shadow-md">
+                </div>
+                <div v-if="cardData.image.avatar" class="w-24 h-24 rounded-full overflow-hidden border-4 border-white shadow-lg mb-4">
+                    <img :src="cardData.image.avatar" alt="Avatar" class="w-full h-full object-cover">
+                </div>
+                <h2 :style="{color: cardData.style.accentColor}" class="text-3xl font-extrabold pulse-text glow-text">{{ cardData.name }}</h2>
+                <p class="text-lg font-medium mt-1" :style="{color: cardData.style.textColor}">{{ cardData.title }}</p>
+                <div v-if="cardData.contact.companyName" class="flex items-center justify-center mt-2">
+                    <p class="font-bold text-sm" :style="{color: cardData.style.textColor}">{{ cardData.contact.companyName }}</p>
+                </div>
+            </div>
+
+            <!-- 名片內容區塊 -->
+            <div class="bg-white p-6 md:p-8 space-y-6">
+                <!-- 基本資訊 -->
+                <div>
+                    <h3 class="font-bold text-xl mb-3 border-b pb-2" :style="{color: cardData.style.accentColor}">聯絡資訊</h3>
+                    <div class="space-y-2">
+                        <p v-if="cardData.contact.phone" :style="{color: cardData.style.textColor}">📱 {{ cardData.contact.phone }}</p>
+                        <p v-if="cardData.contact.email" :style="{color: cardData.style.textColor}">📧 {{ cardData.contact.email }}</p>
+                        <a v-if="cardData.contact.companyUrl" :href="cardData.contact.companyUrl" target="_blank" class="block text-blue-600 hover:underline" :style="{color: cardData.style.textColor}">🌐 {{ cardData.contact.companyUrl }}</a>
+                    </div>
+                </div>
+
+                <!-- 分享與工具 -->
+                <div class="flex flex-col space-y-2">
+                    <button @click="copyShareableUrl" class="bg-gray-200 text-gray-800 px-4 py-2 rounded-md font-bold hover:bg-gray-300">複製分享連結</button>
+                    <a :href="vcardUrl" download="contact.vcf" class="text-center bg-gray-200 text-gray-800 px-4 py-2 rounded-md font-bold hover:bg-gray-300">下載 vCard</a>
+                </div>
+
+                <!-- 動態模組導航 -->
+                <div class="overflow-x-auto scroll-container whitespace-nowrap border-b border-gray-200 mb-4">
+                    <button v-if="cardData.modules.about.enabled" @click="activeModule = 'about'" :class="{'active': activeModule === 'about'}" class="tab-button inline-block px-4 py-2 text-sm font-semibold transition-colors">關於我</button>
+                    <button v-if="cardData.modules.products.enabled" @click="activeModule = 'products'" :class="{'active': activeModule === 'products'}" class="tab-button inline-block px-4 py-2 text-sm font-semibold transition-colors">產品服務</button>
+                    <button v-if="cardData.modules.portfolio.enabled" @click="activeModule = 'portfolio'" :class="{'active': activeModule === 'portfolio'}" class="tab-button inline-block px-4 py-2 text-sm font-semibold transition-colors">作品集</button>
+                    <button v-if="cardData.modules.docs.enabled" @click="activeModule = 'docs'" :class="{'active': activeModule === 'docs'}" class="tab-button inline-block px-4 py-2 text-sm font-semibold transition-colors">文件下載</button>
+                </div>
+
+                <!-- 動態模組內容區 -->
+                <div class="module-content">
+                    <div v-if="activeModule === 'about' && cardData.modules.about.enabled" class="space-y-4">
+                        <h3 class="font-bold text-xl mb-2" :style="{color: cardData.style.accentColor}">關於我</h3>
+                        <p :style="{color: cardData.style.textColor}">{{ cardData.modules.about.content }}</p>
+                        <div v-if="cardData.modules.about.audioUrl">
+                            <audio controls class="w-full">
+                                <source :src="cardData.modules.about.audioUrl" type="audio/mpeg">
+                                您的瀏覽器不支援音訊播放。
+                            </audio>
+                        </div>
+                    </div>
+
+                    <div v-if="activeModule === 'products' && cardData.modules.products.enabled" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div v-for="product in cardData.modules.products.items" :key="product.name" class="p-4 border rounded-lg shadow-sm">
+                            <img :src="product.imageUrl" alt="Product Image" class="w-full h-32 object-cover rounded-md mb-2">
+                            <h4 class="font-bold" :style="{color: cardData.style.accentColor}">{{ product.name }}</h4>
+                            <p class="text-sm mt-1" :style="{color: cardData.style.textColor}">{{ product.description }}</p>
+                        </div>
+                    </div>
+                    
+                    <div v-if="activeModule === 'portfolio' && cardData.modules.portfolio.enabled" class="space-y-4">
+                        <h3 class="font-bold text-xl mb-2" :style="{color: cardData.style.accentColor}">作品集</h3>
+                        <div class="flex overflow-x-auto gap-4 scroll-container pb-4">
+                            <div v-for="item in cardData.modules.portfolio.items" :key="item.name" class="min-w-[150px] p-4 border rounded-lg shadow-sm">
+                                <img :src="item.imageUrl" alt="Project Image" class="w-full h-24 object-cover rounded-md mb-2">
+                                <h4 class="font-bold text-sm" :style="{color: cardData.style.accentColor}">{{ item.name }}</h4>
+                                <p class="text-xs text-gray-600 mt-1">{{ item.description }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div v-if="activeModule === 'docs' && cardData.modules.docs.enabled" class="space-y-2">
+                        <h3 class="font-bold text-xl mb-2" :style="{color: cardData.style.accentColor}">文件下載</h3>
+                        <div v-for="doc in cardData.modules.docs.items" :key="doc.name" class="flex items-center justify-between p-3 border rounded-lg shadow-sm">
+                            <p :style="{color: cardData.style.textColor}">{{ doc.name }}</p>
+                            <a :href="doc.url" target="_blank" class="bg-gray-200 text-gray-800 text-sm px-3 py-1 rounded-md">下載</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 社群連結與分享 -->
+                <div class="mt-8">
+                    <div class="flex justify-center space-x-4 mb-4" :style="{color: cardData.style.accentColor}">
+                        <a v-if="cardData.social.linkedin" :href="cardData.social.linkedin" target="_blank" class="text-2xl hover:scale-110 transition-transform">🔗</a>
+                        <a v-if="cardData.social.facebook" :href="cardData.social.facebook" target="_blank" class="text-2xl hover:scale-110 transition-transform">📘</a>
+                        <a v-if="cardData.social.line" :href="cardData.social.line" target="_blank" class="text-2xl hover:scale-110 transition-transform">🟩</a>
+                        <a v-if="cardData.social.instagram" :href="cardData.social.instagram" target="_blank" class="text-2xl hover:scale-110 transition-transform">📸</a>
+                        <a v-if="cardData.social.twitter" :href="cardData.social.twitter" target="_blank" class="text-2xl hover:scale-110 transition-transform">🐦</a>
+                    </div>
+                    <button @click="shareCard" class="w-full py-3 bg-indigo-600 text-white font-bold rounded-lg shadow-lg hover:bg-indigo-700 transition-colors">分享名片</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const app = Vue.createApp({
+        data() {
+            return {
+                view: 'form',
+                formTab: 'personal',
+                activeModule: 'about',
+                showNotification: false,
+                notificationMessage: '',
+                cardData: {
+                    name: '王小明',
+                    title: '資深前端開發',
+                    selectedTemplateId: 'tech-futuristic',
+                    contact: {
+                        phone: '0912-345678',
+                        email: 'john.doe@example.com',
+                        companyName: '創新科技股份有限公司',
+                        companyUrl: 'https://www.google.com'
+                    },
+                    image: {
+                        avatar: 'https://placehold.co/200x200/5C6BC0/FFFFFF?text=JD',
+                        logo: 'https://placehold.co/100x100/5C6BC0/FFFFFF?text=LOGO'
+                    },
+                    style: {
+                        textColor: '#ffffff',
+                        accentColor: '#00ffff',
+                        customCss: ''
+                    },
+                    modules: {
+                        about: {
+                            enabled: true,
+                            content: '我是資深前端工程師，擅長使用 Vue.js 和 Tailwind CSS 開發高性能的網頁應用程式。我熱衷於創造直觀且美觀的使用者介面，並不斷學習最新的技術以提升開發效率。',
+                            audioUrl: ''
+                        },
+                        products: {
+                            enabled: true,
+                            items: [
+                                { name: '產品 A', description: '這是一個創新的雲端管理工具，能有效提升團隊協作效率。', imageUrl: 'https://placehold.co/300x200/5C6BC0/FFFFFF?text=Product+A' },
+                                { name: '產品 B', description: '基於 AI 的資料分析平台，幫助您洞察市場趨勢，做出明智決策。', imageUrl: 'https://placehold.co/300x200/5C6BC0/FFFFFF?text=Product+B' }
+                            ]
+                        },
+                        portfolio: {
+                            enabled: true,
+                            items: [
+                                { name: '個人作品集網站', description: '展示我的技術能力和設計作品。', imageUrl: 'https://placehold.co/300x200/5C6BC0/FFFFFF?text=Project+X' },
+                                { name: '電商平台專案', description: '一個完整的電子商務解決方案，包含前後台功能。', imageUrl: 'https://placehold.co/300x200/5C6BC0/FFFFFF?text=Project+Y' }
+                            ]
+                        },
+                        docs: {
+                            enabled: true,
+                            items: [
+                                { name: '公司簡介.pdf', url: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf' },
+                                { name: '服務項目.pdf', url: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf' }
+                            ]
+                        }
+                    },
+                    social: {
+                        linkedin: 'https://www.linkedin.com/in/johndoe/',
+                        facebook: 'https://www.facebook.com/johndoe',
+                        instagram: '',
+                        twitter: '',
+                        line: ''
+                    }
+                }
+            };
+        },
+        computed: {
+            shareableUrl() {
+                const data = JSON.stringify(this.cardData);
+                return `${window.location.protocol}//${window.location.host}${window.location.pathname}#${btoa(encodeURIComponent(data))}`;
+            },
+            vcardUrl() {
+                const vCard = `BEGIN:VCARD
+VERSION:3.0
+N:${this.cardData.name}
+FN:${this.cardData.name}
+TITLE:${this.cardData.title}
+TEL;TYPE=WORK,VOICE:${this.cardData.contact.phone}
+EMAIL;TYPE=PREF,INTERNET:${this.cardData.contact.email}
+URL;TYPE=WORK:${this.cardData.contact.companyUrl}
+ORG:${this.cardData.contact.companyName}
+END:VCARD`;
+                const blob = new Blob([vCard], { type: 'text/vcard' });
+                return URL.createObjectURL(blob);
+            },
+            selectedTemplateBg() {
+                const templates = {
+                    'tech-futuristic': 'gradient-tech',
+                    'minimal-business': 'gradient-business',
+                    'creative-art': 'gradient-art',
+                    'modern-gradient': 'gradient-gradient'
+                };
+                return templates[this.cardData.selectedTemplateId] || 'gradient-tech';
+            },
+            customCss() {
+                return this.cardData.style.customCss;
+            }
+        },
+        mounted() {
+            this.loadFromUrlHash();
+            window.addEventListener('hashchange', this.loadFromUrlHash);
+        },
+        methods: {
+            toggleView(targetView) {
+                this.view = targetView;
+            },
+            toggleFormTab(tab) {
+                this.formTab = tab;
+            },
+            updateTemplate() {
+                const templates = {
+                    'tech-futuristic': { textColor: '#ffffff', accentColor: '#00ffff' },
+                    'minimal-business': { textColor: '#d1d5db', accentColor: '#34d399' },
+                    'creative-art': { textColor: '#fef3c7', accentColor: '#f87171' },
+                    'modern-gradient': { textColor: '#1f2937', accentColor: '#facc15' }
+                };
+                const newColors = templates[this.cardData.selectedTemplateId];
+                if (newColors) {
+                    this.cardData.style.textColor = newColors.textColor;
+                    this.cardData.style.accentColor = newColors.accentColor;
+                }
+            },
+            generateCard() {
+                this.toggleView('display');
+                this.showNotificationMessage('名片已生成！');
+            },
+            showNotificationMessage(message) {
+                this.notificationMessage = message;
+                this.showNotification = true;
+                setTimeout(() => {
+                    this.showNotification = false;
+                }, 3000);
+            },
+            copyShareableUrl() {
+                navigator.clipboard.writeText(this.shareableUrl).then(() => {
+                    this.showNotificationMessage('分享連結已複製！');
+                }).catch(err => {
+                    this.showNotificationMessage('複製失敗，請手動複製！');
+                    console.error('Failed to copy text: ', err);
+                });
+            },
+            shareCard() {
+                if (navigator.share) {
+                    navigator.share({
+                        title: this.cardData.name,
+                        text: `這是我的電子名片，請點擊連結查看：`,
+                        url: this.shareableUrl
+                    }).catch(error => {
+                        this.copyShareableUrl();
+                    });
+                } else {
+                    this.copyShareableUrl();
+                }
+            },
+            addModuleItem(moduleName) {
+                const defaultItems = {
+                    products: { name: '', description: '', imageUrl: '' },
+                    portfolio: { name: '', description: '', imageUrl: '' },
+                    docs: { name: '', url: '' }
+                };
+                this.cardData.modules[moduleName].items.push(defaultItems[moduleName]);
+            },
+            removeModuleItem(moduleName, index) {
+                this.cardData.modules[moduleName].items.splice(index, 1);
+            },
+            loadFromUrlHash() {
+                const hash = window.location.hash.substring(1);
+                if (hash) {
+                    try {
+                        const decodedData = decodeURIComponent(atob(hash));
+                        const parsedData = JSON.parse(decodedData);
+                        this.cardData = { ...this.cardData, ...parsedData };
+                        this.view = 'display';
+                    } catch (e) {
+                        console.error('Invalid URL hash data:', e);
+                        this.showNotificationMessage('無效的名片連結，已載入預設資料。');
+                    }
+                }
+            }
+        }
+    });
+
+    app.mount('#app');
+</script>
+
+</body>
+</html>
