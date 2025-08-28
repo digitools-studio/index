@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>抽獎引擎｜Lottery Engine (Vue 3 + i18n)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root{ --bg: #0b0f1a; --panel: rgba(255,255,255,.06); --panel2: rgba(255,255,255,.1); --border: rgba(255,255,255,.12); }
+    html,body{ height:100%; }
+    body{ background: radial-gradient(1200px 600px at 10% 10%, #11203a 0%, transparent 60%),
+                    radial-gradient(1200px 600px at 90% 90%, #1b163a 0%, transparent 60%),
+                    var(--bg);
+          color: #e5e7eb; font-family: Inter, 'Noto Sans TC', system-ui, -apple-system, Segoe UI, Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; }
+    .glass{ background: var(--panel); backdrop-filter: blur(10px); border:1px solid var(--border); }
+    .glass-2{ background: var(--panel2); backdrop-filter: blur(10px); border:1px solid var(--border); }
+    .btn{ transition: all .2s ease; }
+    .btn:hover{ transform: translateY(-1px); }
+    .mono{ font-variant-numeric: tabular-nums; }
+
+    /* Pointer arrow for the wheel */
+    .pointer{ width:0; height:0; border-left:10px solid transparent; border-right:10px solid transparent; border-bottom:16px solid #f59e0b; }
+
+    /* PhotoWall animations */
+    .wall-rotate{ animation: wallSpin 20s linear infinite; transform-style: preserve-3d; }
+    @keyframes wallSpin{ from{ transform: rotateY(0deg) } to{ transform: rotateY(360deg) } }
+    .card-spotlight{ animation: spotlight .9s ease both; }
+    @keyframes spotlight{ 0%{ transform: translateZ(0) scale(1); box-shadow: 0 0 0 rgba(245,158,11,0);} 60%{ transform: translateZ(40px) scale(1.07); box-shadow: 0 20px 60px rgba(245,158,11,.35);} 100%{ transform: translateZ(20px) scale(1.02);} }
+
+    /* GridNine highlight */
+    .cell-highlight{ animation: pulse .6s ease-in-out; }
+    @keyframes pulse{ 0%{ box-shadow:0 0 0 0 rgba(245,158,11,.0);} 50%{ box-shadow:0 0 0 6px rgba(245,158,11,.25);} 100%{ box-shadow:0 0 0 0 rgba(245,158,11,.0);} }
+
+    .scrollbar-thin::-webkit-scrollbar{ height:6px; width:6px; }
+    .scrollbar-thin::-webkit-scrollbar-thumb{ background:#374151; border-radius:6px; }
+  </style>
+</head>
+<body>
+<div id="app" class="max-w-7xl mx-auto px-4 py-6 md:py-10">
+  <!-- Header -->
+  <header class="flex flex-col md:flex-row md:items-center gap-4 md:gap-6 mb-6">
+    <div class="flex-1 flex items-center gap-3">
+      <div class="h-9 w-9 rounded-xl bg-gradient-to-br from-amber-400 to-pink-500"></div>
+      <div>
+        <h1 class="text-xl md:text-2xl font-bold tracking-tight">{{ t('title') }}</h1>
+        <p class="text-sm text-gray-400">{{ t('subtitle') }}</p>
+      </div>
+    </div>
+    <div class="flex items-center gap-3">
+      <select v-model="currentLanguage" class="glass px-3 py-2 rounded-lg text-sm">
+        <option value="zh-TW">繁體中文</option>
+        <option value="zh-CN">简体中文</option>
+        <option value="en">English</option>
+        <option value="ja">日本語</option>
+      </select>
+      <a class="glass px-3 py-2 rounded-lg text-sm hover:bg-white/10" href="#" @click.prevent="loadSample">{{ t('btn_sample') }}</a>
+    </div>
+  </header>
+
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <!-- Left: Controls -->
+    <section class="glass rounded-2xl p-5 md:p-6">
+      <!-- Mode Tabs -->
+      <div class="flex flex-wrap gap-2 mb-4">
+        <button class="btn px-3 py-2 rounded-lg border border-white/10" :class="mode==='wheel' ? 'bg-amber-500 text-black' : 'glass-2'" @click="mode='wheel'">🌀 {{ t('tab_wheel') }}</button>
+        <button class="btn px-3 py-2 rounded-lg border border-white/10" :class="mode==='wall' ? 'bg-amber-500 text-black' : 'glass-2'" @click="mode='wall'">🖼️ {{ t('tab_wall') }}</button>
+        <button class="btn px-3 py-2 rounded-lg border border-white/10" :class="mode==='grid' ? 'bg-amber-500 text-black' : 'glass-2'" @click="mode='grid'">#️⃣ {{ t('tab_grid') }}</button>
+      </div>
+
+      <!-- Roster -->
+      <div>
+        <label class="block text-sm text-gray-300 mb-1">{{ t('roster_label') }}</label>
+        <div class="space-y-2">
+          <div v-for="(p, idx) in rosterTable" :key="p.uid" class="flex gap-2 items-center">
+            <input
+              v-model="p.name"
+              @input="validateName(idx)"
+              :class="['glass-2 flex-1 rounded-lg p-2 text-sm', p.nameError ? 'border border-red-400' : '']"
+              placeholder="輸入人員名字或匿名"
+            />
+            <input
+              v-model.number="p.weight"
+              @input="validateWeight(idx)"
+              type="number"
+              min="1"
+              :class="['glass-2 w-20 rounded-lg p-2 text-sm text-center', p.weightError ? 'border border-red-400' : '']"
+              placeholder="1"
+            />
+            <button class="btn px-2 py-1 rounded bg-red-500 text-white" @click="removeRow(idx)" v-if="rosterTable.length>1">✕</button>
+          </div>
+          <div v-if="rosterError" class="text-red-400 text-xs">{{ rosterError }}</div>
+          <div class="flex gap-2 mt-2 flex-wrap">
+            <button class="btn glass-2 px-3 py-2 rounded-lg" @click="addRow">+ 新增參賽者</button>
+            <button class="btn glass-2 px-3 py-2 rounded-lg" @click="batchPaste">{{ t('btn_parse') }}（批次貼上）</button>
+            <button class="btn glass-2 px-3 py-2 rounded-lg" @click="clearRoster">{{ t('btn_clear') }}</button>
+            <button class="btn glass-2 px-3 py-2 rounded-lg" @click="loadSample">{{ t('btn_sample') }}</button>
+            <!-- 新增確認名單按鈕 -->
+            <button class="btn bg-amber-500 text-black px-3 py-2 rounded-lg" @click="parseParticipants" :disabled="!!rosterError">確認名單</button>
+          </div>
+        </div>
+      </div>
+
+      <hr class="border-white/10 my-5" />
+
+      <!-- Options -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm text-gray-300">{{ t('draw_count') }}</label>
+          <input type="number" min="1" v-model.number="drawCount" class="glass-2 w-full mt-1 rounded-lg p-2 text-sm" />
+        </div>
+        <label class="flex items-center gap-2 mt-5 md:mt-8">
+          <input type="checkbox" v-model="noRepeat" class="rounded" />
+          <span class="text-sm text-gray-300">{{ t('no_repeat') }}</span>
+        </label>
+      </div>
+
+      <div class="mt-4">
+        <p class="text-sm text-gray-300 mb-2">{{ t('rng_title') }}</p>
+        <div class="flex flex-col gap-1">
+          <label class="flex items-center gap-2"><input type="radio" value="crypto" v-model="rngMethod"/> <span class="text-sm">{{ t('rng_crypto') }}</span></label>
+          <label class="flex items-center gap-2"><input type="radio" value="seeded" v-model="rngMethod"/> <span class="text-sm">{{ t('rng_seeded') }}</span></label>
+          <label class="flex items-center gap-2 opacity-80"><input type="radio" value="math" v-model="rngMethod"/> <span class="text-sm">{{ t('rng_math') }}</span></label>
+        </div>
+        <div v-if="rngMethod==='seeded'" class="mt-3 glass-2 p-3 rounded-xl">
+          <div class="flex items-center justify-between gap-2 mb-2">
+            <label class="text-sm text-gray-300">{{ t('seed_salt') }}</label>
+            <button class="btn px-2 py-1 rounded-md glass" @click="generateSalt">{{ t('btn_gen_salt') }}</button>
+          </div>
+          <input v-model="seedSalt" class="w-full glass rounded-lg p-2 text-sm mb-2"/>
+          <label class="text-sm text-gray-300">{{ t('seed_public') }}</label>
+          <input v-model="publicSeed" :placeholder="t('seed_public_ph')" class="w-full glass rounded-lg p-2 text-sm"/>
+          <p class="text-xs text-gray-400 mt-2">{{ t('seed_tip') }}</p>
+        </div>
+      </div>
+
+      <div class="mt-5 flex flex-wrap gap-3">
+        <button class="btn bg-amber-500 text-black px-4 py-2 rounded-xl disabled:opacity-60" :disabled="isDrawing || participants.length===0 || drawCount<1" @click="drawWinners">
+          {{ isDrawing ? t('btn_drawing') : t('btn_draw') }}
+        </button>
+        <button class="btn glass-2 px-4 py-2 rounded-xl" @click="resetEligibility">{{ t('btn_reset_eligibility') }}</button>
+        <button class="btn glass-2 px-4 py-2 rounded-xl" :disabled="drawLog.length===0" @click="exportLog">{{ t('btn_export') }}</button>
+        <!-- 新增 XLSX 匯出按鈕 -->
+        <button class="btn glass-2 px-4 py-2 rounded-xl" :disabled="drawLog.length===0" @click="exportXLSX">匯出 XLSX</button>
+      </div>
+
+      <p class="mt-3 text-sm text-gray-400">{{ t('stats_total') }} <b class="mono">{{ participants.length }}</b> · {{ t('stats_eligible') }} <b class="mono">{{ eligibleCount }}</b></p>
+    </section>
+
+    <!-- Right: Visual + Results -->
+    <section class="glass rounded-2xl p-5 md:p-6">
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="text-lg font-semibold">{{ t('visual_title') }}</h3>
+        <div class="flex items-center gap-2 text-xs text-gray-400">
+          <span class="inline-block h-3 w-3 rounded-full bg-amber-500"></span>
+          <span>{{ t('legend_pointer') }}</span>
+        </div>
+      </div>
+      <div class="rounded-2xl glass-2 p-4 min-h-[320px] md:min-h-[380px] flex items-center justify-center relative overflow-hidden">
+        <!-- fixed pointer for wheel mode -->
+        <div v-if="mode==='wheel'" class="absolute top-2 left-1/2 -translate-x-1/2 z-10">
+          <div class="pointer"></div>
+        </div>
+        <!-- Components -->
+        <wheel-canvas v-if="mode==='wheel'" ref="visualRef" :items="participants" class="w-full"></wheel-canvas>
+        <photo-wall v-else-if="mode==='wall'" ref="visualRef" :items="participants" class="w-full"></photo-wall>
+        <grid-nine v-else ref="visualRef" :items="participants" class="w-full"></grid-nine>
+      </div>
+
+      <!-- Winners -->
+      <div class="mt-5">
+        <div class="flex items-center justify-between gap-2 mb-2">
+          <h4 class="font-semibold">{{ t('winners_latest') }}</h4>
+          <button class="btn text-xs px-2 py-1 rounded-md glass-2" @click="winners=[]">{{ t('btn_clear_winners') }}</button>
+        </div>
+        <div class="flex flex-wrap gap-2 max-h-28 overflow-auto scrollbar-thin">
+          <span v-for="(w,i) in winners" :key="'w-'+i" class="px-2 py-1 rounded-full bg-amber-500 text-black text-xs">{{ w.name }} · {{ t('label_round') }} {{ w.round }}</span>
+          <span v-if="winners.length===0" class="text-xs text-gray-400">{{ t('no_winners_yet') }}</span>
+        </div>
+      </div>
+
+      <!-- Log -->
+      <div class="mt-6">
+        <h4 class="font-semibold mb-2">{{ t('log_title') }}</h4>
+        <div class="overflow-auto max-h-48 rounded-xl glass-2">
+          <table class="w-full text-sm">
+            <thead class="text-gray-300">
+            <tr>
+              <th class="text-left px-3 py-2">{{ t('th_time') }}</th>
+              <th class="text-left px-3 py-2">{{ t('th_round') }}</th>
+              <th class="text-left px-3 py-2">{{ t('th_method') }}</th>
+              <th class="text-left px-3 py-2">{{ t('th_winners') }}</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr v-for="(row, idx) in drawLog" :key="'log-'+idx" class="border-t border-white/10">
+              <td class="px-3 py-2 whitespace-nowrap">{{ row.time }}</td>
+              <td class="px-3 py-2">{{ row.round }}</td>
+              <td class="px-3 py-2">{{ row.method }}</td>
+              <td class="px-3 py-2">{{ row.winners.join(', ') }}</td>
+            </tr>
+            <tr v-if="drawLog.length===0">
+              <td class="px-3 py-3 text-center text-gray-500" colspan="4">{{ t('log_empty') }}</td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- 基本資訊填寫區 -->
+  <div class="mb-4 space-y-2">
+    <div>
+      <label class="block text-sm text-gray-300 mb-1">抽獎目的/主題</label>
+      <input v-model="lotteryPurpose" class="glass-2 w-full rounded-lg p-2 text-sm" placeholder="請輸入本次抽獎主題或目的" />
+    </div>
+    <div>
+      <label class="block text-sm text-gray-300 mb-1">抽獎選項/說明（可選）</label>
+      <textarea v-model="lotteryOptions" class="glass-2 w-full rounded-lg p-2 text-sm" rows="2" placeholder="例如：獎品內容、活動說明等"></textarea>
+    </div>
+  </div>
+</div>
+
+<script>
+const { createApp, defineComponent } = Vue;
+
+/* ===================== i18n ===================== */
+const i18nData = {
+  'zh-TW': {
+    title: '抽獎引擎（極簡 × 科技感）',
+    subtitle: 'Canvas 轉盤 / 3D 照片牆 / 九宮格 · 權重與可驗證隨機 · 四語系',
+    btn_sample: '載入範例',
+    tab_wheel: '轉盤', tab_wall: '3D 照片牆', tab_grid: '九宮格',
+    roster_label: '參賽者名單（每行一位；可用逗號/Tab/豎線分隔權重，如 王小明,3）',
+    roster_ph: '例：\n王小明,3\n李小華,1\n陳大同,2',
+    btn_parse: '解析名單', btn_clear: '清空名單',
+    draw_count: '本次抽出人數', no_repeat: '抽出後排除得獎者（避免重複）',
+    rng_title: '隨機模式', rng_crypto: 'Crypto（密碼學等級，建議）', rng_seeded: 'Seeded（可驗證，用 Salt + Public Seed）', rng_math: 'Math.random（不建議）',
+    seed_salt: 'Salt（預先公開/保留）', btn_gen_salt: '產生 Salt', seed_public: 'Public Seed（公開來源，如日期碼/會議代碼）', seed_public_ph: '例如：2025-08-28-UAT-Session-A', seed_tip: '驗證方式：相同名單與權重、同一 Salt 與 Public Seed、同序列抽取 ⇒ 結果可重現。',
+    btn_draw: '開始抽獎', btn_drawing: '抽獎中…', btn_reset_eligibility: '恢復資格', btn_export: '匯出紀錄 (JSON)',
+    stats_total: '名單筆數：', stats_eligible: '可抽人數：',
+    visual_title: '視覺區', legend_pointer: '指針/焦點',
+    winners_latest: '最新得獎者', btn_clear_winners: '清空', label_round: '輪次', no_winners_yet: '尚無資料',
+    log_title: '抽獎紀錄', th_time: '時間', th_round: '輪次', th_method: '模式', th_winners: '得獎者', log_empty: '尚無抽獎紀錄'
+  },
+  'zh-CN': {
+    title: '抽奖引擎（极简 × 科技感）',
+    subtitle: 'Canvas 转盘 / 3D 照片墙 / 九宫格 · 权重与可验证随机 · 四语言',
+    btn_sample: '载入示例',
+    tab_wheel: '转盘', tab_wall: '3D 照片墙', tab_grid: '九宫格',
+    roster_label: '参赛者名单（每行一位；可用逗号/Tab/竖线分隔权重，如 张三,3）',
+    roster_ph: '示例：\n张三,3\n李四,1\n王五,2',
+    btn_parse: '解析名单', btn_clear: '清空名单',
+    draw_count: '本次抽取人数', no_repeat: '抽中后排除（避免重复）',
+    rng_title: '随机模式', rng_crypto: 'Crypto（加密级，推荐）', rng_seeded: 'Seeded（可验证，Salt + Public Seed）', rng_math: 'Math.random（不推荐）',
+    seed_salt: 'Salt（预先公开/保留）', btn_gen_salt: '生成 Salt', seed_public: 'Public Seed（公开来源，如日期码/会议代码）', seed_public_ph: '例如：2025-08-28-UAT-Session-A', seed_tip: '验证：相同名单与权重、同一 Salt/Seed、同序列抽取 ⇒ 结果可复现。',
+    btn_draw: '开始抽奖', btn_drawing: '抽奖中…', btn_reset_eligibility: '恢复资格', btn_export: '导出记录 (JSON)',
+    stats_total: '名单条数：', stats_eligible: '可抽人数：',
+    visual_title: '可视化区', legend_pointer: '指针/焦点',
+    winners_latest: '最新中奖者', btn_clear_winners: '清空', label_round: '轮次', no_winners_yet: '暂无数据',
+    log_title: '抽奖记录', th_time: '时间', th_round: '轮次', th_method: '模式', th_winners: '中奖者', log_empty: '暂无记录'
+  },
+  'en': {
+    title: 'Lottery Engine (Minimal × Futuristic)',
+    subtitle: 'Canvas Wheel / 3D Photo Wall / 3×3 Grid · Weighted & Verifiable RNG · 4 Languages',
+    btn_sample: 'Load Sample',
+    tab_wheel: 'Wheel', tab_wall: '3D Wall', tab_grid: '3×3 Grid',
+    roster_label: 'Participants (one per line; optional weight via comma/Tab/pipe, e.g., Alex,3)',
+    roster_ph: 'e.g.\nAlex,3\nBella,1\nChen,2',
+    btn_parse: 'Parse Roster', btn_clear: 'Clear Roster',
+    draw_count: 'Winners to draw', no_repeat: 'Exclude winners from future draws',
+    rng_title: 'Randomness Mode', rng_crypto: 'Crypto (CSPRNG, recommended)', rng_seeded: 'Seeded (verifiable: Salt + Public Seed)', rng_math: 'Math.random (not recommended)',
+    seed_salt: 'Salt (pre-commit/retain)', btn_gen_salt: 'Generate Salt', seed_public: 'Public Seed (public source, e.g., date/session code)', seed_public_ph: 'e.g., 2025-08-28-UAT-Session-A', seed_tip: 'Verification: same roster & weights, same Salt & Public Seed, same sequence ⇒ identical results.',
+    btn_draw: 'Draw', btn_drawing: 'Drawing…', btn_reset_eligibility: 'Reset Eligibility', btn_export: 'Export Log (JSON)',
+    stats_total: 'Total entries:', stats_eligible: 'Eligible:',
+    visual_title: 'Visual Stage', legend_pointer: 'Pointer/Focus',
+    winners_latest: 'Latest Winners', btn_clear_winners: 'Clear', label_round: 'round', no_winners_yet: 'No winners yet',
+    log_title: 'Draw Log', th_time: 'Time', th_round: 'Round', th_method: 'Method', th_winners: 'Winners', log_empty: 'No records yet'
+  },
+  'ja': {
+    title: '抽選エンジン（ミニマル × 近未来）',
+    subtitle: 'Canvas ホイール / 3D フォトウォール / 3×3 グリッド · 重み付き & 検証可能 RNG · 4 言語',
+    btn_sample: 'サンプル読込',
+    tab_wheel: 'ホイール', tab_wall: '3D ウォール', tab_grid: '3×3 グリッド',
+    roster_label: '参加者（1 行に 1 名；カンマ/Tab/縦棒で重み：例 Taro,3）',
+    roster_ph: '例：\nSato,3\nSuzuki,1\nTanaka,2',
+    btn_parse: '名簿解析', btn_clear: '名簿クリア',
+    draw_count: '当選人数', no_repeat: '当選者を次回以降から除外',
+    rng_title: 'ランダムモード', rng_crypto: 'Crypto（推奨）', rng_seeded: 'Seeded（Salt + Public Seed で検証）', rng_math: 'Math.random（非推奨）',
+    seed_salt: 'Salt（事前公開/保持）', btn_gen_salt: 'Salt 生成', seed_public: 'Public Seed（公開情報：日付/セッションコード）', seed_public_ph: '例：2025-08-28-UAT-Session-A', seed_tip: '検証：同じ名簿・重み、同じ Salt/Seed、同順抽出 ⇒ 結果が再現。',
+    btn_draw: '抽選', btn_drawing: '抽選中…', btn_reset_eligibility: '資格をリセット', btn_export: 'ログ出力 (JSON)',
+    stats_total: '名簿数：', stats_eligible: '抽選可能：',
+    visual_title: 'ビジュアル', legend_pointer: 'ポインタ/フォーカス',
+    winners_latest: '直近の当選者', btn_clear_winners: 'クリア', label_round: '回', no_winners_yet: 'データなし',
+    log_title: '抽選ログ', th_time: '時刻', th_round: '回', th_method: '方式', th_winners: '当選者', log_empty: 'ログはまだありません'
+  }
+};
+
+/* ===================== Components ===================== */
+const WheelCanvas = defineComponent({
+  name: 'WheelCanvas',
+  props: { items: { type: Array, required: true } },
+  template: `
+    <div class="w-full flex items-center justify-center select-none">
+      <canvas ref="canvas" :width="size" :height="size" class="max-w-full"></canvas>
+    </div>
+  `,
+  data(){ return { size: 340, rotation: 0, animId: null, spinning: false }; },
+  watch:{ items(){ this.draw(); }},
+  mounted(){ this.draw(); },
+  beforeUnmount(){ if(this.animId) cancelAnimationFrame(this.animId); },
+  methods:{
+    draw(){
+      const cvs = this.$refs.canvas; if(!cvs) return; const ctx = cvs.getContext('2d');
+      const N = Math.max(1, this.items.length);
+      ctx.clearRect(0,0,cvs.width,cvs.height);
+      const R = this.size/2 - 6; const cx = this.size/2; const cy = this.size/2;
+      const aPer = Math.PI * 2 / N;
+      ctx.save(); ctx.translate(cx,cy); ctx.rotate(this.rotation);
+      for(let i=0;i<N;i++){
+        const start = i*aPer; const end = start + aPer;
+        ctx.beginPath();
+        const hue = (i*360/N)|0; ctx.fillStyle = `hsl(${hue} 70% 50% / 0.9)`;
+        ctx.moveTo(0,0); ctx.arc(0,0,R,start,end); ctx.closePath(); ctx.fill();
+        // label
+        ctx.save();
+        ctx.rotate(start + aPer/2);
+        ctx.textAlign = 'right'; ctx.fillStyle = '#0b0f1a'; ctx.font = '600 14px Inter, Noto Sans TC';
+        const name = (this.items[i]?.name ?? `#${i+1}`);
+        ctx.fillText(name, R-10, 6);
+        ctx.restore();
+      }
+      // center
+      ctx.beginPath(); ctx.arc(0,0,40,0,Math.PI*2); ctx.fillStyle = '#111827'; ctx.fill();
+      ctx.restore();
+      // ring
+      ctx.beginPath(); ctx.arc(cx,cy,R+3,0,Math.PI*2); ctx.strokeStyle = 'rgba(255,255,255,.25)'; ctx.lineWidth=6; ctx.stroke();
+    },
+    spinTo(index){
+      // return a Promise that resolves after animation finishes
+      if(this.spinning) return Promise.resolve();
+      this.spinning = true;
+      const N = Math.max(1, this.items.length);
+      const aPer = Math.PI*2/N;
+      // We want the chosen slice center to align to top (pointer at -90deg)
+      const targetAngle = -Math.PI/2 - (index + 0.5)*aPer; // wheel rotation absolute
+      const current = this.rotation % (Math.PI*2);
+      let delta = targetAngle - current;
+      // add extra spins (>= 4 turns)
+      const extra = Math.PI*2 * 6; // 6 spins for drama
+      const final = current + delta + extra;
+      const duration = 2600; // ms
+      const startTs = performance.now();
+      return new Promise(res=>{
+        const easeOutCubic = (t)=>1-Math.pow(1-t,3);
+        const step = (ts)=>{
+          const p = Math.min(1, (ts-startTs)/duration);
+          this.rotation = current + (final-current) * easeOutCubic(p);
+          this.draw();
+          if(p<1){ this.animId = requestAnimationFrame(step); } else { this.spinning=false; res(); }
+        };
+        this.animId = requestAnimationFrame(step);
+      });
+    }
+  }
+});
+
+const PhotoWall = defineComponent({
+  name: 'PhotoWall',
+  props: { items: { type: Array, required: true } },
+  template: `
+    <div class="w-full">
+      <div ref="wrap" class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3 wall-rotate p-2">
+        <div v-for="(p,i) in items" :key="p.id||i" :data-idx="i" class="glass-2 rounded-xl p-3 text-center select-none">
+          <div class="mx-auto h-12 w-12 rounded-xl flex items-center justify-center mb-2"
+               :style="avatarStyle(i)">
+            <span class="font-bold">{{ initials(p.name) }}</span>
+          </div>
+          <div class="text-xs truncate">{{ p.name }}</div>
+        </div>
+      </div>
+    </div>
+  `,
+  methods:{
+    initials(name){ return (name||'').split(/\s+/).map(s=>s[0]).join('').slice(0,2).toUpperCase(); },
+    avatarStyle(i){ const hue=(i*47)%360; return `background: radial-gradient(circle at 30% 30%, hsl(${hue} 80% 60%), hsl(${(hue+40)%360} 80% 45%)); color:#0b0f1a;`; },
+    spotlight(index){
+      const wrap = this.$refs.wrap; if(!wrap) return Promise.resolve();
+      const el = wrap.querySelector(`[data-idx="${index}"]`);
+      if(!el) return Promise.resolve();
+      // pause rotation temporarily
+      wrap.style.animationPlayState = 'paused';
+      el.classList.add('card-spotlight');
+      return new Promise(res=>{
+        setTimeout(()=>{ el.classList.remove('card-spotlight'); wrap.style.animationPlayState='running'; res(); }, 1100);
+      });
+    }
+  }
+});
+
+const GridNine = defineComponent({
+  name: 'GridNine',
+  props: { items: { type: Array, required: true } },
+  template: `
+    <div class="w-full">
+      <div class="grid grid-cols-3 gap-3 p-2" ref="grid">
+        <div v-for="(c, idx) in gridItems" :key="c.key" :data-pos="idx"
+             class="glass-2 rounded-xl p-4 text-center select-none">
+          <div class="text-sm font-semibold truncate">{{ c.name }}</div>
+          <div class="text-[10px] text-gray-400">{{ c.weight }}</div>
+        </div>
+      </div>
+    </div>
+  `,
+  data(){ return { gridItems: [], sliceStart: 0 } },
+  watch:{ items(){ this.rebuild(0); } },
+  mounted(){ this.rebuild(0); },
+  methods:{
+    rebuild(targetIndex){
+      const N = this.items.length;
+      if(N<=9){ this.sliceStart = 0; this.gridItems = this.items.map((p,i)=>({ key:p.id||i, name:p.name, weight:p.weight, _idx:i })).slice(0,9); return; }
+      // Center a window of 9 around targetIndex
+      const start = Math.max(0, Math.min(targetIndex-4, N-9));
+      this.sliceStart = start;
+      this.gridItems = this.items.slice(start, start+9).map((p,i)=>({ key:p.id||i, name:p.name, weight:p.weight, _idx:start+i }));
+    },
+    animateToGlobalIndex(globalIndex){
+      // ensure winner in grid
+      this.rebuild(globalIndex);
+      const pos = this.gridItems.findIndex(x=>x._idx===globalIndex);
+      const cells = this.$refs.grid.querySelectorAll('[data-pos]');
+      if(pos<0 || !cells.length) return Promise.resolve();
+      // roulette style highlight
+      const totalSteps = 24 + pos + Math.floor(Math.random()*6); // random extra
+      let step = 0; let last=-1;
+      return new Promise(res=>{
+        const tick = ()=>{
+          const idx = step % this.gridItems.length;
+          const el = cells[idx];
+          if(last>=0) cells[last]?.classList.remove('cell-highlight');
+          el.classList.add('cell-highlight');
+          last = idx; step++;
+          if(step<=totalSteps){ setTimeout(tick, Math.min(60+step*12, 220)); }
+          else{ res(); }
+        };
+        tick();
+      });
+    }
+  }
+});
+
+/* ===================== Core Logic (RNG, weighting, draw) ===================== */
+const Core = {
+  randomCrypto(){ const b=new Uint32Array(1); crypto.getRandomValues(b); return (b[0]>>>0)/4294967296; },
+  mulberry32(seed){ return function(){ let t=seed+=0x6D2B79F5; t=Math.imul(t^t>>>15, t|1); t^= t + Math.imul(t^t>>>7, t|61); return ((t^t>>>14)>>>0)/4294967296; } },
+  async seededRng(seedStr){ const enc=new TextEncoder(); const buf=enc.encode(seedStr); const dig=await crypto.subtle.digest('SHA-256', buf); const v=new DataView(dig); const s=v.getUint32(0,false)||0x12345678; return Core.mulberry32(s); },
+  weightedPick(pool, rng){
+    const eligible = pool.filter(p=>p.eligible && p.weight>0);
+    const total = eligible.reduce((s,p)=>s+p.weight,0);
+    if(total<=0 || eligible.length===0) return null;
+    let r = rng()*total; for(const p of eligible){ if((r -= p.weight) < 0) return p; }
+    return eligible[eligible.length-1];
+  }
+};
+
+/* ===================== App ===================== */
+createApp({
+  components:{ WheelCanvas, PhotoWall, GridNine },
+  data(){
+    return {
+      i18nData,
+      currentLanguage: localStorage.getItem('lottery.lang') || 'zh-TW',
+      mode: localStorage.getItem('lottery.mode') || 'wheel',
+      participantsText: localStorage.getItem('lottery.text') || '',
+      participants: [],
+      drawCount: 1,
+      noRepeat: true,
+      rngMethod: localStorage.getItem('lottery.rng') || 'crypto',
+      seedSalt: localStorage.getItem('lottery.salt') || '',
+      publicSeed: localStorage.getItem('lottery.pubseed') || '',
+      isDrawing:false,
+      winners: [],
+      drawLog: [],
+      round: 0,
+
+      /* Roster Table - 新增的資料結構 */
+      rosterTable: [
+        { uid: Date.now() + '-0', name: '', weight: 1, nameError: false, weightError: false }
+      ],
+      rosterError: '',
+
+      /* 基本資訊 */
+      lotteryPurpose: '',
+      lotteryOptions: ''
+    };
+  },
+  computed:{
+    eligibleCount(){ return this.participants.filter(p=>p.eligible && p.weight>0).length; }
+  },
+  watch:{
+    currentLanguage(v){ localStorage.setItem('lottery.lang', v); },
+    mode(v){ localStorage.setItem('lottery.mode', v); },
+    participantsText(v){ localStorage.setItem('lottery.text', v); },
+    rngMethod(v){ localStorage.setItem('lottery.rng', v); },
+    seedSalt(v){ localStorage.setItem('lottery.salt', v); },
+    publicSeed(v){ localStorage.setItem('lottery.pubseed', v); }
+  },
+  methods:{
+    t(key){ return this.i18nData[this.currentLanguage]?.[key] || key; },
+    addRow() {
+      this.rosterTable.push({ uid: Date.now() + '-' + Math.random().toString(36).slice(2,6), name: '', weight: 1, nameError: false, weightError: false });
+    },
+    removeRow(idx) {
+      this.rosterTable.splice(idx, 1);
+    },
+    validateName(idx) {
+      const p = this.rosterTable[idx];
+      p.nameError = !p.name.trim();
+      this.updateRosterError();
+    },
+    validateWeight(idx) {
+      const p = this.rosterTable[idx];
+      p.weightError = !(Number.isInteger(p.weight) && p.weight > 0);
+      this.updateRosterError();
+    },
+    updateRosterError() {
+      this.rosterError = '';
+      for (const p of this.rosterTable) {
+        if (p.nameError) { this.rosterError = '姓名不可空白'; break; }
+        if (p.weightError) { this.rosterError = '權重必須為正整數'; break; }
+      }
+    },
+    clearRoster() {
+      this.rosterTable = [{ uid: Date.now() + '-0', name: '', weight: 1, nameError: false, weightError: false }];
+      this.rosterError = '';
+    },
+    batchPaste() {
+      const text = prompt('請貼上名單，每行格式：姓名,權重（權重可省略）');
+      if (!text) return;
+      const lines = text.split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
+      this.rosterTable = lines.map((line, idx) => {
+        const [name, weight] = line.split(/[\t,\|]+/).map(s=>s.trim());
+        return {
+          uid: Date.now() + '-' + idx,
+          name: name || '',
+          weight: Number(weight) > 0 ? Number(weight) : 1,
+          nameError: !name,
+          weightError: !(Number.isInteger(Number(weight)) && Number(weight) > 0)
+        };
+      });
+      this.updateRosterError();
+    },
+    // 覆寫原本的 loadSample
+    loadSample() {
+      const sample = [
+        { name: '王小明', weight: 3 },
+        { name: '李小華', weight: 1 },
+        { name: '陳大同', weight: 2 }
+      ];
+      this.rosterTable = sample.map((p, idx) => ({
+        uid: Date.now() + '-' + idx,
+        name: p.name,
+        weight: p.weight,
+        nameError: false,
+        weightError: false
+      }));
+      this.rosterError = '';
+    },
+    // 解析 rosterTable 為 participants
+    parseParticipants() {
+      if (this.rosterError) return;
+      this.participants = this.rosterTable
+        .filter(p => p.name && Number.isInteger(p.weight) && p.weight > 0)
+        .map((p, idx) => ({
+          id: `${Date.now()}_${idx}_${Math.random().toString(36).slice(2,7)}`,
+          name: p.name,
+          weight: p.weight,
+          eligible: true
+        }));
+      this.winners = [];
+      this.round = 0;
+    },
+    clearAll(){ this.participantsText=''; this.participants=[]; this.winners=[]; this.drawLog=[]; this.round=0; },
+    resetEligibility(){ this.participants = this.participants.map(p=>({ ...p, eligible:true })); },
+    generateSalt(){ const b=new Uint8Array(16); crypto.getRandomValues(b); this.seedSalt = Array.from(b).map(x=>x.toString(16).padStart(2,'0')).join(''); },
+
+    async drawWinners(){
+      if(this.participants.length===0 || this.drawCount<1) return;
+      this.isDrawing = true;
+      try{
+        let rng = null; let methodLabel='';
+        if(this.rngMethod==='crypto'){ rng = Core.randomCrypto; methodLabel='crypto'; }
+        else if(this.rngMethod==='math'){ rng = Math.random; methodLabel='math'; }
+        else{ const seedStr = `${this.seedSalt}|${this.publicSeed}|round:${this.round+1}`; rng = await Core.seededRng(seedStr); methodLabel = `seeded(${this.seedSalt.slice(0,6)}…|${this.publicSeed})`; }
+
+        const winnersThisRound=[]; const N = Math.max(1, Math.floor(this.drawCount));
+        for(let i=0;i<N;i++){
+          const pick = Core.weightedPick(this.participants, rng);
+          if(!pick) break;
+          winnersThisRound.push(pick);
+          if(this.noRepeat){ const idx = this.participants.findIndex(p=>p.id===pick.id); if(idx>=0) this.participants[idx].eligible=false; }
+          // Visuals (sequential per winner)
+          const globalIndex = this.participants.findIndex(p=>p.id===pick.id);
+          if(this.mode==='wheel'){ await this.$refs.visualRef.spinTo(globalIndex); }
+          else if(this.mode==='wall'){ await this.$refs.visualRef.spotlight(globalIndex); }
+          else { await this.$refs.visualRef.animateToGlobalIndex(globalIndex); }
+
+          // record winner for display
+          this.round += 1;
+          this.winners.push({ name: pick.name, weight: pick.weight, round: this.round });
+        }
+
+        if(winnersThisRound.length>0){
+          const ts = new Date();
+          this.drawLog.unshift({ time: ts.toLocaleString(), round: this.round, method: methodLabel, winners: winnersThisRound.map(w=>w.name) });
+        }
+      } finally { this.isDrawing=false; }
+    },
+
+    exportLog(){
+      const payload = { lang:this.currentLanguage, mode:this.mode, rngMethod:this.rngMethod, seedSalt:this.seedSalt, publicSeed:this.publicSeed, noRepeat:this.noRepeat,
+                        roster:this.participants.map(p=>({name:p.name, weight:p.weight})), log:this.drawLog };
+      const blob = new Blob([JSON.stringify(payload,null,2)], {type:'application/json'});
+      const url = URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download=`lottery_log_${Date.now()}.json`; a.click(); URL.revokeObjectURL(url);
+    },
+    exportXLSX() {
+      // 彙整資料
+      const now = new Date();
+      const sheetData = [
+        ['抽獎主題', this.lotteryPurpose],
+        ['抽獎說明', this.lotteryOptions],
+        ['抽獎時間', now.toLocaleString()],
+        [],
+        ['輪次', '時間', '得獎者', '抽獎方式']
+      ];
+      // 每筆紀錄
+      this.drawLog.slice().reverse().forEach(row => {
+        sheetData.push([
+          row.round,
+          row.time,
+          row.winners.join(', '),
+          row.method
+        ]);
+      });
+      // 產生 XLSX
+      const ws = XLSX.utils.aoa_to_sheet(sheetData);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, '抽獎紀錄');
+      XLSX.writeFile(wb, `lottery_${now.getFullYear()}${(now.getMonth()+1).toString().padStart(2,'0')}${now.getDate().toString().padStart(2,'0')}_${now.getHours()}${now.getMinutes()}${now.getSeconds()}.xlsx`);
+    }
+  },
+  mounted(){ if(!this.seedSalt) this.generateSalt(); if((this.participantsText||'').trim()) this.parseParticipants(); }
+}).mount('#app');
+</script>
+</body>
+</html>
