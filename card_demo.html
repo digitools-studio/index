@@ -1,0 +1,1105 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>CAR DEMO — True 360 (8×3) Viewer</title>
+
+  <style>
+    :root{
+      --bg0:#060713;
+      --bg1:#0b0d22;
+      --glass: rgba(255,255,255,.08);
+      --glass2: rgba(255,255,255,.12);
+      --line: rgba(255,255,255,.14);
+      --txt: rgba(255,255,255,.92);
+      --muted: rgba(255,255,255,.68);
+      --accent: #7c4dff;
+      --accent2:#00d9ff;
+      --danger:#ff3d7f;
+      --shadow: 0 30px 80px rgba(0,0,0,.55);
+      --radius: 22px;
+      --stageW: min(980px, 96vw);
+      --stageH: min(620px, 72vh);
+    }
+
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
+    body{
+      margin:0;
+      color:var(--txt);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Noto Sans TC", Arial, sans-serif;
+      overflow:hidden;
+      background:
+        radial-gradient(1200px 600px at 18% 18%, rgba(124,77,255,.18), transparent 60%),
+        radial-gradient(1200px 600px at 82% 82%, rgba(0,217,255,.14), transparent 60%),
+        linear-gradient(145deg, var(--bg0), var(--bg1));
+    }
+
+    /* background */
+    .bg{ position:fixed; inset:0; pointer-events:none; overflow:hidden; }
+    .grid{
+      position:absolute; inset:-25%;
+      background:
+        linear-gradient(to right, rgba(255,255,255,.06) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255,255,255,.06) 1px, transparent 1px);
+      background-size: 72px 72px;
+      transform: rotate(-14deg);
+      opacity:.22;
+      filter: drop-shadow(0 0 18px rgba(124,77,255,.22));
+      animation: drift 18s linear infinite;
+    }
+    @keyframes drift{
+      0%{ transform: translate3d(-3%, -2%, 0) rotate(-14deg); }
+      50%{ transform: translate3d(3%, 2%, 0) rotate(-14deg); }
+      100%{ transform: translate3d(-3%, -2%, 0) rotate(-14deg); }
+    }
+    .orbs{ position:absolute; inset:0; filter: blur(18px); opacity:.82; mix-blend-mode: screen; }
+    .orb{
+      position:absolute; width: 520px; height: 520px; border-radius: 999px;
+      background:
+        radial-gradient(circle at 30% 30%, rgba(124,77,255,.55), transparent 60%),
+        radial-gradient(circle at 70% 70%, rgba(0,217,255,.45), transparent 62%),
+        radial-gradient(circle at 40% 70%, rgba(255,61,127,.35), transparent 65%);
+      animation: floaty 10s ease-in-out infinite;
+    }
+    .orb:nth-child(1){ left:-140px; top:-160px; animation-duration: 12s; }
+    .orb:nth-child(2){ right:-180px; top: 40px; width: 640px; height: 640px; animation-duration: 14s; }
+    .orb:nth-child(3){ left: 18%; bottom:-260px; width: 740px; height: 740px; animation-duration: 16s; }
+    @keyframes floaty{ 0%,100%{ transform: translate3d(0,0,0) scale(1); } 50%{ transform: translate3d(24px,-18px,0) scale(1.05); } }
+    canvas#particles{ position:absolute; inset:0; opacity:.42; mix-blend-mode: lighten; }
+
+    /* layout */
+    .wrap{
+      position:relative;
+      height:100%;
+      display:grid;
+      grid-template-columns: 420px 1fr;
+      gap: 18px;
+      padding: 22px;
+      padding-top: 18px;
+    }
+    @media (max-width: 980px){
+      body{ overflow:auto; }
+      .wrap{ height:auto; grid-template-columns: 1fr; padding: 14px; }
+    }
+
+    /* panel */
+    .panel{
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,.09), rgba(255,255,255,.05));
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
+      padding: 18px 18px 16px;
+      position:relative;
+      overflow:hidden;
+    }
+    .panel:before{
+      content:"";
+      position:absolute; inset:-2px;
+      background:
+        radial-gradient(520px 240px at 20% 10%, rgba(124,77,255,.22), transparent 60%),
+        radial-gradient(520px 240px at 90% 30%, rgba(0,217,255,.18), transparent 60%),
+        radial-gradient(560px 260px at 30% 95%, rgba(255,61,127,.12), transparent 60%);
+      pointer-events:none;
+    }
+    .brand{ position:relative; display:flex; align-items:center; gap:12px; margin-bottom: 14px; }
+    .logo{
+      width: 40px; height: 40px; border-radius: 14px;
+      background: linear-gradient(145deg, rgba(124,77,255,.9), rgba(0,217,255,.85));
+      box-shadow: 0 18px 40px rgba(124,77,255,.25);
+      position:relative;
+    }
+    .logo:after{
+      content:""; position:absolute; inset:2px; border-radius: 12px;
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.35), transparent 55%),
+                  radial-gradient(circle at 70% 70%, rgba(0,0,0,.12), transparent 60%);
+      mix-blend-mode: overlay;
+    }
+    .title{ display:flex; flex-direction:column; gap:2px; }
+    .title b{ font-size: 15px; letter-spacing: .08em; text-transform: uppercase; }
+    .title span{ font-size: 12px; color: var(--muted); }
+
+    .hero{
+      position:relative;
+      margin: 10px 0 14px;
+      padding: 14px;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.18);
+      overflow:hidden;
+    }
+    .hero h1{ margin: 0 0 6px; font-size: 22px; letter-spacing: .02em; }
+    .hero p{ margin:0; font-size: 13px; color: var(--muted); line-height:1.45; }
+
+    .hero .chips{ display:flex; flex-wrap:wrap; gap:8px; margin-top: 12px; }
+    .chip{
+      font-size: 12px; padding: 7px 10px; border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      user-select:none;
+      display:flex; align-items:center; gap:8px; white-space:nowrap;
+    }
+    .dot{ width: 7px; height: 7px; border-radius: 99px; background: var(--accent2); box-shadow: 0 0 16px rgba(0,217,255,.6); }
+    .dot.purple{ background: var(--accent); box-shadow: 0 0 16px rgba(124,77,255,.6); }
+    .dot.pink{ background: var(--danger); box-shadow: 0 0 16px rgba(255,61,127,.55); }
+
+    .controls{ position:relative; display:grid; gap: 12px; margin-top: 10px; }
+    .row{ display:flex; align-items:center; justify-content:space-between; gap: 12px; }
+    .row label{ font-size: 12px; color: var(--muted); user-select:none; }
+    .row output{
+      font-size: 12px; color: rgba(255,255,255,.85);
+      letter-spacing:.02em;
+      padding: 2px 8px;
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 999px;
+      background: rgba(255,255,255,.06);
+      min-width: 110px;
+      text-align:center;
+    }
+    input[type="range"]{ width:100%; accent-color: var(--accent2); }
+
+    .btns{ display:flex; gap: 10px; margin-top: 6px; flex-wrap:wrap; }
+    button{
+      appearance:none;
+      border:1px solid rgba(255,255,255,.16);
+      background: rgba(255,255,255,.07);
+      color: var(--txt);
+      border-radius: 14px;
+      padding: 10px 12px;
+      font-size: 13px;
+      cursor:pointer;
+      user-select:none;
+      transition: transform .15s ease, background .15s ease, border-color .15s ease;
+    }
+    button:hover{ transform: translateY(-1px); background: rgba(255,255,255,.1); border-color: rgba(255,255,255,.24); }
+    button:active{ transform: translateY(0px) scale(.98); }
+    button.primary{
+      background: linear-gradient(145deg, rgba(124,77,255,.75), rgba(0,217,255,.55));
+      border-color: rgba(255,255,255,.18);
+    }
+    button.warn{
+      background: linear-gradient(145deg, rgba(255,61,127,.65), rgba(124,77,255,.35));
+      border-color: rgba(255,255,255,.18);
+    }
+
+    .hint{
+      margin-top: 12px;
+      padding: 12px 12px;
+      border: 1px dashed rgba(255,255,255,.2);
+      border-radius: 16px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height:1.5;
+      position:relative;
+      background: rgba(0,0,0,.12);
+    }
+
+    /* stage */
+    .stage{
+      border-radius: var(--radius);
+      border: 1px solid rgba(255,255,255,.14);
+      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(0,0,0,.20));
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
+      position:relative;
+      overflow:hidden;
+      min-height: 520px;
+      touch-action: none;
+    }
+    .stageHeader{
+      position:absolute; left: 14px; right: 14px; top: 14px;
+      display:flex; align-items:center; justify-content:space-between;
+      gap: 10px; z-index: 30; pointer-events:none;
+    }
+    .badge{
+      pointer-events:none;
+      display:flex; align-items:center; gap:10px;
+      padding: 9px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.16);
+      background: rgba(0,0,0,.24);
+      font-size: 12px;
+      color: rgba(255,255,255,.85);
+      letter-spacing:.02em;
+    }
+    .badge .mini{
+      width: 8px; height: 8px; border-radius: 99px;
+      background: var(--accent2);
+      box-shadow: 0 0 14px rgba(0,217,255,.65);
+    }
+    .badge .mini.p{ background: var(--accent); box-shadow: 0 0 14px rgba(124,77,255,.65); }
+
+    /* spotlight */
+    .spot{
+      position:absolute; inset:-40%;
+      background: radial-gradient(520px 300px at var(--mx,50%) var(--my,50%), rgba(255,255,255,.20), transparent 55%);
+      mix-blend-mode: overlay;
+      pointer-events:none;
+      z-index: 8;
+      transition: opacity .2s ease;
+      opacity:.85;
+    }
+
+    /* floor */
+    .floor{
+      position:absolute; left:50%; bottom:-110px; transform: translateX(-50%);
+      width: 980px; height: 420px;
+      background:
+        radial-gradient(closest-side, rgba(0,217,255,.18), transparent 70%),
+        radial-gradient(closest-side, rgba(124,77,255,.16), transparent 72%),
+        radial-gradient(closest-side, rgba(255,61,127,.10), transparent 72%);
+      opacity: .95; pointer-events:none; z-index: 1;
+    }
+    .floor:after{
+      content:""; position:absolute; inset: 110px 90px 70px 90px; border-radius: 50%;
+      background: radial-gradient(closest-side, rgba(255,255,255,.10), rgba(255,255,255,0) 65%);
+      filter: blur(2px); transform: rotateX(70deg); opacity:.75;
+    }
+
+    /* viewer content */
+    .carWrap{
+      position:absolute;
+      left:50%; top:50%;
+      transform: translate(-50%,-46%);
+      width: var(--stageW);
+      height: var(--stageH);
+      display:grid;
+      place-items:center;
+      z-index: 12;
+      pointer-events:none;
+    }
+    .frame{
+      width: min(920px, 96%);
+      height: auto;
+      will-change: transform, filter, opacity;
+      transform-origin: 50% 62%;
+      filter: drop-shadow(0 30px 40px rgba(0,0,0,.55));
+      pointer-events:none;
+      user-select:none;
+      opacity: 0;
+      transition: opacity .10s linear;
+    }
+    .frame.ready{ opacity: 1; }
+
+    /* scanline / shine */
+    .shine{
+      position:absolute;
+      width: min(900px, 94%);
+      height: min(420px, 66%);
+      border-radius: 26px;
+      background:
+        linear-gradient(110deg,
+          rgba(255,255,255,.00) 10%,
+          rgba(255,255,255,.18) 18%,
+          rgba(255,255,255,.00) 28%,
+          rgba(255,255,255,.00) 58%,
+          rgba(0,217,255,.16) 64%,
+          rgba(255,255,255,.00) 74%);
+      mix-blend-mode: screen;
+      opacity: .55;
+      filter: blur(1px);
+      transform: translateY(10px) rotate(var(--shineRot,0deg)) translateX(var(--shineX,0px));
+      pointer-events:none;
+      z-index: 13;
+      animation: sweep 4.2s ease-in-out infinite;
+    }
+    @keyframes sweep{ 0%,100%{ opacity:.35; } 50%{ opacity:.72; } }
+
+    /* loader overlay */
+    .loading{
+      position:absolute; inset:0;
+      display:grid; place-items:center;
+      z-index: 40;
+      background: rgba(0,0,0,.38);
+      backdrop-filter: blur(10px);
+      transition: opacity .35s ease;
+    }
+    .loading.hide{ opacity:0; pointer-events:none; }
+    .spinner{
+      width: 54px; height: 54px;
+      border-radius: 999px;
+      border: 3px solid rgba(255,255,255,.18);
+      border-top-color: rgba(0,217,255,.75);
+      animation: spin 1s linear infinite;
+      box-shadow: 0 0 30px rgba(0,217,255,.16);
+    }
+    @keyframes spin{ to{ transform: rotate(360deg); } }
+
+    .toast{
+      position:absolute;
+      left:50%;
+      bottom: 16px;
+      transform: translateX(-50%);
+      z-index: 45;
+      padding: 10px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.16);
+      background: rgba(0,0,0,.35);
+      backdrop-filter: blur(10px);
+      color: rgba(255,255,255,.86);
+      font-size: 12px;
+      letter-spacing:.02em;
+      opacity: 0;
+      transition: opacity .25s ease, transform .25s ease;
+      pointer-events:none;
+      white-space:nowrap;
+    }
+    .toast.show{ opacity: 1; transform: translateX(-50%) translateY(-4px); }
+
+    .footer{
+      position:absolute; right: 16px; bottom: 14px;
+      z-index: 35;
+      font-size: 11px;
+      color: rgba(255,255,255,.55);
+      pointer-events:none;
+    }
+    .footer b{ color: rgba(255,255,255,.78); font-weight: 600; }
+
+    /* small debug label */
+    .debug{
+      position:absolute; left: 16px; bottom: 14px; z-index: 35;
+      font-size: 11px;
+      color: rgba(255,255,255,.55);
+      pointer-events:none;
+      padding: 7px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.22);
+      display:none;
+    }
+    .debug.show{ display:block; }
+    kbd{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 11px;
+      padding: 2px 6px;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,.16);
+      background: rgba(255,255,255,.08);
+      color: rgba(255,255,255,.88);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="bg">
+    <div class="grid"></div>
+    <div class="orbs">
+      <div class="orb"></div>
+      <div class="orb"></div>
+      <div class="orb"></div>
+    </div>
+    <canvas id="particles"></canvas>
+  </div>
+
+  <div class="wrap">
+    <!-- LEFT PANEL -->
+    <aside class="panel">
+      <div class="brand">
+        <div class="logo"></div>
+        <div class="title">
+          <b>Car Demo</b>
+          <span>True 360° · 8 方向 × 3 仰角</span>
+        </div>
+      </div>
+
+      <section class="hero">
+        <h1>真・360 展示器</h1>
+        <p>
+          不是 CSS 假轉。這版是「序列幀」切圖：<b>24 張圖片</b>（8 yaw × 3 pitch），
+          左右拖曳切方向、上下切仰角，支援慣性滑動、雙指縮放、Auto demo。
+        </p>
+        <div class="chips">
+          <div class="chip"><span class="dot"></span> Drag → yaw/pitch</div>
+          <div class="chip"><span class="dot purple"></span> Wheel / pinch zoom</div>
+          <div class="chip"><span class="dot pink"></span> Auto spin + easing</div>
+        </div>
+      </section>
+
+      <section class="controls">
+        <div class="row">
+          <label for="dragSens">拖曳靈敏度</label>
+          <output id="dragSensOut">1.00x</output>
+        </div>
+        <input id="dragSens" type="range" min="0.5" max="2.2" value="1.0" step="0.05" />
+
+        <div class="row">
+          <label for="inertia">慣性衰減</label>
+          <output id="inertiaOut">0.90</output>
+        </div>
+        <input id="inertia" type="range" min="0.78" max="0.97" value="0.90" step="0.01" />
+
+        <div class="row">
+          <label for="step">切幀速度</label>
+          <output id="stepOut">12px / step</output>
+        </div>
+        <input id="step" type="range" min="6" max="26" value="12" step="1" />
+
+        <div class="row">
+          <label for="glow">光影強度</label>
+          <output id="glowOut">0.65</output>
+        </div>
+        <input id="glow" type="range" min="0.0" max="1.0" value="0.65" step="0.02" />
+
+        <div class="row">
+          <label for="zoomMax">縮放上限</label>
+          <output id="zoomMaxOut">1.70x</output>
+        </div>
+        <input id="zoomMax" type="range" min="1.2" max="2.2" value="1.70" step="0.05" />
+
+        <div class="btns">
+          <button class="primary" id="btnAuto">Auto 展示模式</button>
+          <button id="btnReset">重置</button>
+          <button id="btnSnap">輸出快照</button>
+          <button class="warn" id="btnDebug">Debug</button>
+        </div>
+
+        <div class="hint">
+          <b>資產放置：</b><br/>
+          預設讀取 <b>./assets/car/p{pitch}_y{yaw}.png</b><br/>
+          pitch = 0..2（仰角 3 層），yaw = 0..7（方向 8 張）<br/><br/>
+          <b>快捷鍵：</b> <kbd>←</kbd><kbd>→</kbd> 旋轉、<kbd>↑</kbd><kbd>↓</kbd> 仰角、<kbd>A</kbd> Auto、<kbd>R</kbd> Reset
+        </div>
+      </section>
+    </aside>
+
+    <!-- STAGE -->
+    <main class="stage" id="stage" aria-label="true 360 viewer">
+      <div class="stageHeader">
+        <div class="badge"><span class="mini"></span> True 360</div>
+        <div class="badge"><span class="mini p"></span> 8×3 Frames</div>
+      </div>
+
+      <div class="spot" id="spot"></div>
+      <div class="floor"></div>
+
+      <div class="carWrap" id="carWrap">
+        <div class="shine" id="shine"></div>
+        <img id="frame" class="frame" alt="Car frame" draggable="false" />
+      </div>
+
+      <div class="debug" id="debug"></div>
+      <div class="toast" id="toast"></div>
+
+      <div class="loading" id="loading">
+        <div style="display:grid; gap:12px; place-items:center;">
+          <div class="spinner" aria-label="loading"></div>
+          <div id="loadingText" style="font-size:12px;color:rgba(255,255,255,.78);letter-spacing:.02em;">Loading frames…</div>
+        </div>
+      </div>
+
+      <div class="footer">Tip: <b>拖曳</b>切角度 / <b>滾輪</b>縮放 / <b>雙指</b>縮放 / <b>按 A</b> 自動展示</div>
+    </main>
+  </div>
+
+  <script>
+    /**
+     * ==========================================================
+     * True 360 Viewer (8 yaw × 3 pitch) — Single HTML
+     * - Frame-based (real 360), not CSS fake rotate
+     * - Smooth drag with pixel-accumulated stepping (no jitter)
+     * - Inertia
+     * - Wheel zoom + Pinch zoom (touch)
+     * - Auto demo mode with eased rotation + pitch breathing
+     * - Progressive preload (priority ring around current frame)
+     * - Keyboard control + snapshot export
+     * ==========================================================
+     */
+
+    /* =========================
+       1) CONFIG
+    ========================= */
+    const ASSET = {
+      basePath: "./assets/car", // change if needed
+      pitchCount: 3,            // 0..2
+      yawCount: 8,              // 0..7
+      ext: "png",               // png/webp/avif
+      file: (p, y) => `p${p}_y${y}.${ASSET.ext}`, // naming convention
+      url:  (p, y) => `${ASSET.basePath}/${ASSET.file(p,y)}`
+    };
+
+    const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+
+    /* =========================
+       2) DOM
+    ========================= */
+    const stage = document.getElementById("stage");
+    const frameEl = document.getElementById("frame");
+    const shine = document.getElementById("shine");
+    const spot  = document.getElementById("spot");
+    const toast = document.getElementById("toast");
+    const loading = document.getElementById("loading");
+    const loadingText = document.getElementById("loadingText");
+    const debugEl = document.getElementById("debug");
+
+    const dragSens = document.getElementById("dragSens");
+    const dragSensOut = document.getElementById("dragSensOut");
+    const inertia = document.getElementById("inertia");
+    const inertiaOut = document.getElementById("inertiaOut");
+    const step = document.getElementById("step");
+    const stepOut = document.getElementById("stepOut");
+    const glow = document.getElementById("glow");
+    const glowOut = document.getElementById("glowOut");
+    const zoomMax = document.getElementById("zoomMax");
+    const zoomMaxOut = document.getElementById("zoomMaxOut");
+
+    const btnAuto = document.getElementById("btnAuto");
+    const btnReset = document.getElementById("btnReset");
+    const btnSnap = document.getElementById("btnSnap");
+    const btnDebug = document.getElementById("btnDebug");
+
+    /* =========================
+       3) UI helpers
+    ========================= */
+    let toastTimer = null;
+    function toastMsg(msg){
+      toast.textContent = msg;
+      toast.classList.add("show");
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toast.classList.remove("show"), 1600);
+    }
+
+    function syncUI(){
+      dragSensOut.textContent = `${parseFloat(dragSens.value).toFixed(2)}x`;
+      inertiaOut.textContent = `${parseFloat(inertia.value).toFixed(2)}`;
+      stepOut.textContent = `${parseInt(step.value,10)}px / step`;
+      glowOut.textContent = `${parseFloat(glow.value).toFixed(2)}`;
+      zoomMaxOut.textContent = `${parseFloat(zoomMax.value).toFixed(2)}x`;
+    }
+    [dragSens, inertia, step, glow, zoomMax].forEach(el => el.addEventListener("input", syncUI));
+    syncUI();
+
+    /* =========================
+       4) STATE
+    ========================= */
+    // current frame indices
+    let pitch = 1; // 0..2
+    let yaw = 0;   // 0..7
+
+    // zoom
+    let zoom = 1.0;
+
+    // drag/inertia
+    let isDown = false;
+    let lastX = 0, lastY = 0;
+
+    // accumulate pixels to steps (makes it smooth & deterministic)
+    let accX = 0, accY = 0;
+
+    // velocity for inertia
+    let vx = 0, vy = 0;
+
+    // auto
+    let auto = false;
+    let autoT = 0;
+
+    // pinch
+    let pointers = new Map();
+    let pinchStartDist = null;
+    let pinchStartZoom = 1.0;
+
+    // debug
+    let debug = false;
+
+    /* =========================
+       5) Frame cache & preload
+    ========================= */
+    const totalFrames = ASSET.pitchCount * ASSET.yawCount;
+    const cache = new Map(); // key => {img, loaded, error}
+    let loadedCount = 0;
+
+    function keyOf(p, y){ return `${p}:${y}`; }
+
+    function loadFrame(p, y){
+      const k = keyOf(p,y);
+      if (cache.has(k)) return cache.get(k).promise;
+
+      let resolveFn, rejectFn;
+      const promise = new Promise((res, rej) => { resolveFn = res; rejectFn = rej; });
+
+      const img = new Image();
+      img.decoding = "async";
+      img.loading = "eager"; // we control priority ourselves
+      img.onload = () => {
+        const rec = cache.get(k);
+        if (!rec.loaded){
+          rec.loaded = true;
+          loadedCount++;
+          updateLoadingUI();
+        }
+        resolveFn(img);
+      };
+      img.onerror = () => {
+        const rec = cache.get(k);
+        rec.error = true;
+        updateLoadingUI();
+        rejectFn(new Error(`Failed: ${ASSET.url(p,y)}`));
+      };
+
+      const rec = { img, loaded:false, error:false, promise };
+      cache.set(k, rec);
+      img.src = ASSET.url(p,y);
+
+      return promise;
+    }
+
+    function updateLoadingUI(){
+      const pct = Math.round((loadedCount / totalFrames) * 100);
+      loadingText.textContent = `Loading frames… ${loadedCount}/${totalFrames} (${pct}%)`;
+      if (loadedCount >= Math.min(totalFrames, 6)) {
+        // after some frames ready, we can fade the overlay
+        // but keep it until the first displayed frame is ready
+      }
+    }
+
+    async function warmStart(){
+      // priority: current frame + its neighbors (yaw ring) + other pitch same yaw
+      const tasks = [];
+
+      // 1) current
+      tasks.push(loadFrame(pitch, yaw));
+
+      // 2) yaw neighbors same pitch
+      for (let d=1; d<=2; d++){
+        tasks.push(loadFrame(pitch, (yaw + d + ASSET.yawCount) % ASSET.yawCount));
+        tasks.push(loadFrame(pitch, (yaw - d + ASSET.yawCount) % ASSET.yawCount));
+      }
+
+      // 3) other pitches same yaw
+      for (let p=0; p<ASSET.pitchCount; p++){
+        if (p !== pitch) tasks.push(loadFrame(p, yaw));
+      }
+
+      // 4) background preload rest (deferred)
+      Promise.allSettled([
+        ...Array.from({length: ASSET.pitchCount}, (_,p) =>
+          Array.from({length: ASSET.yawCount}, (_,y) => loadFrame(p,y))
+        ).flat()
+      ]).catch(()=>{});
+
+      // wait at least the current frame
+      await Promise.allSettled(tasks);
+    }
+
+    /* =========================
+       6) Render
+    ========================= */
+    let lastRenderedKey = null;
+
+    async function render(){
+      const k = keyOf(pitch, yaw);
+      if (k === lastRenderedKey) {
+        // still need update zoom/glow
+        applyVisuals();
+        return;
+      }
+      lastRenderedKey = k;
+
+      // ensure frame loaded
+      try{
+        const img = await loadFrame(pitch, yaw);
+        frameEl.classList.remove("ready");
+        // swap
+        frameEl.src = img.src;
+        // force fade-in
+        requestAnimationFrame(()=>{
+          applyVisuals();
+          frameEl.classList.add("ready");
+          // hide overlay once first render is OK
+          loading.classList.add("hide");
+        });
+
+        // keep nearby frames warm (no await)
+        prefetchAround(pitch, yaw);
+
+      }catch(e){
+        // show overlay, but also give hint
+        loading.classList.remove("hide");
+        toastMsg("圖片載入失敗：請確認 assets 路徑與命名規則");
+        if (debug) console.error(e);
+      }
+    }
+
+    function applyVisuals(){
+      // zoom
+      frameEl.style.transform = `scale(${zoom})`;
+
+      // pseudo dynamic lighting based on yaw
+      const g = parseFloat(glow.value);
+      const yawNorm = ((yaw % ASSET.yawCount) + ASSET.yawCount) % ASSET.yawCount;
+      // front-ish: y0. We'll create a smooth factor: cos around y0
+      const ang = (yawNorm / ASSET.yawCount) * Math.PI * 2;
+      const frontFactor = Math.pow(Math.max(0, Math.cos(ang)), 2);
+
+      frameEl.style.filter =
+        `drop-shadow(0 28px 42px rgba(0,0,0,.58))
+         drop-shadow(0 0 ${18 + 24*g}px rgba(0,217,255,${0.08 + 0.18*g + 0.14*frontFactor}))
+         drop-shadow(0 0 ${14 + 20*g}px rgba(124,77,255,${0.06 + 0.14*g + 0.10*(1-frontFactor)}))`;
+
+      // shine reacts to yaw & pitch
+      const lr = Math.sin(ang) * 10;
+      const pr = (pitch - 1) * 8; // -8,0,+8
+      shine.style.setProperty("--shineRot", (-12 + lr*1.2 + pr*0.5) + "deg");
+      shine.style.setProperty("--shineX", (lr * 2.0) + "px");
+      shine.style.opacity = String(0.24 + (0.55 + g*0.85) * 0.42);
+
+      // debug
+      if (debug){
+        debugEl.textContent =
+          `pitch=${pitch} / yaw=${yaw} / zoom=${zoom.toFixed(2)}  |  loaded ${loadedCount}/${totalFrames}`;
+      }
+    }
+
+    function prefetchAround(p, y){
+      // ring of yaw neighbors at same pitch, plus adjacent pitches at same yaw
+      for (let d=1; d<=2; d++){
+        loadFrame(p, (y+d+ASSET.yawCount)%ASSET.yawCount).catch(()=>{});
+        loadFrame(p, (y-d+ASSET.yawCount)%ASSET.yawCount).catch(()=>{});
+      }
+      if (p-1 >= 0) loadFrame(p-1, y).catch(()=>{});
+      if (p+1 < ASSET.pitchCount) loadFrame(p+1, y).catch(()=>{});
+    }
+
+    /* =========================
+       7) Interaction: pointer / pinch / wheel
+    ========================= */
+    function getStageRect(){ return stage.getBoundingClientRect(); }
+    function dist(a,b){ return Math.hypot(a.x-b.x, a.y-b.y); }
+
+    stage.addEventListener("pointerdown", (e) => {
+      stage.setPointerCapture(e.pointerId);
+      pointers.set(e.pointerId, {x:e.clientX, y:e.clientY});
+      isDown = true;
+      lastX = e.clientX; lastY = e.clientY;
+      vx = 0; vy = 0;
+      accX = 0; accY = 0;
+      pinchStartDist = null;
+      auto = false;
+      btnAuto.textContent = "Auto 展示模式";
+    });
+
+    stage.addEventListener("pointermove", (e) => {
+      // spotlight follow
+      const r = getStageRect();
+      const mx = ((e.clientX - r.left)/r.width)*100;
+      const my = ((e.clientY - r.top)/r.height)*100;
+      spot.style.setProperty("--mx", mx + "%");
+      spot.style.setProperty("--my", my + "%");
+
+      if (!pointers.has(e.pointerId)) return;
+      pointers.set(e.pointerId, {x:e.clientX, y:e.clientY});
+
+      // pinch zoom
+      if (pointers.size === 2){
+        const [p1,p2] = Array.from(pointers.values());
+        const d = dist(p1,p2);
+        if (pinchStartDist == null){
+          pinchStartDist = d;
+          pinchStartZoom = zoom;
+        }else{
+          const ratio = d / pinchStartDist;
+          const zMax = parseFloat(zoomMax.value);
+          const target = clamp(pinchStartZoom * ratio, 0.72, zMax);
+          zoom = (zoom * 0.82) + (target * 0.18);
+          applyVisuals();
+        }
+        return;
+      }
+
+      if (!isDown) return;
+
+      const dx = e.clientX - lastX;
+      const dy = e.clientY - lastY;
+      lastX = e.clientX; lastY = e.clientY;
+
+      const s = parseFloat(dragSens.value);
+      // accumulate raw pixels
+      accX += dx * s;
+      accY += dy * s;
+
+      // velocity for inertia
+      vx += dx * 0.35 * s;
+      vy += dy * 0.25 * s;
+
+      // stepping thresholds
+      const stepPx = parseInt(step.value,10);
+
+      // yaw: when accX passes threshold, step frames
+      while (accX >= stepPx) { accX -= stepPx; yaw = (yaw - 1 + ASSET.yawCount) % ASSET.yawCount; render(); }
+      while (accX <= -stepPx){ accX += stepPx; yaw = (yaw + 1) % ASSET.yawCount; render(); }
+
+      // pitch: separate threshold (slightly larger to prevent accidental pitch)
+      const pitchStepPx = Math.round(stepPx * 1.35);
+      while (accY >= pitchStepPx) { accY -= pitchStepPx; pitch = clamp(pitch - 1, 0, ASSET.pitchCount-1); render(); }
+      while (accY <= -pitchStepPx){ accY += pitchStepPx; pitch = clamp(pitch + 1, 0, ASSET.pitchCount-1); render(); }
+    });
+
+    function endPointer(e){
+      pointers.delete(e.pointerId);
+      if (pointers.size === 0){
+        isDown = false;
+        pinchStartDist = null;
+      }
+    }
+    stage.addEventListener("pointerup", endPointer);
+    stage.addEventListener("pointercancel", endPointer);
+
+    // wheel zoom
+    stage.addEventListener("wheel", (e) => {
+      e.preventDefault();
+      const zMax = parseFloat(zoomMax.value);
+      const delta = Math.sign(e.deltaY);
+      zoom += (-delta) * 0.06;
+      zoom = clamp(zoom, 0.72, zMax);
+      applyVisuals();
+    }, { passive:false });
+
+    // dblclick reset view
+    stage.addEventListener("dblclick", () => {
+      resetView();
+      toastMsg("已重置視角");
+    });
+
+    /* =========================
+       8) Inertia + Auto loop
+    ========================= */
+    let lastT = performance.now();
+
+    function tick(now){
+      const dt = Math.min(0.033, (now - lastT) / 1000);
+      lastT = now;
+
+      // auto mode: smooth stepping
+      if (auto){
+        autoT += dt;
+
+        // yaw advance steadily (convert to pixel accumulator)
+        const baseSpeed = 42; // px/s
+        accX -= baseSpeed * dt;
+
+        // pitch breathing (subtle)
+        const breathe = Math.sin(autoT * 0.55);
+        const pTarget = 1 + (breathe > 0 ? 1 : -1) * 0.22; // around 1
+        // Instead of fractional pitch, we gently bias accY to occasionally step
+        accY += (pTarget - pitch) * 3.0;
+
+        const stepPx = parseInt(step.value,10);
+        while (accX <= -stepPx){ accX += stepPx; yaw = (yaw + 1) % ASSET.yawCount; render(); }
+        while (accX >= stepPx) { accX -= stepPx; yaw = (yaw - 1 + ASSET.yawCount) % ASSET.yawCount; render(); }
+
+        const pitchStepPx = Math.round(stepPx * 1.6);
+        while (accY <= -pitchStepPx){ accY += pitchStepPx; pitch = clamp(pitch + 1, 0, ASSET.pitchCount-1); render(); }
+        while (accY >= pitchStepPx) { accY -= pitchStepPx; pitch = clamp(pitch - 1, 0, ASSET.pitchCount-1); render(); }
+
+        // gentle zoom breathing
+        const zMax = parseFloat(zoomMax.value);
+        const zTarget = 1.0 + 0.05 * Math.sin(autoT * 0.8);
+        zoom = clamp(zoom * 0.94 + zTarget * 0.06, 0.72, zMax);
+        applyVisuals();
+      }
+
+      // inertia (only when not down, not pinch)
+      if (!isDown && pointers.size < 2 && !auto){
+        const damp = parseFloat(inertia.value);
+
+        vx *= damp;
+        vy *= damp;
+
+        // convert velocity to accumulator, but cap
+        accX += clamp(vx, -22, 22) * dt * 12;
+        accY += clamp(vy, -18, 18) * dt * 10;
+
+        const stepPx = parseInt(step.value,10);
+
+        while (accX >= stepPx) { accX -= stepPx; yaw = (yaw - 1 + ASSET.yawCount) % ASSET.yawCount; render(); }
+        while (accX <= -stepPx){ accX += stepPx; yaw = (yaw + 1) % ASSET.yawCount; render(); }
+
+        const pitchStepPx = Math.round(stepPx * 1.55);
+        while (accY >= pitchStepPx) { accY -= pitchStepPx; pitch = clamp(pitch - 1, 0, ASSET.pitchCount-1); render(); }
+        while (accY <= -pitchStepPx){ accY += pitchStepPx; pitch = clamp(pitch + 1, 0, ASSET.pitchCount-1); render(); }
+      }
+
+      requestAnimationFrame(tick);
+    }
+
+    /* =========================
+       9) Buttons + keyboard
+    ========================= */
+    function resetView(){
+      pitch = 1;
+      yaw = 0;
+      zoom = 1.0;
+      vx = vy = 0;
+      accX = accY = 0;
+      auto = false;
+      btnAuto.textContent = "Auto 展示模式";
+      render();
+      applyVisuals();
+    }
+
+    btnReset.addEventListener("click", () => { resetView(); toastMsg("重置完成"); });
+
+    btnAuto.addEventListener("click", () => {
+      auto = !auto;
+      btnAuto.textContent = auto ? "停止 Auto" : "Auto 展示模式";
+      if (auto){ autoT = 0; toastMsg("Auto：ON"); }
+      else toastMsg("Auto：OFF");
+    });
+
+    btnDebug.addEventListener("click", () => {
+      debug = !debug;
+      debugEl.classList.toggle("show", debug);
+      toastMsg(debug ? "Debug：ON" : "Debug：OFF");
+      applyVisuals();
+    });
+
+    // keyboard: arrows + A + R
+    window.addEventListener("keydown", (e) => {
+      const k = e.key.toLowerCase();
+      if (k === "a"){ auto = !auto; btnAuto.textContent = auto ? "停止 Auto" : "Auto 展示模式"; if(auto){autoT=0;} toastMsg(auto?"Auto：ON":"Auto：OFF"); return; }
+      if (k === "r"){ resetView(); toastMsg("已重置"); return; }
+
+      if (k === "arrowleft"){ yaw = (yaw - 1 + ASSET.yawCount) % ASSET.yawCount; render(); }
+      if (k === "arrowright"){ yaw = (yaw + 1) % ASSET.yawCount; render(); }
+      if (k === "arrowup"){ pitch = clamp(pitch - 1, 0, ASSET.pitchCount-1); render(); }
+      if (k === "arrowdown"){ pitch = clamp(pitch + 1, 0, ASSET.pitchCount-1); render(); }
+    });
+
+    /* =========================
+       10) Snapshot export (best-effort)
+    ========================= */
+    btnSnap.addEventListener("click", async () => {
+      // Export a clean snapshot (current frame + lighting background).
+      // Note: DOM effects (spotlight/shine) won't be captured perfectly—this is a clean export.
+      const r = stage.getBoundingClientRect();
+      const c = document.createElement("canvas");
+      c.width = Math.round(r.width * devicePixelRatio);
+      c.height = Math.round(r.height * devicePixelRatio);
+      const ctx = c.getContext("2d");
+
+      // bg
+      const g = ctx.createLinearGradient(0,0,c.width,c.height);
+      g.addColorStop(0, "rgba(8,10,30,1)");
+      g.addColorStop(1, "rgba(10,12,40,1)");
+      ctx.fillStyle = g;
+      ctx.fillRect(0,0,c.width,c.height);
+
+      // draw current frame
+      const k = keyOf(pitch,yaw);
+      const rec = cache.get(k);
+      if (!rec || !rec.loaded){
+        toastMsg("目前幀尚未載入完成");
+        return;
+      }
+
+      const img = rec.img;
+      const cx = c.width * 0.5;
+      const cy = c.height * 0.52;
+
+      // scale to fit
+      const maxW = c.width * 0.86;
+      const maxH = c.height * 0.68;
+      const s = Math.min(maxW / img.naturalWidth, maxH / img.naturalHeight) * zoom;
+
+      ctx.save();
+      ctx.translate(cx, cy);
+      ctx.scale(s, s);
+      ctx.drawImage(img, -img.naturalWidth/2, -img.naturalHeight/2);
+      ctx.restore();
+
+      ctx.fillStyle = "rgba(255,255,255,.82)";
+      ctx.font = `${Math.round(14*devicePixelRatio)}px system-ui`;
+      ctx.fillText(`p${pitch}_y${yaw}   zoom=${zoom.toFixed(2)}x`, 18*devicePixelRatio, (c.height - 18*devicePixelRatio));
+
+      const url = c.toDataURL("image/png");
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `car_demo_true360_${Date.now()}.png`;
+      a.click();
+      toastMsg("已輸出快照 PNG");
+    });
+
+    /* =========================
+       11) Particles background
+    ========================= */
+    const pCanvas = document.getElementById("particles");
+    const pCtx = pCanvas.getContext("2d");
+    let P = [];
+    function resizeParticles(){
+      pCanvas.width = Math.round(innerWidth * devicePixelRatio);
+      pCanvas.height = Math.round(innerHeight * devicePixelRatio);
+      const count = Math.round((innerWidth * innerHeight) / 28000);
+      P = new Array(count).fill(0).map(() => ({
+        x: Math.random() * pCanvas.width,
+        y: Math.random() * pCanvas.height,
+        r: (Math.random() * 1.6 + 0.4) * devicePixelRatio,
+        vx: (Math.random() * 0.35 + 0.05) * devicePixelRatio,
+        vy: (Math.random() * 0.25 + 0.05) * devicePixelRatio,
+        a: Math.random() * 0.55 + 0.2
+      }));
+    }
+    window.addEventListener("resize", resizeParticles);
+
+    function drawParticles(){
+      pCtx.clearRect(0,0,pCanvas.width,pCanvas.height);
+      pCtx.fillStyle = "rgba(0,0,0,0.10)";
+      pCtx.fillRect(0,0,pCanvas.width,pCanvas.height);
+
+      for (const p of P){
+        p.x += p.vx;
+        p.y += p.vy;
+        if (p.x > pCanvas.width + 20) p.x = -20;
+        if (p.y > pCanvas.height + 20) p.y = -20;
+
+        pCtx.beginPath();
+        pCtx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+
+        const t = (p.x / pCanvas.width);
+        const c1 = `rgba(0,217,255,${p.a})`;
+        const c2 = `rgba(124,77,255,${p.a})`;
+        pCtx.fillStyle = (t > 0.5) ? c1 : c2;
+        pCtx.fill();
+      }
+      requestAnimationFrame(drawParticles);
+    }
+
+    /* =========================
+       12) Boot
+    ========================= */
+    (async function init(){
+      resizeParticles();
+      drawParticles();
+
+      // initial loading UI
+      updateLoadingUI();
+
+      // warm start and first render
+      try{
+        await warmStart();
+      }catch(_){}
+
+      // if current frame still not ready, try loading it explicitly
+      try{
+        await loadFrame(pitch,yaw);
+      }catch(_){}
+
+      render();
+      applyVisuals();
+      toastMsg("真・360 已啟動：拖曳切角度 / 兩指縮放 / 按 A 自動展示");
+      requestAnimationFrame(tick);
+    })();
+
+    /* =========================
+       13) Small safety checks
+    ========================= */
+    // If assets missing, show a more explicit hint after a while
+    setTimeout(() => {
+      if (loadedCount === 0){
+        toastMsg("看起來 assets 沒載到：請確認 ./assets/car/p0_y0.png 是否存在");
+        loading.classList.remove("hide");
+      }
+    }, 1600);
+  </script>
+</body>
+</html>

@@ -70,6 +70,36 @@
             transform: translateY(0);
         }
 
+        /* Quick Reply 按鈕動畫 */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .animate-fadeIn {
+            animation: fadeIn 0.3s ease-out forwards;
+        }
+        
+        /* Quick Reply 區塊增強樣式 */
+        #lcQuickReplies button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(74, 222, 128, 0.1), transparent);
+            transition: left 0.5s;
+        }
+        #lcQuickReplies button:hover::before {
+            left: 100%;
+        }
+
         /* 移除了指引步驟區塊樣式 */
         /* 移除了 FAQ 區塊樣式 */
 
@@ -542,8 +572,8 @@
         <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80"
              alt="品牌形象官網" class="w-full h-48 object-cover">
         <div class="p-6">
-          <h3 class="text-xl font-bold mb-2 text-gray-900">日商在台招募網頁</h3>
-          <p class="text-gray-700 text-sm mb-2">協助 CTSS 打造現代化日商在台招募網站，提升詢問度 30%。</p>
+          <h3 class="text-xl font-bold mb-2 text-gray-900">正式日商在台招募網頁</h3>
+          <p class="text-gray-700 text-sm mb-2">協助日本軟體公司打造現代化在台招募網站，提升詢問度 30%。</p>
           <span class="inline-block bg-blue-100 text-blue-700 text-xs px-3 py-1 rounded-full">企業客戶</span>
           <a href="https://ctssjpit.com/" target="_blank" class="block mt-4 p-4 rounded-lg bg-orange-100 hover:bg-orange-200 transition text-orange-700 font-semibold shadow">
             👉 點我看 demo 範例
@@ -551,29 +581,15 @@
         </div>
       </div>
 
-      <!-- 02. 活動宣傳頁（demo_event.html） -->
+      <!-- 02. 個人履歷與部落格 -->
       <div class="bg-white rounded-lg shadow-md hover:shadow-xl overflow-hidden transition-transform duration-300 hover:-translate-y-2">
-        <img src="https://images.unsplash.com/photo-1551836022-4c4c79ecde51?auto=format&fit=crop&w=600&q=80"
-             alt="活動宣傳頁" class="w-full h-48 object-cover">
+        <img src="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=600&q=80"
+             alt="個人履歷部落格" class="w-full h-48 object-cover">
         <div class="p-6">
-          <h3 class="text-xl font-bold mb-2 text-gray-900">活動宣傳頁（Event Landing）</h3>
-          <p class="text-gray-700 text-sm mb-2">倒數計時、議程介紹、線上報名一頁完成，報名轉換率顯著提升。</p>
-          <span class="inline-block bg-green-100 text-green-700 text-xs px-3 py-1 rounded-full">活動推廣</span>
-          <a href="./demo_event.html" target="_blank" class="block mt-4 p-4 rounded-lg bg-orange-100 hover:bg-orange-200 transition text-orange-700 font-semibold shadow">
-            👉 點我看 demo 範例
-          </a>
-        </div>
-      </div>
-
-      <!-- 03. 咖啡店一頁式官網（demo_cafe.html） -->
-      <div class="bg-white rounded-lg shadow-md hover:shadow-xl overflow-hidden transition-transform duration-300 hover:-translate-y-2">
-        <img src="https://images.unsplash.com/photo-1504754524776-8f4f37790ca0?auto=format&fit=crop&w=600&q=80"
-             alt="咖啡店官網" class="w-full h-48 object-cover">
-        <div class="p-6">
-          <h3 class="text-xl font-bold mb-2 text-gray-900">咖啡店一頁式官網</h3>
-          <p class="text-gray-700 text-sm mb-2">主打菜單、評價與營業時間，串地圖導覽，提升到店轉換。</p>
-          <span class="inline-block bg-yellow-100 text-yellow-700 text-xs px-3 py-1 rounded-full">在地商家</span>
-          <a href="./demo_cafe.html" target="_blank" class="block mt-4 p-4 rounded-lg bg-orange-100 hover:bg-orange-200 transition text-orange-700 font-semibold shadow">
+          <h3 class="text-xl font-bold mb-2 text-gray-900">個人履歷與技術部落格</h3>
+          <p class="text-gray-700 text-sm mb-2">現代化履歷展示＋技術文章發表＋專案作品集，整合 GitHub 與社群連結。</p>
+          <span class="inline-block bg-purple-100 text-purple-700 text-xs px-3 py-1 rounded-full">個人品牌</span>
+          <a href="https://kenl-tw.github.io/" target="_blank" class="block mt-4 p-4 rounded-lg bg-orange-100 hover:bg-orange-200 transition text-orange-700 font-semibold shadow">
             👉 點我看 demo 範例
           </a>
         </div>
@@ -593,20 +609,6 @@
         </div>
       </div>
 
-      <!-- 05. 音樂人個人頁（demo_music1.html） -->
-      <div class="bg-white rounded-lg shadow-md hover:shadow-xl overflow-hidden transition-transform duration-300 hover:-translate-y-2">
-        <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=600&q=80"
-             alt="音樂人個人作品頁" class="w-full h-48 object-cover">
-        <div class="p-6">
-          <h3 class="text-xl font-bold mb-2 text-gray-900">音樂人個人頁（Solo Musician）</h3>
-          <p class="text-gray-700 text-sm mb-2">整合作品試聽、演出履歷與合作洽談表單，打造個人品牌名片。</p>
-          <span class="inline-block bg-purple-100 text-purple-700 text-xs px-3 py-1 rounded-full">個人品牌</span>
-          <a href="./demo_music1.html" target="_blank" class="block mt-4 p-4 rounded-lg bg-orange-100 hover:bg-orange-200 transition text-orange-700 font-semibold shadow">
-            👉 點我看 demo 範例
-          </a>
-        </div>
-      </div>
-
       <!-- 06. 樂團演出宣傳頁（demo_music2.html） -->
       <div class="bg-white rounded-lg shadow-md hover:shadow-xl overflow-hidden transition-transform duration-300 hover:-translate-y-2">
         <img src="https://images.unsplash.com/photo-1511379938547-c1f69419868d?auto=format&fit=crop&w=600&q=80"
@@ -620,170 +622,1235 @@
           </a>
         </div>
       </div>
+
+      <!-- 分隔線 -->
+      <div class="col-span-1 md:col-span-2 my-8">
+        <div class="flex items-center gap-4">
+          <div class="flex-1 h-1 bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
+          <span class="text-gray-500 font-semibold">實用小工具</span>
+          <div class="flex-1 h-1 bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
+        </div>
+      </div>
+
+      <!-- 07. 幸運抽籤工具 -->
+      <div class="bg-white rounded-lg shadow-md hover:shadow-xl overflow-hidden transition-transform duration-300 hover:-translate-y-2">
+        <img src="https://images.unsplash.com/photo-1516975080664-ed2fc6a32937?auto=format&fit=crop&w=600&q=80"
+             alt="幸運抽籤工具" class="w-full h-48 object-cover">
+        <div class="p-6">
+          <h3 class="text-xl font-bold mb-2 text-gray-900">🎲 幸運抽籤工具</h3>
+          <p class="text-gray-700 text-sm mb-2">互動式抽籤 / 轉盤遊戲，適合活動推廣、客戶互動、社群貼文。支援自訂選項與獲獎名單追蹤。</p>
+          <span class="inline-block bg-pink-100 text-pink-700 text-xs px-3 py-1 rounded-full">互動工具</span>
+          <a href="./tool/lottery.html" target="_blank" class="block mt-4 p-4 rounded-lg bg-orange-100 hover:bg-orange-200 transition text-orange-700 font-semibold shadow">
+            👉 點我玩轉盤
+          </a>
+        </div>
+      </div>
+
+      <!-- 08. 密碼保管庫 -->
+      <div class="bg-white rounded-lg shadow-md hover:shadow-xl overflow-hidden transition-transform duration-300 hover:-translate-y-2">
+        <img src="https://images.unsplash.com/photo-1633356713697-8cb38dd4df0d?auto=format&fit=crop&w=600&q=80"
+             alt="金庫猜數字" class="w-full h-48 object-cover">
+        <div class="p-6">
+          <h3 class="text-xl font-bold mb-2 text-gray-900">金庫猜數字遊戲</h3>
+          <p class="text-gray-700 text-sm mb-2">透過簡易的遊戲了解數學深奧的邏輯。</p>
+          <span class="inline-block bg-teal-100 text-teal-700 text-xs px-3 py-1 rounded-full">實用教學工具</span>
+          <a href="./tool/vault.html" target="_blank" class="block mt-4 p-4 rounded-lg bg-orange-100 hover:bg-orange-200 transition text-orange-700 font-semibold shadow">
+            👉 金庫猜數字
+          </a>
+        </div>
+      </div>
     </div>
   </div>
 </section>
+<!-- --- 9. 行動召喚（Final CTA） --- -->
+<!-- =========================
+     LINE Demo Section (Beauty / Nails)
+     Drop-in ready: TailwindCSS already loaded in your page.
+     Includes interactive JS (no backend required).
+     ========================= -->
+<section id="line-demo" class="py-16 md:py-24 bg-white">
+  <div class="max-w-7xl mx-auto px-6">
+    <!-- Header -->
+    <div class="text-center mb-10">
+      <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900">LINE 行銷自動化 Demo｜美容美甲預約諮詢</h2>
+      <p class="text-gray-600 mt-3 text-base md:text-lg">
+        圖文選單 × 需求分流 × 優惠導購 × 預約提醒（前端互動示意，不需後端也能完整 demo）
+      </p>
 
+      <div class="mt-6 flex flex-col sm:flex-row justify-center gap-3">
+        <!-- Replace with your real LINE OA link -->
+        <a href="https://lin.ee/6IdgZC4" target="_blank"
+          class="bg-green-500 hover:bg-green-600 text-white font-bold px-6 py-3 rounded-full shadow inline-flex items-center justify-center">
+          <i class="fab fa-line text-xl mr-2"></i> 打開 LINE 諮詢（真實入口）
+        </a>
+        <!-- Replace with your booking page if you want -->
+        <a href="#consultant"
+          class="bg-gray-900 hover:bg-gray-800 text-white font-bold px-6 py-3 rounded-full shadow inline-flex items-center justify-center">
+          <ion-icon name="sparkles-outline" class="text-xl mr-2"></ion-icon> 看完整顧問服務
+        </a>
+      </div>
+    </div>
 
-            <!-- --- 9. 行動召喚（Final CTA） --- -->
-    <section id="consultant" class="py-16 md:py-24 bg-gradient-to-br from-purple-800 to-indigo-900 text-white relative overflow-hidden">
-        <!-- 背景漸層 + 50 % 白色星星 SVG scatter Placeholder -->
-        <div class="absolute inset-0 z-0 opacity-50"
-            style="background-image: url('data:image/svg+xml,%3Csvg width=\'100\' height=\'100\' viewBox=\'0 0 100 100\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'%23ffffff\' opacity=\'0.2\'%3E%3Ccircle cx=\'25\' cy=\'25\' r=\'2\'/%3E%3Ccircle cx=\'75\' cy=\'75\' r=\'2\'/%3E%3Ccircle cx=\'20\' cy=\'80\' r=\'1\'/%3E%3Ccircle cx=\'80\' cy=\'20\' r=\'1\'/%3E%3C/g%3E%3C/svg%3E'); background-size: 50px;">
-        </div>
-
-        <div class="relative z-10 max-w-4xl mx-auto px-6 text-center">
-            <h2 class="text-3xl md:text-5xl font-extrabold leading-tight mb-4">立即讓網站進化！</h2>
-            <p class="text-lg md:text-xl mb-8 opacity-90">提供 30 分鐘免費諮詢，讓您的網站煥然一新。</p>
-            <div class="flex flex-col sm:flex-row justify-center gap-4">
-                <a href="https://lin.ee/6IdgZC4" target="_blank"
-                    class="bg-green-500 text-white px-8 py-4 rounded-full font-bold shadow-lg hover:bg-green-600 transition-colors duration-300 flex items-center justify-center">
-                    <i class="fab fa-line text-xl mr-2"></i> LINE 諮詢
-                </a>
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      <!-- Left: Demo Rich Menu + Flow -->
+      <div class="lg:col-span-5">
+        <!-- Rich Menu Mock -->
+        <div class="rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+          <div class="px-5 py-4 bg-gray-50 border-b border-gray-200 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="inline-flex h-2.5 w-2.5 rounded-full bg-green-500"></span>
+              <span class="font-bold text-gray-900">LINE 圖文選單（示意）</span>
             </div>
+            <span class="text-xs text-gray-500">Beauty / Nails</span>
+          </div>
+
+          <div class="p-5">
+            <p class="text-sm text-gray-600 mb-3">
+              🎯 <strong>點擊下方按鈕</strong>模擬客戶在 LINE 內的操作與分流
+            </p>
+            <div class="text-xs text-gray-500 mb-4 bg-blue-50 border border-blue-100 rounded-lg p-3">
+              <div class="flex items-start gap-2">
+                <span class="text-blue-500 mt-0.5">💡</span>
+                <div>
+                  <strong class="text-blue-700">展示特色：</strong>
+                  <ul class="mt-1 space-y-1 list-disc list-inside text-blue-600">
+                    <li>LINE Rich Text 格式化訊息</li>
+                    <li>Quick Reply 動態互動選單</li>
+                    <li>客製化圖文表單流程</li>
+                    <li>每次點擊可串接 GA4 追蹤</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+              <button type="button" data-lc-action="book"
+                class="rounded-xl border border-gray-200 p-4 hover:border-green-400 hover:bg-green-50 transition text-left">
+                <div class="flex items-center gap-2 font-bold text-gray-900">
+                  <ion-icon name="calendar-outline" class="text-xl text-green-600"></ion-icon>
+                  立即預約
+                </div>
+                <div class="text-xs text-gray-600 mt-1">選擇日期時段／快速確認</div>
+              </button>
+
+              <button type="button" data-lc-action="consult"
+                class="rounded-xl border border-gray-200 p-4 hover:border-blue-400 hover:bg-blue-50 transition text-left">
+                <div class="flex items-center gap-2 font-bold text-gray-900">
+                  <ion-icon name="chatbubble-ellipses-outline" class="text-xl text-blue-600"></ion-icon>
+                  預約諮詢
+                </div>
+                <div class="text-xs text-gray-600 mt-1">想問款式／價格／時長</div>
+              </button>
+
+              <button type="button" data-lc-action="promo"
+                class="rounded-xl border border-gray-200 p-4 hover:border-yellow-400 hover:bg-yellow-50 transition text-left">
+                <div class="flex items-center gap-2 font-bold text-gray-900">
+                  <ion-icon name="pricetag-outline" class="text-xl text-yellow-600"></ion-icon>
+                  折扣優惠
+                </div>
+                <div class="text-xs text-gray-600 mt-1">新人禮／套餐／加購</div>
+              </button>
+
+              <button type="button" data-lc-action="service"
+                class="rounded-xl border border-gray-200 p-4 hover:border-purple-400 hover:bg-purple-50 transition text-left">
+                <div class="flex items-center gap-2 font-bold text-gray-900">
+                  <ion-icon name="color-palette-outline" class="text-xl text-purple-600"></ion-icon>
+                  服務項目
+                </div>
+                <div class="text-xs text-gray-600 mt-1">美甲／睫毛／臉部保養</div>
+              </button>
+            </div>
+
+            <div class="mt-5 flex flex-col sm:flex-row gap-3">
+              <button type="button" id="lcReset"
+                class="w-full sm:w-auto px-4 py-2.5 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold inline-flex items-center justify-center">
+                <ion-icon name="refresh-outline" class="text-lg mr-2"></ion-icon> 重置 Demo
+              </button>
+              <button type="button" id="lcAutoRun"
+                class="w-full sm:w-auto px-4 py-2.5 rounded-full bg-gray-900 hover:bg-gray-800 text-white font-semibold inline-flex items-center justify-center">
+                <ion-icon name="play-outline" class="text-lg mr-2"></ion-icon> 自動跑一次流程
+              </button>
+            </div>
+          </div>
         </div>
-    </section>
-            <!-- 8. 聯絡表單（Contact / CTA） -->
-        <section id="contact" class="section-padding bg-gray-900 text-white">
-            <div class="max-w-4xl mx-auto px-6 text-center">
-                <h2 class="text-white text-3xl md:text-4xl font-semibold mb-4 relative">
-                    <span class="inline-block relative"><br>
-                        聯絡我們
-                        <span class="absolute left-1/2 transform -translate-x-1/2 bottom-0 w-24 h-1 bg-yellow-400 rounded-full -mb-4"></span>
-                    </span>
-                </h2>
-                <p class="text-gray-200 text-base md:text-lg max-w-2xl mx-auto mb-16">
-                    請留下您的聯絡資訊，我們將儘速與您聯繫。
-                </p>
 
-                <form action="https://formspree.io/f/xblyjogo" method="POST" class="bg-gray-800 p-8 md:p-12 rounded-lg shadow-xl text-left">
-    <div class="row grid grid-cols-1 md:grid-cols-2 gap-6">
-        <!-- Name Field -->
-        <div class="form-group position-relative">
-            <input type="text" 
-                   name="name" 
-                   class="w-full px-4 py-3 rounded-md bg-gray-700 text-white border border-gray-600 focus:border-blue-500 focus:ring-blue-500 peer"
-                   id="name" 
-                   placeholder="姓名"
-                   required>
-            <label for="name" 
-                   class="absolute left-4 -top-2.5 text-sm bg-gray-800 px-1 transition-all text-white
-                  peer-placeholder-shown:text-white peer-placeholder-shown:text-base 
-                  peer-placeholder-shown:top-3.5 peer-focus:-top-2.5 peer-focus:text-sm 
-                  peer-focus:text-white">
-                姓名 <span class="text-red-400">*</span>
-            </label>
+        <!-- Flow summary -->
+        <div class="mt-6 rounded-2xl bg-gray-50 border border-gray-200 p-5">
+          <h3 class="font-bold text-gray-900 flex items-center gap-2">
+            <ion-icon name="git-network-outline" class="text-xl text-gray-700"></ion-icon>
+            需求分流假流程（可接 Bot／LIFF／GAS／Lambda）
+          </h3>
+          <ol class="mt-3 text-sm text-gray-700 space-y-2 list-decimal list-inside">
+            <li>客戶點選 Rich Menu：預約／諮詢／優惠／服務</li>
+            <li>Quick Reply 分流：服務類型 → 時段偏好 → 預算/方案</li>
+            <li>系統自動打標籤：例如「美甲｜下週｜新客」</li>
+            <li>導向預約頁或真人接手，並可觸發提醒訊息</li>
+          </ol>
+        </div>
+      </div>
+
+      <!-- Right: Chat Simulator -->
+      <div class="lg:col-span-7">
+        <div class="rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+          <div class="px-5 py-4 bg-gray-900 text-white flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="h-9 w-9 rounded-full bg-white/15 flex items-center justify-center">
+                <ion-icon name="sparkles-outline" class="text-xl"></ion-icon>
+              </div>
+              <div>
+                <div class="font-bold leading-tight">美甲小幫手（Demo Bot）</div>
+                <div class="text-xs text-white/70 flex items-center gap-2">
+                  <span>💬 Rich Text</span>
+                  <span>•</span>
+                  <span>🎯 Quick Reply</span>
+                  <span>•</span>
+                  <span>📊 可串 GA4</span>
+                </div>
+              </div>
+            </div>
+
+            <span id="lcTagBadge" class="hidden text-xs bg-white/15 border border-white/20 px-3 py-1 rounded-full">
+              Tags: <span id="lcTags">—</span>
+            </span>
+          </div>
+
+          <div id="lcChat" class="h-[520px] md:h-[560px] bg-white p-5 overflow-y-auto space-y-3">
+            <!-- messages injected by JS -->
+          </div>
+
+          <!-- Quick replies area -->
+          <div class="border-t bg-gradient-to-b from-white to-gray-50 p-4">
+            <div class="flex items-center justify-between mb-3">
+              <div class="flex items-center gap-2">
+                <div class="text-xs font-semibold text-gray-700">💬 Quick Reply 互動選單</div>
+                <div class="text-[10px] px-2 py-0.5 rounded-full bg-green-100 text-green-700 font-medium">LINE 官方功能</div>
+              </div>
+              <div class="text-[10px] text-gray-400">👆 點擊回覆</div>
+            </div>
+            <div class="text-[11px] text-gray-500 mb-3 leading-relaxed">
+              <span class="font-medium text-gray-600">✨ 客製化圖文表單：</span>依據使用者回應動態產生選項，引導對話流程
+            </div>
+            <div id="lcQuickReplies" class="flex flex-wrap gap-2">
+              <!-- buttons injected by JS -->
+            </div>
+          </div>
         </div>
 
-        <!-- Email Field -->
-        <div class="form-group position-relative">
-            <input type="email" 
-                   name="email" 
-                   class="w-full px-4 py-3 rounded-md bg-gray-700 text-white border border-gray-600 focus:border-blue-500 focus:ring-blue-500 peer"
-                   id="email" 
-                   placeholder="電子郵件"
-                   required>
-            <label for="email" 
-                   class="absolute left-4 -top-2.5 text-sm bg-gray-800 px-1 transition-all text-white
-                  peer-placeholder-shown:text-white peer-placeholder-shown:text-base 
-                  peer-placeholder-shown:top-3.5 peer-focus:-top-2.5 peer-focus:text-sm 
-                  peer-focus:text-white">
-                電子郵件 <span class="text-red-400">*</span>
-            </label>
+        <!-- Conversion outputs -->
+        <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="rounded-2xl border border-gray-200 p-5">
+            <div class="text-xs text-gray-500">Demo 目標</div>
+            <div class="font-bold text-gray-900 mt-1">把流量變名單</div>
+            <div class="text-sm text-gray-600 mt-2">分流收集需求後，導向預約或真人接手。</div>
+          </div>
+          <div class="rounded-2xl border border-gray-200 p-5">
+            <div class="text-xs text-gray-500">可交付</div>
+            <div class="font-bold text-gray-900 mt-1">Rich Menu + 分流腳本</div>
+            <div class="text-sm text-gray-600 mt-2">依產業套用模板，快速客製。</div>
+          </div>
+          <div class="rounded-2xl border border-gray-200 p-5">
+            <div class="text-xs text-gray-500">可擴充</div>
+            <div class="font-bold text-gray-900 mt-1">預約＋提醒＋成效追蹤</div>
+            <div class="text-sm text-gray-600 mt-2">GAS/Lambda 寫入名單、推播提醒、串 GA。</div>
+          </div>
         </div>
+      </div>
     </div>
+  </div>
 
-    <!-- Subject Field -->
-    <div class="form-group position-relative mt-6">
-        <select name="subject" 
-                class="w-full px-4 py-3 rounded-md bg-gray-700 text-white border border-gray-600 focus:border-blue-500 focus:ring-blue-500"
-                id="subject" 
-                required>
-            <option value="" class="text-white">選擇主旨</option>
-            <option value="job-application" class="text-white">需求諮詢</option>
-            <option value="business" class="text-white">客製開發討論</option>
-            <option value="business" class="text-white">現有網站轉移</option>
-            <option value="other" class="text-white">其他問題</option>
-        </select>
-        <label for="subject" 
-               class="absolute left-4 -top-2.5 text-sm bg-gray-800 px-1 text-white">
-            主旨<span class="text-red-400">*</span>
-        </label>
-    </div>
+  <!-- =========================
+       Interactive Demo JS
+       - No backend required
+       - Can wire to GA4 by replacing lcTrack()
+       ========================= -->
+  <script>
+    (function(){
+      // -----------------------------
+      // Utilities
+      // -----------------------------
+      const $ = (sel, root=document) => root.querySelector(sel);
+      const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
 
-    <!-- Message Field -->
-    <div class="form-group position-relative mt-6">
-        <textarea name="message" 
-                  rows="6" 
-                  class="w-full px-4 py-3 rounded-md bg-gray-700 text-white border border-gray-600 focus:border-blue-500 focus:ring-blue-500 peer"
-                  placeholder="訊息內容"
-                  required></textarea>
-        <label for="message" 
-               class="absolute left-4 -top-2.5 text-sm bg-gray-800 px-1 transition-all text-white">
-            訊息內容<span class="text-red-400">*</span>
-        </label>
-    </div>
+      const chatEl = $("#lcChat");
+      const quickEl = $("#lcQuickReplies");
+      const tagBadgeEl = $("#lcTagBadge");
+      const tagsEl = $("#lcTags");
+      const resetBtn = $("#lcReset");
+      const autoBtn = $("#lcAutoRun");
 
-    <!-- Status Messages -->
-    <div class="my-6">
-        <div class="loading hidden text-blue-400">Sending message...</div>
-        <div class="error-message hidden text-red-400">Something went wrong. Please try again.</div>
-        <div class="sent-message hidden text-green-400">Your message has been sent successfully!</div>
-    </div>
+      // Replace with your real booking page if you want to demo "real booking"
+      const BOOKING_URL = "YOUR_BOOKING_URL"; // e.g. https://calendar.google.com/calendar/u/0/appointments/schedules/...
+      const LINE_OA_URL = "https://lin.ee/6IdgZC4";
 
-    <!-- Submit Button -->
-    <div class="text-center">
-        <button type="submit" 
-                class="bg-yellow-400 hover:bg-yellow-500 text-white font-semibold px-8 py-4 rounded-md text-lg shadow-lg transition duration-300 inline-flex items-center">
-            Send Message 
-            <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
-            </svg>
-        </button>
-    </div>
-</form>
+      // GA hook (you can replace with your ga_event.js wrapper)
+      function lcTrack(eventName, params = {}) {
+        // If you already use gtag, you can wire here:
+        // if (window.gtag) window.gtag('event', eventName, params);
+        // console.log for demo:
+        console.log("[LINE-DEMO]", eventName, params);
+      }
 
-<!-- Add this JavaScript for form handling -->
-<script>
-    const form = document.querySelector('form');
-    const loadingMessage = document.querySelector('.loading');
-    const errorMessage = document.querySelector('.error-message');
-    const sentMessage = document.querySelector('.sent-message');
+      function escapeHtml(s) {
+        return (s || "").replace(/[&<>"']/g, m => ({
+          "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"
+        }[m]));
+      }
 
-    form.addEventListener('submit', async (e) => {
-        e.preventDefault();
+      function scrollToBottom() {
+        chatEl.scrollTop = chatEl.scrollHeight;
+      }
+
+      function addMsg({ who, text, meta }) {
+        const isBot = who === "bot";
+        const wrap = document.createElement("div");
+        wrap.className = "flex " + (isBot ? "justify-start" : "justify-end");
+
+        const bubble = document.createElement("div");
+        bubble.className =
+          (isBot
+            ? "max-w-[85%] rounded-2xl rounded-tl-sm bg-white text-gray-900 border border-gray-200"
+            : "max-w-[85%] rounded-2xl rounded-tr-sm bg-green-500 text-white"
+          ) + " px-4 py-3 shadow-md";
+
+        bubble.innerHTML = `
+          <div class="text-sm leading-relaxed whitespace-pre-line">${escapeHtml(text).replace(/\n/g,"<br>")}</div>
+          ${meta ? `<div class="mt-2 pt-2 border-t ${isBot ? "border-gray-200 text-gray-500" : "border-white/20 text-white/80"} text-[10px] flex items-center gap-1"><span>✓</span><span>${escapeHtml(meta)}</span></div>` : ""}
+        `;
+
+        wrap.appendChild(bubble);
+        chatEl.appendChild(wrap);
+        scrollToBottom();
+      }
+
+      function setQuickReplies(replies) {
+        quickEl.innerHTML = "";
+        if (!replies || !replies.length) return;
+
+        replies.forEach((r, idx) => {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "px-4 py-2.5 rounded-lg bg-white border-2 border-gray-200 hover:border-green-400 hover:bg-green-50 hover:shadow-md text-sm font-semibold text-gray-800 transition-all duration-200 transform hover:scale-105 flex items-center gap-2 relative overflow-hidden group";
+          
+          // Add icon based on button type
+          const icon = r.icon || getIconForButton(r.label, r.id);
+          if (icon) {
+            const iconSpan = document.createElement("span");
+            iconSpan.className = "text-base";
+            iconSpan.textContent = icon;
+            btn.appendChild(iconSpan);
+          }
+          
+          const textSpan = document.createElement("span");
+          textSpan.textContent = r.label;
+          btn.appendChild(textSpan);
+          
+          // Add subtle animation delay
+          btn.style.animationDelay = `${idx * 50}ms`;
+          btn.classList.add("animate-fadeIn");
+          
+          btn.addEventListener("click", () => {
+            lcTrack("line_demo_quick_reply_click", { label: r.label, id: r.id, step: state.step });
+            handleUserChoice(r);
+          });
+          quickEl.appendChild(btn);
+        });
         
-        // Show loading message
-        loadingMessage.classList.remove('hidden');
-        errorMessage.classList.add('hidden');
-        sentMessage.classList.add('hidden');
-
-        try {
-            const response = await fetch(form.action, {
-                method: 'POST',
-                body: new FormData(form),
-                headers: {
-                    'Accept': 'application/json'
-                }
-            });
-
-            if (response.ok) {
-                // Show success message
-                form.reset();
-                loadingMessage.classList.add('hidden');
-                sentMessage.classList.remove('hidden');
-            } else {
-                throw new Error('Network response was not ok.');
-            }
-        } catch (error) {
-            // Show error message
-            loadingMessage.classList.add('hidden');
-            errorMessage.classList.remove('hidden');
+        // Helper function to get icon
+        function getIconForButton(label, id) {
+          if (id.includes("book") || label.includes("預約")) return "📅";
+          if (id.includes("consult") || label.includes("諮詢")) return "💭";
+          if (id.includes("promo") || label.includes("優惠")) return "🎁";
+          if (id.includes("service") || label.includes("服務")) return "✨";
+          if (id.includes("nails") || label.includes("美甲")) return "💅";
+          if (id.includes("lashes") || label.includes("睫毛")) return "👁️";
+          if (id.includes("facial") || label.includes("保養")) return "🧖";
+          if (id.includes("time") || label.includes("時段")) return "⏰";
+          if (id.includes("weekday")) return "📆";
+          if (id.includes("weekend")) return "🎉";
+          if (id.includes("plan") || id.includes("budget")) return "💰";
+          if (label.includes("款式") || label.includes("設計")) return "🎨";
+          if (label.includes("價格")) return "💵";
+          return "";
         }
-    });
-</script>
+      }
+
+      // -----------------------------
+      // Demo State Machine
+      // -----------------------------
+      const state = {
+        step: "start",
+        tags: new Set(),
+        data: {
+          goal: null,
+          serviceType: null,
+          timePref: null,
+          budgetPlan: null
+        }
+      };
+
+      function updateTags() {
+        const tags = Array.from(state.tags);
+        if (tags.length) {
+          tagBadgeEl.classList.remove("hidden");
+          tagsEl.textContent = tags.join("｜");
+        } else {
+          tagBadgeEl.classList.add("hidden");
+          tagsEl.textContent = "—";
+        }
+      }
+
+      function addTag(t) {
+        state.tags.add(t);
+        updateTags();
+      }
+
+      function resetDemo() {
+        state.step = "start";
+        state.tags = new Set();
+        state.data = { goal:null, serviceType:null, timePref:null, budgetPlan:null };
+        chatEl.innerHTML = "";
+        updateTags();
+        boot();
+        lcTrack("line_demo_reset");
+      }
+
+      function boot() {
+        addMsg({
+          who: "bot",
+          text:
+`嗨～我是「美甲小幫手」(Demo) ✨
+想要我幫你完成哪一件事？
+
+💡 點選下方快速回覆按鈕開始互動`,
+          meta: "📱 示意：LINE Rich Text + 客製化圖文選單分流"
+        });
+
+        setQuickReplies([
+          { id: "goal_book", label: "我要預約" },
+          { id: "goal_consult", label: "我想先諮詢" },
+          { id: "goal_promo", label: "看折扣優惠" },
+          { id: "goal_services", label: "看服務項目" }
+        ]);
+
+        state.step = "start";
+      }
+
+      // Flow logic
+      function handleUserChoice(choice) {
+        // User speaks
+        addMsg({ who: "user", text: choice.label });
+
+        // Advance based on current step + choice
+        switch (state.step) {
+          case "start": {
+            if (choice.id === "goal_book") {
+              state.data.goal = "預約";
+              addTag("目標：預約");
+              state.step = "choose_service_for_booking";
+              addMsg({ who: "bot", text: "好的～想預約哪一種服務呢？✨\n\n請選擇您感興趣的項目：", meta: "💡 動態選單：依使用者意圖產生" });
+              setQuickReplies([
+                { id:"svc_nails", label:"美甲/凝膠" },
+                { id:"svc_lashes", label:"睫毛" },
+                { id:"svc_facial", label:"臉部保養" }
+              ]);
+              return;
+            }
+            if (choice.id === "goal_consult") {
+              state.data.goal = "諮詢";
+              addTag("目標：諮詢");
+              state.step = "choose_service_for_consult";
+              addMsg({ who: "bot", text: "沒問題～你想先諮詢哪一塊？💭\n\n我會先問 3 個問題，幫你快速給建議。", meta: "🎯 智能分流：3 步驟收集需求" });
+              setQuickReplies([
+                { id:"c_style", label:"款式/設計" },
+                { id:"c_price", label:"價格/方案" },
+                { id:"c_time", label:"施作時間" }
+              ]);
+              return;
+            }
+            if (choice.id === "goal_promo") {
+              state.data.goal = "優惠";
+              addTag("目標：優惠");
+              state.step = "show_promos";
+              renderPromos();
+              return;
+            }
+            if (choice.id === "goal_services") {
+              state.data.goal = "服務";
+              addTag("目標：服務");
+              state.step = "show_services";
+              renderServices();
+              return;
+            }
+            break;
+          }
+
+          case "choose_service_for_booking": {
+            state.data.serviceType =
+              choice.id === "svc_nails" ? "美甲/凝膠" :
+              choice.id === "svc_lashes" ? "睫毛" : "臉部保養";
+            addTag("服務：" + state.data.serviceType);
+            state.step = "choose_time";
+            addMsg({ who: "bot", text: "了解～你偏好的時段是？⏰\n\n讓我幫你找到最合適的時間：", meta: "📅 時段篩選" });
+            setQuickReplies([
+              { id:"t_weekday_day", label:"平日白天" },
+              { id:"t_weekday_night", label:"平日晚上" },
+              { id:"t_weekend", label:"週末" }
+            ]);
+            return;
+          }
+
+          case "choose_service_type_consult": {
+            // from consult Q1 -> ask service type
+            state.step = "choose_service_for_consult_2";
+            addMsg({ who: "bot", text: "收到～你主要想做哪一種服務？" });
+            setQuickReplies([
+              { id:"svc_nails2", label:"美甲/凝膠", next:"choose_time_consult" },
+              { id:"svc_lashes2", label:"睫毛", next:"choose_time_consult" },
+              { id:"svc_facial2", label:"臉部保養", next:"choose_time_consult" }
+            ]);
+            return;
+          }
+
+          case "choose_service_for_consult_2": {
+            state.data.serviceType =
+              choice.id === "svc_nails2" ? "美甲/凝膠" :
+              choice.id === "svc_lashes2" ? "睫毛" : "臉部保養";
+            addTag("服務：" + state.data.serviceType);
+            state.step = "choose_time_consult";
+            addMsg({ who: "bot", text: "OK～最後一題：你希望什麼時段比較方便？" });
+            setQuickReplies([
+              { id:"t_weekday_day2", label:"平日白天", next:"choose_plan_consult" },
+              { id:"t_weekday_night2", label:"平日晚上", next:"choose_plan_consult" },
+              { id:"t_weekend2", label:"週末", next:"choose_plan_consult" }
+            ]);
+            return;
+          }
+
+          case "choose_time":
+          case "choose_time_consult": {
+            state.data.timePref =
+              (choice.id.includes("weekday_day")) ? "平日白天" :
+              (choice.id.includes("weekday_night")) ? "平日晚上" : "週末";
+            addTag("時段：" + state.data.timePref);
+
+            // Next: plan
+            const isConsult = state.step === "choose_time_consult";
+            state.step = isConsult ? "choose_plan_consult" : "choose_plan";
+            addMsg({ who: "bot", text: "好～你想看哪一種方案？（會影響折扣與建議款式）" });
+            setQuickReplies([
+              { id:"p_new", label:"新客優惠", next:"result" },
+              { id:"p_set", label:"套餐方案", next:"result" },
+              { id:"p_vip", label:"回購/會員", next:"result" }
+            ]);
+            return;
+          }
+
+          case "choose_plan":
+          case "choose_plan_consult": {
+            state.data.budgetPlan =
+              choice.id === "p_new" ? "新客優惠" :
+              choice.id === "p_set" ? "套餐方案" : "回購/會員";
+            addTag("方案：" + state.data.budgetPlan);
+
+            state.step = "result";
+            renderResult();
+            return;
+          }
+
+          case "show_promos": {
+            // From promos, allow jump to booking/consult
+            if (choice.id === "go_booking") {
+              state.step = "choose_service_for_booking";
+              addMsg({ who: "bot", text: "好～我們直接進預約流程。想預約哪一種服務？" });
+              setQuickReplies([
+                { id:"svc_nails", label:"美甲/凝膠", next:"choose_time" },
+                { id:"svc_lashes", label:"睫毛", next:"choose_time" },
+                { id:"svc_facial", label:"臉部保養", next:"choose_time" }
+              ]);
+              return;
+            }
+            if (choice.id === "go_consult") {
+              state.step = "choose_service_for_consult";
+              addMsg({ who: "bot", text: "沒問題～先告訴我你想先諮詢哪一塊？" });
+              setQuickReplies([
+                { id:"c_style", label:"款式/設計", next:"choose_service_type_consult" },
+                { id:"c_price", label:"價格/方案", next:"choose_service_type_consult" },
+                { id:"c_time", label:"施作時間", next:"choose_service_type_consult" }
+              ]);
+              return;
+            }
+            break;
+          }
+
+          case "show_services": {
+            if (choice.id === "svc_jump_booking") {
+              state.step = "choose_service_for_booking";
+              addMsg({ who: "bot", text: "好的～想預約哪一種服務呢？" });
+              setQuickReplies([
+                { id:"svc_nails", label:"美甲/凝膠", next:"choose_time" },
+                { id:"svc_lashes", label:"睫毛", next:"choose_time" },
+                { id:"svc_facial", label:"臉部保養", next:"choose_time" }
+              ]);
+              return;
+            }
+            if (choice.id === "svc_jump_consult") {
+              state.step = "choose_service_for_consult";
+              addMsg({ who: "bot", text: "沒問題～你想先諮詢哪一塊？" });
+              setQuickReplies([
+                { id:"c_style", label:"款式/設計", next:"choose_service_type_consult" },
+                { id:"c_price", label:"價格/方案", next:"choose_service_type_consult" },
+                { id:"c_time", label:"施作時間", next:"choose_service_type_consult" }
+              ]);
+              return;
+            }
+            break;
+          }
+
+          case "result": {
+            // allow restart from result quick replies
+            if (choice.id === "restart") {
+              resetDemo();
+              return;
+            }
+            if (choice.id === "open_line") {
+              lcTrack("line_demo_open_line_click");
+              window.open(LINE_OA_URL, "_blank");
+              return;
+            }
+            if (choice.id === "open_booking") {
+              lcTrack("line_demo_open_booking_click");
+              if (BOOKING_URL && BOOKING_URL !== "YOUR_BOOKING_URL") {
+                window.open(BOOKING_URL, "_blank");
+              } else {
+                addMsg({ who:"bot", text:"提示：你尚未填入 BOOKING_URL。\n把 section 內的 YOUR_BOOKING_URL 換成你的 Google booking page，就能直接打開預約頁。" });
+              }
+              return;
+            }
+            break;
+          }
+        }
+
+        // Default fallback
+        addMsg({ who: "bot", text: "我懂～我們換個方式。你想「預約」還是「先諮詢」？" });
+        setQuickReplies([
+          { id: "goal_book", label: "我要預約", next: "choose_service_for_booking" },
+          { id: "goal_consult", label: "我想先諮詢", next: "choose_service_for_consult" }
+        ]);
+        state.step = "start";
+      }
+
+      function renderPromos() {
+        lcTrack("line_demo_view_promos");
+        addMsg({
+          who: "bot",
+          text:
+`本月優惠（示意）：
+1) 新客凝膠手部 9 折
+2) 兩人同行享加購折扣
+3) 套餐：手+足 省更多
+
+你想直接「預約」還是「先諮詢」確認適合的方案？`,
+          meta: "示意：可依來源/活動碼自動套用優惠"
+        });
+        setQuickReplies([
+          { id:"go_booking", label:"直接預約", next:"choose_service_for_booking" },
+          { id:"go_consult", label:"先諮詢方案", next:"choose_service_for_consult" }
+        ]);
+      }
+
+      function renderServices() {
+        lcTrack("line_demo_view_services");
+        addMsg({
+          who: "bot",
+          text:
+`服務項目（示意）：
+• 美甲/凝膠：單色、跳色、款式設計
+• 睫毛：自然款、濃密款、補接
+• 臉部保養：清粉刺、保濕、舒緩
+
+想先看「優惠」或直接「預約」？`,
+          meta: "示意：可依客戶標籤推薦對應服務"
+        });
+        setQuickReplies([
+          { id:"svc_jump_booking", label:"直接預約", next:"choose_service_for_booking" },
+          { id:"svc_jump_consult", label:"先諮詢", next:"choose_service_for_consult" },
+          { id:"goal_promo", label:"看折扣優惠", next:"show_promos" }
+        ]);
+        state.step = "show_services";
+      }
+
+      function renderResult() {
+        lcTrack("line_demo_result", {
+          goal: state.data.goal || "",
+          serviceType: state.data.serviceType || "",
+          timePref: state.data.timePref || "",
+          plan: state.data.budgetPlan || ""
+        });
+
+        const suggestion =
+          `我幫你整理好了（示意）：
+• 需求：${state.data.goal || "—"}｜${state.data.serviceType || "—"}
+• 偏好：${state.data.timePref || "—"}｜方案：${state.data.budgetPlan || "—"}
+
+下一步建議：
+1) 點「開啟預約頁」選時間（最快）
+2) 或點「打開 LINE」讓我收集款式/照片，並由人員接手確認`;
+
+        addMsg({
+          who: "bot",
+          text: suggestion,
+          meta: "示意：此步可自動建立 lead（寫入 Sheet/CRM）+ 發預約提醒"
+        });
+
+        setQuickReplies([
+          { id:"open_booking", label:"開啟預約頁", next:"result" },
+          { id:"open_line", label:"打開 LINE 真人接手", next:"result" },
+          { id:"restart", label:"再跑一次 demo", next:"result" }
+        ]);
+
+        state.step = "result";
+      }
+
+      // -----------------------------
+      // Rich Menu buttons on left
+      // -----------------------------
+      $$("[data-lc-action]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const action = btn.getAttribute("data-lc-action");
+          lcTrack("line_demo_richmenu_click", { action });
+
+          // simulate entering the flow
+          if (action === "book") {
+            handleUserChoice({ id:"goal_book", label:"我要預約" });
+          } else if (action === "consult") {
+            handleUserChoice({ id:"goal_consult", label:"我想先諮詢" });
+          } else if (action === "promo") {
+            handleUserChoice({ id:"goal_promo", label:"看折扣優惠" });
+          } else if (action === "service") {
+            handleUserChoice({ id:"goal_services", label:"看服務項目" });
+          }
+        });
+      });
+
+      resetBtn && resetBtn.addEventListener("click", resetDemo);
+
+      autoBtn && autoBtn.addEventListener("click", async () => {
+        lcTrack("line_demo_autorun");
+        resetDemo();
+
+        const wait = (ms) => new Promise(r => setTimeout(r, ms));
+        await wait(550);
+        handleUserChoice({ id:"goal_book", label:"我要預約" });
+        await wait(550);
+        handleUserChoice({ id:"svc_nails", label:"美甲/凝膠" });
+        await wait(550);
+        handleUserChoice({ id:"t_weekday_night", label:"平日晚上" });
+        await wait(550);
+        handleUserChoice({ id:"p_new", label:"新客優惠" });
+      });
+
+      // Init
+      boot();
+      lcTrack("line_demo_view");
+    })();
+  </script>
+</section>
+
+<!-- =========================
+     Data & Growth Analytics Section
+     Drop-in ready: TailwindCSS already loaded in your page.
+     Goal: 精準呈現「GA 數據分析 / 報表 / 競品比較 / 行銷策略」顧問能力
+     ========================= -->
+<section id="data-analytics" class="py-16 md:py-24 bg-gray-50">
+  <div class="max-w-7xl mx-auto px-6">
+    <!-- Header -->
+    <div class="text-center mb-12">
+      <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900">數據分析 × 競品對照｜把決策從「感覺」拉回「證據」</h2>
+      <p class="text-gray-600 mt-3 text-base md:text-lg">
+        GA4 事件設計、漏斗/轉換分析、SEO 與內容規劃、競爭者比較報告，協助制定可執行的網路行銷與產品策略。
+      </p>
+
+      <div class="mt-6 flex flex-col sm:flex-row justify-center gap-3">
+        <a href="#line-demo"
+          class="bg-white hover:bg-gray-100 text-gray-900 font-bold px-6 py-3 rounded-full shadow border border-gray-200 inline-flex items-center justify-center">
+          <ion-icon name="git-network-outline" class="text-xl mr-2"></ion-icon> 回到 LINE Demo 區
+        </a>
+      </div>
+    </div>
+
+    <!-- 數據視覺化展示區 -->
+    <div class="mb-12 bg-white rounded-2xl shadow-lg border border-gray-200 p-8">
+      <h3 class="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-3">
+        <span class="h-8 w-8 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+          📊
+        </span>
+        轉換漏斗分析示例
+      </h3>
+      
+      <!-- 漏斗視覺化 -->
+      <div class="grid grid-cols-1 md:grid-cols-5 gap-4 mb-8">
+        <div class="relative">
+          <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-5 text-white text-center shadow-lg transform hover:scale-105 transition">
+            <div class="text-3xl font-bold mb-1" data-counter="10000">0</div>
+            <div class="text-sm opacity-90">網站訪客</div>
+            <div class="text-xs opacity-75 mt-2">100%</div>
+          </div>
+          <div class="hidden md:block absolute top-1/2 -right-2 transform -translate-y-1/2 text-2xl text-gray-300">→</div>
+        </div>
+        
+        <div class="relative">
+          <div class="bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-xl p-5 text-white text-center shadow-lg transform hover:scale-105 transition">
+            <div class="text-3xl font-bold mb-1" data-counter="3500">0</div>
+            <div class="text-sm opacity-90">CTA 點擊</div>
+            <div class="text-xs opacity-75 mt-2">35%</div>
+          </div>
+          <div class="hidden md:block absolute top-1/2 -right-2 transform -translate-y-1/2 text-2xl text-gray-300">→</div>
+        </div>
+        
+        <div class="relative">
+          <div class="bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl p-5 text-white text-center shadow-lg transform hover:scale-105 transition">
+            <div class="text-3xl font-bold mb-1" data-counter="1200">0</div>
+            <div class="text-sm opacity-90">加入 LINE</div>
+            <div class="text-xs opacity-75 mt-2">12%</div>
+          </div>
+          <div class="hidden md:block absolute top-1/2 -right-2 transform -translate-y-1/2 text-2xl text-gray-300">→</div>
+        </div>
+        
+        <div class="relative">
+          <div class="bg-gradient-to-br from-pink-500 to-pink-600 rounded-xl p-5 text-white text-center shadow-lg transform hover:scale-105 transition">
+            <div class="text-3xl font-bold mb-1" data-counter="450">0</div>
+            <div class="text-sm opacity-90">預約詢問</div>
+            <div class="text-xs opacity-75 mt-2">4.5%</div>
+          </div>
+          <div class="hidden md:block absolute top-1/2 -right-2 transform -translate-y-1/2 text-2xl text-gray-300">→</div>
+        </div>
+        
+        <div class="relative">
+          <div class="bg-gradient-to-br from-green-500 to-green-600 rounded-xl p-5 text-white text-center shadow-lg transform hover:scale-105 transition">
+            <div class="text-3xl font-bold mb-1" data-counter="180">0</div>
+            <div class="text-sm opacity-90">完成成交</div>
+            <div class="text-xs opacity-75 mt-2">1.8%</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 優化建議 -->
+      <div class="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl p-5">
+        <div class="flex items-start gap-3">
+          <div class="text-2xl">💡</div>
+          <div>
+            <div class="font-bold text-gray-900 mb-2">優化機會點</div>
+            <div class="text-sm text-gray-700 space-y-1">
+              <div>• <strong>CTA → LINE：</strong>可能是 LINE 連結不明顯或缺乏誘因，建議 A/B 測試按鈕文案</div>
+              <div>• <strong>LINE → 預約：</strong>流失率高，建議優化 Quick Reply 分流體驗</div>
+              <div>• <strong>預約 → 成交：</strong>40% 轉換率屬優秀，持續追蹤並複製成功模式</div>
             </div>
-        </section>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 競品對照視覺化表格 -->
+    <div class="mb-12 bg-white rounded-2xl shadow-lg border border-gray-200 p-8 overflow-hidden">
+      <h3 class="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-3">
+        <span class="h-8 w-8 rounded-lg bg-gradient-to-br from-yellow-500 to-orange-600 flex items-center justify-center">
+          🔍
+        </span>
+        競品對照分析示例
+      </h3>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="border-b-2 border-gray-300">
+              <th class="text-left py-4 px-4 font-bold text-gray-900">評估項目</th>
+              <th class="text-center py-4 px-4 font-bold text-blue-700 bg-blue-50">您的品牌 ⭐</th>
+              <th class="text-center py-4 px-4 font-bold text-gray-700">競品 A</th>
+              <th class="text-center py-4 px-4 font-bold text-gray-700">競品 B</th>
+              <th class="text-center py-4 px-4 font-bold text-gray-700">競品 C</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-200">
+            <tr class="hover:bg-gray-50 transition">
+              <td class="py-4 px-4 font-semibold text-gray-900">主打定位</td>
+              <td class="py-4 px-4 text-center bg-blue-50">
+                <div class="font-medium text-blue-900">專業技術 × 數據追蹤</div>
+              </td>
+              <td class="py-4 px-4 text-center text-gray-700">快速交付</td>
+              <td class="py-4 px-4 text-center text-gray-700">低價模板</td>
+              <td class="py-4 px-4 text-center text-gray-700">設計美感</td>
+            </tr>
+            <tr class="hover:bg-gray-50 transition">
+              <td class="py-4 px-4 font-semibold text-gray-900">價格區間</td>
+              <td class="py-4 px-4 text-center bg-blue-50">
+                <div class="inline-flex items-center gap-1">
+                  <span class="text-lg">💰</span>
+                  <span class="text-lg">💰</span>
+                  <span class="text-lg">💰</span>
+                </div>
+              </td>
+              <td class="py-4 px-4 text-center text-gray-700">💰💰</td>
+              <td class="py-4 px-4 text-center text-gray-700">💰</td>
+              <td class="py-4 px-4 text-center text-gray-700">💰💰💰💰</td>
+            </tr>
+            <tr class="hover:bg-gray-50 transition">
+              <td class="py-4 px-4 font-semibold text-gray-900">GA4 追蹤</td>
+              <td class="py-4 px-4 text-center bg-blue-50">
+                <div class="inline-flex items-center justify-center gap-1 px-3 py-1 rounded-full bg-green-100 text-green-700 font-bold text-xs">
+                  ✓ 完整支援
+                </div>
+              </td>
+              <td class="py-4 px-4 text-center">
+                <span class="inline-flex items-center justify-center px-3 py-1 rounded-full bg-yellow-100 text-yellow-700 text-xs">基礎埋碼</span>
+              </td>
+              <td class="py-4 px-4 text-center">
+                <span class="inline-flex items-center justify-center px-3 py-1 rounded-full bg-gray-200 text-gray-600 text-xs">無</span>
+              </td>
+              <td class="py-4 px-4 text-center">
+                <span class="inline-flex items-center justify-center px-3 py-1 rounded-full bg-yellow-100 text-yellow-700 text-xs">需加購</span>
+              </td>
+            </tr>
+            <tr class="hover:bg-gray-50 transition">
+              <td class="py-4 px-4 font-semibold text-gray-900">LINE 整合</td>
+              <td class="py-4 px-4 text-center bg-blue-50">
+                <div class="inline-flex items-center justify-center gap-1 px-3 py-1 rounded-full bg-green-100 text-green-700 font-bold text-xs">
+                  ✓ Rich Menu + Bot
+                </div>
+              </td>
+              <td class="py-4 px-4 text-center">
+                <span class="inline-flex items-center justify-center px-3 py-1 rounded-full bg-yellow-100 text-yellow-700 text-xs">僅連結</span>
+              </td>
+              <td class="py-4 px-4 text-center">
+                <span class="inline-flex items-center justify-center px-3 py-1 rounded-full bg-gray-200 text-gray-600 text-xs">無</span>
+              </td>
+              <td class="py-4 px-4 text-center">
+                <span class="inline-flex items-center justify-center px-3 py-1 rounded-full bg-yellow-100 text-yellow-700 text-xs">需加購</span>
+              </td>
+            </tr>
+            <tr class="hover:bg-gray-50 transition">
+              <td class="py-4 px-4 font-semibold text-gray-900">SEO 優化</td>
+              <td class="py-4 px-4 text-center bg-blue-50">
+                <div class="font-medium text-blue-900">結構化標記 + 內容規劃</div>
+              </td>
+              <td class="py-4 px-4 text-center text-gray-700">基本設定</td>
+              <td class="py-4 px-4 text-center text-gray-700">無</td>
+              <td class="py-4 px-4 text-center text-gray-700">基本設定</td>
+            </tr>
+            <tr class="hover:bg-gray-50 transition">
+              <td class="py-4 px-4 font-semibold text-gray-900">轉換率優化建議</td>
+              <td class="py-4 px-4 text-center bg-blue-50">
+                <div class="inline-flex items-center justify-center gap-1 px-3 py-1 rounded-full bg-green-100 text-green-700 font-bold text-xs">
+                  ✓ 含顧問諮詢
+                </div>
+              </td>
+              <td class="py-4 px-4 text-center">
+                <span class="inline-flex items-center justify-center px-3 py-1 rounded-full bg-gray-200 text-gray-600 text-xs">無</span>
+              </td>
+              <td class="py-4 px-4 text-center">
+                <span class="inline-flex items-center justify-center px-3 py-1 rounded-full bg-gray-200 text-gray-600 text-xs">無</span>
+              </td>
+              <td class="py-4 px-4 text-center">
+                <span class="inline-flex items-center justify-center px-3 py-1 rounded-full bg-yellow-100 text-yellow-700 text-xs">需加購</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="mt-6 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-5">
+        <div class="flex items-start gap-3">
+          <div class="text-2xl">🎯</div>
+          <div>
+            <div class="font-bold text-gray-900 mb-2">差異化優勢總結</div>
+            <div class="text-sm text-gray-700">
+              我們不只是做網站，而是建立「可追蹤、可優化、可擴充」的數位行銷系統。從 GA4 事件設計到 LINE 自動化，每個環節都為轉換率服務。
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3 Pillars with Progress Bars -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <!-- GA4 / Tracking -->
+      <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 hover:shadow-xl hover:border-blue-300 transition-all duration-300">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="h-12 w-12 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-lg">
+            <ion-icon name="pulse-outline" class="text-2xl text-white"></ion-icon>
+          </div>
+          <h3 class="text-xl font-bold text-gray-900">GA4 事件設計與追蹤</h3>
+        </div>
+        <p class="text-gray-600 text-sm leading-relaxed mb-5">
+          不只看 PV/UV，而是建立「能導向決策」的事件模型：CTA 點擊、表單送出、加入 LINE、預約完成、來源渠道等。
+          讓每一步轉換都有數據可追。
+        </p>
+
+        <!-- 能力指標視覺化 -->
+        <div class="space-y-3 mb-5">
+          <div>
+            <div class="flex items-center justify-between text-xs mb-1">
+              <span class="font-semibold text-gray-700">事件追蹤完整度</span>
+              <span class="text-blue-600 font-bold">95%</span>
+            </div>
+            <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
+              <div class="h-full bg-gradient-to-r from-blue-500 to-blue-600 rounded-full transition-all duration-1000" style="width: 95%"></div>
+            </div>
+          </div>
+          <div>
+            <div class="flex items-center justify-between text-xs mb-1">
+              <span class="font-semibold text-gray-700">數據可視化能力</span>
+              <span class="text-indigo-600 font-bold">90%</span>
+            </div>
+            <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
+              <div class="h-full bg-gradient-to-r from-indigo-500 to-indigo-600 rounded-full transition-all duration-1000" style="width: 90%"></div>
+            </div>
+          </div>
+          <div>
+            <div class="flex items-center justify-between text-xs mb-1">
+              <span class="font-semibold text-gray-700">漏斗分析精準度</span>
+              <span class="text-purple-600 font-bold">88%</span>
+            </div>
+            <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
+              <div class="h-full bg-gradient-to-r from-purple-500 to-purple-600 rounded-full transition-all duration-1000" style="width: 88%"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="space-y-2 text-sm">
+          <div class="flex items-start gap-2">
+            <ion-icon name="checkmark-circle" class="text-lg text-green-600 mt-0.5 flex-shrink-0"></ion-icon>
+            <span class="text-gray-700">事件命名規範（可維護、可擴充）</span>
+          </div>
+          <div class="flex items-start gap-2">
+            <ion-icon name="checkmark-circle" class="text-lg text-green-600 mt-0.5 flex-shrink-0"></ion-icon>
+            <span class="text-gray-700">漏斗/路徑分析（Landing → LINE → 預約）</span>
+          </div>
+          <div class="flex items-start gap-2">
+            <ion-icon name="checkmark-circle" class="text-lg text-green-600 mt-0.5 flex-shrink-0"></ion-icon>
+            <span class="text-gray-700">UTM 策略（廣告/社群/合作導流）</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dashboard / Reporting -->
+      <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 hover:shadow-xl hover:border-purple-300 transition-all duration-300">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="h-12 w-12 rounded-xl bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center shadow-lg">
+            <ion-icon name="bar-chart-outline" class="text-2xl text-white"></ion-icon>
+          </div>
+          <h3 class="text-xl font-bold text-gray-900">報表與儀表板（可視化）</h3>
+        </div>
+        <p class="text-gray-600 text-sm leading-relaxed mb-5">
+          將 GA4/搜尋/社群數據整理成「週報/月報」與行動建議。重點不在圖好看，而是每張圖都回答一個問題：下一步做什麼？
+        </p>
+
+        <!-- 報表交付時程視覺化 -->
+        <div class="space-y-3 mb-5">
+          <div>
+            <div class="flex items-center justify-between text-xs mb-1">
+              <span class="font-semibold text-gray-700">週報自動化率</span>
+              <span class="text-purple-600 font-bold">85%</span>
+            </div>
+            <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
+              <div class="h-full bg-gradient-to-r from-purple-500 to-purple-600 rounded-full transition-all duration-1000" style="width: 85%"></div>
+            </div>
+          </div>
+          <div>
+            <div class="flex items-center justify-between text-xs mb-1">
+              <span class="font-semibold text-gray-700">洞察價值度</span>
+              <span class="text-pink-600 font-bold">92%</span>
+            </div>
+            <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
+              <div class="h-full bg-gradient-to-r from-pink-500 to-pink-600 rounded-full transition-all duration-1000" style="width: 92%"></div>
+            </div>
+          </div>
+          <div>
+            <div class="flex items-center justify-between text-xs mb-1">
+              <span class="font-semibold text-gray-700">行動建議準確度</span>
+              <span class="text-rose-600 font-bold">90%</span>
+            </div>
+            <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
+              <div class="h-full bg-gradient-to-r from-rose-500 to-rose-600 rounded-full transition-all duration-1000" style="width: 90%"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="space-y-2 text-sm">
+          <div class="flex items-start gap-2">
+            <ion-icon name="checkmark-circle" class="text-lg text-green-600 mt-0.5 flex-shrink-0"></ion-icon>
+            <span class="text-gray-700">KPI 架構：曝光→點擊→名單→成交</span>
+          </div>
+          <div class="flex items-start gap-2">
+            <ion-icon name="checkmark-circle" class="text-lg text-green-600 mt-0.5 flex-shrink-0"></ion-icon>
+            <span class="text-gray-700">週/月節奏：成效回顧＋下一步待辦</span>
+          </div>
+          <div class="flex items-start gap-2">
+            <ion-icon name="checkmark-circle" class="text-lg text-green-600 mt-0.5 flex-shrink-0"></ion-icon>
+            <span class="text-gray-700">常見問題診斷：流量有了但沒轉換？</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Competitor / Strategy -->
+      <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 hover:shadow-xl hover:border-yellow-300 transition-all duration-300">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="h-12 w-12 rounded-xl bg-gradient-to-br from-yellow-500 to-orange-600 flex items-center justify-center shadow-lg">
+            <ion-icon name="telescope-outline" class="text-2xl text-white"></ion-icon>
+          </div>
+          <h3 class="text-xl font-bold text-gray-900">競品比較與策略規劃</h3>
+        </div>
+        <p class="text-gray-600 text-sm leading-relaxed mb-5">
+          用「競品對照表」把市場講清楚：定位、主張、價格、轉換流程、內容策略、信任元素（評價/案例/保證）與差異化。
+        </p>
+
+        <!-- 競品分析維度視覺化 -->
+        <div class="space-y-3 mb-5">
+          <div>
+            <div class="flex items-center justify-between text-xs mb-1">
+              <span class="font-semibold text-gray-700">市場洞察深度</span>
+              <span class="text-yellow-600 font-bold">93%</span>
+            </div>
+            <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
+              <div class="h-full bg-gradient-to-r from-yellow-500 to-orange-600 rounded-full transition-all duration-1000" style="width: 93%"></div>
+            </div>
+          </div>
+          <div>
+            <div class="flex items-center justify-between text-xs mb-1">
+              <span class="font-semibold text-gray-700">策略可行性</span>
+              <span class="text-orange-600 font-bold">88%</span>
+            </div>
+            <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
+              <div class="h-full bg-gradient-to-r from-orange-500 to-orange-600 rounded-full transition-all duration-1000" style="width: 88%"></div>
+            </div>
+          </div>
+          <div>
+            <div class="flex items-center justify-between text-xs mb-1">
+              <span class="font-semibold text-gray-700">差異化明確度</span>
+              <span class="text-amber-600 font-bold">95%</span>
+            </div>
+            <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
+              <div class="h-full bg-gradient-to-r from-amber-500 to-amber-600 rounded-full transition-all duration-1000" style="width: 95%"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="space-y-2 text-sm">
+          <div class="flex items-start gap-2">
+            <ion-icon name="checkmark-circle" class="text-lg text-green-600 mt-0.5 flex-shrink-0"></ion-icon>
+            <span class="text-gray-700">競品漏斗拆解：入口→主張→CTA→成交</span>
+          </div>
+          <div class="flex items-start gap-2">
+            <ion-icon name="checkmark-circle" class="text-lg text-green-600 mt-0.5 flex-shrink-0"></ion-icon>
+            <span class="text-gray-700">差異化策略：一句話主張＋頁面證據鏈</span>
+          </div>
+          <div class="flex items-start gap-2">
+            <ion-icon name="checkmark-circle" class="text-lg text-green-600 mt-0.5 flex-shrink-0"></ion-icon>
+            <span class="text-gray-700">A/B 測試方向：文案、價格錨點、表單欄位</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 添加數字動畫腳本 -->
+    <script>
+      // Counter animation for funnel numbers
+      document.addEventListener('DOMContentLoaded', function() {
+        const counters = document.querySelectorAll('[data-counter]');
+        const observerOptions = {
+          threshold: 0.5,
+          rootMargin: '0px'
+        };
+
+        const animateCounter = (element) => {
+          const target = parseInt(element.getAttribute('data-counter'));
+          const duration = 2000; // 2 seconds
+          const steps = 60;
+          const increment = target / steps;
+          let current = 0;
+          
+          const timer = setInterval(() => {
+            current += increment;
+            if (current >= target) {
+              element.textContent = target.toLocaleString();
+              clearInterval(timer);
+            } else {
+              element.textContent = Math.floor(current).toLocaleString();
+            }
+          }, duration / steps);
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting && entry.target.textContent === '0') {
+              animateCounter(entry.target);
+            }
+          });
+        }, observerOptions);
+
+        counters.forEach(counter => observer.observe(counter));
+      });
+    </script>
+</section>
+
+
+<!-- --- 10. 聯絡表單（顧問級 Contact / CTA） --- -->
+<section id="consultant" class="py-16 md:py-24 bg-gradient-to-br from-purple-900 via-indigo-900 to-slate-900 text-white relative overflow-hidden">
+  <!-- 背景 -->
+  <div class="absolute inset-0 z-0 opacity-50"
+       style="background-image:
+        radial-gradient(900px 500px at 20% 25%, rgba(168, 85, 247, .35), transparent 60%),
+        radial-gradient(700px 400px at 80% 35%, rgba(59, 130, 246, .30), transparent 60%);
+       ">
+  </div>
+
+  <div class="relative z-10 max-w-4xl mx-auto px-6 text-center">
+    <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 border border-white/15 text-sm mb-5">
+      30 分鐘免費顧問諮詢
+    </div>
+
+    <h2 class="text-3xl md:text-5xl font-extrabold leading-tight mb-4">
+      把流量變名單，把名單變成交
+    </h2>
+
+    <p class="text-base md:text-xl opacity-90 max-w-2xl mx-auto mb-8">
+      一頁式網站 × SEO × GA 事件追蹤 × LINE 行銷自動化<br>
+      我們專注在「可追蹤、可導流、可擴充」的解決方案。
+    </p>
+
+    <!-- 你會得到什麼（精簡版） -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10 text-left">
+      <div class="bg-white/10 border border-white/15 rounded-xl p-5">
+        <div class="text-sm opacity-80 mb-1">我們會協助你</div>
+        <div class="font-bold">釐清真正的需求</div>
+        <p class="text-sm opacity-80 mt-1">你要的是曝光、詢問、報名，還是成交。</p>
+      </div>
+      <div class="bg-white/10 border border-white/15 rounded-xl p-5">
+        <div class="text-sm opacity-80 mb-1">並建議</div>
+        <div class="font-bold">合適的實作方式</div>
+        <p class="text-sm opacity-80 mt-1">模板、客製，或需要系統支援。</p>
+      </div>
+      <div class="bg-white/10 border border-white/15 rounded-xl p-5">
+        <div class="text-sm opacity-80 mb-1">同時規劃</div>
+        <div class="font-bold">追蹤與轉換指標</div>
+        <p class="text-sm opacity-80 mt-1">GA / LINE 事件，讓效果可被驗證。</p>
+      </div>
+    </div>
+
+    <!-- CTA -->
+    <div class="flex flex-col sm:flex-row justify-center gap-4">
+      <a href="https://lin.ee/6IdgZC4" target="_blank"
+         data-cta="consult_line" data-section="consultant" data-plan="free_consult_30min"
+         class="bg-green-500 text-white px-8 py-4 rounded-full font-bold shadow-lg hover:bg-green-600 transition flex items-center justify-center">
+        <i class="fab fa-line text-xl mr-2"></i> LINE 一鍵諮詢
+      </a>
+    </div>
+
+    <p class="mt-4 text-xs text-white/70">
+      本頁案例與流程為 DEMO 展示，用於說明可交付的功能與流程設計。
+    </p>
+  </div>
+</section>
+
         </main>
 <br>
 <footer class="bg-gray-800 text-white">

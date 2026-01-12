@@ -1,707 +1,1409 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
-
 <head>
-    <title>終極密碼猜謎｜數位金庫入侵模擬（不含邊界規則）| Guess The Number</title>
-    <meta name="description" content="經典『終極密碼』規則（不含邊界），在限定回合中破解數位金庫。支援中英日、難度與自訂範圍，適合邏輯推理與心智訓練。">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <link rel="canonical" href="https://example.com/vault-guess" />
-    <link rel="alternate" href="https://example.com/vault-guess" hreflang="zh-Hant" />
-    <link rel="alternate" href="https://example.com/vault-guess?lang=en" hreflang="en" />
-    <link rel="alternate" href="https://example.com/vault-guess?lang=ja" hreflang="ja" />
-    <meta name="robots" content="index,follow,max-image-preview:large" />
+  <title>終極密碼教學版｜二分搜尋推理訓練｜數位金庫入侵模擬（不含邊界）</title>
+  <meta name="description" content="教學導向的終極密碼（不含邊界）推理訓練：候選數、理論最少步數、二分搜尋策略提示、結算 Summary、迷你問卷收集教學工具需求。支援中英日與每日挑戰。">
 
-    <meta property="og:type" content="website">
-    <meta property="og:title" content="終極密碼猜謎｜數位金庫入侵模擬（不含邊界）">
-    <meta property="og:description" content="在限定回合內破解金庫密碼。支援中英日、自訂難度與範圍。">
-    <meta property="og:url" content="https://example.com/vault-guess">
-    <meta property="og:image" content="https://example.com/assets/og-vault-guess.png">
-    <meta property="og:locale" content="zh_TW">
+  <meta name="robots" content="index,follow,max-image-preview:large" />
 
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="終極密碼猜謎｜數位金庫入侵模擬">
-    <meta name="twitter:description" content="不含邊界規則的經典猜數字。中英日與自訂難度。">
-    <meta name="twitter:image" content="https://example.com/assets/og-vault-guess.png">
-    
-    <!-- 載入 Tailwind CSS CDN (用於炫酷的響應式設計) -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- 載入 Vue.js 3 CDN -->
-    <!-- 引入 nextTick 函式以管理焦點 -->
-    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-    <style>
-        /* 使用 Inter 字體以提高現代感和可讀性 */
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #0d1117; /* 黑暗背景 */
-        }
-        /* 隱藏 Chrome/Safari 的數字輸入上下箭頭 */
-        input[type=number]::-webkit-inner-spin-button,
-        input[type=number]::-webkit-outer-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
-        }
-        /* 隱藏 Firefox 的數字輸入上下箭頭 */
-        input[type=number] {
-            -moz-appearance: textfield;
-        }
-        /* 讓選項卡看起來更像科技介面 */
-        .tab-button {
-            transition: all 0.3s ease;
-        }
-    </style>
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="終極密碼教學版｜二分搜尋推理訓練（不含邊界）">
+  <meta property="og:description" content="教學導向：候選數、理論最少步數、策略提示、結算 Summary、迷你問卷收集教學工具需求。">
+  <meta property="og:image" content="https://example.com/assets/og-vault-guess.png">
+  <meta property="og:locale" content="zh_TW">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="終極密碼教學版｜二分搜尋推理訓練">
+  <meta name="twitter:description" content="不含邊界規則的終極密碼，加入策略教學與結算 Summary。">
+  <meta name="twitter:image" content="https://example.com/assets/og-vault-guess.png">
+
+  <!-- CSP：CDN + Google Forms iframe 需要的最小集合 -->
+  <meta http-equiv="Content-Security-Policy" content="
+    default-src 'self';
+    base-uri 'self';
+    object-src 'none';
+    frame-ancestors 'none';
+    img-src 'self' https: data:;
+    style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.tailwindcss.com;
+    font-src 'self' https://fonts.gstatic.com data:;
+    script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://unpkg.com;
+    connect-src 'self';
+    frame-src https://docs.google.com;
+        " />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+  <style>
+    body {
+      font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      background-color: #0d1117;
+    }
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+    input[type=number] { -moz-appearance: textfield; }
+    .tab-button { transition: all 0.2s ease; }
+    .focus-ring:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(45, 212, 191, 0.6); }
+  </style>
 </head>
+
 <body>
-
 <div id="app" class="min-h-screen p-4 sm:p-8 flex items-center justify-center">
-    <div class="w-full max-w-4xl bg-gray-800 p-6 sm:p-10 rounded-3xl shadow-2xl border border-gray-700">
+  <div class="w-full max-w-5xl bg-gray-800 p-6 sm:p-10 rounded-3xl shadow-2xl border border-gray-700">
 
-        <header class="text-center mb-8">
-            <h1 class="text-4xl sm:text-5xl font-extrabold text-teal-400 mb-2">{{ t.title }}</h1>
-            <p class="text-lg text-gray-400 mb-6">
-                {{ translate(t.subtitle, minRange, maxRange) }}
-            </p>
-            
-            <div class="flex justify-center space-x-3 mb-6">
-                <span class="text-gray-400 mr-2 self-center">{{ t.language }}:</span>
-                <button
-                    @click="changeLanguage('zh')"
-                    :class="{'bg-teal-600 ring-2 ring-teal-400': language === 'zh', 'bg-gray-600 hover:bg-teal-700': language !== 'zh'}"
-                    class="px-3 py-1 text-sm font-semibold text-white rounded-full transition duration-200 shadow-lg"
-                >
-                    繁體中文
-                </button>
-                <button
-                    @click="changeLanguage('en')"
-                    :class="{'bg-teal-600 ring-2 ring-teal-400': language === 'en', 'bg-gray-600 hover:bg-teal-700': language !== 'en'}"
-                    class="px-3 py-1 text-sm font-semibold text-white rounded-full transition duration-200 shadow-lg"
-                >
-                    English
-                </button>
-                <button
-                    @click="changeLanguage('jp')"
-                    :class="{'bg-teal-600 ring-2 ring-teal-400': language === 'jp', 'bg-gray-600 hover:bg-teal-700': language !== 'jp'}"
-                    class="px-3 py-1 text-sm font-semibold text-white rounded-full transition duration-200 shadow-lg"
-                >
-                    日本語
-                </button>
-            </div>
-        </header>
+    <!-- Top bar -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
+      <div class="flex items-center gap-2">
+        <span class="text-xs font-semibold text-gray-200 bg-gray-700/70 border border-gray-600 px-3 py-1 rounded-full">
+          {{ t.badge_teaching }}
+        </span>
+        <span class="text-xs text-gray-400">
+          {{ t.badge_rule }}
+        </span>
+      </div>
 
-        <div class="bg-gray-900 p-5 rounded-2xl mb-8 border border-teal-500/30 shadow-2xl">
-            <h2 class="text-2xl font-bold text-teal-300 mb-4 border-b border-gray-700 pb-2 flex items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37h.001z"/>
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                </svg>
-                {{ t.header_config }}
-            </h2>
-            
-            <div class="flex flex-wrap gap-2 mb-4">
-                <button
-                    v-for="(mode, key) in gameModes"
-                    :key="key"
-                    @click="setGameMode(key)"
-                    :class="{
-                        'bg-teal-600 ring-2 ring-teal-400': gameModeKey === key,
-                        'bg-gray-700 hover:bg-gray-600': gameModeKey !== key
-                    }"
-                    class="tab-button px-4 py-2 text-sm font-semibold text-white rounded-lg shadow-md flex-grow sm:flex-grow-0"
-                >
-                    {{ t[mode.nameKey] }}
-                </button>
-            </div>
+      <div class="flex flex-wrap items-center gap-2 justify-end">
+        <button @click="openSettings()"
+                class="focus-ring px-3 py-2 rounded-xl bg-gray-700 hover:bg-gray-600 text-gray-100 text-sm font-semibold border border-gray-600">
+          {{ t.settings }}
+        </button>
 
-            <div class="p-4 bg-gray-700/50 rounded-xl">
-                <p v-if="gameModeKey !== 'custom'" class="text-sm text-gray-300 mb-3">
-                    {{ translate(t.config_info, t[gameModes[gameModeKey].nameKey], gameModes[gameModeKey].min, gameModes[gameModeKey].max, gameModes[gameModeKey].attempts) }}
-                </p>
+        <button @click="toggleCoach()"
+                class="focus-ring px-3 py-2 rounded-xl text-sm font-semibold border"
+                :class="coachEnabled ? 'bg-teal-600 hover:bg-teal-500 border-teal-400 text-white' : 'bg-gray-700 hover:bg-gray-600 border-gray-600 text-gray-100'">
+          {{ coachEnabled ? t.coach_on : t.coach_off }}
+        </button>
 
-                <div v-else class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div class="col-span-1 md:col-span-2">
-                        <label class="block text-gray-400 text-sm mb-1">{{ t.config_range }}</label>
-                        <div class="flex space-x-2">
-                            <input type="number" v-model.number="customMin" min="1" max="999" class="p-2 w-1/2 bg-gray-600 text-white rounded-lg focus:ring-teal-500 focus:outline-none">
-                            <span class="self-center text-gray-300">-</span>
-                            <input type="number" v-model.number="customMax" :min="customMin + 1" max="10000" class="p-2 w-1/2 bg-gray-600 text-white rounded-lg focus:ring-teal-500 focus:outline-none">
-                        </div>
-                    </div>
-                    <div>
-                        <label class="block text-gray-400 text-sm mb-1">{{ t.config_attempts }}</label>
-                        <input type="number" v-model.number="customAttempts" min="1" max="50" class="p-2 w-full bg-gray-600 text-white rounded-lg focus:ring-teal-500 focus:outline-none">
-                    </div>
-                </div>
-            </div>
-
-            <button
-                @click="startGame"
-                class="mt-4 w-full px-6 py-3 text-white font-bold rounded-xl shadow-lg transform transition duration-300 ease-in-out"
-                :class="{
-                    'bg-red-500 hover:bg-red-600 shadow-red-500/50': gameStatus === 'playing',
-                    'bg-blue-500 hover:bg-blue-600 shadow-blue-500/50': gameStatus !== 'playing'
-                }"
-            >
-                {{ gameStatus === 'playing' ? t.restart_game : t.start_game }}
-            </button>
-        </div>
-        
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8 text-center">
-            <div class="p-4 bg-gray-700 rounded-xl shadow-inner border border-gray-600">
-                <p class="text-gray-400 text-sm">{{ t.current_mode }}</p>
-                <p class="text-xl font-bold text-yellow-300">{{ t[gameModes[gameModeKey].nameKey] }}</p>
-            </div>
-            <div class="p-4 bg-gray-700 rounded-xl shadow-inner border border-gray-600">
-                <p class="text-gray-400 text-sm">{{ t.attempt }}</p>
-                <p class="text-2xl font-bold text-teal-300">{{ currentAttempts }} / {{ maxAttempts }}</p>
-            </div>
-            <div class="p-4 bg-gray-700 rounded-xl shadow-inner border border-gray-600">
-                <p class="text-gray-400 text-sm">{{ t.high_score }}</p>
-                <p class="text-2xl font-bold text-yellow-300">{{ highScore !== null ? translate(t.attempt) + ' ' + highScore : 'N/A' }}</p>
-            </div>
-        </div>
-
-        <div class="bg-gray-700 p-6 rounded-2xl mb-8 shadow-xl border border-gray-600">
-            <p 
-                :class="{
-                    'text-green-400 animate-pulse': gameStatus === 'won',
-                    'text-red-400': gameStatus === 'lost',
-                    'text-blue-400': gameStatus === 'playing'
-                }"
-                class="text-xl font-semibold text-center mb-4 transition-colors duration-500"
-            >
-                {{ gameMessage }}
-            </p>
-
-            <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
-                <input
-                    ref="guessInputRef" 
-                    type="number"
-                    v-model.number="guess"
-                    :placeholder="translate(t.input_placeholder, minRange, maxRange)"
-                    :disabled="gameStatus !== 'playing'"
-                    @keyup.enter="gameStatus === 'playing' ? makeGuess() : startGame()"
-                    @input="isInputInvalid = false" 
-                    class="flex-grow p-3 bg-gray-600 text-white rounded-xl focus:ring-2 focus:ring-teal-500 focus:outline-none placeholder-gray-400 transition text-center"
-                    :class="{'border-2 border-red-500 ring-4 ring-red-500/50': isInputInvalid}" 
-                >
-                <button
-                    @click="gameStatus === 'playing' ? makeGuess() : startGame()"
-                    :disabled="gameStatus !== 'playing'"
-                    :class="{
-                        'bg-teal-500 hover:bg-teal-600 shadow-teal-500/50': gameStatus === 'playing',
-                        'bg-blue-500 hover:bg-blue-600 shadow-blue-500/50': gameStatus !== 'playing',
-                        'opacity-60 cursor-not-allowed': gameStatus !== 'playing'
-                    }"
-                    class="w-full sm:w-auto px-6 py-3 text-white font-bold rounded-xl shadow-lg transform transition duration-300 ease-in-out hover:scale-[1.02]"
-                >
-                    {{ gameStatus === 'playing' ? t.guess_button : t.start_game }}
-                </button>
-            </div>
-        </div>
-
-        <div v-if="guesses.length > 0" class="mt-8 bg-gray-800 p-4 sm:p-6 rounded-2xl border border-gray-700">
-            <h3 class="text-2xl font-bold text-gray-300 mb-4 border-b border-gray-600 pb-2">
-                {{ t.header_guess }} / {{ t.header_result }}
-            </h3>
-            <div class="max-h-64 overflow-y-auto pr-2">
-                <transition-group name="list" tag="ul">
-                    <li v-for="(item, index) in guesses" :key="index"
-                        class="flex justify-between items-center p-3 mb-2 rounded-lg transition-all duration-300"
-                        :class="{
-                        'bg-gray-700/50': index % 2 === 0,
-                        'bg-gray-700': index % 2 !== 0,
-                        'border-l-4 border-teal-500': item.min !== minRange || item.max !== maxRange
-                        }"
-                    >
-                        <span class="text-xl font-mono text-white w-1/4">
-                            {{ item.value }}
-                        </span>
-                        <span class="text-gray-300 w-3/4 text-right sm:text-left">
-                            {{ item.hint }}
-                        </span>
-                    </li>
-                </transition-group>
-            </div>
-        </div>
-
+        <label class="inline-flex items-center gap-2 bg-gray-700/60 px-4 py-2 rounded-xl border border-gray-600">
+          <input type="checkbox" v-model="dailyChallengeEnabled" class="accent-teal-400" />
+          <span class="text-gray-200 text-sm font-semibold">{{ t.daily_toggle }}</span>
+        </label>
+      </div>
     </div>
+
+    <header class="text-center mb-8">
+      <h1 class="text-4xl sm:text-5xl font-extrabold text-teal-400 mb-2">{{ t.title }}</h1>
+      <p class="text-lg text-gray-400 mb-5">
+        {{ translate(t.subtitle, minRange, maxRange) }}
+      </p>
+
+      <div class="flex flex-wrap justify-center gap-2 mb-3">
+        <span class="text-gray-400 mr-2 self-center">{{ t.language }}:</span>
+
+        <button @click="changeLanguage('zh')"
+                class="focus-ring px-3 py-1 text-sm font-semibold text-white rounded-full transition duration-200 shadow-lg"
+                :class="language === 'zh' ? 'bg-teal-600 ring-2 ring-teal-400' : 'bg-gray-600 hover:bg-teal-700'">
+          繁體中文
+        </button>
+
+        <button @click="changeLanguage('en')"
+                class="focus-ring px-3 py-1 text-sm font-semibold text-white rounded-full transition duration-200 shadow-lg"
+                :class="language === 'en' ? 'bg-teal-600 ring-2 ring-teal-400' : 'bg-gray-600 hover:bg-teal-700'">
+          English
+        </button>
+
+        <button @click="changeLanguage('jp')"
+                class="focus-ring px-3 py-1 text-sm font-semibold text-white rounded-full transition duration-200 shadow-lg"
+                :class="language === 'jp' ? 'bg-teal-600 ring-2 ring-teal-400' : 'bg-gray-600 hover:bg-teal-700'">
+          日本語
+        </button>
+      </div>
+
+      <div class="text-gray-400 text-sm">
+        {{ t.daily_seed_label }}:
+        <span class="text-gray-200 font-mono">{{ dailySeedInfo }}</span>
+      </div>
+    </header>
+
+    <!-- Config -->
+    <div class="bg-gray-900 p-5 rounded-2xl mb-6 border border-teal-500/30 shadow-2xl">
+      <h2 class="text-2xl font-bold text-teal-300 mb-4 border-b border-gray-700 pb-2 flex items-center">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37h.001z"/>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+        </svg>
+        {{ t.header_config }}
+      </h2>
+
+      <div class="flex flex-wrap gap-2 mb-4">
+        <button v-for="(mode, key) in gameModes"
+                :key="key"
+                @click="setGameMode(key)"
+                class="focus-ring tab-button px-4 py-2 text-sm font-semibold text-white rounded-lg shadow-md flex-grow sm:flex-grow-0"
+                :class="gameModeKey === key ? 'bg-teal-600 ring-2 ring-teal-400' : 'bg-gray-700 hover:bg-gray-600'">
+          {{ t[mode.nameKey] }}
+        </button>
+      </div>
+
+      <div class="p-4 bg-gray-700/50 rounded-xl">
+        <p v-if="gameModeKey !== 'custom'" class="text-sm text-gray-200 mb-3">
+          {{ translate(t.config_info, t[gameModes[gameModeKey].nameKey], gameModes[gameModeKey].min, gameModes[gameModeKey].max, gameModes[gameModeKey].attempts) }}
+        </p>
+
+        <div v-else class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="col-span-1 md:col-span-2">
+            <label class="block text-gray-300 text-sm mb-1">{{ t.config_range }}</label>
+            <div class="flex space-x-2">
+              <input type="number" v-model.number="customMin" min="1" max="999"
+                     class="focus-ring p-2 w-1/2 bg-gray-600 text-white rounded-lg"
+                     inputmode="numeric" pattern="\\d*">
+              <span class="self-center text-gray-200">-</span>
+              <input type="number" v-model.number="customMax" :min="customMin + 1" max="10000"
+                     class="focus-ring p-2 w-1/2 bg-gray-600 text-white rounded-lg"
+                     inputmode="numeric" pattern="\\d*">
+            </div>
+          </div>
+          <div>
+            <label class="block text-gray-300 text-sm mb-1">{{ t.config_attempts }}</label>
+            <input type="number" v-model.number="customAttempts" min="1" max="50"
+                   class="focus-ring p-2 w-full bg-gray-600 text-white rounded-lg"
+                   inputmode="numeric" pattern="\\d*">
+          </div>
+        </div>
+      </div>
+
+      <button @click="startGame"
+              class="focus-ring mt-4 w-full px-6 py-3 text-white font-bold rounded-xl shadow-lg transform transition duration-200 ease-in-out"
+              :class="gameStatus === 'playing' ? 'bg-red-500 hover:bg-red-600 shadow-red-500/40' : 'bg-blue-500 hover:bg-blue-600 shadow-blue-500/40'">
+        {{ gameStatus === 'playing' ? t.restart_game : t.start_game }}
+      </button>
+
+      <!-- Coach panel -->
+      <div v-if="coachEnabled" class="mt-4 p-4 rounded-2xl bg-gray-900/60 border border-gray-700">
+        <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+          <div>
+            <div class="text-gray-200 font-semibold">{{ t.coach_title }}</div>
+            <div class="text-gray-400 text-sm mt-1">{{ t.coach_desc }}</div>
+          </div>
+
+          <button @click="applyRecommendedGuess()"
+                  :disabled="gameStatus !== 'playing'"
+                  class="focus-ring px-4 py-2 rounded-xl text-sm font-bold border"
+                  :class="gameStatus === 'playing' ? 'bg-teal-600 hover:bg-teal-500 border-teal-400 text-white' : 'bg-gray-700 border-gray-600 text-gray-300 cursor-not-allowed opacity-70'">
+            {{ t.coach_fill }}
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-4">
+          <div class="p-3 rounded-xl bg-gray-800 border border-gray-700">
+            <div class="text-gray-400 text-xs">{{ t.candidates_label }}</div>
+            <div class="text-white text-2xl font-extrabold font-mono">{{ candidateCount }}</div>
+            <div class="text-gray-400 text-xs mt-1">{{ t.candidates_hint }}</div>
+          </div>
+          <div class="p-3 rounded-xl bg-gray-800 border border-gray-700">
+            <div class="text-gray-400 text-xs">{{ t.optimal_label }}</div>
+            <div class="text-white text-2xl font-extrabold font-mono">{{ theoreticalMinSteps }}</div>
+            <div class="text-gray-400 text-xs mt-1">{{ translate(t.optimal_hint, theoreticalMinSteps) }}</div>
+          </div>
+          <div class="p-3 rounded-xl bg-gray-800 border border-gray-700">
+            <div class="text-gray-400 text-xs">{{ t.recommend_label }}</div>
+            <div class="text-white text-2xl font-extrabold font-mono">{{ recommendedGuess }}</div>
+            <div class="text-gray-400 text-xs mt-1">{{ translate(t.recommend_hint, recommendedGuess) }}</div>
+          </div>
+        </div>
+
+        <div class="mt-3 text-sm">
+          <span class="text-gray-300 font-semibold">{{ t.coach_feedback_label }}</span>
+          <span class="text-gray-200">{{ coachFeedback }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Status cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6 text-center">
+      <div class="p-4 bg-gray-700 rounded-xl shadow-inner border border-gray-600">
+        <p class="text-gray-300 text-sm">{{ t.current_mode }}</p>
+        <p class="text-xl font-bold text-yellow-300">{{ t[gameModes[gameModeKey].nameKey] }}</p>
+      </div>
+      <div class="p-4 bg-gray-700 rounded-xl shadow-inner border border-gray-600">
+        <p class="text-gray-300 text-sm">{{ t.attempt }}</p>
+        <p class="text-2xl font-bold text-teal-300">{{ currentAttempts }} / {{ maxAttempts }}</p>
+      </div>
+      <div class="p-4 bg-gray-700 rounded-xl shadow-inner border border-gray-600">
+        <p class="text-gray-300 text-sm">{{ t.high_score }}</p>
+        <p class="text-2xl font-bold text-yellow-300">{{ highScore !== null ? translate(t.attempt) + ' ' + highScore : 'N/A' }}</p>
+      </div>
+    </div>
+
+    <!-- Game -->
+    <div class="bg-gray-700 p-6 rounded-2xl mb-8 shadow-xl border border-gray-600">
+      <p aria-live="polite"
+         :class="{
+           'text-green-300': gameStatus === 'won',
+           'text-red-300': gameStatus === 'lost',
+           'text-blue-200': gameStatus === 'playing'
+         }"
+         class="text-xl font-semibold text-center mb-4 transition-colors duration-300">
+        {{ gameMessage }}
+      </p>
+
+      <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+        <input ref="guessInputRef"
+               type="number"
+               v-model.number="guess"
+               :placeholder="translate(t.input_placeholder, minRange, maxRange)"
+               :disabled="gameStatus !== 'playing'"
+               @keyup.enter="gameStatus === 'playing' ? makeGuess() : startGame()"
+               @input="isInputInvalid = false"
+               :aria-invalid="isInputInvalid ? 'true' : 'false'"
+               class="focus-ring flex-grow p-3 bg-gray-600 text-white rounded-xl placeholder-gray-200/50 transition text-center"
+               :class="isInputInvalid ? 'border-2 border-red-500 ring-4 ring-red-500/30' : 'border border-gray-600'"
+               inputmode="numeric" pattern="\\d*">
+
+        <button @click="gameStatus === 'playing' ? makeGuess() : startGame()"
+                :disabled="gameStatus !== 'playing'"
+                class="focus-ring w-full sm:w-auto px-6 py-3 text-white font-bold rounded-xl shadow-lg transform transition duration-200 ease-in-out hover:scale-[1.01]"
+                :class="gameStatus === 'playing' ? 'bg-teal-500 hover:bg-teal-600 shadow-teal-500/40' : 'bg-blue-500 hover:bg-blue-600 shadow-blue-500/40 opacity-70 cursor-not-allowed'">
+          {{ gameStatus === 'playing' ? t.guess_button : t.start_game }}
+        </button>
+      </div>
+
+      <div v-if="coachEnabled" class="mt-4 text-center text-gray-200 text-sm">
+        {{ t.tip_midpoint }}
+        <span class="font-mono font-semibold text-white">{{ recommendedGuess }}</span>
+      </div>
+    </div>
+
+    <!-- History -->
+    <div v-if="guesses.length > 0" class="mt-8 bg-gray-800 p-4 sm:p-6 rounded-2xl border border-gray-700">
+      <h3 class="text-2xl font-bold text-gray-200 mb-4 border-b border-gray-600 pb-2">
+        {{ t.header_guess }} / {{ t.header_result }}
+      </h3>
+      <div class="max-h-64 overflow-y-auto pr-2">
+        <transition-group name="list" tag="ul">
+          <li v-for="(item, index) in guesses" :key="index"
+              class="flex justify-between items-center p-3 mb-2 rounded-lg border border-gray-700"
+              :class="index % 2 === 0 ? 'bg-gray-700/50' : 'bg-gray-700'">
+            <span class="text-xl font-mono text-white w-1/4">{{ item.value }}</span>
+            <span class="text-gray-100 w-3/4 text-right sm:text-left">{{ item.hint }}</span>
+          </li>
+        </transition-group>
+      </div>
+    </div>
+
+    <!-- Teaching + CTA -->
+    <section class="mt-10 bg-gray-900/50 border border-gray-700 rounded-3xl p-6">
+      <h2 class="text-2xl font-extrabold text-white mb-2">{{ t.learn_title }}</h2>
+      <p class="text-gray-200 leading-relaxed">
+        {{ t.learn_p1 }}
+      </p>
+
+      <ul class="mt-4 space-y-2 text-gray-200">
+        <li>• <span class="font-semibold text-white">{{ t.learn_b1_title }}</span> — {{ t.learn_b1_desc }}</li>
+        <li>• <span class="font-semibold text-white">{{ t.learn_b2_title }}</span> — {{ t.learn_b2_desc }}</li>
+        <li>• <span class="font-semibold text-white">{{ t.learn_b3_title }}</span> — {{ t.learn_b3_desc }}</li>
+      </ul>
+
+      <div class="mt-6 p-4 rounded-2xl bg-gray-800 border border-gray-700">
+        <div class="text-white font-bold">{{ t.cta_title }}</div>
+        <div class="text-gray-200 text-sm mt-1">{{ t.cta_desc }}</div>
+        <div class="mt-4 flex flex-col sm:flex-row gap-2">
+          <button @click="openSurvey('cta')"
+                  class="focus-ring px-4 py-3 rounded-xl bg-teal-600 hover:bg-teal-500 text-white font-bold border border-teal-400">
+            {{ t.cta_button }}
+          </button>
+        </div>
+      </div>
+
+      <div class="mt-4 text-gray-400 text-xs">
+        {{ t.privacy_note }}
+      </div>
+    </section>
+
+    <div class="mt-8 text-center text-gray-500 text-xs">
+      {{ t.events_label }}: <span class="font-mono text-gray-300">{{ eventCount }}</span>
+    </div>
+
+  </div>
+
+  <!-- ✅ SUMMARY modal (Win/Lose) - RESPONSIVE & ALWAYS CLOSEABLE -->
+  <div v-if="summaryOpen"
+       class="fixed inset-0 bg-black/60 z-50 p-4 sm:p-6"
+       role="dialog" aria-modal="true" aria-label="Summary"
+       @mousedown.self="closeSummary()">
+    <!-- Using grid to avoid center-trap on small screens -->
+    <div class="w-full h-full grid place-items-center">
+      <!-- Card: max height bounded; internal scrolling -->
+      <div class="w-full max-w-2xl bg-gray-900 rounded-3xl border border-gray-700 shadow-2xl overflow-hidden
+                  max-h-[90vh] flex flex-col">
+        <!-- Sticky header: close always visible -->
+        <div class="p-5 sm:p-6 border-b border-gray-700 flex items-start justify-between gap-4 sticky top-0 bg-gray-900 z-10">
+          <div>
+            <div class="text-white text-2xl font-extrabold">
+              {{ summaryStatusTitle }}
+            </div>
+            <div class="text-gray-300 text-sm mt-1">
+              {{ summarySubtitle }}
+            </div>
+          </div>
+          <button @click="closeSummary()"
+                  class="focus-ring px-3 py-2 rounded-xl bg-gray-700 hover:bg-gray-600 text-gray-100 text-sm font-bold border border-gray-600">
+            {{ t.close }}
+          </button>
+        </div>
+
+        <!-- Body scroll container -->
+        <div class="p-5 sm:p-6 overflow-y-auto">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="p-4 rounded-2xl bg-gray-800 border border-gray-700">
+              <div class="text-gray-400 text-xs">{{ t.summary_attempts }}</div>
+              <div class="text-white text-3xl font-extrabold font-mono">{{ summary.attempts }}</div>
+              <div class="text-gray-300 text-sm mt-1">{{ translate(t.summary_attempts_hint, maxAttempts) }}</div>
+            </div>
+
+            <div class="p-4 rounded-2xl bg-gray-800 border border-gray-700">
+              <div class="text-gray-400 text-xs">{{ t.summary_optimal }}</div>
+              <div class="text-white text-3xl font-extrabold font-mono">{{ summary.optimal }}</div>
+              <div class="text-gray-300 text-sm mt-1">{{ translate(t.summary_optimal_hint, summary.optimal) }}</div>
+            </div>
+
+            <div class="p-4 rounded-2xl bg-gray-800 border border-gray-700">
+              <div class="text-gray-400 text-xs">{{ t.summary_efficiency }}</div>
+              <div class="text-white text-3xl font-extrabold font-mono">{{ summary.efficiency }}</div>
+              <div class="text-gray-300 text-sm mt-1">{{ t.summary_efficiency_hint }}</div>
+            </div>
+
+            <div class="p-4 rounded-2xl bg-gray-800 border border-gray-700">
+              <div class="text-gray-400 text-xs">{{ t.summary_time }}</div>
+              <div class="text-white text-3xl font-extrabold font-mono">{{ summary.time }}</div>
+              <div class="text-gray-300 text-sm mt-1">{{ t.summary_time_hint }}</div>
+            </div>
+          </div>
+
+          <div class="mt-5 p-4 rounded-2xl bg-gray-800 border border-gray-700">
+            <div class="text-white font-bold">{{ t.summary_takeaway_title }}</div>
+            <div class="text-gray-200 mt-1">{{ summary.takeaway }}</div>
+          </div>
+
+          <div class="mt-6 flex flex-col sm:flex-row gap-2">
+            <button @click="openSurvey('summary')"
+                    class="focus-ring w-full px-4 py-3 rounded-xl bg-gray-700 hover:bg-gray-600 text-gray-100 font-bold border border-gray-600">
+              {{ t.survey_open }}
+            </button>
+          </div>
+
+          <div class="mt-4 text-gray-400 text-xs">
+            {{ t.survey_hint }}
+          </div>
+
+          <!-- Embed (optional) -->
+          <div class="mt-5 rounded-2xl overflow-hidden border border-gray-700">
+            <!-- Use min height but let container scroll; keep it responsive -->
+            <iframe :src="googleFormEmbedUrl"
+                    class="w-full h-[520px] sm:h-[560px] bg-white"
+                    title="Mini Survey"
+                    loading="lazy"
+                    referrerpolicy="no-referrer-when-downgrade"></iframe>
+          </div>
+        </div>
+
+        <!-- Optional sticky footer (kept simple) -->
+        <div class="border-t border-gray-700 p-4 bg-gray-900/80 sticky bottom-0">
+          <button @click="closeSummary()"
+                  class="focus-ring w-full px-4 py-3 rounded-xl bg-teal-600 hover:bg-teal-500 text-white font-bold border border-teal-400">
+            {{ t.close }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Settings modal -->
+  <div v-if="settingsOpen"
+       class="fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-50"
+       role="dialog" aria-modal="true" aria-label="Settings"
+       @mousedown.self="closeSettings()">
+    <div class="w-full max-w-2xl bg-gray-900 rounded-3xl border border-gray-700 shadow-2xl overflow-hidden max-h-[90vh] flex flex-col">
+      <div class="p-6 border-b border-gray-700 flex items-start justify-between gap-4 sticky top-0 bg-gray-900 z-10">
+        <div>
+          <div class="text-white text-2xl font-extrabold">{{ t.settings }}</div>
+          <div class="text-gray-300 text-sm mt-1">{{ t.settings_desc }}</div>
+        </div>
+        <button @click="closeSettings()"
+                class="focus-ring px-3 py-2 rounded-xl bg-gray-700 hover:bg-gray-600 text-gray-100 text-sm font-bold border border-gray-600">
+          {{ t.close }}
+        </button>
+      </div>
+
+      <div class="p-6 space-y-5 overflow-y-auto">
+        <div class="p-4 rounded-2xl bg-gray-800 border border-gray-700">
+          <div class="flex items-center justify-between gap-3">
+            <div>
+              <div class="text-white font-bold">{{ t.analytics_toggle_title }}</div>
+              <div class="text-gray-300 text-sm mt-1">{{ t.analytics_toggle_desc }}</div>
+            </div>
+            <label class="inline-flex items-center gap-2">
+              <input type="checkbox" v-model="analyticsEnabled" class="accent-teal-400" />
+              <span class="text-gray-200 text-sm font-semibold">{{ analyticsEnabled ? t.on : t.off }}</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          <button @click="exportMyData()"
+                  class="focus-ring px-4 py-3 rounded-xl bg-teal-600 hover:bg-teal-500 text-white font-bold border border-teal-400">
+            {{ t.export }}
+          </button>
+          <button @click="clearLocalData()"
+                  class="focus-ring px-4 py-3 rounded-xl bg-red-600 hover:bg-red-500 text-white font-bold border border-red-400">
+            {{ t.clear }}
+          </button>
+        </div>
+
+        <div class="text-gray-400 text-xs leading-relaxed">
+          {{ t.settings_note }}
+        </div>
+      </div>
+    </div>
+  </div>
+
 </div>
 
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": ["SoftwareApplication","Game"],
-  "name": "終極密碼猜謎｜數位金庫入侵模擬",
-  "alternateName": ["Guess The Number","Digital Vault Breach Simulator"],
-  "applicationCategory": "Game",
-  "operatingSystem": "Web",
-  "inLanguage": ["zh-Hant","en","ja"],
-  "description": "經典終極密碼（不含邊界）規則，限定回合破解數位金庫。支援多語言與自訂難度。",
-  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "TWD" },
-  "url": "https://example.com/vault-guess",
-  "image": "https://example.com/assets/og-vault-guess.png",
-  "genre": ["Puzzle","Logic"],
-  "keywords": "終極密碼, 猜數字, 邏輯遊戲, 猜數字遊戲, Guess The Number"
-}
-</script>
-
 <script>
-    // 引入 nextTick 函式
-    const { createApp, ref, computed, watch, nextTick } = Vue;
+  const { createApp, ref, computed, watch, nextTick, onMounted, onBeforeUnmount } = Vue;
 
-    // --- 遊戲模式配置 ---
-    const gameModesConfig = {
-        novice_hacker: { // 新手駭客
-            min: 1, max: 50, attempts: 10, nameKey: 'mode_novice'
-        },
-        elite_codebreaker: { // 精英密碼解譯員 (標準)
-            min: 1, max: 100, attempts: 10, nameKey: 'mode_elite'
-        },
-        ai_guardian: { // AI 守護者 (專家)
-            min: 1, max: 1000, attempts: 15, nameKey: 'mode_ai_guardian'
-        },
-        custom: { // 自訂模式
-            min: 1, max: 100, attempts: 10, nameKey: 'mode_custom'
-        }
+  function hash32(str) {
+    let h = 2166136261 >>> 0;
+    for (let i = 0; i < str.length; i++) {
+      h ^= str.charCodeAt(i);
+      h = Math.imul(h, 16777619);
+    }
+    return h >>> 0;
+  }
+
+  function mulberry32(seed) {
+    let a = seed >>> 0;
+    return function() {
+      a |= 0;
+      a = (a + 0x6D2B79F5) | 0;
+      let t = Math.imul(a ^ (a >>> 15), 1 | a);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
     };
+  }
 
-    // --- 國際化 (i18n) 字典 ---
-    const translations = {
-        zh: {
-            title: '💎 數位金庫入侵模擬',
-            subtitle: '當前金庫密碼範圍：$0 到 $1（不含邊界）',
-            start_game: '開始入侵 (新遊戲)',
-            restart_game: '重啟入侵 (重設密碼)',
-            guess_button: '猜測',
-            input_placeholder: '請輸入介於 $0 與 $1 之間（不含）的數字',
-            attempt: '當前回合',
-            attempts_remaining: '剩餘次數',
-            high_score: '最佳紀錄 (最少嘗試)',
-            current_mode: '當前模式',
-            status_playing: '入侵進行中... 尋找正確的頻率。',
-            status_win: '入侵成功！金庫密碼已被破解！🎉',
-            status_loss: '入侵失敗，警報已啟動。密碼是 $0',
-            hint_too_low: '猜測數字太低，新範圍：',
-            hint_too_high: '猜測數字太高，新範圍：',
-            error_invalid: '請輸入一個有效的數字。',
-            error_range: '請輸入介於 $0 與 $1 之間（不含）的數字。',
-            header_guess: '嘗試值',
-            header_result: '金庫提示',
-            language: '語言',
-            header_config: '⚙️ 入侵配置與難度選擇',
-            mode_novice: '新手駭客',
-            mode_elite: '精英密碼解譯員',
-            mode_ai_guardian: 'AI 守護者',
-            mode_custom: '自訂配置',
-            config_range: '密碼數字範圍',
-            config_attempts: '最大嘗試次數',
-            config_info: '選擇 $0 模式：密碼範圍 $1 到 $2，總共 $3 次嘗試機會。',
-        },
-        en: {
-            title: '💎 Digital Vault Breach Simulator',
-            subtitle: 'Current vault code range: $0 to $1 (exclusive)',
-            start_game: 'Start Breach (New Game)',
-            restart_game: 'Restart Breach (New Code)',
-            guess_button: 'Guess',
-            input_placeholder: 'Enter a number strictly between $0 and $1',
-            attempt: 'Current Attempt',
-            attempts_remaining: 'Attempts Remaining',
-            high_score: 'High Score (Least Attempts)',
-            current_mode: 'Current Mode',
-            status_playing: 'Breach in progress... Finding the right frequency.',
-            status_win: 'Breach Successful! Vault code cracked! 🎉',
-            status_loss: 'Breach Failed. Alarm triggered. The code was $0',
-            hint_too_low: 'Guess was too low. New range:',
-            hint_too_high: 'Guess was too high. New range:',
-            error_invalid: 'Please enter a valid number.',
-            error_range: 'Please enter a number strictly between $0 and $1.',
-            header_guess: 'Guess',
-            header_result: 'Vault Hint',
-            language: 'Language',
-            header_config: '⚙️ Breach Configuration & Role Selection',
-            mode_novice: 'Novice Hacker',
-            mode_elite: 'Elite Codebreaker',
-            mode_ai_guardian: 'AI Guardian',
-            mode_custom: 'Custom Configuration',
-            config_range: 'Code Number Range',
-            config_attempts: 'Max Attempts',
-            config_info: 'You selected the $0 mode: Code range $1 to $2, with $3 total attempts.',
-        },
-        jp: {
-            title: '現在の金庫コード範囲：$0 から $1（端点を含まない）',
-            subtitle: '現在の金庫コード範囲：$0 から $1',
-            start_game: '侵入開始 (新規ゲーム)',
-            restart_game: '侵入再開 (コードリセット)',
-            guess_button: '推測',
-            input_placeholder: '$0 と $1 の間（端点含まず）の数字を入力',
-            attempt: '現在の試行',
-            attempts_remaining: '残り回数',
-            high_score: 'ベストスコア (最少試行)',
-            current_mode: '現在のモード',
-            status_playing: '侵入進行中... 正しい周波数を探しています。',
-            status_win: '侵入成功！金庫コードが解読されました！🎉',
-            status_loss: '侵入失敗。アラームが作動しました。コードは $0 でした',
-            hint_too_low: '推測が低すぎます。新しい範囲:',
-            hint_too_high: '推測が高すぎます。新しい範囲:',
-            error_invalid: '有効な数字を入力してください。',
-            error_range: '$0 と $1 の間（端点含まず）の数字を入力してください。',
-            header_guess: '推測値',
-            header_result: '金庫ヒント',
-            language: '言語',
-            header_config: '⚙️ 侵入設定と役割選択',
-            mode_novice: '初心者ハッカー',
-            mode_elite: 'エリートコードブレーカー',
-            mode_ai_guardian: 'AI ガーディアン',
-            mode_custom: 'カスタム設定',
-            config_range: 'コード数字の範囲',
-            config_attempts: '最大試行回数',
-            config_info: '$0 モードを選択しました：コード範囲は $1 から $2、合計 $3 回の試行機会があります。',
+  function todayISO() {
+    const d = new Date();
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${y}-${m}-${day}`;
+  }
+
+  function clampInt(v, min, max) {
+    const n = Number.parseInt(v, 10);
+    if (Number.isNaN(n)) return min;
+    return Math.max(min, Math.min(max, n));
+  }
+
+  function msToClock(ms) {
+    const s = Math.max(0, Math.floor(ms / 1000));
+    const mm = String(Math.floor(s / 60)).padStart(2, '0');
+    const ss = String(s % 60).padStart(2, '0');
+    return `${mm}:${ss}`;
+  }
+
+  function translate(str, ...args) {
+    return String(str || '').replace(/\$(\d+)/g, (_, i) => {
+      const v = args[Number(i)];
+      return (v === undefined || v === null) ? _ : String(v);
+    });
+  }
+
+  const gameModesConfig = {
+    novice_hacker: { min: 1, max: 50, attempts: 10, nameKey: 'mode_novice' },
+    elite_codebreaker: { min: 1, max: 100, attempts: 10, nameKey: 'mode_elite' },
+    ai_guardian: { min: 1, max: 1000, attempts: 15, nameKey: 'mode_ai_guardian' },
+    custom: { min: 1, max: 100, attempts: 10, nameKey: 'mode_custom' }
+  };
+
+  const translations = {
+    zh: {
+      badge_teaching: "Teaching Edition",
+      badge_rule: "不含邊界（開區間）",
+      title: "💎 終極密碼教學版｜推理訓練",
+      subtitle: "目前範圍：$0 到 $1（不含邊界）",
+      language: "語言",
+      header_config: "⚙️ 模式與難度",
+      mode_novice: "新手",
+      mode_elite: "標準",
+      mode_ai_guardian: "專家",
+      mode_custom: "自訂",
+      config_range: "數字範圍",
+      config_attempts: "最大回合",
+      config_info: "你選擇 $0：範圍 $1 到 $2（不含邊界），共 $3 回合。",
+      start_game: "開始新局",
+      restart_game: "重啟本局",
+      guess_button: "送出猜測",
+      input_placeholder: "輸入介於 $0 與 $1 之間（不含）的數字",
+      attempt: "回合",
+      current_mode: "模式",
+      high_score: "最佳紀錄（最少步數）",
+      status_playing: "推理中：縮小候選，逐步逼近答案。",
+      status_win: "破解成功！🎉 你剛剛完成了一次漂亮的區間收斂。",
+      status_loss: "回合用盡。答案是 $0",
+      hint_too_low: "太小 → 新範圍：",
+      hint_too_high: "太大 → 新範圍：",
+      error_invalid: "請輸入有效的整數。",
+      error_range: "請輸入介於 $0 與 $1 之間（不含邊界）的數字。",
+      header_guess: "猜測",
+      header_result: "提示",
+      daily_toggle: "每日挑戰",
+      daily_seed_label: "今日種子",
+      settings: "設定",
+      settings_desc: "管理匿名分析、匯出與清除本機資料。",
+      close: "關閉",
+      on: "開",
+      off: "關",
+      analytics_toggle_title: "允許匿名分析",
+      analytics_toggle_desc: "只記錄匿名事件（模式、步數、錯誤率等），用於改善教學體驗。",
+      export: "匯出我的資料（JSON）",
+      clear: "清除本機資料",
+      survey_open: "填寫迷你問卷",
+      survey_hint: "迷你問卷用來收集教學工具需求與使用情境（可選填 Email）。",
+      settings_note: "建議：提供清除/匯出可提高信任與轉換。若你未來要上後端，再把事件送到 API 或分析平台即可。",
+      events_label: "事件記錄數",
+
+      coach_on: "教練：開",
+      coach_off: "教練：關",
+      coach_title: "推理教練（教學模式）",
+      coach_desc: "推薦中位數猜測、解析每步偏離最佳策略的程度，幫你把遊戲玩成「二分搜尋」訓練。",
+      coach_fill: "套用推薦值到輸入框",
+      tip_midpoint: "提示：最佳策略常用「中位數」逼近答案。推薦：",
+      candidates_label: "候選數",
+      candidates_hint: "候選 = 上界 - 下界 - 1。",
+      optimal_label: "理論最少步數",
+      optimal_hint: "最佳策略約需 $0 步。",
+      recommend_label: "推薦猜測",
+      recommend_hint: "建議先試 $0（中位數）。",
+      coach_feedback_label: "教練評語：",
+
+      learn_title: "把「終極密碼」變成教學工具",
+      learn_p1: "這個版本專注於把遊戲變成可用於教學與訓練的互動工具：用候選數與理論最少步數，讓學習者理解「資訊量」與「二分搜尋」的效率差異。",
+      learn_b1_title: "候選數（Candidate Count）",
+      learn_b1_desc: "每次猜測後，候選數快速下降；這是「資訊被壓縮」的可視化。",
+      learn_b2_title: "理論最少步數（log2）",
+      learn_b2_desc: "把抽象的二分搜尋效率，變成具體可比較的數字。",
+      learn_b3_title: "策略回饋（Coach Feedback）",
+      learn_b3_desc: "告訴學習者這一步偏離中位數多少，讓行為與策略對齊。",
+
+      cta_title: "你正在開發教學工具或教案嗎？",
+      cta_desc: "留下你的需求，我可以把這套遊戲演化成更符合你的教學情境（例如：課堂活動、作業評量、學習歷程紀錄）。",
+      cta_button: "用 60 秒描述你的需求（迷你問卷）",
+      privacy_note: "隱私：本頁預設只做匿名分析；迷你問卷由你自願填寫，可選填 Email。",
+
+      summary_attempts: "本局步數",
+      summary_attempts_hint: "上限：$0 回合",
+      summary_optimal: "理論最少",
+      summary_optimal_hint: "最佳策略約 $0 步",
+      summary_efficiency: "效率",
+      summary_efficiency_hint: "越接近 1.00 越接近理論最優。",
+      summary_time: "耗時",
+      summary_time_hint: "從開始到結束。",
+      summary_takeaway_title: "教學重點（Takeaway）"
+    },
+
+    en: {
+      badge_teaching: "Teaching Edition",
+      badge_rule: "Exclusive bounds (open interval)",
+      title: "💎 Teaching Edition｜Reasoning Training",
+      subtitle: "Range: $0 to $1 (exclusive)",
+      language: "Language",
+      header_config: "⚙️ Mode & Difficulty",
+      mode_novice: "Novice",
+      mode_elite: "Standard",
+      mode_ai_guardian: "Expert",
+      mode_custom: "Custom",
+      config_range: "Number Range",
+      config_attempts: "Max Attempts",
+      config_info: "You selected $0: range $1 to $2 (exclusive), $3 attempts.",
+      start_game: "Start New Game",
+      restart_game: "Restart",
+      guess_button: "Submit Guess",
+      input_placeholder: "Enter a number strictly between $0 and $1",
+      attempt: "Attempt",
+      current_mode: "Mode",
+      high_score: "High Score (least attempts)",
+      status_playing: "Reasoning... Shrink the candidates and converge.",
+      status_win: "Cracked! 🎉 You performed a clean interval-convergence.",
+      status_loss: "Out of attempts. The code was $0",
+      hint_too_low: "Too low → New range:",
+      hint_too_high: "Too high → New range:",
+      error_invalid: "Enter a valid integer.",
+      error_range: "Enter a number strictly between $0 and $1.",
+      header_guess: "Guess",
+      header_result: "Hint",
+      daily_toggle: "Daily Challenge",
+      daily_seed_label: "Daily Seed",
+      settings: "Settings",
+      settings_desc: "Manage analytics, export, and clear local data.",
+      close: "Close",
+      on: "On",
+      off: "Off",
+      analytics_toggle_title: "Allow anonymous analytics",
+      analytics_toggle_desc: "Only anonymous events (mode, attempts, error rate) to improve teaching UX.",
+      export: "Export my data (JSON)",
+      clear: "Clear local data",
+      survey_open: "Open mini survey",
+      survey_hint: "The survey collects teaching-tool needs and scenarios (email optional).",
+      settings_note: "Export/Clear improves trust. Add backend later if you want cloud analytics.",
+      events_label: "Event log count",
+
+      coach_on: "Coach: On",
+      coach_off: "Coach: Off",
+      coach_title: "Reasoning Coach",
+      coach_desc: "Recommends midpoint guesses and explains deviation from optimal strategy.",
+      coach_fill: "Fill recommended guess",
+      tip_midpoint: "Tip: midpoint guesses are often optimal. Recommended:",
+      candidates_label: "Candidates",
+      candidates_hint: "Candidates = upper - lower - 1.",
+      optimal_label: "Theoretical min steps",
+      optimal_hint: "Best strategy ≈ $0 steps.",
+      recommend_label: "Recommended",
+      recommend_hint: "Try $0 (midpoint).",
+      coach_feedback_label: "Coach feedback:",
+
+      learn_title: "Turn a game into a teaching tool",
+      learn_p1: "This edition turns the game into an interactive tool for teaching reasoning and binary-search efficiency.",
+      learn_b1_title: "Candidate Count",
+      learn_b1_desc: "See how information compresses as candidates shrink.",
+      learn_b2_title: "Theoretical Min Steps (log2)",
+      learn_b2_desc: "A concrete benchmark for strategy efficiency.",
+      learn_b3_title: "Coach Feedback",
+      learn_b3_desc: "Helps learners align actions with strategy.",
+
+      cta_title: "Building a teaching tool or lesson plan?",
+      cta_desc: "Share your needs. This game can evolve into classroom activities, assessments, or learning records.",
+      cta_button: "Describe your needs in 60 seconds (mini survey)",
+      privacy_note: "Privacy: anonymous analytics by default; survey is voluntary (email optional).",
+
+      summary_attempts: "Attempts",
+      summary_attempts_hint: "Limit: $0",
+      summary_optimal: "Theoretical Min",
+      summary_optimal_hint: "Best strategy ≈ $0",
+      summary_efficiency: "Efficiency",
+      summary_efficiency_hint: "Closer to 1.00 means closer to optimal.",
+      summary_time: "Time",
+      summary_time_hint: "From start to finish.",
+      summary_takeaway_title: "Takeaway"
+    },
+
+    jp: {
+      badge_teaching: "Teaching Edition",
+      badge_rule: "端点を含まない（開区間）",
+      title: "💎 教学版｜推理トレーニング",
+      subtitle: "範囲：$0 から $1（端点を含まない）",
+      language: "言語",
+      header_config: "⚙️ モード＆難易度",
+      mode_novice: "初心者",
+      mode_elite: "標準",
+      mode_ai_guardian: "上級",
+      mode_custom: "カスタム",
+      config_range: "数値範囲",
+      config_attempts: "最大回数",
+      config_info: "$0：範囲 $1 から $2（端点なし）、$3 回。",
+      start_game: "新規開始",
+      restart_game: "リスタート",
+      guess_button: "送信",
+      input_placeholder: "$0 と $1 の間（端点なし）の数字",
+      attempt: "試行",
+      current_mode: "モード",
+      high_score: "ベスト（最少手数）",
+      status_playing: "推理中…候補を絞り込みます。",
+      status_win: "成功！🎉 区間収束がきれいでした。",
+      status_loss: "回数切れ。答えは $0",
+      hint_too_low: "低すぎ → 新しい範囲：",
+      hint_too_high: "高すぎ → 新しい範囲：",
+      error_invalid: "有効な整数を入力してください。",
+      error_range: "$0 と $1 の間（端点なし）を入力してください。",
+      header_guess: "推測",
+      header_result: "ヒント",
+      daily_toggle: "デイリーチャレンジ",
+      daily_seed_label: "今日のシード",
+      settings: "設定",
+      settings_desc: "分析・エクスポート・削除を管理。",
+      close: "閉じる",
+      on: "オン",
+      off: "オフ",
+      analytics_toggle_title: "匿名分析を許可",
+      analytics_toggle_desc: "匿名イベントのみ（モード、手数、エラー率）で改善します。",
+      export: "データを書き出す（JSON）",
+      clear: "ローカルデータ削除",
+      survey_open: "ミニアンケート",
+      survey_hint: "教育ツールの要望収集（メール任意）。",
+      settings_note: "エクスポート/削除は信頼性を上げます。後でバックエンド追加も可能。",
+      events_label: "イベント記録数",
+
+      coach_on: "コーチ：オン",
+      coach_off: "コーチ：オフ",
+      coach_title: "推理コーチ",
+      coach_desc: "中位数推奨と最適戦略からのずれを説明します。",
+      coach_fill: "推奨値を入力",
+      tip_midpoint: "ヒント：中位数が有効。推奨：",
+      candidates_label: "残り候補",
+      candidates_hint: "候補 = 上限 - 下限 - 1。",
+      optimal_label: "理論最小手数",
+      optimal_hint: "最適戦略 ≈ $0 手。",
+      recommend_label: "推奨",
+      recommend_hint: "$0（中位数）を試す。",
+      coach_feedback_label: "コーチ評価：",
+
+      learn_title: "ゲームを教育ツールへ",
+      learn_p1: "候補数と理論最小手数で「情報量」と「二分探索の効率」を可視化します。",
+      learn_b1_title: "候補数",
+      learn_b1_desc: "候補が減るほど情報が圧縮されます。",
+      learn_b2_title: "理論最小手数（log2）",
+      learn_b2_desc: "効率を数値で比較できます。",
+      learn_b3_title: "コーチフィードバック",
+      learn_b3_desc: "行動を戦略に合わせます。",
+
+      cta_title: "教育ツールや教材を開発していますか？",
+      cta_desc: "要望を共有してください。授業活動や評価に進化できます。",
+      cta_button: "60秒で要望を記入（ミニアンケート）",
+      privacy_note: "プライバシー：匿名分析が基本。アンケートは任意（メール任意）。",
+
+      summary_attempts: "手数",
+      summary_attempts_hint: "上限：$0",
+      summary_optimal: "理論最小",
+      summary_optimal_hint: "最適 ≈ $0",
+      summary_efficiency: "効率",
+      summary_efficiency_hint: "1.00 に近いほど最適。",
+      summary_time: "時間",
+      summary_time_hint: "開始〜終了。",
+      summary_takeaway_title: "学び（Takeaway）"
+    }
+  };
+
+  const STORAGE = {
+    stateKey: "vault_teaching_state_v1",
+    eventsKey: "vault_teaching_events_v1",
+    profileKey: "vault_teaching_profile_v1"
+  };
+
+  function safeJsonParse(raw, fallback) {
+    try { return raw ? JSON.parse(raw) : fallback; } catch { return fallback; }
+  }
+  function loadLS(key, fallback) {
+    return safeJsonParse(localStorage.getItem(key), fallback);
+  }
+  function saveLS(key, val) {
+    try { localStorage.setItem(key, JSON.stringify(val)); } catch {}
+  }
+
+  createApp({
+    setup() {
+      const GOOGLE_FORM_EMBED_URL =
+        "https://docs.google.com/forms/d/e/1FAIpQLSfTzIxdxYJns_XAbN_mfYC7QEMJHM-DXT3_P2b4NICUZ663tQ/viewform?embedded=true";
+      const GOOGLE_FORM_VIEW_URL =
+        "https://docs.google.com/forms/d/e/1FAIpQLSfTzIxdxYJns_XAbN_mfYC7QEMJHM-DXT3_P2b4NICUZ663tQ/viewform";
+
+      const guessInputRef = ref(null);
+
+      const language = ref("zh");
+      const t = computed(() => translations[language.value] || translations.zh);
+
+      const analyticsEnabled = ref(true);
+      const dailyChallengeEnabled = ref(true);
+      const coachEnabled = ref(true);
+
+      const settingsOpen = ref(false);
+      const summaryOpen = ref(false);
+
+      const gameModeKey = ref("elite_codebreaker");
+      const gameModes = computed(() => gameModesConfig);
+
+      const customMin = ref(1);
+      const customMax = ref(100);
+      const customAttempts = ref(10);
+
+      const initialMin = ref(gameModesConfig.elite_codebreaker.min);
+      const initialMax = ref(gameModesConfig.elite_codebreaker.max);
+      const maxAttempts = ref(gameModesConfig.elite_codebreaker.attempts);
+
+      const minRange = ref(initialMin.value);
+      const maxRange = ref(initialMax.value);
+
+      const secretNumber = ref(0);
+      const guess = ref(null);
+      const guesses = ref([]);
+      const isInputInvalid = ref(false);
+
+      const gameStatus = ref(null); // playing, won, lost, null
+      const message = ref("");
+
+      const highScore = ref(null);
+
+      const gameStartAt = ref(null);
+
+      const summary = ref({
+        status: "won",
+        attempts: 0,
+        optimal: 0,
+        efficiency: "1.00",
+        time: "00:00",
+        takeaway: ""
+      });
+
+      const surveyEmbedEnabled = computed(() =>
+        String(GOOGLE_FORM_EMBED_URL || "").startsWith("https://docs.google.com/forms/")
+      );
+      const googleFormEmbedUrl = computed(() => GOOGLE_FORM_EMBED_URL);
+
+      const surveyViewEnabled = computed(() =>
+        String(GOOGLE_FORM_VIEW_URL || "").startsWith("https://docs.google.com/forms/")
+      );
+      const googleFormViewUrl = computed(() => GOOGLE_FORM_VIEW_URL);
+
+      const profile = ref(loadLS(STORAGE.profileKey, {
+        hasSeenSurvey: false,
+        surveyShownCount: 0,
+        totalSessions: 0,
+        totalWins: 0,
+        totalLosses: 0
+      }));
+
+      const events = ref(loadLS(STORAGE.eventsKey, []));
+      const eventCount = computed(() => events.value.length);
+
+      const currentAttempts = computed(() => guesses.value.length);
+
+      const candidateCount = computed(() => Math.max(0, (maxRange.value - minRange.value - 1)));
+      const theoreticalMinSteps = computed(() => {
+        const n = candidateCount.value;
+        if (n <= 1) return 0;
+        return Math.ceil(Math.log2(n));
+      });
+
+      const recommendedGuess = computed(() => {
+        const mid = Math.floor((minRange.value + maxRange.value) / 2);
+        if (mid <= minRange.value) return minRange.value + 1;
+        if (mid >= maxRange.value) return maxRange.value - 1;
+        return mid;
+      });
+
+      const coachFeedback = computed(() => {
+        if (!coachEnabled.value) return "";
+        if (gameStatus.value !== "playing") return "";
+        if (currentAttempts.value === 0) {
+          return ({
+            zh: "第一步通常猜中位數最穩：它最大化每步資訊量（像二分搜尋）。",
+            en: "Midpoint is usually best: it maximizes information per step (binary-search-like).",
+            jp: "中位数が安定：1手あたりの情報量が最大（二分探索風）。"
+          }[language.value] || "Midpoint is best.");
         }
-    };
 
-    // Helper 函數：用於替換翻譯字串中的 $0, $1 等變數
-    const translate = (str, ...args) => {
-        return String(str || '').replace(/\$(\d+)/g, (_, i) => {
-            const v = args[Number(i)];
-            return (v === undefined || v === null) ? _ : String(v);
-        });
+        const last = guesses.value[0];
+        if (!last) return "";
+        const lastMid = Math.floor((last.min + last.max) / 2);
+        const delta = Math.abs(last.value - lastMid);
+
+        if (delta === 0) return ({
+          zh: "漂亮！你猜在中位數，這是接近最優策略的一步。",
+          en: "Nice! You hit the midpoint — very close to optimal.",
+          jp: "良い！中位数で、最適に近い一手です。"
+        }[language.value] || "Nice midpoint.");
+
+        if (delta <= 2) return ({
+          zh: "很接近中位數（偏差很小），策略感不錯。",
+          en: "Very close to the midpoint. Solid strategy.",
+          jp: "中位数に近い。良い戦略です。"
+        }[language.value] || "Close to midpoint.");
+
+        return translate(({
+          zh: "這步偏離中位數 $0，仍可行，但資訊效率略低；下一步建議更靠近中位數。",
+          en: "This guess deviated $0 from midpoint. Still works, but less efficient; try closer next time.",
+          jp: "中位数から $0 ずれました。可能ですが効率低め。次は中位数寄りがおすすめ。"
+        }[language.value] || "Try closer to midpoint."), delta);
+      });
+
+      const dailySeedInfo = computed(() => {
+        const date = todayISO();
+        if (!dailyChallengeEnabled.value) return `${date} / random`;
+        if (gameModeKey.value === "custom") return `${date} / custom`;
+        return `${date} / ${gameModeKey.value}`;
+      });
+
+      const gameMessage = computed(() => {
+        if (gameStatus.value === "won") return t.value.status_win;
+        if (gameStatus.value === "lost") return translate(t.value.status_loss, secretNumber.value);
+        if (message.value && gameStatus.value === "playing") return message.value;
+        return t.value.status_playing;
+      });
+
+      function setHtmlLang() {
+        const langMap = { zh: "zh-Hant", en: "en", jp: "ja" };
+        document.documentElement.lang = langMap[language.value] || "zh-Hant";
+      }
+
+      function readQueryLang() {
+        try {
+          const u = new URL(window.location.href);
+          const q = (u.searchParams.get("lang") || "").toLowerCase();
+          if (q === "en") return "en";
+          if (q === "ja" || q === "jp") return "jp";
+          if (q === "zh" || q === "zh-hant" || q === "zh-tw") return "zh";
+          return null;
+        } catch {
+          return null;
+        }
+      }
+
+      function track(name, payload = {}) {
+        if (!analyticsEnabled.value) return;
+
+        const evt = {
+          name,
+          ts: new Date().toISOString(),
+          lang: language.value,
+          mode: gameModeKey.value,
+          daily: !!dailyChallengeEnabled.value && gameModeKey.value !== "custom",
+          min: minRange.value,
+          max: maxRange.value,
+          attemptNo: currentAttempts.value,
+          ...payload
+        };
+        events.value.unshift(evt);
+        if (events.value.length > 800) events.value.length = 800;
+        saveLS(STORAGE.eventsKey, events.value);
+      }
+
+      function saveState() {
+        const s = {
+          language: language.value,
+          analyticsEnabled: analyticsEnabled.value,
+          dailyChallengeEnabled: dailyChallengeEnabled.value,
+          coachEnabled: coachEnabled.value,
+          highScore: highScore.value,
+          gameModeKey: gameModeKey.value,
+          customMin: customMin.value,
+          customMax: customMax.value,
+          customAttempts: customAttempts.value
+        };
+        saveLS(STORAGE.stateKey, s);
+        saveLS(STORAGE.profileKey, profile.value);
+      }
+
+      function loadState() {
+        const s = loadLS(STORAGE.stateKey, null);
+        if (s) {
+          if (["zh","en","jp"].includes(s.language)) language.value = s.language;
+          if (typeof s.analyticsEnabled === "boolean") analyticsEnabled.value = s.analyticsEnabled;
+          if (typeof s.dailyChallengeEnabled === "boolean") dailyChallengeEnabled.value = s.dailyChallengeEnabled;
+          if (typeof s.coachEnabled === "boolean") coachEnabled.value = s.coachEnabled;
+          if (typeof s.highScore === "number" && s.highScore > 0) highScore.value = s.highScore;
+
+          if (s.gameModeKey && gameModesConfig[s.gameModeKey]) {
+            gameModeKey.value = s.gameModeKey;
+            if (s.gameModeKey === "custom") {
+              customMin.value = s.customMin || 1;
+              customMax.value = s.customMax || 100;
+              customAttempts.value = s.customAttempts || 10;
+            }
+          }
+        }
+
+        const qLang = readQueryLang();
+        if (qLang) language.value = qLang;
+        setHtmlLang();
+      }
+
+      function getRngForCurrentGame(min, max) {
+        const useDaily = !!dailyChallengeEnabled.value && gameModeKey.value !== "custom";
+        if (!useDaily) return Math.random;
+
+        const seedStr = `${todayISO()}|${gameModeKey.value}|${min}|${max}`;
+        const seed = hash32(seedStr);
+        return mulberry32(seed);
+      }
+
+      function startGame() {
+        let currentMin, currentMax, attemptsLimit;
+
+        if (gameModeKey.value === "custom") {
+          currentMin = clampInt(customMin.value, 1, 9999);
+          currentMax = clampInt(customMax.value, currentMin + 1, 10000);
+          attemptsLimit = clampInt(customAttempts.value, 1, 50);
+        } else {
+          const mode = gameModesConfig[gameModeKey.value];
+          currentMin = mode.min;
+          currentMax = mode.max;
+          attemptsLimit = mode.attempts;
+        }
+
+        if ((currentMax - currentMin) <= 2) currentMax = Math.max(currentMax, currentMin + 3);
+
+        initialMin.value = currentMin;
+        initialMax.value = currentMax;
+        maxAttempts.value = attemptsLimit;
+
+        minRange.value = currentMin;
+        maxRange.value = currentMax;
+
+        const rng = getRngForCurrentGame(currentMin, currentMax);
+        secretNumber.value = Math.floor(rng() * (currentMax - currentMin - 1)) + currentMin + 1;
+
+        guesses.value = [];
+        guess.value = null;
+        gameStatus.value = "playing";
+        isInputInvalid.value = false;
+        message.value = t.value.status_playing;
+
+        gameStartAt.value = Date.now();
+
+        profile.value.totalSessions = (profile.value.totalSessions || 0) + 1;
+        saveState();
+
+        track("game_start", { initialMin: currentMin, initialMax: currentMax, attemptsLimit });
+        nextTick(() => guessInputRef.value?.focus());
+      }
+
+      function buildTakeaway(status, attempts, optimal, eff) {
+        const effNum = Number(eff);
+        const base = {
+          zh: `你把候選數逐步壓縮，這正是「資訊量」在工作。理論最少步數是 ${optimal}，你用了 ${attempts} 步（效率 ${eff}）。`,
+          en: `You compressed candidates — that's information at work. Theoretical min is ${optimal}, you used ${attempts} steps (efficiency ${eff}).`,
+          jp: `候補を圧縮しました。理論最小は ${optimal}、あなたは ${attempts} 手（効率 ${eff}）。`
+        }[language.value] || "";
+
+        const advice = (effNum <= 1.15)
+          ? ({ zh:"策略很接近最優：保持「中位數」思維即可。", en:"Very close to optimal: keep using midpoint thinking.", jp:"最適に近い：中位数思考を継続。" }[language.value])
+          : (effNum <= 1.5)
+            ? ({ zh:"已具備策略感：下一次更靠近中位數，效率會更漂亮。", en:"Good strategy: aim closer to midpoint for better efficiency.", jp:"良い：中位数寄りでさらに効率UP。" }[language.value])
+            : ({ zh:"偏離最優較多：建議每步先看中位數，讓每次猜測最大化資訊量。", en:"Quite off optimal: try midpoint each step to maximize information.", jp:"最適から遠い：毎回中位数で情報量最大化を。" }[language.value]);
+
+        const statusLine = status === "won"
+          ? ({ zh:"你成功完成一次收斂。這可拿來教「二分搜尋」或「決策樹」的概念。", en:"You completed a convergence — great for teaching binary search / decision trees.", jp:"収束完了。二分探索や決定木の教材に最適。" }[language.value])
+          : ({ zh:"雖然沒破解，但你已縮小大量候選。把每步偏離中位數的程度降低，勝率會上升。", en:"Even if you lost, you reduced candidates. Reduce deviation from midpoint to improve.", jp:"負けても候補は減った。中位数からのズレを減らすと勝率UP。" }[language.value]);
+
+        return `${statusLine} ${base} ${advice}`;
+      }
+
+      function openSummary(status) {
+        const endAt = Date.now();
+        const elapsed = gameStartAt.value ? (endAt - gameStartAt.value) : 0;
+
+        const attempts = guesses.value.length;
+        const optimal = theoreticalMinSteps.value;
+        const efficiencyNum = optimal > 0 ? (attempts / optimal) : 1;
+        const efficiency = efficiencyNum.toFixed(2);
+
+        summary.value = {
+          status,
+          attempts,
+          optimal,
+          efficiency,
+          time: msToClock(elapsed),
+          takeaway: buildTakeaway(status, attempts, optimal, efficiency)
         };
 
-    createApp({
-        setup() {
-            // --- 狀態數據 ---
-            const localStorageKey = 'ultimate_code_state_v2';
-            
-            // UX 優化 1 & 2: 用於控制焦點和輸入錯誤的響應式變數
-            const guessInputRef = ref(null); // 輸入框的 DOM 引用
-            const isInputInvalid = ref(false); // 輸入錯誤狀態
+        summaryOpen.value = true;
 
-            // 遊戲配置狀態
-            const gameModeKey = ref('elite_codebreaker'); // 決定當前模式
-            const initialMin = ref(gameModesConfig.elite_codebreaker.min);
-            const initialMax = ref(gameModesConfig.elite_codebreaker.max);
-            const maxAttempts = ref(gameModesConfig.elite_codebreaker.attempts);
+        profile.value.surveyShownCount = (profile.value.surveyShownCount || 0) + 1;
+        saveState();
+      }
 
-            // 自訂模式的臨時輸入
-            const customMin = ref(1);
-            const customMax = ref(100);
-            const customAttempts = ref(10);
+      function closeSummary() {
+        summaryOpen.value = false;
+      }
 
-            // 遊戲進行狀態
-            const secretNumber = ref(0);
-            const minRange = ref(initialMin.value);
-            const maxRange = ref(initialMax.value);
-            const guess = ref(null);
-            const guesses = ref([]); // { value: number, hint: string, min: number, max: number }
-            const gameStatus = ref(null); // 'playing', 'won', 'lost', null
-            const message = ref('');
-            const language = ref('zh'); // 預設繁體中文
-            const highScore = ref(null);
+      const summaryStatusTitle = computed(() => {
+        if (!summaryOpen.value) return "";
+        if (summary.value.status === "won") return ({ zh:"🎉 Summary：破解成功", en:"🎉 Summary: Success", jp:"🎉 Summary：成功" }[language.value] || "Summary");
+        return ({ zh:"🧠 Summary：差一點，但學到很多", en:"🧠 Summary: Close call", jp:"🧠 Summary：惜しい" }[language.value] || "Summary");
+      });
 
-            // --- Computed Properties ---
-            const t = computed(() => translations[language.value]);
-            const currentAttempts = computed(() => guesses.value.length);
-            const remainingAttempts = computed(() => maxAttempts.value - currentAttempts.value);
-            const gameModes = computed(() => gameModesConfig);
-            
-            // 根據遊戲狀態顯示主要訊息
-            const gameMessage = computed(() => {
-                if (gameStatus.value === 'won') {
-                    return t.value.status_win;
-                }
-                if (gameStatus.value === 'lost') {
-                    return translate(t.value.status_loss, secretNumber.value);
-                }
-                if (message.value && gameStatus.value === 'playing') {
-                    return message.value;
-                }
-                // 預設提示
-                return translate(t.value.status_playing);
-            });
+      const summarySubtitle = computed(() => {
+        const modeName = t.value[gameModesConfig[gameModeKey.value]?.nameKey] || gameModeKey.value;
+        const daily = (!!dailyChallengeEnabled.value && gameModeKey.value !== "custom")
+          ? ({ zh:"每日挑戰", en:"Daily Challenge", jp:"デイリー" }[language.value])
+          : ({ zh:"隨機題", en:"Random", jp:"ランダム" }[language.value]);
+        return `${modeName} · ${daily} · ${todayISO()}`;
+      });
 
+      function makeGuess() {
+        const currentGuess = Number.parseInt(guess.value, 10);
 
-            // --- 方法 ---
-
-            // 1. 遊戲初始化
-            const startGame = () => {
-                // 根據當前模式設定遊戲參數
-                let currentMin, currentMax, currentAttemptsLimit;
-
-                if (gameModeKey.value === 'custom') {
-                    // 檢查並使用自訂值，確保範圍有效
-                    currentMin = Math.max(1, customMin.value || 1);
-                    currentMax = Math.max(currentMin + 1, customMax.value || 100);
-                    currentAttemptsLimit = Math.max(1, customAttempts.value || 10);
-                } else {
-                    const mode = gameModesConfig[gameModeKey.value];
-                    currentMin = mode.min;
-                    currentMax = mode.max;
-                    currentAttemptsLimit = mode.attempts;
-                }
-                
-                // 更新初始範圍和最大嘗試次數
-                initialMin.value = currentMin;
-                initialMax.value = currentMax;
-                maxAttempts.value = currentAttemptsLimit;
-
-                // 生成一個新的秘密數字 (包含在範圍內)
-                if ((currentMax - currentMin) <= 2) {
-                // 若範圍無法形成開區間，往外擴或給提示（防呆）
-                currentMax = Math.max(currentMax, currentMin + 3);
-                }
-                const newSecret = Math.floor(Math.random() * (currentMax - currentMin - 1)) + currentMin + 1;
-                
-                // 重設狀態
-                secretNumber.value = newSecret;
-                minRange.value = currentMin;
-                maxRange.value = currentMax; // 實際範圍是 [minRange, maxRange] 的中間
-                guess.value = null;
-                guesses.value = [];
-                gameStatus.value = 'playing';
-                message.value = t.value.status_playing;
-                isInputInvalid.value = false; // 清除輸入錯誤狀態
-                
-                // 遊戲開始後立即設置焦點到輸入框
-                nextTick(() => guessInputRef.value?.focus());
-
-                // 儲存配置 (但只在遊戲開始時更新配置狀態，高分另行處理)
-                saveState();
-
-                console.log(`New Game Started: Code between ${currentMin} and ${currentMax}. Secret: ${newSecret}`);
-            };
-
-            // 2. 處理猜測
-            const makeGuess = () => {
-                const currentGuess = parseInt(guess.value);
-
-                // 錯誤檢查：是否為有效數字
-                if (isNaN(currentGuess) || currentGuess === null) {
-                    message.value = t.value.error_invalid;
-                    isInputInvalid.value = true; // 設置錯誤狀態
-                    nextTick(() => guessInputRef.value?.focus());
-                    return;
-                }
-                
-                // 錯誤檢查：是否在當前範圍內 (不包含邊界)
-                if (currentGuess <= minRange.value || currentGuess >= maxRange.value) {
-                    message.value = translate(t.value.error_range, minRange.value, maxRange.value);
-                    isInputInvalid.value = true; // 設置錯誤狀態
-                    nextTick(() => guessInputRef.value?.focus());
-                    return;
-                }
-
-                // 驗證成功，清除錯誤狀態
-                isInputInvalid.value = false;
-
-                // 1. 勝利條件
-                if (currentGuess === secretNumber.value) {
-                    gameStatus.value = 'won';
-                    message.value = t.value.status_win;
-                    saveHighScore(currentAttempts.value + 1);
-                    guesses.value.unshift({ 
-                        value: currentGuess, 
-                        hint: translate(t.value.status_win), 
-                        min: minRange.value, 
-                        max: maxRange.value 
-                    });
-                    return;
-                }
-
-                let hintText = '';
-                let newMin = minRange.value;
-                let newMax = maxRange.value;
-
-                // 2. 更新範圍 (終極密碼的核心邏輯)
-                if (currentGuess < secretNumber.value) {
-                    newMin = currentGuess;
-                    hintText = translate(t.value.hint_too_low) + `(${currentGuess} - ${maxRange.value})`;
-                } else if (currentGuess > secretNumber.value) {
-                    newMax = currentGuess;
-                    hintText = translate(t.value.hint_too_high) + `(${minRange.value} - ${currentGuess})`;
-                }
-
-                // 寫入猜測歷史
-                guesses.value.unshift({ 
-                    value: currentGuess, 
-                    hint: hintText, 
-                    min: newMin, 
-                    max: newMax 
-                });
-
-                // 更新遊戲範圍
-                minRange.value = newMin;
-                maxRange.value = newMax;
-                message.value = t.value.status_playing;
-
-                // 3. 失敗條件
-                if (guesses.value.length >= maxAttempts.value) {
-                    gameStatus.value = 'lost';
-                    message.value = translate(t.value.status_loss, secretNumber.value);
-                }
-
-                // 重設輸入框
-                guess.value = null;
-                
-                // 猜測後立即設置焦點到輸入框
-                if (gameStatus.value === 'playing') {
-                    nextTick(() => guessInputRef.value?.focus());
-                }
-            };
-
-            // 3. LocalStorage 相關
-            const loadState = () => {
-                try {
-                    const storedState = JSON.parse(localStorage.getItem(localStorageKey));
-                    if (storedState) {
-                        // 載入語言設定
-                        if (['zh', 'en', 'jp'].includes(storedState.language)) {
-                            language.value = storedState.language;
-                        }
-                        // 載入高分
-                        if (typeof storedState.highScore === 'number' && storedState.highScore > 0) {
-                            highScore.value = storedState.highScore;
-                        }
-                        // 載入遊戲模式設定
-                        if (storedState.gameModeKey && gameModesConfig[storedState.gameModeKey]) {
-                            gameModeKey.value = storedState.gameModeKey;
-                            if (storedState.gameModeKey === 'custom') {
-                                customMin.value = storedState.customMin || 1;
-                                customMax.value = storedState.customMax || 100;
-                                customAttempts.value = storedState.customAttempts || 10;
-                            }
-                            // 首次載入時同步範圍顯示
-                            const mode = storedState.gameModeKey === 'custom' ? { min: storedState.customMin, max: storedState.customMax } : gameModesConfig[storedState.gameModeKey];
-                            minRange.value = mode.min;
-                            maxRange.value = mode.max;
-                        }
-                    }
-                } catch (e) {
-                    console.error("無法載入 LocalStorage 狀態:", e);
-                }
-                // 首次載入或載入失敗後，根據當前設定開始新遊戲
-                startGame();
-            };
-            
-            const saveState = () => {
-                const currentState = {
-                    language: language.value,
-                    highScore: highScore.value,
-                    gameModeKey: gameModeKey.value,
-                    customMin: customMin.value,
-                    customMax: customMax.value,
-                    customAttempts: customAttempts.value,
-                };
-                localStorage.setItem(localStorageKey, JSON.stringify(currentState));
-            };
-
-            const highScores = ref({}); // { [modeKey]: number }
-
-            const saveHighScore = (attempts) => {
-            const key = gameModeKey.value;
-            const prev = highScores.value[key];
-            if (!prev || attempts < prev) {
-                highScores.value[key] = attempts;
-                saveState();
-            }
-            };
-            
-            // 4. 語言切換
-            const changeLanguage = (lang) => {
-                language.value = lang;
-                message.value = t.value.status_playing; 
-                saveState();
-            };
-
-            // 5. 模式切換
-            const setGameMode = (key) => {
-                gameModeKey.value = key;
-                let currentModeConfig;
-
-                if (key !== 'custom') {
-                    currentModeConfig = gameModesConfig[key];
-                    // 如果切換到預設模式，則將自訂輸入框的值更新為該模式的參數
-                    customMin.value = currentModeConfig.min;
-                    customMax.value = currentModeConfig.max;
-                    customAttempts.value = currentModeConfig.attempts;
-                } else {
-                    // 對於自訂模式，使用當前自訂輸入的值
-                    currentModeConfig = {
-                        min: customMin.value,
-                        max: customMax.value,
-                        attempts: customAttempts.value
-                    };
-                }
-                
-                // 模式切換後立即更新顯示的範圍 (minRange / maxRange)
-                minRange.value = currentModeConfig.min;
-                maxRange.value = currentModeConfig.max;
-
-                // 當模式改變時，鼓勵用戶點擊「開始遊戲」
-                message.value = '';
-                gameStatus.value = null; 
-            };
-
-            // 監聽自訂模式的數值，當值改變時，遊戲狀態重置
-            watch([customMin, customMax, customAttempts], () => {
-                if (gameModeKey.value === 'custom') {
-                    // 簡單的輸入檢查
-                    customMin.value = Math.max(1, customMin.value || 1);
-                    customMax.value = Math.max(customMin.value + 1, customMax.value || 100);
-                    customAttempts.value = Math.max(1, customAttempts.value || 10);
-
-                    // 即時同步顯示範圍
-                    minRange.value = customMin.value;
-                    maxRange.value = customMax.value;
-                    
-                    // 重設遊戲狀態，提示用戶開始新遊戲
-                    gameStatus.value = null;
-                }
-            });
-
-
-            // 首次加載時載入狀態
-            loadState();
-            
-            // 將方法和數據回傳給模板
-            return {
-                // Data
-                secretNumber,
-                minRange,
-                maxRange,
-                guess,
-                guesses,
-                gameStatus,
-                language,
-                highScore,
-                gameModeKey,
-                gameModes,
-                customMin,
-                customMax,
-                customAttempts,
-                guessInputRef,       // 傳遞 DOM 引用
-                isInputInvalid,      // 傳遞錯誤狀態
-
-                // Computed
-                t,
-                currentAttempts,
-                remainingAttempts,
-                gameMessage,
-                maxAttempts, // 讓模板可以直接使用
-
-                // Methods
-                translate,
-                startGame,
-                makeGuess,
-                changeLanguage,
-                setGameMode,
-            };
+        if (Number.isNaN(currentGuess)) {
+          message.value = t.value.error_invalid;
+          isInputInvalid.value = true;
+          track("guess_submit", { result: "invalid" });
+          nextTick(() => guessInputRef.value?.focus());
+          return;
         }
-    }).mount('#app');
+
+        if (currentGuess <= minRange.value || currentGuess >= maxRange.value) {
+          message.value = translate(t.value.error_range, minRange.value, maxRange.value);
+          isInputInvalid.value = true;
+          track("guess_submit", { result: "out_of_range", guess: currentGuess });
+          nextTick(() => guessInputRef.value?.focus());
+          return;
+        }
+
+        isInputInvalid.value = false;
+
+        if (currentGuess === secretNumber.value) {
+          gameStatus.value = "won";
+          message.value = t.value.status_win;
+
+          guesses.value.unshift({
+            value: currentGuess,
+            hint: t.value.status_win,
+            min: minRange.value,
+            max: maxRange.value
+          });
+
+          profile.value.totalWins = (profile.value.totalWins || 0) + 1;
+
+          if (highScore.value === null || guesses.value.length < highScore.value) highScore.value = guesses.value.length;
+          saveState();
+
+          track("guess_submit", { result: "win", guess: currentGuess });
+          track("game_end", { result: "won" });
+
+          openSummary("won");
+          return;
+        }
+
+        let newMin = minRange.value;
+        let newMax = maxRange.value;
+        let result = "high";
+        let hintText = "";
+
+        if (currentGuess < secretNumber.value) {
+          newMin = currentGuess;
+          hintText = `${t.value.hint_too_low} (${currentGuess} - ${maxRange.value})`;
+          result = "low";
+        } else {
+          newMax = currentGuess;
+          hintText = `${t.value.hint_too_high} (${minRange.value} - ${currentGuess})`;
+          result = "high";
+        }
+
+        guesses.value.unshift({ value: currentGuess, hint: hintText, min: newMin, max: newMax });
+
+        minRange.value = newMin;
+        maxRange.value = newMax;
+        message.value = t.value.status_playing;
+
+        track("guess_submit", { result, guess: currentGuess, newMin, newMax });
+
+        if (guesses.value.length >= maxAttempts.value) {
+          gameStatus.value = "lost";
+          message.value = translate(t.value.status_loss, secretNumber.value);
+
+          profile.value.totalLosses = (profile.value.totalLosses || 0) + 1;
+          saveState();
+
+          track("game_end", { result: "lost", secret: secretNumber.value });
+          openSummary("lost");
+        }
+
+        guess.value = null;
+        if (gameStatus.value === "playing") nextTick(() => guessInputRef.value?.focus());
+      }
+
+      function setGameMode(key) {
+        const prev = gameModeKey.value;
+        if (!gameModesConfig[key]) return;
+
+        gameModeKey.value = key;
+
+        if (key !== "custom") {
+          const cfg = gameModesConfig[key];
+          customMin.value = cfg.min;
+          customMax.value = cfg.max;
+          customAttempts.value = cfg.attempts;
+          minRange.value = cfg.min;
+          maxRange.value = cfg.max;
+        } else {
+          minRange.value = customMin.value;
+          maxRange.value = customMax.value;
+        }
+
+        gameStatus.value = null;
+        message.value = "";
+        saveState();
+        track("mode_change", { from: prev, to: key });
+      }
+
+      watch([customMin, customMax, customAttempts], () => {
+        if (gameModeKey.value === "custom") {
+          customMin.value = clampInt(customMin.value, 1, 9999);
+          customMax.value = clampInt(customMax.value, customMin.value + 1, 10000);
+          customAttempts.value = clampInt(customAttempts.value, 1, 50);
+
+          minRange.value = customMin.value;
+          maxRange.value = customMax.value;
+
+          gameStatus.value = null;
+          saveState();
+        }
+      });
+
+      function changeLanguage(lang) {
+        const prev = language.value;
+        if (!["zh","en","jp"].includes(lang)) return;
+        language.value = lang;
+        setHtmlLang();
+        saveState();
+        track("lang_change", { from: prev, to: lang });
+      }
+
+      function toggleCoach() {
+        coachEnabled.value = !coachEnabled.value;
+        saveState();
+        track("coach_toggle", { enabled: coachEnabled.value });
+      }
+
+      function applyRecommendedGuess() {
+        guess.value = recommendedGuess.value;
+        nextTick(() => guessInputRef.value?.focus());
+        track("coach_apply", { recommended: recommendedGuess.value });
+      }
+
+      function openSettings() {
+        settingsOpen.value = true;
+        track("settings_open");
+      }
+
+      function closeSettings() {
+        settingsOpen.value = false;
+      }
+
+      function exportMyData() {
+        const payload = {
+          exportedAt: new Date().toISOString(),
+          state: loadLS(STORAGE.stateKey, {}),
+          profile: loadLS(STORAGE.profileKey, {}),
+          events: loadLS(STORAGE.eventsKey, [])
+        };
+        const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "vault-teaching-export.json";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+
+        track("export");
+      }
+
+      function clearLocalData() {
+        localStorage.removeItem(STORAGE.stateKey);
+        localStorage.removeItem(STORAGE.eventsKey);
+        localStorage.removeItem(STORAGE.profileKey);
+        events.value = [];
+        profile.value = { hasSeenSurvey:false, surveyShownCount:0, totalSessions:0, totalWins:0, totalLosses:0 };
+        highScore.value = null;
+
+        track("clear");
+        settingsOpen.value = false;
+
+        loadState();
+        startGame();
+      }
+
+      function openSurvey(source) {
+        track("survey_open", { source });
+
+        if (!summaryOpen.value) summaryOpen.value = true;
+
+        if (surveyViewEnabled.value) {
+          window.open(googleFormViewUrl.value, "_blank", "noopener,noreferrer");
+        }
+
+        profile.value.hasSeenSurvey = true;
+        saveState();
+      }
+
+      // ✅ ESC close support for Summary + Settings (don’t trap users)
+      function onKeydown(e) {
+        if (e.key !== "Escape") return;
+        if (summaryOpen.value) closeSummary();
+        else if (settingsOpen.value) closeSettings();
+      }
+
+      onMounted(() => {
+        window.addEventListener("keydown", onKeydown, { passive: true });
+      });
+      onBeforeUnmount(() => {
+        window.removeEventListener("keydown", onKeydown);
+      });
+
+      watch(language, () => setHtmlLang());
+      watch([analyticsEnabled, dailyChallengeEnabled, coachEnabled], () => saveState());
+
+      loadState();
+      startGame();
+
+      return {
+        language, t,
+        translate,
+        guessInputRef,
+        analyticsEnabled,
+        dailyChallengeEnabled,
+        coachEnabled,
+        settingsOpen,
+        summaryOpen,
+
+        gameModeKey, gameModes,
+        customMin, customMax, customAttempts,
+
+        initialMin, initialMax,
+        minRange, maxRange,
+        secretNumber,
+        guess, guesses,
+        isInputInvalid,
+        gameStatus,
+        message,
+
+        highScore,
+        maxAttempts,
+        currentAttempts,
+
+        candidateCount,
+        theoreticalMinSteps,
+        recommendedGuess,
+        coachFeedback,
+        dailySeedInfo,
+
+        eventCount,
+
+        summary,
+        summaryStatusTitle,
+        summarySubtitle,
+
+        surveyEmbedEnabled,
+        googleFormEmbedUrl,
+        surveyViewEnabled,
+        googleFormViewUrl,
+
+        startGame,
+        makeGuess,
+        setGameMode,
+        changeLanguage,
+        toggleCoach,
+        applyRecommendedGuess,
+        openSettings,
+        closeSettings,
+        closeSummary,
+        openSurvey,
+        exportMyData,
+        clearLocalData
+      };
+    }
+  }).mount("#app");
 </script>
 
 </body>

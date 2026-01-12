@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>抽獎引擎｜Lottery Engine (Vue 3 + i18n)</title>
+  <title>抽獎轉盤｜Lottery Wheel</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
   <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
@@ -19,25 +19,120 @@
           color: #e5e7eb; font-family: Inter, 'Noto Sans TC', system-ui, -apple-system, Segoe UI, Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; }
     .glass{ background: var(--panel); backdrop-filter: blur(10px); border:1px solid var(--border); }
     .glass-2{ background: var(--panel2); backdrop-filter: blur(10px); border:1px solid var(--border); }
-    .btn{ transition: all .2s ease; }
-    .btn:hover{ transform: translateY(-1px); }
+    .btn{ transition: all .2s ease; cursor: pointer; }
+    .btn:hover{ transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+    .btn:disabled{ opacity: 0.5; cursor: not-allowed; transform: none; }
     .mono{ font-variant-numeric: tabular-nums; }
 
     /* Pointer arrow for the wheel */
-    .pointer{ width:0; height:0; border-left:10px solid transparent; border-right:10px solid transparent; border-bottom:16px solid #f59e0b; }
+    .pointer{ 
+      width:0; height:0; 
+      border-left:14px solid transparent; 
+      border-right:14px solid transparent; 
+      border-bottom:24px solid #f59e0b; 
+      filter: drop-shadow(0 2px 8px rgba(245,158,11,0.6));
+    }
 
-    /* PhotoWall animations */
-    .wall-rotate{ animation: wallSpin 20s linear infinite; transform-style: preserve-3d; }
-    @keyframes wallSpin{ from{ transform: rotateY(0deg) } to{ transform: rotateY(360deg) } }
-    .card-spotlight{ animation: spotlight .9s ease both; }
-    @keyframes spotlight{ 0%{ transform: translateZ(0) scale(1); box-shadow: 0 0 0 rgba(245,158,11,0);} 60%{ transform: translateZ(40px) scale(1.07); box-shadow: 0 20px 60px rgba(245,158,11,.35);} 100%{ transform: translateZ(20px) scale(1.02);} }
+    .winner-announce {
+      animation: winnerPop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    @keyframes winnerPop {
+      0% { transform: scale(0) rotate(-180deg); opacity: 0; }
+      50% { transform: scale(1.15) rotate(5deg); }
+      100% { transform: scale(1) rotate(0deg); opacity: 1; }
+    }
 
-    /* GridNine highlight */
-    .cell-highlight{ animation: pulse .6s ease-in-out; }
-    @keyframes pulse{ 0%{ box-shadow:0 0 0 0 rgba(245,158,11,.0);} 50%{ box-shadow:0 0 0 6px rgba(245,158,11,.25);} 100%{ box-shadow:0 0 0 0 rgba(245,158,11,.0);} }
+    /* 中獎全屏慶祝動畫 */
+    .celebration-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      pointer-events: none;
+      animation: celebrationFade 3s ease-out forwards;
+    }
+    @keyframes celebrationFade {
+      0% { opacity: 1; }
+      70% { opacity: 1; }
+      100% { opacity: 0; }
+    }
+
+    .confetti {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background: #f59e0b;
+      animation: confettiFall 3s ease-out forwards;
+    }
+    @keyframes confettiFall {
+      0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+    }
+
+    /* 轉盤閃光效果 */
+    .wheel-glow {
+      animation: wheelGlow 0.5s ease-in-out;
+    }
+    @keyframes wheelGlow {
+      0%, 100% { filter: drop-shadow(0 0 0 transparent); }
+      50% { filter: drop-shadow(0 0 30px rgba(245,158,11,0.8)); }
+    }
+
+    /* 得獎者彈出動畫 */
+    .winner-modal {
+      animation: modalSlideIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    @keyframes modalSlideIn {
+      0% { transform: translateY(-100px) scale(0.5); opacity: 0; }
+      100% { transform: translateY(0) scale(1); opacity: 1; }
+    }
 
     .scrollbar-thin::-webkit-scrollbar{ height:6px; width:6px; }
     .scrollbar-thin::-webkit-scrollbar-thumb{ background:#374151; border-radius:6px; }
+    
+    .fade-in { animation: fadeIn 0.3s ease-in; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .pulse-border {
+      animation: pulseBorder 2s ease-in-out infinite;
+    }
+    @keyframes pulseBorder {
+      0%, 100% { border-color: rgba(245,158,11,0.3); }
+      50% { border-color: rgba(245,158,11,0.8); }
+    }
+
+    /* 按鈕點擊漣漪效果 */
+    .ripple {
+      position: relative;
+      overflow: hidden;
+    }
+    .ripple::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.5);
+      transform: translate(-50%, -50%);
+      transition: width 0.6s, height 0.6s;
+    }
+    .ripple:active::after {
+      width: 300px;
+      height: 300px;
+    }
+
+    /* Logo閃光動畫 */
+    @keyframes shimmer {
+      0% { transform: translateX(-100%) rotate(45deg); }
+      100% { transform: translateX(200%) rotate(45deg); }
+    }
+    .animate-shimmer {
+      animation: shimmer 3s infinite;
+    }
   </style>
 </head>
 <body>
@@ -45,7 +140,13 @@
   <!-- Header -->
   <header class="flex flex-col md:flex-row md:items-center gap-4 md:gap-6 mb-6">
     <div class="flex-1 flex items-center gap-3">
-      <div class="h-9 w-9 rounded-xl bg-gradient-to-br from-amber-400 to-pink-500"></div>
+      <div class="h-10 w-10 rounded-xl bg-gradient-to-br from-amber-400 to-pink-500 flex items-center justify-center relative overflow-hidden">
+        <div class="absolute inset-0 bg-white/20 rotate-45 transform translate-x-full animate-shimmer"></div>
+        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="10" stroke-width="2"/>
+          <path d="M12 6v12M6 12h12" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </div>
       <div>
         <h1 class="text-xl md:text-2xl font-bold tracking-tight">{{ t('title') }}</h1>
         <p class="text-sm text-gray-400">{{ t('subtitle') }}</p>
@@ -58,171 +159,418 @@
         <option value="en">English</option>
         <option value="ja">日本語</option>
       </select>
-      <a class="glass px-3 py-2 rounded-lg text-sm hover:bg-white/10" href="#" @click.prevent="loadSample">{{ t('btn_sample') }}</a>
+      <button class="btn glass px-3 py-2 rounded-lg text-sm hover:bg-white/10" @click="loadSample">{{ t('btn_sample') }}</button>
     </div>
   </header>
+
+  <!-- 基本資訊區 -->
+  <div class="glass rounded-2xl p-5 md:p-6 mb-6">
+    <h3 class="text-lg font-semibold mb-4 flex items-center gap-2">
+      <div class="h-6 w-1 bg-gradient-to-b from-amber-400 to-pink-500 rounded-full"></div>
+      抽獎基本資訊
+    </h3>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div>
+        <label class="block text-sm text-gray-300 mb-2">抽獎主題 *</label>
+        <input v-model="lotteryPurpose" class="glass-2 w-full rounded-lg p-3 text-sm" placeholder="例如：年終尾牙抽獎、部門聚餐抽獎" />
+      </div>
+      <div>
+        <label class="block text-sm text-gray-300 mb-2">獎項說明（選填）</label>
+        <input v-model="lotteryOptions" class="glass-2 w-full rounded-lg p-3 text-sm" placeholder="例如：頭獎 iPhone、貳獎 AirPods" />
+      </div>
+    </div>
+  </div>
+
+  <!-- 進階設定區 -->
+  <div class="glass rounded-2xl p-5 md:p-6 mb-6">
+    <div class="flex items-center justify-between mb-4">
+      <h3 class="text-lg font-semibold flex items-center gap-2">
+        <div class="h-6 w-1 bg-gradient-to-b from-purple-400 to-indigo-500 rounded-full"></div>
+        進階設定
+      </h3>
+      <button @click="showAdvancedSettings = !showAdvancedSettings" class="text-sm text-gray-400 hover:text-white">
+        {{ showAdvancedSettings ? '收起 ▲' : '展開 ▼' }}
+      </button>
+    </div>
+    
+    <div v-show="showAdvancedSettings" class="space-y-4">
+      <!-- Row 1: Draw Mode & Animation Speed -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div>
+          <label class="block text-sm text-gray-200 font-medium mb-2">抽獎模式</label>
+          <select v-model="drawMode" class="w-full rounded-lg p-3 text-sm bg-gray-800 border border-gray-600 text-white focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20 outline-none transition-all">
+            <option value="single">單次抽獎</option>
+            <option value="batch">批次抽獎</option>
+            <option value="group">分組抽獎</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm text-gray-200 font-medium mb-2">動畫速度</label>
+          <select v-model="animationSpeed" class="w-full rounded-lg p-3 text-sm bg-gray-800 border border-gray-600 text-white focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20 outline-none transition-all">
+            <option value="fast">快速 (2秒)</option>
+            <option value="normal">正常 (4秒)</option>
+            <option value="slow">慢速 (6秒)</option>
+          </select>
+        </div>
+        <div class="flex items-end">
+          <label class="flex items-center gap-3 cursor-pointer p-3 bg-gray-800 border border-gray-600 rounded-lg w-full hover:bg-gray-700 transition-colors">
+            <input type="checkbox" v-model="enableSound" class="w-5 h-5 rounded border-gray-500 text-amber-500 focus:ring-2 focus:ring-amber-400/20">
+            <span class="text-sm text-gray-100 font-medium">啟用音效</span>
+          </label>
+        </div>
+      </div>
+      
+      <!-- Row 2: Blacklist & Show History -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <label class="flex items-center gap-3 cursor-pointer p-3 bg-gray-800 border border-gray-600 rounded-lg hover:bg-gray-700 transition-colors">
+          <input type="checkbox" v-model="enableBlacklist" class="w-5 h-5 rounded border-gray-500 text-amber-500 focus:ring-2 focus:ring-amber-400/20">
+          <span class="text-sm text-gray-100 font-medium">啟用黑名單功能</span>
+        </label>
+        <label class="flex items-center gap-3 cursor-pointer p-3 bg-gray-800 border border-gray-600 rounded-lg hover:bg-gray-700 transition-colors">
+          <input type="checkbox" v-model="showHistory" class="w-5 h-5 rounded border-gray-500 text-amber-500 focus:ring-2 focus:ring-amber-400/20">
+          <span class="text-sm text-gray-100 font-medium">顯示抽獎紀錄</span>
+        </label>
+      </div>
+      
+      <!-- Prize Settings -->
+      <div v-if="drawMode === 'batch'" class="border-t border-white/10 pt-4">
+        <div class="flex items-center justify-between mb-3">
+          <label class="text-sm text-gray-200 font-semibold">獎項設定</label>
+          <button @click="addPrizeSetting" class="text-xs bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-400 hover:to-emerald-500 px-3 py-1.5 rounded-lg text-white font-medium shadow-lg">
+            ➕ 新增獎項
+          </button>
+        </div>
+        <div v-if="prizeSettings.length === 0" class="text-sm text-gray-400 text-center py-4 bg-gray-800/50 rounded-lg">
+          尚未設定獎項，點擊「新增獎項」開始設定
+        </div>
+        <div v-else class="space-y-2">
+          <div v-for="(prize, index) in prizeSettings" :key="index" 
+               class="bg-gray-800 border border-gray-600 p-3 rounded-lg flex items-center gap-3"
+               :class="index === currentPrizeIndex ? 'ring-2 ring-amber-400 border-amber-400' : ''">
+            <div class="flex-1 grid grid-cols-2 gap-2">
+              <input v-model="prize.name" class="bg-gray-900 border border-gray-600 text-white px-3 py-2 rounded text-sm focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20 outline-none" placeholder="獎項名稱" />
+              <input v-model.number="prize.count" type="number" min="1" class="bg-gray-900 border border-gray-600 text-white px-3 py-2 rounded text-sm focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20 outline-none" placeholder="人數" />
+            </div>
+            <span class="text-xs text-amber-400 font-medium">{{ prize.drawn }}/{{ prize.count }}</span>
+            <button @click="removePrizeSetting(index)" class="text-red-400 hover:text-red-300 text-sm font-bold">✕</button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Blacklist Management -->
+      <div v-if="enableBlacklist" class="border-t border-white/10 pt-4">
+        <label class="block text-sm text-gray-200 mb-2 font-semibold">黑名單管理</label>
+        <div class="flex gap-2 mb-2">
+          <input v-model="blacklistInput" @keyup.enter="addToBlacklist" class="flex-1 px-3 py-2 rounded text-sm bg-gray-800 border border-gray-600 text-white focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20 outline-none" placeholder="輸入要加入黑名單的名字" />
+          <button @click="addToBlacklist" class="bg-gradient-to-r from-red-500 to-pink-600 hover:from-red-400 hover:to-pink-500 px-4 py-2 rounded-lg text-sm text-white font-medium shadow-lg">
+            加入
+          </button>
+        </div>
+        <div v-if="blacklist.length === 0" class="text-sm text-gray-400 text-center py-2 bg-gray-800/50 rounded-lg">
+          尚無黑名單
+        </div>
+        <div v-else class="flex flex-wrap gap-2">
+          <span v-for="(name, index) in blacklist" :key="index" 
+                class="bg-gray-800 border border-red-500/30 px-3 py-1.5 rounded-full text-sm flex items-center gap-2 text-gray-100">
+            {{ name }}
+            <button @click="removeFromBlacklist(index)" class="text-red-400 hover:text-red-300 font-bold">✕</button>
+          </span>
+        </div>
+      </div>
+      
+      <!-- Settings Save/Load -->
+      <div class="border-t border-white/10 pt-4 flex gap-3">
+        <button @click="saveSettings" class="btn bg-gray-800 border border-gray-600 hover:bg-gray-700 px-4 py-2 rounded-lg text-sm text-gray-100 font-medium ripple shadow-lg">
+          💾 儲存設定
+        </button>
+        <button @click="loadSettings" class="btn bg-gray-800 border border-gray-600 hover:bg-gray-700 px-4 py-2 rounded-lg text-sm text-gray-100 font-medium ripple shadow-lg">
+          📂 載入設定
+        </button>
+      </div>
+    </div>
+  </div>
 
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
     <!-- Left: Controls -->
     <section class="glass rounded-2xl p-5 md:p-6">
-      <!-- Mode Tabs -->
-      <div class="flex flex-wrap gap-2 mb-4">
-        <button class="btn px-3 py-2 rounded-lg border border-white/10" :class="mode==='wheel' ? 'bg-amber-500 text-black' : 'glass-2'" @click="mode='wheel'">🌀 {{ t('tab_wheel') }}</button>
-        <button class="btn px-3 py-2 rounded-lg border border-white/10" :class="mode==='wall' ? 'bg-amber-500 text-black' : 'glass-2'" @click="mode='wall'">🖼️ {{ t('tab_wall') }}</button>
-        <button class="btn px-3 py-2 rounded-lg border border-white/10" :class="mode==='grid' ? 'bg-amber-500 text-black' : 'glass-2'" @click="mode='grid'">#️⃣ {{ t('tab_grid') }}</button>
-      </div>
 
       <!-- Roster -->
       <div>
-        <label class="block text-sm text-gray-300 mb-1">{{ t('roster_label') }}</label>
-        <div class="space-y-2">
-          <div v-for="(p, idx) in rosterTable" :key="p.uid" class="flex gap-2 items-center">
+        <div class="flex items-center justify-between mb-3">
+          <label class="block text-sm font-semibold text-gray-200 flex items-center gap-2">
+            <div class="h-5 w-1 bg-gradient-to-b from-blue-400 to-purple-500 rounded-full"></div>
+            參與者名單
+          </label>
+          <span class="text-xs glass-2 px-2 py-1 rounded-full">總計 {{ rosterTable.length }} 人</span>
+        </div>
+        <div class="space-y-2 max-h-64 overflow-y-auto scrollbar-thin">
+          <div v-for="(p, idx) in rosterTable" :key="p.uid" class="flex gap-2 items-center fade-in">
+            <span class="text-xs text-gray-400 w-6">{{ idx + 1 }}</span>
             <input
               v-model="p.name"
               @input="validateName(idx)"
-              :class="['glass-2 flex-1 rounded-lg p-2 text-sm', p.nameError ? 'border border-red-400' : '']"
-              placeholder="輸入人員名字或匿名"
+              :class="['glass-2 flex-1 rounded-lg p-2.5 text-sm', p.nameError ? 'border-2 border-red-400' : '']"
+              placeholder="輸入姓名"
             />
-            <input
-              v-model.number="p.weight"
-              @input="validateWeight(idx)"
-              type="number"
-              min="1"
-              :class="['glass-2 w-20 rounded-lg p-2 text-sm text-center', p.weightError ? 'border border-red-400' : '']"
-              placeholder="1"
-            />
-            <button class="btn px-2 py-1 rounded bg-red-500 text-white" @click="removeRow(idx)" v-if="rosterTable.length>1">✕</button>
+            <div class="flex items-center gap-1">
+              <label class="text-xs text-gray-400">權重</label>
+              <input
+                v-model.number="p.weight"
+                @input="validateWeight(idx)"
+                type="number"
+                min="1"
+                :class="['glass-2 w-16 rounded-lg p-2.5 text-sm text-center', p.weightError ? 'border-2 border-red-400' : '']"
+                placeholder="1"
+              />
+            </div>
+            <button class="btn px-2 py-1.5 rounded-lg bg-red-500/80 hover:bg-red-500 text-white text-xs" @click="removeRow(idx)" v-if="rosterTable.length>1">✕</button>
           </div>
-          <div v-if="rosterError" class="text-red-400 text-xs">{{ rosterError }}</div>
-          <div class="flex gap-2 mt-2 flex-wrap">
-            <button class="btn glass-2 px-3 py-2 rounded-lg" @click="addRow">+ 新增參賽者</button>
-            <button class="btn glass-2 px-3 py-2 rounded-lg" @click="batchPaste">{{ t('btn_parse') }}（批次貼上）</button>
-            <button class="btn glass-2 px-3 py-2 rounded-lg" @click="clearRoster">{{ t('btn_clear') }}</button>
-            <button class="btn glass-2 px-3 py-2 rounded-lg" @click="loadSample">{{ t('btn_sample') }}</button>
-            <!-- 新增確認名單按鈕 -->
-            <button class="btn bg-amber-500 text-black px-3 py-2 rounded-lg" @click="parseParticipants" :disabled="!!rosterError">確認名單</button>
-          </div>
+        </div>
+        <div v-if="rosterError" class="mt-2 p-2 rounded-lg bg-red-500/20 border border-red-500/40 text-red-400 text-xs">⚠️ {{ rosterError }}</div>
+        <div class="flex gap-2 mt-3 flex-wrap">
+          <button class="btn glass-2 px-3 py-2 rounded-lg text-sm ripple" @click="addRow">+ 新增</button>
+          <button class="btn glass-2 px-3 py-2 rounded-lg text-sm ripple" @click="batchPaste">批次貼上</button>
+          <button class="btn glass-2 px-3 py-2 rounded-lg text-sm ripple" @click="clearRoster">清空</button>
+          <button class="btn bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-white font-semibold px-4 py-2 rounded-lg text-sm ripple shadow-lg" @click="parseParticipants" :disabled="!!rosterError || rosterTable.length === 0">確認名單</button>
         </div>
       </div>
 
       <hr class="border-white/10 my-5" />
 
       <!-- Options -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="space-y-4">
         <div>
-          <label class="block text-sm text-gray-300">{{ t('draw_count') }}</label>
-          <input type="number" min="1" v-model.number="drawCount" class="glass-2 w-full mt-1 rounded-lg p-2 text-sm" />
-        </div>
-        <label class="flex items-center gap-2 mt-5 md:mt-8">
-          <input type="checkbox" v-model="noRepeat" class="rounded" />
-          <span class="text-sm text-gray-300">{{ t('no_repeat') }}</span>
-        </label>
-      </div>
-
-      <div class="mt-4">
-        <p class="text-sm text-gray-300 mb-2">{{ t('rng_title') }}</p>
-        <div class="flex flex-col gap-1">
-          <label class="flex items-center gap-2"><input type="radio" value="crypto" v-model="rngMethod"/> <span class="text-sm">{{ t('rng_crypto') }}</span></label>
-          <label class="flex items-center gap-2"><input type="radio" value="seeded" v-model="rngMethod"/> <span class="text-sm">{{ t('rng_seeded') }}</span></label>
-          <label class="flex items-center gap-2 opacity-80"><input type="radio" value="math" v-model="rngMethod"/> <span class="text-sm">{{ t('rng_math') }}</span></label>
-        </div>
-        <div v-if="rngMethod==='seeded'" class="mt-3 glass-2 p-3 rounded-xl">
-          <div class="flex items-center justify-between gap-2 mb-2">
-            <label class="text-sm text-gray-300">{{ t('seed_salt') }}</label>
-            <button class="btn px-2 py-1 rounded-md glass" @click="generateSalt">{{ t('btn_gen_salt') }}</button>
+          <label class="block text-sm font-semibold text-gray-200 mb-3 flex items-center gap-2">
+            <div class="h-5 w-1 bg-gradient-to-b from-green-400 to-emerald-500 rounded-full"></div>
+            抽獎設定
+          </label>
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs text-gray-400 mb-2">{{ t('draw_count') }}</label>
+              <input type="number" min="1" v-model.number="drawCount" class="glass-2 w-full rounded-lg p-3 text-sm font-semibold text-center" />
+            </div>
+            <div class="flex items-end">
+              <label class="flex items-center gap-2 glass-2 w-full p-3 rounded-lg cursor-pointer hover:bg-white/5 transition-all">
+                <input type="checkbox" v-model="noRepeat" class="rounded w-4 h-4" />
+                <span class="text-sm text-gray-300">{{ t('no_repeat') }}</span>
+              </label>
+            </div>
           </div>
-          <input v-model="seedSalt" class="w-full glass rounded-lg p-2 text-sm mb-2"/>
-          <label class="text-sm text-gray-300">{{ t('seed_public') }}</label>
-          <input v-model="publicSeed" :placeholder="t('seed_public_ph')" class="w-full glass rounded-lg p-2 text-sm"/>
-          <p class="text-xs text-gray-400 mt-2">{{ t('seed_tip') }}</p>
         </div>
       </div>
 
-      <div class="mt-5 flex flex-wrap gap-3">
-        <button class="btn bg-amber-500 text-black px-4 py-2 rounded-xl disabled:opacity-60" :disabled="isDrawing || participants.length===0 || drawCount<1" @click="drawWinners">
-          {{ isDrawing ? t('btn_drawing') : t('btn_draw') }}
-        </button>
-        <button class="btn glass-2 px-4 py-2 rounded-xl" @click="resetEligibility">{{ t('btn_reset_eligibility') }}</button>
-        <button class="btn glass-2 px-4 py-2 rounded-xl" :disabled="drawLog.length===0" @click="exportLog">{{ t('btn_export') }}</button>
-        <!-- 新增 XLSX 匯出按鈕 -->
-        <button class="btn glass-2 px-4 py-2 rounded-xl" :disabled="drawLog.length===0" @click="exportXLSX">匯出 XLSX</button>
+      <div class="mt-6">
+        <div class="bg-gradient-to-r from-amber-500/10 to-pink-500/10 border border-amber-500/30 rounded-xl p-4 mb-4">
+          <div class="flex items-center justify-between text-sm">
+            <div class="flex items-center gap-4">
+              <div>
+                <span class="text-gray-400">{{ t('stats_total') }}</span>
+                <span class="font-bold text-lg ml-1 mono text-amber-400">{{ participants.length }}</span>
+              </div>
+              <div>
+                <span class="text-gray-400">{{ t('stats_eligible') }}</span>
+                <span class="font-bold text-lg ml-1 mono text-green-400">{{ eligibleCount }}</span>
+              </div>
+              <div>
+                <span class="text-gray-400">已中獎：</span>
+                <span class="font-bold text-lg ml-1 mono text-pink-400">{{ participants.length - eligibleCount }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Session Progress Bar -->
+        <div v-if="isSessionActive" class="mb-4 p-4 glass-2 rounded-xl">
+          <div class="flex justify-between items-center mb-2">
+            <span class="text-sm text-gray-300">本輪抽獎進度</span>
+            <span class="text-sm font-bold text-amber-400 mono">{{ currentSessionDrawn }} / {{ maxDrawPerSession }}</span>
+          </div>
+          <div class="w-full bg-gray-700 rounded-full h-3 overflow-hidden">
+            <div class="h-full bg-gradient-to-r from-amber-400 via-amber-500 to-pink-500 rounded-full transition-all duration-500 ease-out"
+                 :style="{width: sessionProgress + '%'}"></div>
+          </div>
+          <div v-if="currentPrize" class="mt-2 text-sm text-amber-300">
+            當前獎項：{{ currentPrize.name }} ({{ currentPrize.drawn }}/{{ currentPrize.count }})
+          </div>
+        </div>
+        
+        <div class="flex flex-wrap gap-3">
+          <!-- Session Control Buttons -->
+          <button v-if="!isSessionActive" 
+                  class="btn bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-400 hover:to-emerald-500 text-white font-bold px-6 py-4 rounded-xl ripple shadow-xl"
+                  @click="startNewSession">
+            🚀 開始新一輪
+          </button>
+          <button v-else-if="currentSessionDrawn >= maxDrawPerSession"
+                  class="btn bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-400 hover:to-indigo-500 text-white font-bold px-6 py-4 rounded-xl ripple shadow-xl"
+                  @click="resetAndRestart">
+            🔄 重新開始
+          </button>
+          <button v-else-if="isSessionActive"
+                  class="btn glass-2 px-4 py-4 rounded-xl ripple hover:bg-red-500/20 text-red-400"
+                  @click="endSession">
+            ⏹️ 結束本輪
+          </button>
+          
+          <!-- Draw Button -->
+          <button class="btn bg-gradient-to-r from-amber-500 via-amber-600 to-pink-500 hover:from-amber-400 hover:via-amber-500 hover:to-pink-400 text-white font-bold px-8 py-4 rounded-xl disabled:opacity-60 disabled:cursor-not-allowed flex items-center gap-3 shadow-xl ripple relative overflow-hidden group" 
+                  :disabled="!canDraw" 
+                  @click="drawWinners"
+                  :class="isDrawing ? 'pulse-border' : ''">
+            <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+            <span v-if="!isDrawing" class="text-xl relative z-10">⭐</span>
+            <span v-else class="animate-spin text-xl relative z-10">⏳</span>
+            <span class="relative z-10 text-lg">{{ isDrawing ? t('btn_drawing') : t('btn_draw') }}</span>
+          </button>
+          
+          <button class="btn glass-2 px-4 py-4 rounded-xl ripple hover:bg-white/10" @click="resetEligibility">重置資格</button>
+          <button class="btn glass-2 px-4 py-4 rounded-xl ripple hover:bg-white/10" :disabled="drawLog.length===0" @click="exportLog">匯出JSON</button>
+          <button class="btn glass-2 px-4 py-4 rounded-xl ripple hover:bg-white/10" :disabled="drawLog.length===0" @click="exportXLSX">匯出XLSX</button>
+        </div>
       </div>
-
-      <p class="mt-3 text-sm text-gray-400">{{ t('stats_total') }} <b class="mono">{{ participants.length }}</b> · {{ t('stats_eligible') }} <b class="mono">{{ eligibleCount }}</b></p>
     </section>
 
     <!-- Right: Visual + Results -->
     <section class="glass rounded-2xl p-5 md:p-6">
-      <div class="flex items-center justify-between mb-3">
-        <h3 class="text-lg font-semibold">{{ t('visual_title') }}</h3>
-        <div class="flex items-center gap-2 text-xs text-gray-400">
-          <span class="inline-block h-3 w-3 rounded-full bg-amber-500"></span>
-          <span>{{ t('legend_pointer') }}</span>
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-lg font-semibold flex items-center gap-2">
+          <div class="h-6 w-1 bg-gradient-to-b from-amber-400 to-pink-500 rounded-full"></div>
+          {{ t('visual_title') }}
+        </h3>
+        <div class="flex items-center gap-2 text-xs">
+          <div class="flex items-center gap-1.5 glass-2 px-2 py-1 rounded-full">
+            <span class="inline-block h-3 w-3 rounded-full bg-amber-500 animate-pulse"></span>
+            <span class="text-gray-300">{{ t('legend_pointer') }}</span>
+          </div>
         </div>
       </div>
-      <div class="rounded-2xl glass-2 p-4 min-h-[320px] md:min-h-[380px] flex items-center justify-center relative overflow-hidden">
+      <div class="rounded-2xl glass-2 p-6 min-h-[360px] md:min-h-[420px] flex items-center justify-center relative overflow-hidden border border-white/5" ref="wheelContainer">
         <!-- fixed pointer for wheel mode -->
-        <div v-if="mode==='wheel'" class="absolute top-2 left-1/2 -translate-x-1/2 z-10">
+        <div class="absolute top-4 left-1/2 -translate-x-1/2 z-10">
           <div class="pointer"></div>
         </div>
-        <!-- Components -->
-        <wheel-canvas v-if="mode==='wheel'" ref="visualRef" :items="participants" class="w-full"></wheel-canvas>
-        <photo-wall v-else-if="mode==='wall'" ref="visualRef" :items="participants" class="w-full"></photo-wall>
-        <grid-nine v-else ref="visualRef" :items="participants" class="w-full"></grid-nine>
+        <!-- Wheel Component -->
+        <wheel-canvas ref="visualRef" :items="participants" class="w-full"></wheel-canvas>
+        
+        <!-- 當沒有參與者時的提示 -->
+        <div v-if="participants.length === 0" class="absolute inset-0 flex items-center justify-center">
+          <div class="text-center">
+            <div class="w-24 h-24 mx-auto mb-4 rounded-full bg-gradient-to-br from-gray-600 to-gray-800 flex items-center justify-center">
+              <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="10" stroke-width="2"/>
+                <path d="M12 6v12M6 12h12" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <p class="text-gray-400 text-lg">請先確認參與者名單</p>
+          </div>
+        </div>
       </div>
 
-      <!-- Winners -->
-      <div class="mt-5">
-        <div class="flex items-center justify-between gap-2 mb-2">
-          <h4 class="font-semibold">{{ t('winners_latest') }}</h4>
-          <button class="btn text-xs px-2 py-1 rounded-md glass-2" @click="winners=[]">{{ t('btn_clear_winners') }}</button>
+      <!-- Winners Display -->
+      <div class="mt-6">
+        <div class="flex items-center justify-between gap-2 mb-3">
+          <h4 class="font-semibold flex items-center gap-2">
+            <div class="h-5 w-1 bg-gradient-to-b from-yellow-400 to-amber-500 rounded-full"></div>
+            <span>{{ t('winners_latest') }}</span>
+            <span v-if="isSessionActive" class="text-xs px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30 font-medium animate-pulse">本輪</span>
+          </h4>
+          <button class="btn text-xs px-3 py-1.5 rounded-md glass-2 hover:bg-red-500/20 ripple" @click="winners=[]">清空</button>
         </div>
-        <div class="flex flex-wrap gap-2 max-h-28 overflow-auto scrollbar-thin">
-          <span v-for="(w,i) in winners" :key="'w-'+i" class="px-2 py-1 rounded-full bg-amber-500 text-black text-xs">{{ w.name }} · {{ t('label_round') }} {{ w.round }}</span>
-          <span v-if="winners.length===0" class="text-xs text-gray-400">{{ t('no_winners_yet') }}</span>
+        <div class="flex flex-wrap gap-2 max-h-32 overflow-auto scrollbar-thin glass-2 p-3 rounded-xl">
+          <span v-for="(w,i) in winners" :key="'w-'+i" 
+                class="px-4 py-2 rounded-lg bg-gradient-to-r from-amber-500 to-pink-500 text-white text-sm font-medium winner-announce shadow-lg flex items-center gap-2">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+            </svg>
+            <span v-if="w.prize" class="text-xs opacity-75">[{{ w.prize }}]</span>
+            {{ w.name }} <span class="opacity-75 text-xs ml-1">({{ t('label_round') }} {{ w.round }})</span>
+          </span>
+          <span v-if="winners.length===0 && !isSessionActive" class="text-sm text-gray-400 p-2">
+            {{ t('no_winners_yet') }}
+            <span class="text-xs text-amber-400 ml-2">→ 點擊「🚀 開始新一輪」開始抽獎</span>
+          </span>
+          <span v-if="winners.length===0 && isSessionActive" class="text-sm text-gray-400 p-2">尚未抽出，點擊「⭐ 開始抽獎」按鈕開始</span>
+        </div>
+      </div>
+
+      <!-- 已中獎名單管理 -->
+      <div class="mt-6" v-if="participants.length > 0">
+        <div class="flex items-center justify-between gap-2 mb-3">
+          <h4 class="font-semibold flex items-center gap-2">
+            <div class="h-5 w-1 bg-gradient-to-b from-blue-400 to-purple-500 rounded-full"></div>
+            參與者狀態
+          </h4>
+          <div class="text-xs glass-2 px-3 py-1 rounded-full">
+            <span class="text-green-400">● {{ eligibleCount }} 可抽</span>
+            <span class="text-gray-400 mx-1">/</span>
+            <span class="text-pink-400">● {{ participants.length - eligibleCount }} 已中</span>
+          </div>
+        </div>
+        <div class="glass-2 rounded-xl p-3 max-h-48 overflow-auto scrollbar-thin">
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+            <div v-for="p in participants" :key="p.id" 
+                 class="flex items-center gap-2 p-2 rounded-lg text-sm transition-all"
+                 :class="p.eligible ? 'bg-green-500/10 border border-green-500/30 hover:bg-green-500/20' : 'bg-pink-500/10 border border-pink-500/30 opacity-60'">
+              <div class="w-2 h-2 rounded-full" :class="p.eligible ? 'bg-green-400' : 'bg-pink-400'"></div>
+              <span class="flex-1 truncate">{{ p.name }}</span>
+              <span class="text-xs text-gray-400">({{ p.weight }})</span>
+            </div>
+          </div>
         </div>
       </div>
 
       <!-- Log -->
       <div class="mt-6">
-        <h4 class="font-semibold mb-2">{{ t('log_title') }}</h4>
-        <div class="overflow-auto max-h-48 rounded-xl glass-2">
+        <div class="flex items-center justify-between mb-3">
+          <h4 class="font-semibold flex items-center gap-2">
+            <div class="h-5 w-1 bg-gradient-to-b from-indigo-400 to-purple-500 rounded-full"></div>
+            {{ t('log_title') }}
+          </h4>
+          <span class="text-xs glass-2 px-2 py-1 rounded-full">總計 {{ drawLog.length }} 筆</span>
+        </div>
+        <div class="overflow-auto max-h-64 rounded-xl glass-2 border border-white/5">
           <table class="w-full text-sm">
-            <thead class="text-gray-300">
+            <thead class="text-gray-300 bg-black/20 sticky top-0">
             <tr>
-              <th class="text-left px-3 py-2">{{ t('th_time') }}</th>
-              <th class="text-left px-3 py-2">{{ t('th_round') }}</th>
-              <th class="text-left px-3 py-2">{{ t('th_method') }}</th>
-              <th class="text-left px-3 py-2">{{ t('th_winners') }}</th>
+              <th class="text-left px-3 py-3 font-semibold">{{ t('th_time') }}</th>
+              <th class="text-left px-3 py-3 font-semibold">{{ t('th_round') }}</th>
+              <th v-if="prizeSettings.length > 0" class="text-left px-3 py-3 font-semibold">獎項</th>
+              <th v-if="isSessionActive" class="text-left px-3 py-3 font-semibold">進度</th>
+              <th class="text-left px-3 py-3 font-semibold">{{ t('th_winners') }}</th>
             </tr>
             </thead>
             <tbody>
-            <tr v-for="(row, idx) in drawLog" :key="'log-'+idx" class="border-t border-white/10">
-              <td class="px-3 py-2 whitespace-nowrap">{{ row.time }}</td>
-              <td class="px-3 py-2">{{ row.round }}</td>
-              <td class="px-3 py-2">{{ row.method }}</td>
-              <td class="px-3 py-2">{{ row.winners.join(', ') }}</td>
+            <tr v-for="(row, idx) in drawLog" :key="'log-'+idx" class="border-t border-white/10 hover:bg-white/5 transition-colors">
+              <td class="px-3 py-3 whitespace-nowrap text-xs text-gray-400">{{ row.time }}</td>
+              <td class="px-3 py-3">
+                <span class="inline-block px-2 py-0.5 rounded-full bg-gradient-to-r from-amber-500/20 to-pink-500/20 text-amber-400 text-xs font-semibold">{{ row.round }}</span>
+              </td>
+              <td v-if="prizeSettings.length > 0" class="px-3 py-3">
+                <span v-if="row.prize" class="inline-block px-2 py-0.5 rounded-full bg-gradient-to-r from-purple-500/20 to-indigo-500/20 text-purple-400 text-xs font-semibold">{{ row.prize }}</span>
+                <span v-else class="text-gray-500 text-xs">-</span>
+              </td>
+              <td v-if="isSessionActive" class="px-3 py-3 whitespace-nowrap text-xs text-gray-400">
+                {{ row.sessionProgress || '-' }}
+              </td>
+              <td class="px-3 py-3">
+                <span class="font-medium text-white">{{ row.winners.join(', ') }}</span>
+              </td>
             </tr>
             <tr v-if="drawLog.length===0">
-              <td class="px-3 py-3 text-center text-gray-500" colspan="4">{{ t('log_empty') }}</td>
+              <td class="px-3 py-6 text-center text-gray-500" :colspan="3 + (prizeSettings.length > 0 ? 1 : 0) + (isSessionActive ? 1 : 0)">
+                <div class="w-16 h-16 mx-auto mb-3 rounded-full bg-gray-800/50 flex items-center justify-center">
+                  <svg class="w-8 h-8 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                  </svg>
+                </div>
+                {{ t('log_empty') }}
+              </td>
             </tr>
             </tbody>
           </table>
         </div>
       </div>
     </section>
-  </div>
-
-  <!-- 基本資訊填寫區 -->
-  <div class="mb-4 space-y-2">
-    <div>
-      <label class="block text-sm text-gray-300 mb-1">抽獎目的/主題</label>
-      <input v-model="lotteryPurpose" class="glass-2 w-full rounded-lg p-2 text-sm" placeholder="請輸入本次抽獎主題或目的" />
-    </div>
-    <div>
-      <label class="block text-sm text-gray-300 mb-1">抽獎選項/說明（可選）</label>
-      <textarea v-model="lotteryOptions" class="glass-2 w-full rounded-lg p-2 text-sm" rows="2" placeholder="例如：獎品內容、活動說明等"></textarea>
-    </div>
   </div>
 </div>
 
@@ -232,72 +580,144 @@ const { createApp, defineComponent } = Vue;
 /* ===================== i18n ===================== */
 const i18nData = {
   'zh-TW': {
-    title: '抽獎引擎（極簡 × 科技感）',
-    subtitle: 'Canvas 轉盤 / 3D 照片牆 / 九宮格 · 權重與可驗證隨機 · 四語系',
+    title: '抽獎轉盤',
+    subtitle: '簡單易用的線上抽獎工具 · 公平公正 · 多語系支援',
     btn_sample: '載入範例',
-    tab_wheel: '轉盤', tab_wall: '3D 照片牆', tab_grid: '九宮格',
-    roster_label: '參賽者名單（每行一位；可用逗號/Tab/豎線分隔權重，如 王小明,3）',
-    roster_ph: '例：\n王小明,3\n李小華,1\n陳大同,2',
+    roster_label: '參與者名單',
     btn_parse: '解析名單', btn_clear: '清空名單',
-    draw_count: '本次抽出人數', no_repeat: '抽出後排除得獎者（避免重複）',
-    rng_title: '隨機模式', rng_crypto: 'Crypto（密碼學等級，建議）', rng_seeded: 'Seeded（可驗證，用 Salt + Public Seed）', rng_math: 'Math.random（不建議）',
-    seed_salt: 'Salt（預先公開/保留）', btn_gen_salt: '產生 Salt', seed_public: 'Public Seed（公開來源，如日期碼/會議代碼）', seed_public_ph: '例如：2025-08-28-UAT-Session-A', seed_tip: '驗證方式：相同名單與權重、同一 Salt 與 Public Seed、同序列抽取 ⇒ 結果可重現。',
-    btn_draw: '開始抽獎', btn_drawing: '抽獎中…', btn_reset_eligibility: '恢復資格', btn_export: '匯出紀錄 (JSON)',
-    stats_total: '名單筆數：', stats_eligible: '可抽人數：',
-    visual_title: '視覺區', legend_pointer: '指針/焦點',
-    winners_latest: '最新得獎者', btn_clear_winners: '清空', label_round: '輪次', no_winners_yet: '尚無資料',
-    log_title: '抽獎紀錄', th_time: '時間', th_round: '輪次', th_method: '模式', th_winners: '得獎者', log_empty: '尚無抽獎紀錄'
+    draw_count: '本次抽出人數', no_repeat: '抽出後排除（避免重複）',
+    rng_title: '隨機模式', 
+    rng_crypto: 'Crypto 加密隨機', 
+    rng_seeded: 'Seeded 可驗證隨機', 
+    rng_math: 'Math.random 基本隨機',
+    seed_salt: 'Salt（鹽值）', 
+    btn_gen_salt: '產生', 
+    seed_public: 'Public Seed（公開種子）', 
+    seed_public_ph: '例如：2025-01-03-Event-A', 
+    seed_tip: '驗證方式：相同名單、權重、Salt、Public Seed、抽取序列 → 結果可重現',
+    btn_draw: '開始抽獎', 
+    btn_drawing: '抽獎中...', 
+    btn_reset_eligibility: '恢復所有資格', 
+    btn_export: '匯出 JSON',
+    stats_total: '總人數：', 
+    stats_eligible: '可抽：',
+    visual_title: '抽獎轉盤', 
+    legend_pointer: '指針',
+    winners_latest: '本次得獎者', 
+    btn_clear_winners: '清空', 
+    label_round: '輪', 
+    no_winners_yet: '尚無得獎者',
+    log_title: '抽獎紀錄', 
+    th_time: '時間', 
+    th_round: '輪次', 
+    th_method: '隨機模式', 
+    th_winners: '得獎者', 
+    log_empty: '尚無抽獎紀錄'
   },
   'zh-CN': {
-    title: '抽奖引擎（极简 × 科技感）',
-    subtitle: 'Canvas 转盘 / 3D 照片墙 / 九宫格 · 权重与可验证随机 · 四语言',
+    title: '抽奖转盘',
+    subtitle: '简单易用的在线抽奖工具 · 公平公正 · 多语言支持',
     btn_sample: '载入示例',
-    tab_wheel: '转盘', tab_wall: '3D 照片墙', tab_grid: '九宫格',
-    roster_label: '参赛者名单（每行一位；可用逗号/Tab/竖线分隔权重，如 张三,3）',
-    roster_ph: '示例：\n张三,3\n李四,1\n王五,2',
+    roster_label: '参与者名单',
     btn_parse: '解析名单', btn_clear: '清空名单',
     draw_count: '本次抽取人数', no_repeat: '抽中后排除（避免重复）',
-    rng_title: '随机模式', rng_crypto: 'Crypto（加密级，推荐）', rng_seeded: 'Seeded（可验证，Salt + Public Seed）', rng_math: 'Math.random（不推荐）',
-    seed_salt: 'Salt（预先公开/保留）', btn_gen_salt: '生成 Salt', seed_public: 'Public Seed（公开来源，如日期码/会议代码）', seed_public_ph: '例如：2025-08-28-UAT-Session-A', seed_tip: '验证：相同名单与权重、同一 Salt/Seed、同序列抽取 ⇒ 结果可复现。',
-    btn_draw: '开始抽奖', btn_drawing: '抽奖中…', btn_reset_eligibility: '恢复资格', btn_export: '导出记录 (JSON)',
-    stats_total: '名单条数：', stats_eligible: '可抽人数：',
-    visual_title: '可视化区', legend_pointer: '指针/焦点',
-    winners_latest: '最新中奖者', btn_clear_winners: '清空', label_round: '轮次', no_winners_yet: '暂无数据',
-    log_title: '抽奖记录', th_time: '时间', th_round: '轮次', th_method: '模式', th_winners: '中奖者', log_empty: '暂无记录'
+    rng_title: '随机模式', 
+    rng_crypto: 'Crypto 加密随机', 
+    rng_seeded: 'Seeded 可验证随机', 
+    rng_math: 'Math.random 基本随机',
+    seed_salt: 'Salt（盐值）', 
+    btn_gen_salt: '生成', 
+    seed_public: 'Public Seed（公开种子）', 
+    seed_public_ph: '例如：2025-01-03-Event-A', 
+    seed_tip: '验证：相同名单、权重、Salt、Seed、序列 → 结果可复现',
+    btn_draw: '开始抽奖', 
+    btn_drawing: '抽奖中...', 
+    btn_reset_eligibility: '恢复所有资格', 
+    btn_export: '导出 JSON',
+    stats_total: '总人数：', 
+    stats_eligible: '可抽：',
+    visual_title: '抽奖转盘', 
+    legend_pointer: '指针',
+    winners_latest: '本次中奖者', 
+    btn_clear_winners: '清空', 
+    label_round: '轮', 
+    no_winners_yet: '暂无中奖者',
+    log_title: '抽奖记录', 
+    th_time: '时间', 
+    th_round: '轮次', 
+    th_method: '随机模式', 
+    th_winners: '中奖者', 
+    log_empty: '暂无记录'
   },
   'en': {
-    title: 'Lottery Engine (Minimal × Futuristic)',
-    subtitle: 'Canvas Wheel / 3D Photo Wall / 3×3 Grid · Weighted & Verifiable RNG · 4 Languages',
+    title: 'Lottery Wheel',
+    subtitle: 'Simple & Fair Online Lottery Tool · Multi-language',
     btn_sample: 'Load Sample',
-    tab_wheel: 'Wheel', tab_wall: '3D Wall', tab_grid: '3×3 Grid',
-    roster_label: 'Participants (one per line; optional weight via comma/Tab/pipe, e.g., Alex,3)',
-    roster_ph: 'e.g.\nAlex,3\nBella,1\nChen,2',
-    btn_parse: 'Parse Roster', btn_clear: 'Clear Roster',
-    draw_count: 'Winners to draw', no_repeat: 'Exclude winners from future draws',
-    rng_title: 'Randomness Mode', rng_crypto: 'Crypto (CSPRNG, recommended)', rng_seeded: 'Seeded (verifiable: Salt + Public Seed)', rng_math: 'Math.random (not recommended)',
-    seed_salt: 'Salt (pre-commit/retain)', btn_gen_salt: 'Generate Salt', seed_public: 'Public Seed (public source, e.g., date/session code)', seed_public_ph: 'e.g., 2025-08-28-UAT-Session-A', seed_tip: 'Verification: same roster & weights, same Salt & Public Seed, same sequence ⇒ identical results.',
-    btn_draw: 'Draw', btn_drawing: 'Drawing…', btn_reset_eligibility: 'Reset Eligibility', btn_export: 'Export Log (JSON)',
-    stats_total: 'Total entries:', stats_eligible: 'Eligible:',
-    visual_title: 'Visual Stage', legend_pointer: 'Pointer/Focus',
-    winners_latest: 'Latest Winners', btn_clear_winners: 'Clear', label_round: 'round', no_winners_yet: 'No winners yet',
-    log_title: 'Draw Log', th_time: 'Time', th_round: 'Round', th_method: 'Method', th_winners: 'Winners', log_empty: 'No records yet'
+    roster_label: 'Participants',
+    btn_parse: 'Parse', btn_clear: 'Clear',
+    draw_count: 'Winners to draw', no_repeat: 'Exclude winners',
+    rng_title: 'Random Mode', 
+    rng_crypto: 'Crypto Random', 
+    rng_seeded: 'Seeded (Verifiable)', 
+    rng_math: 'Math.random',
+    seed_salt: 'Salt', 
+    btn_gen_salt: 'Generate', 
+    seed_public: 'Public Seed', 
+    seed_public_ph: 'e.g., 2025-01-03-Event-A', 
+    seed_tip: 'Verification: same roster, weights, Salt, Seed, sequence → reproducible',
+    btn_draw: 'Draw', 
+    btn_drawing: 'Drawing...', 
+    btn_reset_eligibility: 'Reset All', 
+    btn_export: 'Export JSON',
+    stats_total: 'Total:', 
+    stats_eligible: 'Eligible:',
+    visual_title: 'Lottery Wheel', 
+    legend_pointer: 'Pointer',
+    winners_latest: 'Latest Winners', 
+    btn_clear_winners: 'Clear', 
+    label_round: 'R', 
+    no_winners_yet: 'No winners yet',
+    log_title: 'Draw Log', 
+    th_time: 'Time', 
+    th_round: 'Round', 
+    th_method: 'Method', 
+    th_winners: 'Winners', 
+    log_empty: 'No records'
   },
   'ja': {
-    title: '抽選エンジン（ミニマル × 近未来）',
-    subtitle: 'Canvas ホイール / 3D フォトウォール / 3×3 グリッド · 重み付き & 検証可能 RNG · 4 言語',
-    btn_sample: 'サンプル読込',
-    tab_wheel: 'ホイール', tab_wall: '3D ウォール', tab_grid: '3×3 グリッド',
-    roster_label: '参加者（1 行に 1 名；カンマ/Tab/縦棒で重み：例 Taro,3）',
-    roster_ph: '例：\nSato,3\nSuzuki,1\nTanaka,2',
-    btn_parse: '名簿解析', btn_clear: '名簿クリア',
-    draw_count: '当選人数', no_repeat: '当選者を次回以降から除外',
-    rng_title: 'ランダムモード', rng_crypto: 'Crypto（推奨）', rng_seeded: 'Seeded（Salt + Public Seed で検証）', rng_math: 'Math.random（非推奨）',
-    seed_salt: 'Salt（事前公開/保持）', btn_gen_salt: 'Salt 生成', seed_public: 'Public Seed（公開情報：日付/セッションコード）', seed_public_ph: '例：2025-08-28-UAT-Session-A', seed_tip: '検証：同じ名簿・重み、同じ Salt/Seed、同順抽出 ⇒ 結果が再現。',
-    btn_draw: '抽選', btn_drawing: '抽選中…', btn_reset_eligibility: '資格をリセット', btn_export: 'ログ出力 (JSON)',
-    stats_total: '名簿数：', stats_eligible: '抽選可能：',
-    visual_title: 'ビジュアル', legend_pointer: 'ポインタ/フォーカス',
-    winners_latest: '直近の当選者', btn_clear_winners: 'クリア', label_round: '回', no_winners_yet: 'データなし',
-    log_title: '抽選ログ', th_time: '時刻', th_round: '回', th_method: '方式', th_winners: '当選者', log_empty: 'ログはまだありません'
+    title: '抽選ホイール',
+    subtitle: 'シンプルで公平なオンライン抽選ツール',
+    btn_sample: 'サンプル',
+    roster_label: '参加者',
+    btn_parse: '解析', btn_clear: 'クリア',
+    draw_count: '当選人数', no_repeat: '当選者を除外',
+    rng_title: 'ランダムモード', 
+    rng_crypto: 'Crypto', 
+    rng_seeded: 'Seeded（検証可能）', 
+    rng_math: 'Math.random',
+    seed_salt: 'Salt', 
+    btn_gen_salt: '生成', 
+    seed_public: 'Public Seed', 
+    seed_public_ph: '例：2025-01-03-Event-A', 
+    seed_tip: '検証：同じ名簿・重み・Salt・Seed・順序 → 再現可能',
+    btn_draw: '抽選', 
+    btn_drawing: '抽選中...', 
+    btn_reset_eligibility: 'リセット', 
+    btn_export: 'JSON出力',
+    stats_total: '総数：', 
+    stats_eligible: '可能：',
+    visual_title: '抽選ホイール', 
+    legend_pointer: 'ポインタ',
+    winners_latest: '当選者', 
+    btn_clear_winners: 'クリア', 
+    label_round: '回', 
+    no_winners_yet: 'まだありません',
+    log_title: '抽選ログ', 
+    th_time: '時刻', 
+    th_round: '回', 
+    th_method: 'モード', 
+    th_winners: '当選者', 
+    log_empty: 'ログなし'
   }
 };
 
@@ -307,152 +727,240 @@ const WheelCanvas = defineComponent({
   props: { items: { type: Array, required: true } },
   template: `
     <div class="w-full flex items-center justify-center select-none">
-      <canvas ref="canvas" :width="size" :height="size" class="max-w-full"></canvas>
+      <canvas ref="canvas" :width="size" :height="size" class="max-w-full" style="max-height: 400px;"></canvas>
     </div>
   `,
-  data(){ return { size: 340, rotation: 0, animId: null, spinning: false }; },
-  watch:{ items(){ this.draw(); }},
-  mounted(){ this.draw(); },
+  data(){ return { size: 400, rotation: 0, animId: null, spinning: false }; },
+  watch:{ 
+    items: {
+      handler(newItems, oldItems){ 
+        // 只有在不是旋轉中時才重繪
+        if(!this.spinning) {
+          console.log('📊 items changed, redrawing wheel');
+          this.$nextTick(() => {
+            this.draw(); 
+          });
+        } else {
+          console.log('⏸️ Spinning in progress, skip redraw');
+        }
+      },
+      deep: true,
+      flush: 'post'
+    }
+  },
+  mounted(){ 
+    console.log('🎪 WheelCanvas mounted');
+    this.$nextTick(() => {
+      this.draw();
+    });
+  },
   beforeUnmount(){ if(this.animId) cancelAnimationFrame(this.animId); },
   methods:{
     draw(){
       const cvs = this.$refs.canvas; if(!cvs) return; const ctx = cvs.getContext('2d');
-      const N = Math.max(1, this.items.length);
+      // 只顯示eligible為true的參與者
+      const eligibleItems = this.items.filter(item => item.eligible !== false);
+      const N = Math.max(1, eligibleItems.length);
       ctx.clearRect(0,0,cvs.width,cvs.height);
-      const R = this.size/2 - 6; const cx = this.size/2; const cy = this.size/2;
+      const R = this.size/2 - 10; 
+      const cx = this.size/2; 
+      const cy = this.size/2;
       const aPer = Math.PI * 2 / N;
-      ctx.save(); ctx.translate(cx,cy); ctx.rotate(this.rotation);
+      
+      ctx.save(); 
+      ctx.translate(cx,cy); 
+      ctx.rotate(this.rotation);
+      
+      // 繪製轉盤扇形
       for(let i=0;i<N;i++){
-        const start = i*aPer; const end = start + aPer;
+        const start = i*aPer; 
+        const end = start + aPer;
         ctx.beginPath();
-        const hue = (i*360/N)|0; ctx.fillStyle = `hsl(${hue} 70% 50% / 0.9)`;
-        ctx.moveTo(0,0); ctx.arc(0,0,R,start,end); ctx.closePath(); ctx.fill();
-        // label
+        
+        // 使用更豐富的漸變色
+        const hue = (i*360/N)|0; 
+        const gradient = ctx.createRadialGradient(0, 0, 0, 0, 0, R);
+        gradient.addColorStop(0, `hsl(${hue} 80% 60%)`);
+        gradient.addColorStop(1, `hsl(${hue} 70% 45%)`);
+        ctx.fillStyle = gradient;
+        
+        ctx.moveTo(0,0); 
+        ctx.arc(0,0,R,start,end); 
+        ctx.closePath(); 
+        ctx.fill();
+        
+        // 添加邊框
+        ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        
+        // 繪製文字標籤
         ctx.save();
         ctx.rotate(start + aPer/2);
-        ctx.textAlign = 'right'; ctx.fillStyle = '#0b0f1a'; ctx.font = '600 14px Inter, Noto Sans TC';
-        const name = (this.items[i]?.name ?? `#${i+1}`);
-        ctx.fillText(name, R-10, 6);
+        ctx.textAlign = 'right'; 
+        ctx.textBaseline = 'middle';
+        
+        const item = eligibleItems[i];
+        const name = (item?.name ?? `#${i+1}`);
+        
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 14px Inter, Noto Sans TC';
+        // 添加文字陰影
+        ctx.shadowColor = 'rgba(0,0,0,0.5)';
+        ctx.shadowBlur = 4;
+        ctx.shadowOffsetX = 1;
+        ctx.shadowOffsetY = 1;
+        
+        // 繪製名字
+        const maxWidth = R - 50;
+        const displayName = name.length > 8 ? name.substring(0, 7) + '…' : name;
+        ctx.fillText(displayName, R-15, 0, maxWidth);
+        
+        // 如果有權重，顯示權重
+        if (item?.weight && item.weight > 1) {
+          ctx.font = '10px Inter';
+          ctx.fillStyle = 'rgba(255,255,255,0.6)';
+          ctx.shadowBlur = 0;
+          ctx.fillText(`×${item.weight}`, R-15, 15);
+        }
+        
         ctx.restore();
       }
-      // center
-      ctx.beginPath(); ctx.arc(0,0,40,0,Math.PI*2); ctx.fillStyle = '#111827'; ctx.fill();
+      
+      // 繪製中心圓
+      const centerGradient = ctx.createRadialGradient(0, 0, 0, 0, 0, 50);
+      centerGradient.addColorStop(0, '#1f2937');
+      centerGradient.addColorStop(1, '#111827');
+      ctx.beginPath(); 
+      ctx.arc(0,0,50,0,Math.PI*2); 
+      ctx.fillStyle = centerGradient;
+      ctx.fill();
+      
+      // 中心文字
+      ctx.fillStyle = '#f59e0b';
+      ctx.font = 'bold 16px Inter';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.shadowColor = 'rgba(245,158,11,0.8)';
+      ctx.shadowBlur = 8;
+      ctx.fillText('SPIN', 0, 0);
+      
       ctx.restore();
-      // ring
-      ctx.beginPath(); ctx.arc(cx,cy,R+3,0,Math.PI*2); ctx.strokeStyle = 'rgba(255,255,255,.25)'; ctx.lineWidth=6; ctx.stroke();
+      
+      // 外環
+      ctx.beginPath(); 
+      ctx.arc(cx,cy,R+5,0,Math.PI*2); 
+      ctx.strokeStyle = 'rgba(245,158,11,0.4)'; 
+      ctx.lineWidth=8; 
+      ctx.stroke();
     },
-    spinTo(index){
-      // return a Promise that resolves after animation finishes
-      if(this.spinning) return Promise.resolve();
+    spinTo(globalIndex, duration = 5000){
+      console.log('🎯 === spinTo 開始 ===', { 
+        globalIndex, 
+        duration, 
+        currentSpinning: this.spinning,
+        itemsCount: this.items.length,
+        eligibleCount: this.items.filter(i => i.eligible !== false).length
+      });
+      
+      if(this.spinning) {
+        console.warn('⚠️ 轉盤正在旋轉中，跳過');
+        return Promise.resolve();
+      }
+      
+      // 確保動畫ID被清除
+      if(this.animId) {
+        cancelAnimationFrame(this.animId);
+        this.animId = null;
+      }
+      
       this.spinning = true;
-      const N = Math.max(1, this.items.length);
+      
+      // 只計算eligible的參與者
+      const eligibleItems = this.items.filter(item => item.eligible !== false);
+      const targetItem = this.items[globalIndex];
+      const eligibleIndex = eligibleItems.findIndex(item => item.id === targetItem?.id);
+      
+      console.log('📊 轉盤資訊:', {
+        totalItems: this.items.length,
+        eligibleCount: eligibleItems.length,
+        targetName: targetItem?.name,
+        targetId: targetItem?.id,
+        eligibleIndex
+      });
+      
+      if(eligibleIndex === -1) {
+        console.error('❌ 找不到目標項目在eligible列表中');
+        this.spinning = false;
+        return Promise.resolve();
+      }
+      
+      const N = Math.max(1, eligibleItems.length);
       const aPer = Math.PI*2/N;
-      // We want the chosen slice center to align to top (pointer at -90deg)
-      const targetAngle = -Math.PI/2 - (index + 0.5)*aPer; // wheel rotation absolute
+      
+      // 計算目標角度
+      const targetAngle = -Math.PI/2 - (eligibleIndex + 0.5)*aPer;
       const current = this.rotation % (Math.PI*2);
       let delta = targetAngle - current;
-      // add extra spins (>= 4 turns)
-      const extra = Math.PI*2 * 6; // 6 spins for drama
-      const final = current + delta + extra;
-      const duration = 2600; // ms
-      const startTs = performance.now();
-      return new Promise(res=>{
-        const easeOutCubic = (t)=>1-Math.pow(1-t,3);
-        const step = (ts)=>{
-          const p = Math.min(1, (ts-startTs)/duration);
-          this.rotation = current + (final-current) * easeOutCubic(p);
+      
+      // 正規化delta到[-PI, PI]
+      while (delta > Math.PI) delta -= Math.PI * 2;
+      while (delta < -Math.PI) delta += Math.PI * 2;
+      
+      // 添加額外旋轉圈數 (8-10圈)
+      const extraSpins = Math.PI * 2 * (8 + Math.random() * 2);
+      const final = this.rotation + delta + extraSpins;
+      
+      console.log('🔄 轉盤參數:', { 
+        current: this.rotation.toFixed(2),
+        targetAngle: targetAngle.toFixed(2),
+        delta: delta.toFixed(2),
+        extraSpins: `${(extraSpins/(Math.PI*2)).toFixed(1)}圈`,
+        final: final.toFixed(2),
+        duration: `${duration}ms`
+      });
+      
+      const startTime = performance.now();
+      
+      return new Promise((resolve) => {
+        const easeOutCubic = (t) => {
+          const t1 = 1 - t;
+          return 1 - t1 * t1 * t1;
+        };
+        
+        let frameCount = 0;
+        const animate = (currentTime) => {
+          const elapsed = currentTime - startTime;
+          const progress = Math.min(1, elapsed / duration);
+          
+          this.rotation = current + (final - current) * easeOutCubic(progress);
           this.draw();
-          if(p<1){ this.animId = requestAnimationFrame(step); } else { this.spinning=false; res(); }
+          
+          frameCount++;
+          if(frameCount % 30 === 0) {
+            console.log(`🔄 旋轉中... ${(progress * 100).toFixed(1)}%`);
+          }
+          
+          if(progress < 1) {
+            this.animId = requestAnimationFrame(animate);
+          } else {
+            console.log('✅ === 轉盤動畫完成 === (總幀數:', frameCount, ')');
+            this.spinning = false;
+            this.rotation = final; // 確保最後位置正確
+            this.draw();
+            resolve();
+          }
         };
-        this.animId = requestAnimationFrame(step);
+        
+        console.log('🚀 啟動 requestAnimationFrame');
+        this.animId = requestAnimationFrame(animate);
       });
     }
   }
 });
 
-const PhotoWall = defineComponent({
-  name: 'PhotoWall',
-  props: { items: { type: Array, required: true } },
-  template: `
-    <div class="w-full">
-      <div ref="wrap" class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3 wall-rotate p-2">
-        <div v-for="(p,i) in items" :key="p.id||i" :data-idx="i" class="glass-2 rounded-xl p-3 text-center select-none">
-          <div class="mx-auto h-12 w-12 rounded-xl flex items-center justify-center mb-2"
-               :style="avatarStyle(i)">
-            <span class="font-bold">{{ initials(p.name) }}</span>
-          </div>
-          <div class="text-xs truncate">{{ p.name }}</div>
-        </div>
-      </div>
-    </div>
-  `,
-  methods:{
-    initials(name){ return (name||'').split(/\s+/).map(s=>s[0]).join('').slice(0,2).toUpperCase(); },
-    avatarStyle(i){ const hue=(i*47)%360; return `background: radial-gradient(circle at 30% 30%, hsl(${hue} 80% 60%), hsl(${(hue+40)%360} 80% 45%)); color:#0b0f1a;`; },
-    spotlight(index){
-      const wrap = this.$refs.wrap; if(!wrap) return Promise.resolve();
-      const el = wrap.querySelector(`[data-idx="${index}"]`);
-      if(!el) return Promise.resolve();
-      // pause rotation temporarily
-      wrap.style.animationPlayState = 'paused';
-      el.classList.add('card-spotlight');
-      return new Promise(res=>{
-        setTimeout(()=>{ el.classList.remove('card-spotlight'); wrap.style.animationPlayState='running'; res(); }, 1100);
-      });
-    }
-  }
-});
-
-const GridNine = defineComponent({
-  name: 'GridNine',
-  props: { items: { type: Array, required: true } },
-  template: `
-    <div class="w-full">
-      <div class="grid grid-cols-3 gap-3 p-2" ref="grid">
-        <div v-for="(c, idx) in gridItems" :key="c.key" :data-pos="idx"
-             class="glass-2 rounded-xl p-4 text-center select-none">
-          <div class="text-sm font-semibold truncate">{{ c.name }}</div>
-          <div class="text-[10px] text-gray-400">{{ c.weight }}</div>
-        </div>
-      </div>
-    </div>
-  `,
-  data(){ return { gridItems: [], sliceStart: 0 } },
-  watch:{ items(){ this.rebuild(0); } },
-  mounted(){ this.rebuild(0); },
-  methods:{
-    rebuild(targetIndex){
-      const N = this.items.length;
-      if(N<=9){ this.sliceStart = 0; this.gridItems = this.items.map((p,i)=>({ key:p.id||i, name:p.name, weight:p.weight, _idx:i })).slice(0,9); return; }
-      // Center a window of 9 around targetIndex
-      const start = Math.max(0, Math.min(targetIndex-4, N-9));
-      this.sliceStart = start;
-      this.gridItems = this.items.slice(start, start+9).map((p,i)=>({ key:p.id||i, name:p.name, weight:p.weight, _idx:start+i }));
-    },
-    animateToGlobalIndex(globalIndex){
-      // ensure winner in grid
-      this.rebuild(globalIndex);
-      const pos = this.gridItems.findIndex(x=>x._idx===globalIndex);
-      const cells = this.$refs.grid.querySelectorAll('[data-pos]');
-      if(pos<0 || !cells.length) return Promise.resolve();
-      // roulette style highlight
-      const totalSteps = 24 + pos + Math.floor(Math.random()*6); // random extra
-      let step = 0; let last=-1;
-      return new Promise(res=>{
-        const tick = ()=>{
-          const idx = step % this.gridItems.length;
-          const el = cells[idx];
-          if(last>=0) cells[last]?.classList.remove('cell-highlight');
-          el.classList.add('cell-highlight');
-          last = idx; step++;
-          if(step<=totalSteps){ setTimeout(tick, Math.min(60+step*12, 220)); }
-          else{ res(); }
-        };
-        tick();
-      });
-    }
-  }
-});
+const PhotoWall = defineComponent({ name: 'PhotoWall', template: '<div></div>' }); // 移除但保留空組件避免錯誤
+const GridNine = defineComponent({ name: 'GridNine', template: '<div></div>' }); // 移除但保留空組件避免錯誤
 
 /* ===================== Core Logic (RNG, weighting, draw) ===================== */
 const Core = {
@@ -475,8 +983,6 @@ createApp({
     return {
       i18nData,
       currentLanguage: localStorage.getItem('lottery.lang') || 'zh-TW',
-      mode: localStorage.getItem('lottery.mode') || 'wheel',
-      participantsText: localStorage.getItem('lottery.text') || '',
       participants: [],
       drawCount: 1,
       noRepeat: true,
@@ -488,80 +994,478 @@ createApp({
       drawLog: [],
       round: 0,
 
-      /* Roster Table - 新增的資料結構 */
+      /* 抽獎卡控 */
+      currentSessionDrawn: 0, // 本次session已抽出的總人數
+      maxDrawPerSession: 0, // 本次session最多可抽人數
+      isSessionActive: false, // 是否有活躍session
+
+      /* 擴充功能 */
+      drawMode: 'single', // single: 單次抽獎, batch: 批次抽獎, group: 分組抽獎
+      enableSound: true, // 音效開關
+      animationSpeed: 'normal', // fast, normal, slow
+      autoMode: false, // 自動連續抽獎
+      showHistory: true, // 顯示歷史記錄
+      enableBlacklist: false, // 啟用黑名單
+      blacklist: [], // 黑名單名單
+      blacklistInput: '', // 黑名單輸入框
+      prizeSettings: [], // 獎項設定
+      currentPrizeIndex: 0, // 當前獎項索引
+      showAdvancedSettings: false, // 是否顯示進階設定
+
+      /* Roster Table */
       rosterTable: [
         { uid: Date.now() + '-0', name: '', weight: 1, nameError: false, weightError: false }
       ],
       rosterError: '',
 
       /* 基本資訊 */
-      lotteryPurpose: '',
-      lotteryOptions: ''
+      lotteryPurpose: localStorage.getItem('lottery.purpose') || '',
+      lotteryOptions: localStorage.getItem('lottery.options') || ''
     };
   },
   computed:{
-    eligibleCount(){ return this.participants.filter(p=>p.eligible && p.weight>0).length; }
+    eligibleCount(){ return this.participants.filter(p=>p.eligible && p.weight>0).length; },
+    canDraw() {
+      // 判斷是否可以抽獎
+      if(this.isDrawing || this.participants.length === 0 || this.drawCount < 1) return false;
+      if(this.isSessionActive && this.currentSessionDrawn >= this.maxDrawPerSession) return false;
+      return this.eligibleCount > 0;
+    },
+    sessionProgress() {
+      if(!this.isSessionActive || this.maxDrawPerSession === 0) return 0;
+      return Math.min(100, (this.currentSessionDrawn / this.maxDrawPerSession) * 100);
+    },
+    currentPrize() {
+      if(this.prizeSettings.length === 0) return null;
+      return this.prizeSettings[this.currentPrizeIndex] || null;
+    }
   },
   watch:{
     currentLanguage(v){ localStorage.setItem('lottery.lang', v); },
-    mode(v){ localStorage.setItem('lottery.mode', v); },
-    participantsText(v){ localStorage.setItem('lottery.text', v); },
     rngMethod(v){ localStorage.setItem('lottery.rng', v); },
     seedSalt(v){ localStorage.setItem('lottery.salt', v); },
-    publicSeed(v){ localStorage.setItem('lottery.pubseed', v); }
+    publicSeed(v){ localStorage.setItem('lottery.pubseed', v); },
+    lotteryPurpose(v){ localStorage.setItem('lottery.purpose', v); },
+    lotteryOptions(v){ localStorage.setItem('lottery.options', v); }
   },
   methods:{
     t(key){ return this.i18nData[this.currentLanguage]?.[key] || key; },
-    addRow() {
-      this.rosterTable.push({ uid: Date.now() + '-' + Math.random().toString(36).slice(2,6), name: '', weight: 1, nameError: false, weightError: false });
+    
+    // 開始新一輪抽獎
+    startNewSession() {
+      if(this.participants.length === 0) {
+        alert('❌ 請先確認參與者名單');
+        return;
+      }
+      
+      const maxDraw = parseInt(prompt(`請輸入本次抽獎要抽出的總人數：\n（可抽人數：${this.eligibleCount}）`, this.drawCount));
+      
+      if(!maxDraw || maxDraw < 1) {
+        alert('❌ 請輸入有效的抽獎人數');
+        return;
+      }
+      
+      if(maxDraw > this.eligibleCount) {
+        if(!confirm(`⚠️ 設定人數(${maxDraw})大於可抽人數(${this.eligibleCount})\n\n是否繼續？（將以可抽人數為準）`)) {
+          return;
+        }
+      }
+      
+      this.maxDrawPerSession = Math.min(maxDraw, this.eligibleCount);
+      this.currentSessionDrawn = 0;
+      this.isSessionActive = true;
+      
+      // 清空本次得獎者（開始新一輪）
+      this.winners = [];
+      
+      // 恢復所有參與者的抽獎資格
+      console.log('🔄 重置所有參與者狀態...');
+      this.participants.forEach((p, index) => {
+        this.participants[index] = { ...p, eligible: true };
+      });
+      
+      // 強制觸發重繪
+      this.$nextTick(() => {
+        console.log('✅ 參與者狀態已重置，強制重繪轉盤');
+        if(this.$refs.visualRef) {
+          this.$refs.visualRef.draw();
+        }
+      });
+      
+      alert(`✅ 已開始新一輪抽獎\n本輪將抽出 ${this.maxDrawPerSession} 人\n\n所有參與者狀態已重置`);
     },
+    
+    // 結束當前session
+    endSession() {
+      if(!this.isSessionActive) return;
+      
+      // 顯示本輪摘要
+      let summary = `📊 本輪抽獎摘要\n\n`;
+      summary += `總名額：${this.maxDrawPerSession} 人\n`;
+      summary += `已抽出：${this.currentSessionDrawn} 人\n`;
+      summary += `剩餘：${this.maxDrawPerSession - this.currentSessionDrawn} 人\n\n`;
+      
+      if(this.winners.length > 0) {
+        summary += `🎉 本輪得獎者：\n`;
+        this.winners.forEach(w => {
+          summary += `  • ${w.prize ? '['+w.prize+'] ' : ''}${w.name}\n`;
+        });
+      }
+      
+      summary += `\n確定要結束本輪抽獎嗎？`;
+      
+      if(confirm(summary)) {
+        this.isSessionActive = false;
+        this.currentSessionDrawn = 0;
+        this.maxDrawPerSession = 0;
+        this.winners = []; // 清空本次得獎者
+        alert('✅ 已結束本輪抽獎\n\n所有記錄已保存至「抽獎紀錄」區塊');
+      }
+    },
+    
+    // 重置session並重新開始
+    resetAndRestart() {
+      // 顯示完成總結
+      let summary = `🎊 恭喜完成本輪抽獎！\n\n`;
+      summary += `本輪已抽出 ${this.currentSessionDrawn}/${this.maxDrawPerSession} 人\n\n`;
+      
+      if(this.winners.length > 0) {
+        summary += `🏆 得獎名單：\n`;
+        this.winners.forEach((w, i) => {
+          summary += `  ${i+1}. ${w.prize ? '['+w.prize+'] ' : ''}${w.name}\n`;
+        });
+        summary += `\n`;
+      }
+      
+      summary += `是否開始下一輪抽獎？`;
+      
+      if(confirm(summary)) {
+        this.isSessionActive = false;
+        this.currentSessionDrawn = 0;
+        this.maxDrawPerSession = 0;
+        this.winners = []; // 清空本次得獎者
+        this.startNewSession();
+      } else {
+        // 如果不繼續，也要清理狀態
+        this.isSessionActive = false;
+        this.currentSessionDrawn = 0;
+        this.maxDrawPerSession = 0;
+        this.winners = [];
+        alert('✅ 已結束抽獎\n\n所有記錄已保存');
+      }
+    },
+    
+    // 添加到黑名單
+    addToBlacklist(name) {
+      if(!this.blacklist.includes(name)) {
+        this.blacklist.push(name);
+        // 從參與者中移除
+        const idx = this.participants.findIndex(p => p.name === name);
+        if(idx >= 0) {
+          this.participants[idx].eligible = false;
+        }
+      }
+    },
+    
+    // 從黑名單移除
+    removeFromBlacklist(name) {
+      const idx = this.blacklist.indexOf(name);
+      if(idx >= 0) {
+        this.blacklist.splice(idx, 1);
+      }
+    },
+    
+    // 添加獎項設定
+    addPrizeSetting() {
+      const name = prompt('請輸入獎項名稱：', `${['特獎', '頭獎', '貳獎', '參獎', '肆獎'][this.prizeSettings.length] || '獎項'}`);
+      if(!name) return;
+      
+      const count = parseInt(prompt('請輸入該獎項名額：', '1'));
+      if(!count || count < 1) return;
+      
+      this.prizeSettings.push({
+        id: Date.now(),
+        name: name,
+        count: count,
+        drawn: 0,
+        winners: []
+      });
+    },
+    
+    // 刪除獎項
+    removePrizeSetting(id) {
+      const idx = this.prizeSettings.findIndex(p => p.id === id);
+      if(idx >= 0) {
+        this.prizeSettings.splice(idx, 1);
+        if(this.currentPrizeIndex >= this.prizeSettings.length) {
+          this.currentPrizeIndex = Math.max(0, this.prizeSettings.length - 1);
+        }
+      }
+    },
+    
+    // 保存設定
+    saveSettings() {
+      const settings = {
+        drawMode: this.drawMode,
+        enableSound: this.enableSound,
+        animationSpeed: this.animationSpeed,
+        autoMode: this.autoMode,
+        showHistory: this.showHistory,
+        enableBlacklist: this.enableBlacklist,
+        blacklist: this.blacklist,
+        prizeSettings: this.prizeSettings,
+        drawCount: this.drawCount,
+        noRepeat: this.noRepeat
+      };
+      
+      const blob = new Blob([JSON.stringify(settings, null, 2)], {type:'application/json'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `lottery_settings_${Date.now()}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    },
+    
+    // 載入設定
+    loadSettings() {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = '.json';
+      input.onchange = (e) => {
+        const file = e.target.files[0];
+        if(!file) return;
+        
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          try {
+            const settings = JSON.parse(e.target.result);
+            this.drawMode = settings.drawMode || 'single';
+            this.enableSound = settings.enableSound !== false;
+            this.animationSpeed = settings.animationSpeed || 'normal';
+            this.autoMode = settings.autoMode || false;
+            this.showHistory = settings.showHistory !== false;
+            this.enableBlacklist = settings.enableBlacklist || false;
+            this.blacklist = settings.blacklist || [];
+            this.prizeSettings = settings.prizeSettings || [];
+            this.drawCount = settings.drawCount || 1;
+            this.noRepeat = settings.noRepeat !== false;
+            alert('✅ 設定已載入');
+          } catch(err) {
+            alert('❌ 載入設定失敗：' + err.message);
+          }
+        };
+        reader.readAsText(file);
+      };
+      input.click();
+    },
+    
+    // 播放慶祝音效
+    playCelebrationSound() {
+      try {
+        // 使用Web Audio API創建簡單的慶祝音效
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const duration = 0.3;
+        
+        // 創建三個音符的和弦效果 (C5, E5, G5)
+        const frequencies = [523.25, 659.25, 783.99];
+        
+        frequencies.forEach((freq, index) => {
+          const oscillator = audioContext.createOscillator();
+          const gainNode = audioContext.createGain();
+          
+          oscillator.connect(gainNode);
+          gainNode.connect(audioContext.destination);
+          
+          oscillator.frequency.value = freq;
+          oscillator.type = 'sine';
+          
+          // 設置音量包絡
+          const now = audioContext.currentTime;
+          gainNode.gain.setValueAtTime(0, now);
+          gainNode.gain.linearRampToValueAtTime(0.15, now + 0.01);
+          gainNode.gain.exponentialRampToValueAtTime(0.01, now + duration);
+          
+          oscillator.start(now + index * 0.1);
+          oscillator.stop(now + index * 0.1 + duration);
+        });
+      } catch(e) {
+        console.warn('音效播放失敗:', e);
+      }
+    },
+    
+    // 慶祝動畫
+    showCelebration(winnerName, silent = false) {
+      // 播放音效
+      if(this.enableSound && !silent) {
+        this.playCelebrationSound();
+      }
+      
+      // 創建慶祝覆蓋層
+      const overlay = document.createElement('div');
+      overlay.className = 'celebration-overlay';
+      overlay.style.cssText = 'position: fixed; inset: 0; z-index: 9999; pointer-events: none;';
+      
+      // 添加彩紙效果
+      for(let i = 0; i < 50; i++) {
+        const confetti = document.createElement('div');
+        confetti.className = 'confetti';
+        confetti.style.left = `${Math.random() * 100}%`;
+        confetti.style.animationDelay = `${Math.random() * 0.5}s`;
+        confetti.style.animationDuration = `${2 + Math.random() * 2}s`;
+        
+        const colors = ['#f59e0b', '#ec4899', '#8b5cf6', '#3b82f6', '#10b981'];
+        confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+        confetti.style.width = `${Math.random() * 10 + 5}px`;
+        confetti.style.height = confetti.style.width;
+        
+        overlay.appendChild(confetti);
+      }
+      
+      // 添加中獎者通知
+      const notice = document.createElement('div');
+      notice.className = 'winner-modal';
+      notice.style.cssText = `
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: linear-gradient(135deg, #f59e0b 0%, #ec4899 100%);
+        padding: 2rem 3rem;
+        border-radius: 1.5rem;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        color: white;
+        font-size: 2rem;
+        font-weight: bold;
+        text-align: center;
+        z-index: 10000;
+      `;
+      notice.innerHTML = `
+        <div style="font-size: 3rem; margin-bottom: 1rem;">🎉</div>
+        <div>恭喜</div>
+        <div style="font-size: 2.5rem; margin: 1rem 0;">${winnerName}</div>
+        <div style="font-size: 1.5rem;">中獎了！</div>
+      `;
+      
+      overlay.appendChild(notice);
+      document.body.appendChild(overlay);
+      
+      // 3秒後自動移除
+      setTimeout(() => {
+        overlay.remove();
+      }, 3000);
+    },
+    
+    addRow() {
+      this.rosterTable.push({ 
+        uid: Date.now() + '-' + Math.random().toString(36).slice(2,6), 
+        name: '', 
+        weight: 1, 
+        nameError: false, 
+        weightError: false 
+      });
+    },
+    
     removeRow(idx) {
       this.rosterTable.splice(idx, 1);
+      this.updateRosterError();
     },
+    
     validateName(idx) {
       const p = this.rosterTable[idx];
       p.nameError = !p.name.trim();
       this.updateRosterError();
     },
+    
     validateWeight(idx) {
       const p = this.rosterTable[idx];
-      p.weightError = !(Number.isInteger(p.weight) && p.weight > 0);
+      const w = Number(p.weight);
+      p.weightError = !(Number.isInteger(w) && w > 0);
       this.updateRosterError();
     },
+    
     updateRosterError() {
       this.rosterError = '';
-      for (const p of this.rosterTable) {
-        if (p.nameError) { this.rosterError = '姓名不可空白'; break; }
-        if (p.weightError) { this.rosterError = '權重必須為正整數'; break; }
+      const hasEmpty = this.rosterTable.some(p => !p.name.trim());
+      const hasInvalidWeight = this.rosterTable.some(p => {
+        const w = Number(p.weight);
+        return !(Number.isInteger(w) && w > 0);
+      });
+      
+      if (hasEmpty) { 
+        this.rosterError = '姓名不可空白'; 
+      } else if (hasInvalidWeight) { 
+        this.rosterError = '權重必須為正整數'; 
       }
     },
+    
     clearRoster() {
-      this.rosterTable = [{ uid: Date.now() + '-0', name: '', weight: 1, nameError: false, weightError: false }];
+      this.rosterTable = [{ 
+        uid: Date.now() + '-0', 
+        name: '', 
+        weight: 1, 
+        nameError: false, 
+        weightError: false 
+      }];
       this.rosterError = '';
+      this.participants = [];
+      this.winners = [];
     },
+    
     batchPaste() {
-      const text = prompt('請貼上名單，每行格式：姓名,權重（權重可省略）');
+      const text = prompt('請貼上名單，每行格式：姓名,權重（權重可省略，預設為1）\n\n範例：\n王小明,3\n李小華\n陳大同,2');
       if (!text) return;
+      
       const lines = text.split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
       this.rosterTable = lines.map((line, idx) => {
-        const [name, weight] = line.split(/[\t,\|]+/).map(s=>s.trim());
+        const parts = line.split(/[\t,\|]+/).map(s=>s.trim());
+        const name = parts[0] || '';
+        const weight = parts[1] ? Number(parts[1]) : 1;
+        
         return {
           uid: Date.now() + '-' + idx,
-          name: name || '',
-          weight: Number(weight) > 0 ? Number(weight) : 1,
+          name: name,
+          weight: weight > 0 ? weight : 1,
           nameError: !name,
-          weightError: !(Number.isInteger(Number(weight)) && Number(weight) > 0)
+          weightError: !(Number.isInteger(weight) && weight > 0)
         };
       });
       this.updateRosterError();
     },
-    // 覆寫原本的 loadSample
+    
     loadSample() {
-      const sample = [
-        { name: '王小明', weight: 3 },
-        { name: '李小華', weight: 1 },
-        { name: '陳大同', weight: 2 }
-      ];
+      const samples = {
+        'zh-TW': [
+          { name: '王小明', weight: 3 },
+          { name: '李小華', weight: 1 },
+          { name: '陳大同', weight: 2 },
+          { name: '張美麗', weight: 1 },
+          { name: '林志明', weight: 2 }
+        ],
+        'zh-CN': [
+          { name: '张三', weight: 3 },
+          { name: '李四', weight: 1 },
+          { name: '王五', weight: 2 },
+          { name: '赵六', weight: 1 },
+          { name: '钱七', weight: 2 }
+        ],
+        'en': [
+          { name: 'Alice', weight: 3 },
+          { name: 'Bob', weight: 1 },
+          { name: 'Charlie', weight: 2 },
+          { name: 'Diana', weight: 1 },
+          { name: 'Eve', weight: 2 }
+        ],
+        'ja': [
+          { name: '佐藤', weight: 3 },
+          { name: '鈴木', weight: 1 },
+          { name: '田中', weight: 2 },
+          { name: '高橋', weight: 1 },
+          { name: '渡辺', weight: 2 }
+        ]
+      };
+      
+      const sample = samples[this.currentLanguage] || samples['zh-TW'];
       this.rosterTable = sample.map((p, idx) => ({
         uid: Date.now() + '-' + idx,
         name: p.name,
@@ -571,90 +1475,325 @@ createApp({
       }));
       this.rosterError = '';
     },
-    // 解析 rosterTable 為 participants
+    
     parseParticipants() {
-      if (this.rosterError) return;
+      if (this.rosterError) {
+        alert('請修正名單錯誤後再確認');
+        return;
+      }
+      
+      if (this.rosterTable.length === 0) {
+        alert('請至少新增一位參與者');
+        return;
+      }
+      
       this.participants = this.rosterTable
-        .filter(p => p.name && Number.isInteger(p.weight) && p.weight > 0)
+        .filter(p => p.name.trim() && Number.isInteger(Number(p.weight)) && Number(p.weight) > 0)
+        .filter(p => !this.enableBlacklist || !this.blacklist.includes(p.name.trim())) // 過濾黑名單
         .map((p, idx) => ({
           id: `${Date.now()}_${idx}_${Math.random().toString(36).slice(2,7)}`,
-          name: p.name,
-          weight: p.weight,
+          name: p.name.trim(),
+          weight: Number(p.weight),
           eligible: true
         }));
+      
+      if (this.participants.length === 0) {
+        alert('沒有有效的參與者');
+        return;
+      }
+      
       this.winners = [];
       this.round = 0;
+      
+      // 顯示確認訊息
+      let message = `✅ 已確認 ${this.participants.length} 位參與者\n總權重：${this.participants.reduce((s,p)=>s+p.weight, 0)}`;
+      if(this.enableBlacklist && this.blacklist.length > 0) {
+        const filtered = this.rosterTable.filter(p => this.blacklist.includes(p.name.trim())).length;
+        if(filtered > 0) {
+          message += `\n已過濾黑名單：${filtered} 人`;
+        }
+      }
+      alert(message);
     },
-    clearAll(){ this.participantsText=''; this.participants=[]; this.winners=[]; this.drawLog=[]; this.round=0; },
-    resetEligibility(){ this.participants = this.participants.map(p=>({ ...p, eligible:true })); },
-    generateSalt(){ const b=new Uint8Array(16); crypto.getRandomValues(b); this.seedSalt = Array.from(b).map(x=>x.toString(16).padStart(2,'0')).join(''); },
+    
+    resetEligibility(){ 
+      this.participants = this.participants.map(p=>({ ...p, eligible:true })); 
+      alert('✅ 已恢復所有參與者的抽獎資格');
+    },
+    
+    generateSalt(){ 
+      const b=new Uint8Array(16); 
+      crypto.getRandomValues(b); 
+      this.seedSalt = Array.from(b).map(x=>x.toString(16).padStart(2,'0')).join(''); 
+    },
 
     async drawWinners(){
-      if(this.participants.length===0 || this.drawCount<1) return;
+      if(this.participants.length===0) {
+        alert('❌ 請先確認參與者名單');
+        return;
+      }
+      
+      if(this.drawCount<1) {
+        alert('❌ 抽取人數必須大於0');
+        return;
+      }
+      
+      if(this.eligibleCount === 0) {
+        alert('❌ 沒有可抽的參與者\n\n請點擊「恢復所有資格」按鈕重置');
+        return;
+      }
+      
+      // 檢查session狀態
+      if(!this.isSessionActive) {
+        if(!confirm('尚未開始抽獎輪次\n\n是否立即開始新一輪抽獎？')) {
+          return;
+        }
+        this.startNewSession();
+        if(!this.isSessionActive) return; // 如果用戶取消了
+      }
+      
+      // 檢查是否已達本輪上限
+      if(this.currentSessionDrawn >= this.maxDrawPerSession) {
+        alert(`❌ 本輪抽獎已達上限\n\n已抽出：${this.currentSessionDrawn}/${this.maxDrawPerSession} 人\n\n請開始新一輪抽獎`);
+        return;
+      }
+      
+      // 計算本次可抽人數
+      const remainingInSession = this.maxDrawPerSession - this.currentSessionDrawn;
+      const actualDrawCount = Math.min(this.drawCount, remainingInSession, this.eligibleCount);
+      
+      if(this.drawCount > remainingInSession) {
+        if(!confirm(`⚠️ 本次設定抽取${this.drawCount}人，但本輪僅剩${remainingInSession}個名額\n\n將抽出${actualDrawCount}人，是否繼續？`)) {
+          return;
+        }
+      }
+      
       this.isDrawing = true;
+      
       try{
-        let rng = null; let methodLabel='';
-        if(this.rngMethod==='crypto'){ rng = Core.randomCrypto; methodLabel='crypto'; }
-        else if(this.rngMethod==='math'){ rng = Math.random; methodLabel='math'; }
-        else{ const seedStr = `${this.seedSalt}|${this.publicSeed}|round:${this.round+1}`; rng = await Core.seededRng(seedStr); methodLabel = `seeded(${this.seedSalt.slice(0,6)}…|${this.publicSeed})`; }
+        let rng = Core.randomCrypto;
+        let methodLabel = 'Crypto';
 
-        const winnersThisRound=[]; const N = Math.max(1, Math.floor(this.drawCount));
+        const winnersThisRound=[]; 
+        const N = actualDrawCount;
+        
+        // 固定轉盤旋轉時間為5秒
+        const spinDuration = 5000;
+        const pauseBetween = 3200;
+        
         for(let i=0;i<N;i++){
+          console.log(`
+🎰 ========== 第 ${i+1}/${N} 次抽獎 ==========`);
+          
           const pick = Core.weightedPick(this.participants, rng);
           if(!pick) break;
+          
+          console.log('🎯 抽中:', pick.name);
           winnersThisRound.push(pick);
-          if(this.noRepeat){ const idx = this.participants.findIndex(p=>p.id===pick.id); if(idx>=0) this.participants[idx].eligible=false; }
-          // Visuals (sequential per winner)
+          
+          // 【關鍵】先不修改 eligible，等轉盤完成後再改
           const globalIndex = this.participants.findIndex(p=>p.id===pick.id);
-          if(this.mode==='wheel'){ await this.$refs.visualRef.spinTo(globalIndex); }
-          else if(this.mode==='wall'){ await this.$refs.visualRef.spotlight(globalIndex); }
-          else { await this.$refs.visualRef.animateToGlobalIndex(globalIndex); }
-
-          // record winner for display
+          console.log('🎪 準備旋轉轉盤...', { 
+            globalIndex, 
+            spinDuration,
+            pickName: pick.name,
+            pickId: pick.id
+          });
+          
+          // 檢查 visualRef 是否存在
+          if(!this.$refs.visualRef) {
+            console.error('❌ visualRef 不存在！');
+            alert('錯誤：轉盤組件未初始化');
+            return;
+          }
+          
+          // ========== 步驟1: 轉盤旋轉動畫（5秒） ==========
+          console.log('🔄 [步驟1] 轉盤開始旋轉...');
+          await this.$refs.visualRef.spinTo(globalIndex, spinDuration);
+          console.log('✅ [步驟1完成] 轉盤旋轉結束');
+          
+          // ========== 步驟2: 轉盤停穩後，修改 eligible ==========
+          console.log('🔄 [步驟2] 等待轉盤完全停穩...');
+          await new Promise(resolve => setTimeout(resolve, 500));
+          
+          // 現在才標記為不可抽（轉盤已經停止了）
+          if(this.noRepeat){ 
+            const idx = this.participants.findIndex(p=>p.id===pick.id); 
+            if(idx>=0) {
+              console.log('🚫 設定 eligible=false:', this.participants[idx].name);
+              this.participants[idx].eligible = false;
+            }
+          }
+          
+          console.log('✅ [步驟2完成] 參與者狀態已更新');
+          
+          // ========== 步驟3: 閃光效果 ==========
+          console.log('🔄 [步驟3] 添加閃光效果...');
+          const wheelContainer = this.$refs.wheelContainer;
+          if(wheelContainer) {
+            wheelContainer.classList.add('wheel-glow');
+            setTimeout(() => wheelContainer.classList.remove('wheel-glow'), 800);
+          }
+          
+          await new Promise(resolve => setTimeout(resolve, 300));
+          console.log('✅ [步驟3完成] 閃光效果完成');
+          
+          // ========== 步驟4: 顯示慶祝動畫 ==========
+          console.log('🔄 [步驟4] 顯示慶祝動畫:', pick.name);
+          if(this.enableSound) {
+            this.showCelebration(pick.name);
+          } else {
+            this.showCelebration(pick.name, true); // 靜音模式
+          }
+          
+          // 增加輪次
           this.round += 1;
-          this.winners.push({ name: pick.name, weight: pick.weight, round: this.round });
+          this.currentSessionDrawn += 1;
+          
+          // 記錄得獎者
+          const winnerData = { 
+            name: pick.name, 
+            weight: pick.weight, 
+            round: this.round,
+            prize: this.currentPrize ? this.currentPrize.name : ''
+          };
+          this.winners.push(winnerData);
+          
+          // 如果有獎項設定，記錄到獎項中
+          if(this.currentPrize) {
+            this.currentPrize.winners.push(pick.name);
+            this.currentPrize.drawn += 1;
+            
+            // 如果該獎項已抽完，自動切換到下一個獎項
+            if(this.currentPrize.drawn >= this.currentPrize.count) {
+              if(this.currentPrizeIndex < this.prizeSettings.length - 1) {
+                this.currentPrizeIndex += 1;
+              }
+            }
+          }
+          
+          // 如果要抽多個，中間稍作停頓（等待慶祝動畫）
+          if(i < N-1) {
+            await new Promise(resolve => setTimeout(resolve, pauseBetween));
+          }
         }
 
+        // 記錄到抽獎紀錄
         if(winnersThisRound.length>0){
           const ts = new Date();
-          this.drawLog.unshift({ time: ts.toLocaleString(), round: this.round, method: methodLabel, winners: winnersThisRound.map(w=>w.name) });
+          this.drawLog.unshift({ 
+            time: ts.toLocaleString('zh-TW', { 
+              year: 'numeric', 
+              month: '2-digit', 
+              day: '2-digit', 
+              hour: '2-digit', 
+              minute: '2-digit', 
+              second: '2-digit' 
+            }), 
+            round: this.round, 
+            winners: winnersThisRound.map(w=>w.name),
+            prize: this.currentPrize ? this.currentPrize.name : '',
+            sessionProgress: `${this.currentSessionDrawn}/${this.maxDrawPerSession}`
+          });
         }
-      } finally { this.isDrawing=false; }
+        
+        // 檢查是否完成本輪
+        if(this.currentSessionDrawn >= this.maxDrawPerSession) {
+          setTimeout(() => {
+            let msg = `🎊 本輪抽獎已完成！\n\n`;
+            msg += `📊 統計：${this.currentSessionDrawn}/${this.maxDrawPerSession} 人\n\n`;
+            msg += `🏆 得獎名單：\n`;
+            this.winners.forEach((w, i) => {
+              msg += `  ${i+1}. ${w.prize ? '['+w.prize+'] ' : ''}${w.name}\n`;
+            });
+            msg += `\n💡 提示：點擊「🔄 重新開始」可以開啟下一輪抽獎`;
+            alert(msg);
+          }, 500);
+        }
+        
+      } catch(error) {
+        console.error('抽獎過程發生錯誤:', error);
+        alert('❌ 抽獎過程發生錯誤，請重試');
+      } finally { 
+        this.isDrawing=false; 
+      }
     },
 
     exportLog(){
-      const payload = { lang:this.currentLanguage, mode:this.mode, rngMethod:this.rngMethod, seedSalt:this.seedSalt, publicSeed:this.publicSeed, noRepeat:this.noRepeat,
-                        roster:this.participants.map(p=>({name:p.name, weight:p.weight})), log:this.drawLog };
-      const blob = new Blob([JSON.stringify(payload,null,2)], {type:'application/json'});
-      const url = URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download=`lottery_log_${Date.now()}.json`; a.click(); URL.revokeObjectURL(url);
+      const payload = { 
+        purpose: this.lotteryPurpose,
+        options: this.lotteryOptions,
+        lang: this.currentLanguage, 
+        rngMethod: this.rngMethod, 
+        seedSalt: this.seedSalt, 
+        publicSeed: this.publicSeed, 
+        noRepeat: this.noRepeat,
+        roster: this.participants.map(p=>({
+          name: p.name, 
+          weight: p.weight, 
+          eligible: p.eligible
+        })), 
+        winners: this.winners,
+        log: this.drawLog,
+        exportTime: new Date().toISOString()
+      };
+      
+      const blob = new Blob([JSON.stringify(payload, null, 2)], {type:'application/json'});
+      const url = URL.createObjectURL(blob); 
+      const a = document.createElement('a'); 
+      const fileName = `lottery_${this.lotteryPurpose || 'record'}_${Date.now()}.json`;
+      a.href = url; 
+      a.download = fileName; 
+      a.click(); 
+      URL.revokeObjectURL(url);
     },
+    
     exportXLSX() {
-      // 彙整資料
       const now = new Date();
       const sheetData = [
-        ['抽獎主題', this.lotteryPurpose],
-        ['抽獎說明', this.lotteryOptions],
-        ['抽獎時間', now.toLocaleString()],
+        ['抽獎主題', this.lotteryPurpose || '未填寫'],
+        ['獎項說明', this.lotteryOptions || '未填寫'],
+        ['抽獎時間', now.toLocaleString('zh-TW')],
+        ['隨機模式', 'Crypto（加密等級）'],
+        ['總參與人數', this.participants.length],
+        ['總抽獎輪次', this.round],
         [],
-        ['輪次', '時間', '得獎者', '抽獎方式']
+        ['輪次', '時間', '得獎者']
       ];
+      
       // 每筆紀錄
       this.drawLog.slice().reverse().forEach(row => {
         sheetData.push([
           row.round,
           row.time,
-          row.winners.join(', '),
-          row.method
+          row.winners.join(', ')
         ]);
       });
+      
+      // 參與者狀態
+      sheetData.push([]);
+      sheetData.push(['參與者名單', '權重', '狀態']);
+      this.participants.forEach(p => {
+        sheetData.push([
+          p.name,
+          p.weight,
+          p.eligible ? '可抽' : '已中獎'
+        ]);
+      });
+      
       // 產生 XLSX
       const ws = XLSX.utils.aoa_to_sheet(sheetData);
       const wb = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(wb, ws, '抽獎紀錄');
-      XLSX.writeFile(wb, `lottery_${now.getFullYear()}${(now.getMonth()+1).toString().padStart(2,'0')}${now.getDate().toString().padStart(2,'0')}_${now.getHours()}${now.getMinutes()}${now.getSeconds()}.xlsx`);
+      
+      const fileName = `lottery_${this.lotteryPurpose || 'record'}_${now.getFullYear()}${(now.getMonth()+1).toString().padStart(2,'0')}${now.getDate().toString().padStart(2,'0')}.xlsx`;
+      XLSX.writeFile(wb, fileName);
     }
   },
-  mounted(){ if(!this.seedSalt) this.generateSalt(); if((this.participantsText||'').trim()) this.parseParticipants(); }
+  
+  mounted(){ 
+    if(!this.seedSalt) this.generateSalt(); 
+  }
 }).mount('#app');
 </script>
 </body>
