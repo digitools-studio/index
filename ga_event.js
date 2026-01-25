@@ -44,15 +44,7 @@ function getPageSection() {
 // 模板與功能類別追蹤
 // ========================================
 
-// 3. 模板試用預覽按鈕
-document.addEventListener('click', function(e) {
-  if (e.target.closest('a[href="#customization"]')) {
-    gtag('event', 'select_template', {
-      event_category: 'template',
-      event_label: '試用預覽',
-      section: 'features'
-    });
-  }
+// 「客製化區塊」已移除，相關追蹤碼已刪除
 });
 
 // ========================================

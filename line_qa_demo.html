@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 混合客服戰情室 - 深度商務版</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Noto+Sans+TC:wght@300;400;700;900&display=swap');
+        
+        :root {
+            --primary: #3b82f6;
+            --line-green: #00B900;
+            --line-chat-bg: #8cabd9;
+            --bg-dark: #0f172a;
+        }
+
+        body { 
+            font-family: 'Inter', 'Noto Sans TC', sans-serif; 
+            background-color: var(--bg-dark);
+            color: #f8fafc;
+            overflow: hidden;
+        }
+
+        .phone-mockup {
+            width: 320px;
+            height: 720px;
+            background: #000;
+            border-radius: 40px;
+            padding: 12px;
+            box-shadow: 0 50px 100px -20px rgba(0,0,0,0.5);
+            border: 4px solid #334155;
+            position: relative;
+        }
+
+        .phone-inner {
+            width: 100%;
+            height: 100%;
+            background: var(--line-chat-bg);
+            border-radius: 30px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .line-header {
+            background: rgba(43, 58, 74, 0.95);
+            backdrop-filter: blur(10px);
+            color: white;
+            padding: 40px 15px 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            z-index: 20;
+        }
+
+        /* LINE Rich Menu */
+        .rich-menu {
+            height: 160px;
+            background: white;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            border-top: 1px solid #ddd;
+            z-index: 30;
+        }
+        .menu-item {
+            border: 0.5px solid #eee;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 5px;
+            cursor: pointer;
+        }
+        .menu-item i { font-size: 14px; margin-bottom: 2px; color: var(--line-green); }
+        .menu-item span { font-size: 8px; color: #333; font-weight: bold; }
+
+        /* Flex Message Styles */
+        .flex-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            max-width: 230px;
+        }
+        .flex-header { background: #1a1a1a; color: white; padding: 10px; font-size: 11px; font-weight: bold; }
+        .flex-hero { height: 100px; background: #f8f9fa; display: flex; items-center; justify-center; border-bottom: 1px solid #eee; }
+        .flex-body { padding: 12px; }
+        .flex-row { display: flex; justify-content: space-between; margin-bottom: 4px; font-size: 10px; }
+        .flex-btn { background: var(--line-green); color: white; text-align: center; padding: 8px; border-radius: 6px; font-size: 11px; font-weight: bold; margin-top: 8px; cursor: pointer; }
+
+        .line-bubble-user {
+            background: #85e249;
+            color: #000;
+            border-radius: 15px 2px 15px 15px;
+            padding: 8px 12px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+        .line-bubble-bot {
+            background: white;
+            color: #000;
+            border-radius: 2px 15px 15px 15px;
+            padding: 8px 12px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .premium-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+        }
+
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        
+        .animate-scan {
+            background: linear-gradient(to bottom, transparent, rgba(59, 130, 246, 0.2), transparent);
+            background-size: 100% 100px;
+            animation: scan 2s linear infinite;
+        }
+        @keyframes scan {
+            0% { background-position: 0 -100px; }
+            100% { background-position: 0 700px; }
+        }
+
+        [v-cloak] { display: none; }
+    </style>
+</head>
+<body>
+
+<div id="app" v-cloak class="min-h-screen flex flex-col">
+    <!-- Top Header -->
+    <header class="p-4 px-8 flex justify-between items-center border-b border-white/5 bg-slate-900/80 sticky top-0 z-50">
+        <div class="flex items-center space-x-4">
+            <div class="w-10 h-10 bg-[#00B900] rounded-xl flex items-center justify-center">
+                <i class="fab fa-line text-2xl text-white"></i>
+            </div>
+            <div>
+                <h1 class="text-lg font-black tracking-tighter">LINE <span class="text-[#00B900]">EXPERT</span> HUB</h1>
+                <p class="text-[9px] text-slate-500 font-bold uppercase tracking-widest">Advanced Vision & RAG Logic</p>
+            </div>
+        </div>
+        <div class="flex items-center space-x-4">
+            <div class="text-right mr-4">
+                <p class="text-[9px] text-slate-500 font-bold">RAG STATUS</p>
+                <p class="text-xs font-bold text-blue-400">ACTIVE: 14.2B Tokens Indexed</p>
+            </div>
+            <button @click="resetFlow" class="px-4 py-2 bg-slate-800 rounded-lg text-xs font-bold hover:bg-slate-700 transition">重啟演練</button>
+        </div>
+    </header>
+
+    <main class="flex-1 p-6 flex flex-col lg:flex-row gap-8 items-start justify-center max-w-[1700px] mx-auto w-full">
+        
+        <!-- Left: Phone Simulator -->
+        <div class="flex flex-col items-center space-y-4 shrink-0">
+            <div class="phone-mockup">
+                <div class="phone-inner">
+                    <div class="line-header">
+                        <i class="fas fa-chevron-left"></i>
+                        <span class="font-bold text-sm">智慧家居專家 - AI</span>
+                        <div class="flex space-x-3 text-xs">
+                            <i class="fas fa-search"></i>
+                            <i class="fas fa-bars"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="flex-1 overflow-y-auto p-4 space-y-4 no-scrollbar" id="chat-box">
+                        <div v-for="(msg, i) in visibleMessages" :key="i" class="flex flex-col" :class="msg.role === 'user' ? 'items-end' : 'items-start'">
+                            
+                            <!-- User/Bot Text Message -->
+                            <div v-if="!msg.isFlex && !msg.isImage" class="flex items-start max-w-[90%]" :class="msg.role === 'user' ? 'flex-row-reverse' : 'flex-row'">
+                                <div v-if="msg.role !== 'user'" class="w-7 h-7 rounded-full bg-[#00B900] mr-2 flex-shrink-0 flex items-center justify-center">
+                                    <i v-if="msg.role === 'bot'" class="fas fa-robot text-white text-[10px]"></i>
+                                    <img v-else src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" class="rounded-full">
+                                </div>
+                                <div class="flex flex-col" :class="msg.role === 'user' ? 'items-end' : 'items-start'">
+                                    <div :class="[msg.role === 'user' ? 'line-bubble-user' : 'line-bubble-bot']">
+                                        <p class="text-[11px] leading-snug">{{ msg.text }}</p>
+                                    </div>
+                                    <span class="text-[8px] text-slate-500 mt-1">17:05</span>
+                                </div>
+                            </div>
+
+                            <!-- Image Upload (Simulation) -->
+                            <div v-if="msg.isImage" class="flex items-end flex-row-reverse max-w-[90%] animate-fade-in">
+                                <div class="rounded-xl overflow-hidden border-2 border-[#85e249] shadow-lg">
+                                    <div class="w-32 h-32 bg-slate-200 flex flex-col items-center justify-center text-slate-400">
+                                        <i class="fas fa-camera text-2xl mb-1"></i>
+                                        <span class="text-[9px] font-bold">上傳照片中...</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Flex Message (Rich Text) -->
+                            <div v-if="msg.isFlex" class="flex items-start max-w-[90%] flex-row animate-fade-in">
+                                <div class="w-7 h-7 rounded-full bg-[#00B900] mr-2 flex-shrink-0 flex items-center justify-center"><i class="fas fa-robot text-white text-[10px]"></i></div>
+                                <div class="flex-card">
+                                    <div class="flex-header">{{ msg.flexTitle }}</div>
+                                    <div v-if="msg.hasHero" class="flex-hero">
+                                        <i class="fas fa-file-pdf text-4xl text-red-500"></i>
+                                    </div>
+                                    <div class="flex-body">
+                                        <div v-for="row in msg.flexRows" class="flex-row">
+                                            <span class="text-slate-400">{{ row.label }}</span>
+                                            <span class="font-bold text-[#333]">{{ row.value }}</span>
+                                        </div>
+                                        <div class="flex-btn">{{ msg.flexBtn }}</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- Rich Menu -->
+                    <div v-if="showMenu" class="rich-menu animate-fade-in">
+                        <div class="menu-item"><i class="fas fa-box-open"></i><span>產品介紹</span></div>
+                        <div class="menu-item"><i class="fas fa-camera-retro"></i><span>相容性識別</span></div>
+                        <div class="menu-item"><i class="fas fa-book-reader"></i><span>手冊下載</span></div>
+                        <div class="menu-item"><i class="fas fa-user-shield"></i><span>會員中心</span></div>
+                        <div class="menu-item"><i class="fas fa-question-circle"></i><span>排除故障</span></div>
+                        <div class="menu-item" style="background: #f0fff0;"><i class="fas fa-headset"></i><span>真人專員</span></div>
+                    </div>
+
+                    <!-- Input Bar -->
+                    <div class="bg-white p-3 flex items-center space-x-3">
+                        <button @click="showMenu = !showMenu" class="text-slate-400"><i class="fas fa-th-large"></i></button>
+                        <div class="flex-1 bg-slate-100 rounded-full py-1.5 px-3 text-[10px] text-slate-400 italic">輸入訊息或上傳圖片...</div>
+                        <i class="far fa-smile text-slate-400"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right: System Operations -->
+        <div class="flex-1 flex flex-col space-y-6">
+            <!-- Execution Step -->
+            <div class="premium-card p-6 flex flex-col border-l-4 border-blue-500">
+                <div class="flex items-center justify-between mb-4">
+                    <span class="text-[10px] font-black text-slate-500 uppercase tracking-widest">Automated Workflow Execution</span>
+                    <span class="text-xs font-black text-blue-500">Step {{ currentStep }} / 14</span>
+                </div>
+                <h3 class="text-lg font-bold text-white mb-4 italic">目標：{{ currentStepLabel }}</h3>
+                <div class="flex items-center space-x-3">
+                    <button @click="prevStep" :disabled="currentStep === 1" class="w-10 h-10 rounded-xl bg-slate-800 flex items-center justify-center disabled:opacity-30"><i class="fas fa-chevron-left"></i></button>
+                    <div class="flex-1 p-3 bg-blue-500/10 border border-blue-500/30 rounded-xl">
+                        <p class="text-xs text-blue-300 font-bold leading-relaxed">{{ currentStepScript }}</p>
+                    </div>
+                    <button @click="nextStep" :disabled="currentStep === 14" class="h-10 px-6 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-black text-xs shadow-lg shadow-blue-900/40 transition">下一階段</button>
+                </div>
+            </div>
+
+            <div class="flex-1 grid grid-cols-1 xl:grid-cols-2 gap-6">
+                <!-- RAG Logic Detail -->
+                <div class="premium-card flex flex-col overflow-hidden">
+                    <div class="p-4 border-b border-white/5 bg-white/5 flex justify-between items-center">
+                        <span class="text-[10px] font-black text-slate-400 uppercase">Knowledge Retrieval Engine</span>
+                        <div class="flex space-x-2">
+                            <span class="text-[9px] text-blue-500 font-bold">Query Optimization: ON</span>
+                        </div>
+                    </div>
+                    <div class="flex-1 p-5 overflow-y-auto no-scrollbar space-y-4 relative">
+                        <div v-if="isScanning" class="absolute inset-0 animate-scan z-10 pointer-events-none"></div>
+                        
+                        <div v-for="(chunk, idx) in visibleChunks" :key="idx" 
+                             class="p-4 rounded-xl border border-white/5 bg-slate-800/40 animate-fade-in">
+                            <div class="flex items-center justify-between mb-2">
+                                <div class="flex items-center space-x-2">
+                                    <i class="fas fa-database text-blue-500 text-[10px]"></i>
+                                    <span class="text-[9px] font-black text-slate-500 uppercase">Chunk #{{ idx+1 }}</span>
+                                </div>
+                                <span class="text-[8px] bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded">Score: 0.{{ 98 - idx }}</span>
+                            </div>
+                            <p class="text-[11px] text-slate-300 leading-relaxed italic">"{{ chunk }}"</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Live Logs -->
+                <div class="premium-card flex flex-col overflow-hidden">
+                    <div class="p-4 border-b border-white/5 bg-white/5">
+                        <span class="text-[10px] font-black text-slate-400 uppercase">System Integrity Log</span>
+                    </div>
+                    <div class="flex-1 p-5 overflow-y-auto no-scrollbar space-y-4">
+                        <div v-for="(log, idx) in currentLogs" :key="idx" class="flex space-x-3 border-b border-white/5 pb-3">
+                            <div class="w-1.5 h-1.5 rounded-full mt-1.5 shrink-0" :class="log.type === 'action' ? 'bg-green-500' : 'bg-blue-500'"></div>
+                            <div>
+                                <p class="text-[11px] font-bold text-slate-200">{{ log.title }}</p>
+                                <p class="text-[10px] text-slate-500">{{ log.desc }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script>
+const { createApp, ref, computed, nextTick } = Vue;
+
+createApp({
+    setup() {
+        const currentStep = ref(1);
+        const isScanning = ref(false);
+        const showMenu = ref(true);
+
+        const flow = [
+            { step: 1, label: '需求啟動', role: 'user', text: '你好，我想了解智慧家居系統。', script: '用戶啟動會話，AI 進入「引導諮詢」模式，準備進行環境診斷。' },
+            { step: 2, label: '主動詢問', role: 'bot', text: '沒問題！為了給您最精準的建議，能先請問您目前家中的智慧設備品牌嗎？（例如：小米、Apple Home、或是傳統開關？）', script: 'AI 執行引導策略，試圖識別用戶既有設備生態系，以決定 RAG 檢索方向。' },
+            { step: 3, label: '用戶回饋', role: 'user', text: '我目前是用傳統開關，但有一些舊款的 Philips Hue 燈泡。', script: '用戶提供關鍵字「傳統開關」與「Philips Hue」，系統標記「混合環境相容性」需求。' },
+            { step: 4, label: '視覺識別引導', role: 'bot', text: '明白了！Philips Hue 可以完美整合。至於傳統開關的部分，您可以拍一張開關盒的照片傳給我嗎？我可以幫您識別是否具備「中性線」，這關係到安裝型號。', script: 'AI 啟動 Vision 模組預熱，要求特定圖像以解決「中性線」這個關鍵技術問題。' },
+            { step: 5, label: '圖片上傳', role: 'user', isImage: true, script: '用戶上傳開關盒內線路照片，系統啟動多模態識別。' },
+            { step: 6, label: 'AI 視覺識別', role: 'bot', text: '識別完成！從照片看，您的底盒具備中性線（零線），這表示您可以選擇免電池的『SmartHub Pro』系列開關。', script: 'Vision AI 成功識別中性線，RAG 立即鎖定對應的產品線規則。' },
+            { step: 7, label: '手冊與方案', role: 'bot', isFlex: true, 
+              flexTitle: '建議方案：SmartHub Pro (有線版)',
+              flexRows: [
+                  { label: '相容性', value: 'Philips Hue 橋接 OK' },
+                  { label: '安裝條件', value: '具備中性線' },
+                  { label: '建議型號', value: 'SW-PRO-101' }
+              ],
+              flexBtn: '查看安裝細節', script: '系統生成 Flex Message，將視覺識別結果轉化為具體購買建議。' },
+            { step: 8, label: '手冊下載', role: 'bot', isFlex: true,
+              hasHero: true,
+              flexTitle: 'SmartHub Pro 使用者手冊',
+              flexRows: [
+                  { label: '版本', value: 'v2.4 (2025)' },
+                  { label: '檔案大小', value: '4.2 MB' }
+              ],
+              flexBtn: '點擊下載 PDF', script: 'RAG 精準定位對應型號的 User Manual，並以圖文訊息推送下載連結。' },
+            { step: 9, label: '進階諮詢', role: 'user', text: '那如果斷網了，我的情境燈光還能動嗎？', script: '用戶提出核心技術疑慮（網路依賴性），系統調用「邊緣運算」知識庫。' },
+            { step: 10, label: '核心技術解答', role: 'bot', text: '這就是我們的優勢！SmartHub Pro 支援本地邊緣運算，即便網路斷開，您的本地自動化場景仍會照常運作。', script: 'AI 提取技術白皮書中關於「本地聯動」的段落進行專業回覆。' },
+            { step: 11, label: '大宗報價', role: 'user', text: '我們公司辦公室也想裝，大約需要 60 個開關。', script: '識別到商務大宗採購信號，系統將對話權重標記為「High Value」。' },
+            { step: 12, label: '初步報價', role: 'bot', isFlex: true,
+              flexTitle: '辦公室專案預估方案',
+              flexRows: [
+                  { label: '數量', value: '60 Units' },
+                  { label: '單價', value: 'NT$ 1,200' },
+                  { label: '專案折扣', value: '85 折' }
+              ],
+              flexBtn: '預約現場勘查', script: '自動計算 Tier-1 折扣，並產出商業報價卡片。' },
+            { step: 13, label: '真人介入', role: 'human', text: '您好，我是商務經理阿強。看到您有 60 台以上的建案需求，我可以直接帶樣品到貴司拜訪嗎？', script: '觸發自動轉接，真人經理帶入 AI 整理的診斷與報價數據進行對話。' },
+            { step: 14, label: '結案預約', role: 'user', text: '太好了，下週三下午可以嗎？', script: '成功完成從「產品識別」到「商務會面」的全自動引導流程。' }
+        ];
+
+        const knowledgeChunks = [
+            "中性線(Neutral)判定邏輯：透過 Vision 識別藍色/白色線路，並確認與負載線之電位關係。",
+            "本地連線協定：系統採 Zigbee 3.0 與 Thread 混合網狀架構，不經雲端即可執行場景指令。",
+            "商務折扣規則：大宗採購 50-99 台為 Tier 1 (85折)，100台以上為 Tier 2 (75折)。",
+            "Philips Hue 整合：透過本地 Bridge API 進行 Token 握手，延遲低於 50ms。"
+        ];
+
+        const visibleMessages = computed(() => flow.filter(f => f.step <= currentStep.value));
+        const currentStepLabel = computed(() => flow[currentStep.value-1]?.label);
+        const currentStepScript = computed(() => flow[currentStep.value-1]?.script);
+        const visibleChunks = computed(() => knowledgeChunks.filter((_, i) => i < Math.ceil(currentStep.value / 3)));
+        
+        const currentLogs = computed(() => {
+            const l = [];
+            const steps = flow.slice(0, currentStep.value).reverse();
+            steps.forEach(s => {
+                l.push({ title: s.label, desc: s.script, type: s.role === 'human' ? 'action' : 'system' });
+            });
+            return l;
+        });
+
+        const nextStep = () => {
+            if (currentStep.value < 14) {
+                isScanning.value = true;
+                setTimeout(() => {
+                    currentStep.value++;
+                    isScanning.value = false;
+                    scrollToBottom();
+                }, 500);
+            }
+        };
+        const prevStep = () => { if (currentStep.value > 1) currentStep.value--; };
+        const resetFlow = () => { currentStep.value = 1; showMenu.value = true; };
+
+        const scrollToBottom = () => {
+            nextTick(() => {
+                const box = document.getElementById('chat-box');
+                if (box) box.scrollTo({ top: box.scrollHeight, behavior: 'smooth' });
+            });
+        };
+
+        return {
+            currentStep, isScanning, showMenu,
+            visibleMessages, currentStepLabel, currentStepScript,
+            visibleChunks, currentLogs,
+            nextStep, prevStep, resetFlow
+        };
+    }
+}).mount('#app');
+</script>
+
+<style>
+@keyframes fade-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+.animate-fade-in { animation: fade-in 0.4s ease-out forwards; }
+</style>
+
+</body>
+</html>
