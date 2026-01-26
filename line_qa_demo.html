@@ -61,10 +61,10 @@
         .config-input input,
         .config-input select {
             padding: 10px 12px;
-            background: rgba(255, 255, 255, 0.08);
+            background: rgba(30, 41, 59, 0.8);
             border: 1px solid rgba(255, 255, 255, 0.15);
             border-radius: 8px;
-            color: #f8fafc;
+            color: #f1f5f9;
             font-size: 13px;
             transition: all 0.2s;
         }
@@ -76,9 +76,20 @@
         .config-input input:focus,
         .config-input select:focus {
             outline: none;
-            background: rgba(255, 255, 255, 0.12);
+            background: rgba(30, 41, 59, 1);
             border-color: var(--primary);
             box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+        }
+
+        /* select 選項樣式 */
+        .config-input select option {
+            background: #1e293b;
+            color: #f1f5f9;
+            padding: 8px;
+        }
+
+        .config-input select option:hover {
+            background: #3b82f6;
         }
 
         /* 進度條動畫 */
@@ -216,6 +227,94 @@
             background: rgba(239, 68, 68, 0.2);
             color: #fca5a5;
             border: 1px solid rgba(239, 68, 68, 0.4);
+        }
+
+        /* 知識來源上傳區塊 */
+        .knowledge-sources {
+            background: rgba(16, 185, 129, 0.05);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 12px;
+            padding: 14px;
+            margin-top: 12px;
+        }
+
+        .knowledge-sources h3 {
+            font-size: 12px;
+            font-weight: 600;
+            color: #6ee7b7;
+            margin: 0 0 10px 0;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .knowledge-sources h3 i {
+            font-size: 10px;
+        }
+
+        .source-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .source-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 10px;
+            background: rgba(16, 185, 129, 0.1);
+            border-radius: 8px;
+            border: 1px solid rgba(16, 185, 129, 0.15);
+            font-size: 12px;
+            color: #cbd5e1;
+            transition: all 0.2s;
+        }
+
+        .source-item:hover {
+            background: rgba(16, 185, 129, 0.15);
+            border-color: rgba(16, 185, 129, 0.3);
+        }
+
+        .source-item i {
+            font-size: 11px;
+            color: #6ee7b7;
+            flex-shrink: 0;
+        }
+
+        .source-item .source-name {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .source-item .source-status {
+            font-size: 10px;
+            background: rgba(34, 197, 94, 0.2);
+            color: #86efac;
+            padding: 2px 8px;
+            border-radius: 4px;
+            white-space: nowrap;
+        }
+
+        .upload-prompt {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px;
+            background: rgba(16, 185, 129, 0.08);
+            border: 1px dashed rgba(16, 185, 129, 0.3);
+            border-radius: 8px;
+            font-size: 12px;
+            color: #a7f3d0;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .upload-prompt:hover {
+            background: rgba(16, 185, 129, 0.12);
+            border-color: rgba(16, 185, 129, 0.5);
         }
 
         /* 手機版：全寬調整 */
@@ -478,7 +577,7 @@
                     <div class="flex items-center justify-between mb-4">
                         <h2 class="text-sm font-bold text-white flex items-center gap-2">
                             <i class="fas fa-sliders-h text-blue-400"></i>
-                            店家基本參數設定
+                            自營電商基本信息設定
                         </h2>
                         <button @click="showConfigTip = !showConfigTip" class="text-xs text-blue-400 hover:text-blue-300 transition">
                             {{ showConfigTip ? '收起提示' : '顯示提示' }}
@@ -487,37 +586,59 @@
                     
                     <transition name="fade">
                         <p v-if="showConfigTip" class="text-xs text-slate-400 mb-4 bg-blue-500/10 p-3 rounded border border-blue-500/20">
-                            💡 提示：修改下方參數後，chatbot 會自動調整推薦內容、產品信息和商務策略。嘗試不同行業和類別看看效果！
+                            💡 提示：根據不同商品類別、目標客群和品牌故事，AI 將自動調整產品推薦、Q&A 回答和營銷策略。知識庫會自動引用你上傳的資源！
                         </p>
                     </transition>
 
                     <div class="config-grid">
                         <div class="config-input">
                             <label>店家/品牌名稱</label>
-                            <input v-model="config.shopName" type="text" placeholder="例：智慧家居專家" @input="onConfigChange">
+                            <input v-model="config.shopName" type="text" placeholder="例：優選家居官方專賣" @input="onConfigChange">
                         </div>
                         <div class="config-input">
-                            <label>行業類別</label>
-                            <select v-model="config.industry" @change="onConfigChange">
+                            <label>主營商品類別</label>
+                            <select v-model="config.mainProduct" @change="onConfigChange">
                                 <option value="smart-home">智慧家居</option>
-                                <option value="restaurant">餐飲</option>
-                                <option value="retail">零售</option>
-                                <option value="education">教育</option>
-                                <option value="tech">科技產品</option>
-                                <option value="finance">金融服務</option>
+                                <option value="fashion">服飾配件</option>
+                                <option value="beauty">美妝保養</option>
+                                <option value="food">食品飲品</option>
+                                <option value="electronics">3C 產品</option>
+                                <option value="home-decor">居家裝飾</option>
                             </select>
                         </div>
                         <div class="config-input">
-                            <label>主營產品/服務</label>
-                            <input v-model="config.mainProduct" type="text" placeholder="例：智能開關系統" @input="onConfigChange">
-                        </div>
-                        <div class="config-input">
-                            <label>目標客群</label>
+                            <label>目標客群定位</label>
                             <select v-model="config.targetAudience" @change="onConfigChange">
-                                <option value="residential">住宅用戶</option>
-                                <option value="commercial">商業客戶</option>
-                                <option value="both">兩者均有</option>
+                                <option value="young">年輕上班族 (25-35)</option>
+                                <option value="family">家庭客戶 (35-50)</option>
+                                <option value="premium">高端消費者 (50+)</option>
+                                <option value="mixed">全年齡層</option>
                             </select>
+                        </div>
+                        <div class="config-input">
+                            <label>品牌特色/賣點</label>
+                            <input v-model="config.brandStory" type="text" placeholder="例：堅持台灣製造、環保友善" @input="onConfigChange">
+                        </div>
+                    </div>
+
+                    <!-- 知識來源上傳區塊 -->
+                    <div class="knowledge-sources">
+                        <h3>
+                            <i class="fas fa-database"></i>
+                            AI 知識來源庫
+                        </h3>
+                        <div class="source-list">
+                            <div v-for="(source, idx) in knowledgeSources" :key="idx" class="source-item animate-slide-in" :style="{ 'animation-delay': idx * 100 + 'ms' }">
+                                <i :class="getSourceIcon(source.type)"></i>
+                                <div class="source-name" :title="source.name">
+                                    {{ source.name }}
+                                </div>
+                                <span class="source-status">{{ source.status }}</span>
+                            </div>
+                        </div>
+                        <div class="upload-prompt mt-3">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <span>+ 新增知識來源（文件、FAQ、品牌故事）</span>
                         </div>
                     </div>
                 </div>
@@ -783,13 +904,32 @@ createApp({
     setup() {
         // ========== 參數配置 ==========
         const config = ref({
-            shopName: '智慧家居專家',
-            industry: 'smart-home',
-            mainProduct: '智能開關系統',
-            targetAudience: 'both'
+            shopName: '優選家居官方專賣',
+            mainProduct: 'smart-home',
+            targetAudience: 'mixed',
+            brandStory: '堅持台灣製造、環保友善'
         });
 
         const showConfigTip = ref(true);
+
+        const knowledgeSources = ref([
+            { name: '2025 年度產品目錄 & 技術規格書', type: 'catalog', status: '✓ 已同步' },
+            { name: 'FAQ 常見問題解答（含退貨政策）', type: 'faq', status: '✓ 已同步' },
+            { name: '品牌故事與企業社會責任承諾', type: 'story', status: '✓ 已同步' },
+            { name: '客戶評論與成功案例集錦', type: 'reviews', status: '✓ 已同步' },
+            { name: '安裝教學影片 & 排除故障指南', type: 'guide', status: '✓ 已同步' }
+        ]);
+
+        const getSourceIcon = (type) => {
+            const icons = {
+                'catalog': 'fas fa-book',
+                'faq': 'fas fa-question-circle',
+                'story': 'fas fa-heart',
+                'reviews': 'fas fa-star',
+                'guide': 'fas fa-video'
+            };
+            return icons[type] || 'fas fa-file';
+        };
 
         const onConfigChange = () => {
             // 重新生成流程內容（基於新配置）
@@ -804,71 +944,66 @@ createApp({
         // ========== 基礎流程模板 ==========
         const flowTemplate = {
             'smart-home': [
-                { step: 1, label: '需求啟動', role: 'user', text: '你好，我想了解智慧家居系統。', script: '用戶啟動會話，AI 進入「引導諮詢」模式。' },
-                { step: 2, label: '主動詢問', role: 'bot', text: '歡迎！為了給您最精準的建議，能先請問您目前家中的智慧設備品牌嗎？', script: 'AI 執行引導策略，識別用戶設備生態系。' },
-                { step: 3, label: '用戶回饋', role: 'user', text: '我目前是用傳統開關，但有一些舊款的 Philips Hue 燈泡。', script: '用戶提供關鍵信息，系統標記「混合環境相容性」需求。' },
-                { step: 4, label: '視覺識別引導', role: 'bot', text: '明白了！Philips Hue 可以完美整合。您能拍一張開關盒的照片傳給我嗎？', script: 'AI 啟動 Vision 模組，要求特定圖像。' },
-                { step: 5, label: '圖片上傳', role: 'user', isImage: true, script: '用戶上傳照片，系統啟動多模態識別。' },
-                { step: 6, label: 'AI 視覺識別', role: 'bot', text: '識別完成！您的底盒具備中性線，可以選擇免電池的『SmartHub Pro』系列。', script: 'Vision AI 成功識別，RAG 鎖定對應產品線。' },
-                { step: 7, label: '產品推薦', role: 'bot', isFlex: true, 
-                  flexTitle: '建議方案：SmartHub Pro (有線版)',
+                { step: 1, label: '品牌問候', role: 'bot', text: '歡迎來到優選家居！我是智能客服 AI，幫您推薦最合適的智能家居解決方案。', script: '展示品牌認同和服務承諾，AI 進入「精準推薦」模式。' },
+                { step: 2, label: '產品分類導覽', role: 'bot', text: '我們有 5 大產品線：智能開關、感測器、控制器、橋接器和專業應用方案。您對哪個類別感興趣？', script: 'RAG 檢索產品目錄，展示分類和特色。' },
+                { step: 3, label: '客戶詢問', role: 'user', text: '我想裝智能開關，但怕裝不好。請問安裝麻煩嗎？', script: '客戶提出安裝相關疑慮。' },
+                { step: 4, label: 'FAQ 回答', role: 'bot', text: '完全不麻煩！我們 SmartHub 系列有三種安裝方式：(1)免電池無線版（推薦） (2)有線版（需中性線） (3)改造版（舊開關直接替換）。我可以幫您判斷家裡適合哪一種。', script: '引用 FAQ 知識庫，提供多個解決方案。' },
+                { step: 5, label: '圖片識別請求', role: 'bot', text: '能拍一張您家的開關盒內部嗎？我用 AI 視覺識別幫您判斷是否有中性線。', script: 'Vision 模組預熱，要求特定圖像。' },
+                { step: 6, label: '用戶上傳', role: 'user', isImage: true, script: '用戶上傳開關盒照片，系統啟動多模態識別。' },
+                { step: 7, label: '視覺識別結果', role: 'bot', text: '✓ 識別完成！您的底盒有中性線（零線），最適合裝我們的『SmartHub Pro 有線版』。這款獲得 2024 年「台灣智慧家居創新獎」，用戶好評率 98%。', script: 'Vision AI 識別中性線，引用品牌認證和評論。' },
+                { step: 8, label: '產品詳細卡片', role: 'bot', isFlex: true, 
+                  flexTitle: '推薦產品：SmartHub Pro 有線版',
                   flexRows: [
-                      { label: '相容性', value: 'Philips Hue 可用' },
-                      { label: '安裝條件', value: '具備中性線' },
-                      { label: '型號', value: 'SW-PRO-101' }
+                      { label: '適配性', value: '99% 家庭相容' },
+                      { label: '安裝時間', value: '30 分鐘（含教學）' },
+                      { label: '保固年數', value: '5 年業界保證' },
+                      { label: '特色', value: '邊緣運算 + 離線可用' }
                   ],
-                  flexBtn: '查看詳情', script: '系統生成 Flex Message，推薦對應產品。' },
-                { step: 8, label: '文檔推送', role: 'bot', isFlex: true,
-                  hasHero: true,
-                  flexTitle: 'SmartHub Pro 安裝指南',
+                  flexBtn: '查看完整規格', script: '推送產品詳情卡片，突出技術優勢和保障。' },
+                { step: 9, label: '品牌承諾展示', role: 'bot', text: '我們是 MIT 認證品牌，所有產品都在台灣設計製造。並承諾：終身免費技術支援、90 天無條件退貨、用戶隱私第一。', script: '展示品牌故事和企業社會責任。' },
+                { step: 10, label: '深度 FAQ', role: 'user', text: '聽起來不錯！但如果斷網呢？而且升級固件安全嗎？', script: '客戶提出進階技術問題。' },
+                { step: 11, label: '進階技術解答', role: 'bot', text: '很好的問題！(1) 斷網時：設備有邊緣運算引擎，本地場景和自動化完全正常 (2) 安全性：我們用軍事級加密，固件更新只在 WiFi 環境進行，更新前會驗證數位簽名。詳細技術白皮書已放在 FAQ。', script: 'AI 提取技術文檔，進行深度專業回答。' },
+                { step: 12, label: '客戶成功案例', role: 'bot', isFlex: true,
+                  flexTitle: '✓ 客戶成功案例',
                   flexRows: [
-                      { label: '版本', value: 'v2.4 (2025)' },
-                      { label: '大小', value: '4.2 MB' }
+                      { label: '台南張家', value: '100 坪豪宅' },
+                      { label: '改造時間', value: '2 天完成' },
+                      { label: '滿意度', value: '⭐⭐⭐⭐⭐ 5星' }
                   ],
-                  flexBtn: '下載 PDF', script: 'RAG 定位相關文檔並推送。' },
-                { step: 9, label: '進階詢問', role: 'user', text: '斷網時本地聯動還能動嗎？', script: '用戶提出技術疑慮。' },
-                { step: 10, label: '技術解答', role: 'bot', text: 'SmartHub Pro 支援邊緣運算，斷網時本地場景仍正常運作！', script: 'AI 提取技術文檔進行解答。' },
-                { step: 11, label: '商務升級', role: 'user', text: '我們公司辦公室也想裝，需要 60 個開關。', script: '識別到大宗採購信號。' },
-                { step: 12, label: '報價方案', role: 'bot', isFlex: true,
-                  flexTitle: '商用方案報價',
-                  flexRows: [
-                      { label: '數量', value: '60 Units' },
-                      { label: '單價', value: 'NT$ 1,200' },
-                      { label: '折扣', value: '85 折' }
-                  ],
-                  flexBtn: '預約勘查', script: '自動計算折扣並生成報價。' },
-                { step: 13, label: '真人轉接', role: 'human', text: '您好，我是商務經理。看到您有大型建案需求，我可以帶樣品拜訪嗎？', script: '觸發自動轉接。' },
-                { step: 14, label: '完成預約', role: 'user', text: '太好了！下週三下午 2 點可以嗎？', script: '成功完成全流程。' }
+                  flexBtn: '看更多案例', script: '推送客戶評論和成功案例。' },
+                { step: 13, label: '購買意願升溫', role: 'user', text: '好吧，我決定試試。請問有教學影片嗎？裝不好怎麼辦？', script: '客戶傾向購買，但尋求額外保障。' },
+                { step: 14, label: '購前貼心支援', role: 'bot', text: '當然有！我們有 1 小時完整裝機影片、24 小時線上客服、甚至可以付費請我們派師傅到府安裝。購買後我會發送專屬安裝指南和售後 QR code，任何問題秒回覆。', script: '展現完整的購前購後支援承諾。' }
             ],
-            'restaurant': [
-                { step: 1, label: '初次問候', role: 'user', text: '你好，我想了解你們的菜單。', script: '客戶初次互動。' },
-                { step: 2, label: '歡迎回應', role: 'bot', text: '歡迎光臨！我們有特製咖啡和新鮮甜點，今天有什麼特別推薦給您嗎？', script: 'AI 展示菜單特色。' },
-                { step: 3, label: '客戶需求', role: 'user', text: '我對素食選項感興趣。', script: '客戶表達偏好。' },
-                { step: 4, label: '菜單推薦', role: 'bot', text: '太好了！我們有招牌素食沙拉和有機蔬菜湯。', script: 'RAG 檢索對應菜品。' },
-                { step: 5, label: '圖片確認', role: 'user', isImage: true, script: '客戶拍照確認菜品。' },
-                { step: 6, label: 'AI 識別', role: 'bot', text: '這是我們的有機沙拉，使用當季新鮮食材，今日特價 20% 折扣！', script: 'Vision 識別菜品，推薦優惠。' },
-                { step: 7, label: '優惠推薦', role: 'bot', isFlex: true,
-                  flexTitle: '今日推薦組合',
+            'fashion': [
+                { step: 1, label: '品牌歡迎', role: 'bot', text: '歡迎來到優選服飾！我是您的時尚顧問 AI，幫您找到完美搭配。', script: '品牌問候，展示服務風格。' },
+                { step: 2, label: '風格諮詢', role: 'bot', text: '我們有 OL 上班族、休閒運動、正式典禮三大風格系列。您今天想找什麼風格的衣著？', script: 'RAG 檢索風格分類和當季流行。' },
+                { step: 3, label: '客戶需求', role: 'user', text: '我想要既舒適又顯氣質的上班服，適合 30+ 的上班族。', script: '客戶明確表達需求和年齡層。' },
+                { step: 4, label: '產品推薦', role: 'bot', text: '完美！我們有「熟女氣質系列」，用天絲和棉混紡，柔軟透氣，剪裁顯身材。今年很紅的款式。', script: '引用產品目錄推薦合適款式。' },
+                { step: 5, label: '圖片搜索', role: 'bot', text: '你能拍一下你現在穿的衣服嗎？我用 AI 色彩分析幫你推薦搭配。', script: 'Vision 模組啟動色彩分析。' },
+                { step: 6, label: '用戶上傳', role: 'user', isImage: true, script: '客戶上傳穿衣照片。' },
+                { step: 7, label: 'AI 色彩分析', role: 'bot', text: '✓ 分析完成！你是冬季色系（冷色調），很適合我們的深藍、炭黑和銀灰色。避免暖褐色會更顯氣質。', script: 'Vision 進行色彩和膚色分析。' },
+                { step: 8, label: '搭配建議卡片', role: 'bot', isFlex: true, 
+                  flexTitle: '為你推薦的搭配組合',
                   flexRows: [
-                      { label: '沙拉 + 飲料', value: 'NT$ 280' },
-                      { label: '折扣', value: '20% 優惠' },
-                      { label: '有效期', value: '今日' }
+                      { label: '上衣', value: '深藍緹花襯衫' },
+                      { label: '褲子', value: '黑色直筒褲' },
+                      { label: '配件', value: '銀色手錶' },
+                      { label: '整套優惠', value: '9 折套裝價' }
                   ],
-                  flexBtn: '立即訂購', script: '推送套餐優惠。' },
-                { step: 8, label: '訂單確認', role: 'user', text: '好的，我要點一份！', script: '客戶確認訂單。' },
-                { step: 9, label: '配送詢問', role: 'user', text: '可以外送嗎？', script: '客戶詢問配送。' },
-                { step: 10, label: '配送說明', role: 'bot', text: '當然可以！我們提供 30 分鐘內外送，配送費 NT$ 30。', script: 'RAG 提供配送信息。' },
-                { step: 11, label: '團購建議', role: 'user', text: '我們辦公室 10 人想團購午餐。', script: '升級為團購機會。' },
-                { step: 12, label: '團購方案', role: 'bot', isFlex: true,
-                  flexTitle: '團購優惠方案',
+                  flexBtn: '加入購物車', script: '推送搭配建議卡片。' },
+                { step: 9, label: '品牌故事', role: 'bot', text: '我們是台灣自創品牌，堅持用永續面料（回收寶特瓶製成），同時支持公平貿易。每買一件衣服，我們就捐 10 元給婦女教育基金。', script: '展示品牌社會責任。' },
+                { step: 10, label: '進階 FAQ', role: 'user', text: '品質怎麼樣？會不會容易起毛球或褪色？', script: '客戶詢問品質和耐用性。' },
+                { step: 11, label: '品質保證', role: 'bot', text: '我們每件衣服都經過 200 次洗滌測試，起毛球率 < 1%，色牢度 4 級以上（行業最高標準）。還有 1 年品質保證，起毛或褪色免費換新。', script: 'AI 引用品質測試數據和保障。' },
+                { step: 12, label: '客戶評論', role: 'bot', isFlex: true,
+                  flexTitle: '⭐ 客戶穿搭分享',
                   flexRows: [
-                      { label: '人數', value: '10 人' },
-                      { label: '單人價', value: 'NT$ 250' },
-                      { label: '團購省', value: 'NT$ 200' }
+                      { label: '美倩（32歲上班族）', value: '穿一整年都舒服' },
+                      { label: '用戶評分', value: '⭐⭐⭐⭐⭐ 9.8/10' },
+                      { label: '回購率', value: '68% 客戶重複購買' }
                   ],
-                  flexBtn: '確認團購', script: '生成團購報價。' },
-                { step: 13, label: '專員聯繫', role: 'human', text: '您好！我是餐飲經理。團購可以客製化菜單，我們可以詳談嗎？', script: '真人經理接手。' },
-                { step: 14, label: '預約確認', role: 'user', text: '好的，明天中午能討論嗎？', script: '成功轉換商機。' }
+                  flexBtn: '看更多評論', script: '推送客戶穿搭和評價。' },
+                { step: 13, label: '購買確認', role: 'user', text: '決定了，我要買那組搭配！請問有 7 天試穿嗎？', script: '客戶準備購買，詢問退貨政策。' },
+                { step: 14, label: '購買保障', role: 'bot', text: '當然有！我們提供 7 天無條件試穿退貨。而且新客戶首次購買打 85 折。今天下單還送價值 200 元的保養組合。我發送給你專屬購物連結，查看你的個人化穿搭建議！', script: '展示完整的購買保障和新客優惠。' }
             ]
         };
 
@@ -876,29 +1011,54 @@ createApp({
         let flow = flowTemplate['smart-home'];
 
         const regenerateFlow = () => {
-            const industry = config.value.industry;
-            flow = flowTemplate[industry] || flowTemplate['smart-home'];
+            const product = config.value.mainProduct;
+            flow = flowTemplate[product] || flowTemplate['smart-home'];
             currentStep.value = 1;
             showMenu.value = true;
         };
 
         // ========== 知識庫 ==========
         const knowledgeChunks = computed(() => {
+            const product = config.value.mainProduct;
             const chunks = {
                 'smart-home': [
-                    "中性線判定邏輯：透過 Vision 識別藍色/白色線路，並確認電位關係。",
-                    "本地連線協定：Zigbee 3.0 與 Thread 混合架構，不經雲端。",
-                    "商務折扣規則：50-99 台為 85 折，100 台以上 75 折。",
-                    "Philips Hue 整合：本地 Bridge API 握手，延遲 < 50ms。"
+                    "產品特色：IoT 晶片採用業界最新 Zigbee 3.0 標準，支援離線邊緣運算，不依賴雲端。",
+                    "安裝三選項：(1) 無線電池版（最簡單，無需改線） (2) 有線版（需中性線，效能最佳） (3) 改造版（舊開關直接替換）。",
+                    "品牌認證：2024 年台灣智慧家居創新獎、SGS 驗證、5 年業界最長保固期。",
+                    "客戶成功案例：台南張家 100 坪豪宅、台中陳先生辦公室、高雄李女士民宿，滿意度均 98% 以上。"
                 ],
-                'restaurant': [
-                    "菜單優化：基於季節和客群偏好動態推薦。",
-                    "配送政策：30 分內外送，配費 NT$30，3 公里內免費。",
-                    "團購折扣：10-20 人 15% 折，20-30 人 20% 折。",
-                    "過敏信息：含堅果、乳製品菜品已標記。"
+                'fashion': [
+                    "面料技術：天絲與有機棉混紡，透氣舒適，回收寶特瓶製成（永續時尚）。",
+                    "色系分析：春夏色系（暖色調）、秋冬色系（冷色調），AI 會根據膚色推薦最顯氣質款式。",
+                    "品質保證：經過 200 次洗滌測試，起毛球率 < 1%，色牢度 4 級，1 年品質保障。",
+                    "社會責任：每件衣服售價中 10 元捐贈給婦女教育基金，支持台灣設計師自創品牌計畫。"
+                ],
+                'beauty': [
+                    "成分選擇：95% 天然植物萃取，無類固醇、無重金屬，通過皮膚科醫生測試。",
+                    "效果承諾：30 天見效或 100% 退款，3 個月明顯改善或免費補充。",
+                    "用戶評價：92% 用戶滿意度，平均 4.8 星，回購率 75%。",
+                    "售後服務：提供免費膚質分析、居家保養課程、24 小時線上諮詢。"
+                ],
+                'food': [
+                    "食材來源：100% 台灣本地小農，可溯源認證，不使用農藥化肥。",
+                    "製程透明：每批產品掃 QR code 可查看製造日期、成分來源、檢驗報告。",
+                    "健康認證：通過 BSMI 認證、台灣 FDA 合格、營養師推薦品牌。",
+                    "配送保鮮：冷鏈配送、24 小時內送達，不新鮮免費補送或全額退款。"
+                ],
+                'electronics': [
+                    "技術規格：搭載最新 A17 Pro 晶片、IP68 防水認證、支援 5 年系統更新。",
+                    "價格保證：24 小時內有更便宜來源，我們自動降價或補差價。",
+                    "售後保障：2 年全修全換保障、1 年意外損傷免費修、官方認證維修點遍佈全台。",
+                    "客戶評論：科技部落客推薦、電競選手代言、上市公司員工認可。"
+                ],
+                'home-decor': [
+                    "設計風格：北歐簡約、日式侘寂、工業風、新古典等 8 種風格任選。",
+                    "客製化服務：可提供免費 3D 居家空間設計、線上諮詢、上門丈量。",
+                    "材質品質：選用 FSC 認證木材、進口布料、低甲醛環保油漆。",
+                    "安裝服務：提供免費送裝、舊傢俱回收、6 個月內損傷免費修復。"
                 ]
             };
-            return chunks[config.value.industry] || chunks['smart-home'];
+            return chunks[product] || chunks['smart-home'];
         });
 
         // ========== 計算屬性 ==========
@@ -991,6 +1151,7 @@ createApp({
         return {
             // 配置
             config, showConfigTip, onConfigChange,
+            knowledgeSources, getSourceIcon,
             
             // 狀態
             currentStep, isScanning, showMenu,
