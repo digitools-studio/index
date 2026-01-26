@@ -15,24 +15,236 @@
             --line-green: #00B900;
             --line-chat-bg: #8cabd9;
             --bg-dark: #0f172a;
+            --card-bg: #1e293b;
         }
+
+        * { box-sizing: border-box; }
 
         body { 
             font-family: 'Inter', 'Noto Sans TC', sans-serif; 
             background-color: var(--bg-dark);
             color: #f8fafc;
+            overflow-x: hidden;
+        }
+
+        /* 參數配置面板 */
+        .config-panel {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(34, 211, 238, 0.05));
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .config-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-top: 12px;
+        }
+
+        .config-input {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .config-input label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #94a3b8;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .config-input input,
+        .config-input select {
+            padding: 10px 12px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 8px;
+            color: #f8fafc;
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+
+        .config-input input::placeholder {
+            color: #64748b;
+        }
+
+        .config-input input:focus,
+        .config-input select:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.12);
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+        }
+
+        /* 進度條動畫 */
+        @keyframes progress-fill {
+            from { width: 0; opacity: 0; }
+            to { width: var(--progress); opacity: 1; }
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
             overflow: hidden;
+            margin-top: 8px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #3b82f6, #22d3ee);
+            border-radius: 3px;
+            transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 0 10px rgba(59, 130, 246, 0.6);
+        }
+
+        /* 統計卡片 */
+        .stat-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 12px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .stat-card:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(59, 130, 246, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .stat-value {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--primary);
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: #94a3b8;
+            margin-top: 4px;
+            text-transform: uppercase;
+        }
+
+        /* 步驟進度視覺化 */
+        .step-timeline {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+            flex-wrap: wrap;
+        }
+
+        .timeline-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .timeline-dot.active {
+            background: var(--primary);
+            box-shadow: 0 0 12px rgba(59, 130, 246, 0.6);
+            transform: scale(1.3);
+        }
+
+        .timeline-dot.completed {
+            background: #10b981;
+        }
+
+        /* 動畫增強 */
+        @keyframes slide-in-up {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% {
+                box-shadow: 0 0 10px rgba(59, 130, 246, 0.3);
+            }
+            50% {
+                box-shadow: 0 0 20px rgba(59, 130, 246, 0.6);
+            }
+        }
+
+        .animate-slide-in {
+            animation: slide-in-up 0.4s ease-out;
+        }
+
+        .pulse-glow {
+            animation: pulse-glow 2s ease-in-out infinite;
+        }
+
+        /* 情感指標 */
+        .sentiment-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-top: 8px;
+        }
+
+        .sentiment-positive {
+            background: rgba(16, 185, 129, 0.2);
+            color: #86efac;
+            border: 1px solid rgba(16, 185, 129, 0.4);
+        }
+
+        .sentiment-neutral {
+            background: rgba(100, 116, 139, 0.2);
+            color: #cbd5e1;
+            border: 1px solid rgba(100, 116, 139, 0.4);
+        }
+
+        .sentiment-negative {
+            background: rgba(239, 68, 68, 0.2);
+            color: #fca5a5;
+            border: 1px solid rgba(239, 68, 68, 0.4);
+        }
+
+        /* 手機版：全寬調整 */
+        @media (max-width: 1024px) {
+            body { overflow: auto; }
+            #app { min-h: auto; }
         }
 
         .phone-mockup {
-            width: 320px;
-            height: 720px;
+            width: 100%;
+            max-width: 320px;
+            height: 100vh;
+            max-height: 720px;
             background: #000;
             border-radius: 40px;
             padding: 12px;
             box-shadow: 0 50px 100px -20px rgba(0,0,0,0.5);
             border: 4px solid #334155;
             position: relative;
+        }
+
+        @media (max-width: 768px) {
+            .phone-mockup {
+                border-radius: 12px;
+                padding: 8px;
+                height: 600px;
+                max-height: none;
+                border: 2px solid #334155;
+            }
         }
 
         .phone-inner {
@@ -46,66 +258,150 @@
             position: relative;
         }
 
+        @media (max-width: 768px) {
+            .phone-inner {
+                border-radius: 8px;
+            }
+        }
+
         .line-header {
             background: rgba(43, 58, 74, 0.95);
             backdrop-filter: blur(10px);
             color: white;
-            padding: 40px 15px 10px;
+            padding: 35px 12px 10px 12px;
             display: flex;
             align-items: center;
             justify-content: space-between;
             z-index: 20;
+            flex-shrink: 0;
         }
 
-        /* LINE Rich Menu */
+        .line-header .fas { font-size: 14px; }
+        .line-header span { font-size: 13px; font-weight: bold; }
+
+        @media (max-width: 768px) {
+            .line-header {
+                padding: 30px 10px 8px 10px;
+            }
+            .line-header span { font-size: 12px; }
+            .line-header .fas { font-size: 12px; }
+        }
+
+        /* LINE Rich Menu - 優化觸控大小 */
         .rich-menu {
-            height: 160px;
+            height: auto;
             background: white;
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            grid-template-rows: repeat(2, 1fr);
+            grid-template-rows: auto;
             border-top: 1px solid #ddd;
             z-index: 30;
+            flex-shrink: 0;
         }
+        
         .menu-item {
             border: 0.5px solid #eee;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 5px;
+            padding: 12px 8px;
             cursor: pointer;
+            min-height: 56px;
+            transition: background-color 0.2s;
         }
-        .menu-item i { font-size: 14px; margin-bottom: 2px; color: var(--line-green); }
-        .menu-item span { font-size: 8px; color: #333; font-weight: bold; }
 
-        /* Flex Message Styles */
+        .menu-item:active {
+            background-color: #f0f0f0;
+        }
+
+        .menu-item i { font-size: 16px; margin-bottom: 4px; color: var(--line-green); }
+        .menu-item span { font-size: 9px; color: #333; font-weight: bold; line-height: 1.2; }
+
+        /* Flex Message Styles - 響應式寬度 */
         .flex-card {
             background: white;
             border-radius: 12px;
             overflow: hidden;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            width: 100%;
             max-width: 230px;
         }
-        .flex-header { background: #1a1a1a; color: white; padding: 10px; font-size: 11px; font-weight: bold; }
-        .flex-hero { height: 100px; background: #f8f9fa; display: flex; items-center; justify-center; border-bottom: 1px solid #eee; }
-        .flex-body { padding: 12px; }
-        .flex-row { display: flex; justify-content: space-between; margin-bottom: 4px; font-size: 10px; }
-        .flex-btn { background: var(--line-green); color: white; text-align: center; padding: 8px; border-radius: 6px; font-size: 11px; font-weight: bold; margin-top: 8px; cursor: pointer; }
+
+        @media (max-width: 768px) {
+            .flex-card {
+                max-width: 200px;
+            }
+        }
+
+        .flex-header { 
+            background: #1a1a1a; 
+            color: white; 
+            padding: 10px; 
+            font-size: 11px; 
+            font-weight: bold; 
+            word-break: break-word;
+        }
+        
+        .flex-hero { 
+            height: 100px; 
+            background: #f8f9fa; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            border-bottom: 1px solid #eee; 
+        }
+        
+        .flex-body { 
+            padding: 12px; 
+        }
+        
+        .flex-row { 
+            display: flex; 
+            justify-content: space-between; 
+            margin-bottom: 6px; 
+            font-size: 10px; 
+            gap: 8px;
+        }
+        
+        .flex-btn { 
+            background: var(--line-green); 
+            color: white; 
+            text-align: center; 
+            padding: 10px 8px; 
+            border-radius: 6px; 
+            font-size: 12px; 
+            font-weight: bold; 
+            margin-top: 8px; 
+            cursor: pointer;
+            border: none;
+            transition: opacity 0.2s;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .flex-btn:active {
+            opacity: 0.8;
+        }
 
         .line-bubble-user {
             background: #85e249;
             color: #000;
             border-radius: 15px 2px 15px 15px;
-            padding: 8px 12px;
+            padding: 10px 14px;
             box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            word-break: break-word;
         }
+
         .line-bubble-bot {
             background: white;
             color: #000;
             border-radius: 2px 15px 15px 15px;
-            padding: 8px 12px;
+            padding: 10px 14px;
             box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            word-break: break-word;
         }
 
         .premium-card {
@@ -116,15 +412,45 @@
         }
 
         .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         
         .animate-scan {
             background: linear-gradient(to bottom, transparent, rgba(59, 130, 246, 0.2), transparent);
             background-size: 100% 100px;
             animation: scan 2s linear infinite;
         }
+
         @keyframes scan {
             0% { background-position: 0 -100px; }
             100% { background-position: 0 700px; }
+        }
+
+        /* 手機版佈局 */
+        @media (max-width: 1024px) {
+            main {
+                flex-direction: column !important;
+                gap: 4px !important;
+                align-items: stretch !important;
+                padding: 0 !important;
+                max-width: 100% !important;
+            }
+
+            .flex-1 {
+                flex: none !important;
+                width: 100%;
+            }
+
+            .grid {
+                grid-template-columns: 1fr !important;
+            }
+
+            header {
+                padding: 12px 16px !important;
+            }
+
+            .grid.grid-cols-1.xl\\:grid-cols-2 {
+                grid-template-columns: 1fr !important;
+            }
         }
 
         [v-cloak] { display: none; }
@@ -133,164 +459,314 @@
 <body>
 
 <div id="app" v-cloak class="min-h-screen flex flex-col">
-    <!-- Top Header -->
-    <header class="p-4 px-8 flex justify-between items-center border-b border-white/5 bg-slate-900/80 sticky top-0 z-50">
-        <div class="flex items-center space-x-4">
-            <div class="w-10 h-10 bg-[#00B900] rounded-xl flex items-center justify-center">
-                <i class="fab fa-line text-2xl text-white"></i>
-            </div>
-            <div>
-                <h1 class="text-lg font-black tracking-tighter">LINE <span class="text-[#00B900]">EXPERT</span> HUB</h1>
-                <p class="text-[9px] text-slate-500 font-bold uppercase tracking-widest">Advanced Vision & RAG Logic</p>
+    <!-- 頁面介紹區塊 -->
+    <section class="bg-gradient-to-r from-blue-900/40 to-cyan-900/40 border-b border-white/10">
+        <div class="max-w-[1700px] mx-auto px-4 sm:px-6 py-6 sm:py-8">
+            <div class="flex flex-col gap-6">
+                <!-- 標題和說明 -->
+                <div class="animate-slide-in">
+                    <h1 class="text-2xl sm:text-3xl font-black mb-2">
+                        <span class="text-[#00B900]">▸ LINE AI 混合客服智能引擎</span>
+                    </h1>
+                    <p class="text-sm sm:text-base text-slate-300 max-w-2xl">
+                        基於 Vision + RAG 的多模態客服演示。配置您的店家參數，AI 將自動適配聊天內容、推薦策略和商務邏輯。
+                    </p>
+                </div>
+
+                <!-- 參數配置面板 -->
+                <div class="config-panel">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-sm font-bold text-white flex items-center gap-2">
+                            <i class="fas fa-sliders-h text-blue-400"></i>
+                            店家基本參數設定
+                        </h2>
+                        <button @click="showConfigTip = !showConfigTip" class="text-xs text-blue-400 hover:text-blue-300 transition">
+                            {{ showConfigTip ? '收起提示' : '顯示提示' }}
+                        </button>
+                    </div>
+                    
+                    <transition name="fade">
+                        <p v-if="showConfigTip" class="text-xs text-slate-400 mb-4 bg-blue-500/10 p-3 rounded border border-blue-500/20">
+                            💡 提示：修改下方參數後，chatbot 會自動調整推薦內容、產品信息和商務策略。嘗試不同行業和類別看看效果！
+                        </p>
+                    </transition>
+
+                    <div class="config-grid">
+                        <div class="config-input">
+                            <label>店家/品牌名稱</label>
+                            <input v-model="config.shopName" type="text" placeholder="例：智慧家居專家" @input="onConfigChange">
+                        </div>
+                        <div class="config-input">
+                            <label>行業類別</label>
+                            <select v-model="config.industry" @change="onConfigChange">
+                                <option value="smart-home">智慧家居</option>
+                                <option value="restaurant">餐飲</option>
+                                <option value="retail">零售</option>
+                                <option value="education">教育</option>
+                                <option value="tech">科技產品</option>
+                                <option value="finance">金融服務</option>
+                            </select>
+                        </div>
+                        <div class="config-input">
+                            <label>主營產品/服務</label>
+                            <input v-model="config.mainProduct" type="text" placeholder="例：智能開關系統" @input="onConfigChange">
+                        </div>
+                        <div class="config-input">
+                            <label>目標客群</label>
+                            <select v-model="config.targetAudience" @change="onConfigChange">
+                                <option value="residential">住宅用戶</option>
+                                <option value="commercial">商業客戶</option>
+                                <option value="both">兩者均有</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="flex items-center space-x-4">
+    </section>
+
+    <!-- Top Header -->
+    <header class="p-3 sm:p-4 sm:px-8 flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-white/5 bg-slate-900/80 sticky top-0 z-40 gap-2">
+        <div class="flex items-center space-x-3 w-full sm:w-auto">
+            <div class="w-9 h-9 sm:w-10 sm:h-10 bg-[#00B900] rounded-xl flex items-center justify-center flex-shrink-0">
+                <i class="fab fa-line text-xl sm:text-2xl text-white"></i>
+            </div>
+            <div class="min-w-0">
+                <h2 class="text-sm sm:text-base font-black tracking-tighter">{{ config.shopName || 'AI 客服助手' }}</h2>
+                <p class="text-[8px] sm:text-[9px] text-slate-500 font-bold uppercase tracking-widest">RAG 驅動 | 多模態識別</p>
+            </div>
+        </div>
+        <div class="hidden sm:flex items-center space-x-4">
             <div class="text-right mr-4">
-                <p class="text-[9px] text-slate-500 font-bold">RAG STATUS</p>
-                <p class="text-xs font-bold text-blue-400">ACTIVE: 14.2B Tokens Indexed</p>
+                <p class="text-[9px] text-slate-500 font-bold">對話質量</p>
+                <p class="text-xs font-bold text-green-400">{{ satisfactionScore }}% 滿意度</p>
             </div>
             <button @click="resetFlow" class="px-4 py-2 bg-slate-800 rounded-lg text-xs font-bold hover:bg-slate-700 transition">重啟演練</button>
         </div>
+        <button @click="resetFlow" class="sm:hidden w-full px-3 py-2 bg-slate-800 rounded-lg text-xs font-bold hover:bg-slate-700 transition">重啟演練</button>
     </header>
 
-    <main class="flex-1 p-6 flex flex-col lg:flex-row gap-8 items-start justify-center max-w-[1700px] mx-auto w-full">
+    <main class="flex-1 p-3 sm:p-6 flex flex-col lg:flex-row gap-3 sm:gap-8 items-start justify-center max-w-[1700px] mx-auto w-full">
         
         <!-- Left: Phone Simulator -->
-        <div class="flex flex-col items-center space-y-4 shrink-0">
-            <div class="phone-mockup">
-                <div class="phone-inner">
-                    <div class="line-header">
-                        <i class="fas fa-chevron-left"></i>
-                        <span class="font-bold text-sm">智慧家居專家 - AI</span>
-                        <div class="flex space-x-3 text-xs">
-                            <i class="fas fa-search"></i>
-                            <i class="fas fa-bars"></i>
+        <div class="flex flex-col items-center space-y-3 sm:space-y-4 w-full lg:w-auto lg:shrink-0">
+            <div class="w-full sm:w-auto">
+                <div class="phone-mockup">
+                    <div class="phone-inner">
+                        <div class="line-header">
+                            <i class="fas fa-chevron-left"></i>
+                            <span class="flex-1 text-center px-2 truncate">智慧家居專家 - AI</span>
+                            <div class="flex space-x-2 text-xs">
+                                <i class="fas fa-search"></i>
+                                <i class="fas fa-bars"></i>
+                            </div>
                         </div>
-                    </div>
-                    
-                    <div class="flex-1 overflow-y-auto p-4 space-y-4 no-scrollbar" id="chat-box">
-                        <div v-for="(msg, i) in visibleMessages" :key="i" class="flex flex-col" :class="msg.role === 'user' ? 'items-end' : 'items-start'">
-                            
-                            <!-- User/Bot Text Message -->
-                            <div v-if="!msg.isFlex && !msg.isImage" class="flex items-start max-w-[90%]" :class="msg.role === 'user' ? 'flex-row-reverse' : 'flex-row'">
-                                <div v-if="msg.role !== 'user'" class="w-7 h-7 rounded-full bg-[#00B900] mr-2 flex-shrink-0 flex items-center justify-center">
-                                    <i v-if="msg.role === 'bot'" class="fas fa-robot text-white text-[10px]"></i>
-                                    <img v-else src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" class="rounded-full">
-                                </div>
-                                <div class="flex flex-col" :class="msg.role === 'user' ? 'items-end' : 'items-start'">
-                                    <div :class="[msg.role === 'user' ? 'line-bubble-user' : 'line-bubble-bot']">
-                                        <p class="text-[11px] leading-snug">{{ msg.text }}</p>
+                        
+                        <div class="flex-1 overflow-y-auto p-3 space-y-3 no-scrollbar text-sm" id="chat-box">
+                            <div v-for="(msg, i) in visibleMessages" :key="i" class="flex flex-col" :class="msg.role === 'user' ? 'items-end' : 'items-start'">
+                                
+                                <!-- User/Bot Text Message -->
+                                <div v-if="!msg.isFlex && !msg.isImage" class="flex items-start max-w-[95%]" :class="msg.role === 'user' ? 'flex-row-reverse' : 'flex-row'">
+                                    <div v-if="msg.role !== 'user'" class="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-[#00B900] mr-2 flex-shrink-0 flex items-center justify-center">
+                                        <i v-if="msg.role === 'bot'" class="fas fa-robot text-white text-[9px]"></i>
+                                        <img v-else src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" class="rounded-full">
                                     </div>
-                                    <span class="text-[8px] text-slate-500 mt-1">17:05</span>
-                                </div>
-                            </div>
-
-                            <!-- Image Upload (Simulation) -->
-                            <div v-if="msg.isImage" class="flex items-end flex-row-reverse max-w-[90%] animate-fade-in">
-                                <div class="rounded-xl overflow-hidden border-2 border-[#85e249] shadow-lg">
-                                    <div class="w-32 h-32 bg-slate-200 flex flex-col items-center justify-center text-slate-400">
-                                        <i class="fas fa-camera text-2xl mb-1"></i>
-                                        <span class="text-[9px] font-bold">上傳照片中...</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Flex Message (Rich Text) -->
-                            <div v-if="msg.isFlex" class="flex items-start max-w-[90%] flex-row animate-fade-in">
-                                <div class="w-7 h-7 rounded-full bg-[#00B900] mr-2 flex-shrink-0 flex items-center justify-center"><i class="fas fa-robot text-white text-[10px]"></i></div>
-                                <div class="flex-card">
-                                    <div class="flex-header">{{ msg.flexTitle }}</div>
-                                    <div v-if="msg.hasHero" class="flex-hero">
-                                        <i class="fas fa-file-pdf text-4xl text-red-500"></i>
-                                    </div>
-                                    <div class="flex-body">
-                                        <div v-for="row in msg.flexRows" class="flex-row">
-                                            <span class="text-slate-400">{{ row.label }}</span>
-                                            <span class="font-bold text-[#333]">{{ row.value }}</span>
+                                    <div class="flex flex-col" :class="msg.role === 'user' ? 'items-end' : 'items-start'">
+                                        <div :class="[msg.role === 'user' ? 'line-bubble-user' : 'line-bubble-bot']">
+                                            <p class="text-[10px] sm:text-[11px] leading-snug break-words">{{ msg.text }}</p>
                                         </div>
-                                        <div class="flex-btn">{{ msg.flexBtn }}</div>
+                                        <span class="text-[7px] sm:text-[8px] text-slate-500 mt-1">17:05</span>
                                     </div>
                                 </div>
+
+                                <!-- Image Upload (Simulation) -->
+                                <div v-if="msg.isImage" class="flex items-end flex-row-reverse max-w-[95%] animate-fade-in">
+                                    <div class="rounded-xl overflow-hidden border-2 border-[#85e249] shadow-lg">
+                                        <div class="w-28 h-28 sm:w-32 sm:h-32 bg-slate-200 flex flex-col items-center justify-center text-slate-400">
+                                            <i class="fas fa-camera text-2xl mb-1"></i>
+                                            <span class="text-[8px] sm:text-[9px] font-bold text-center px-1">上傳照片中...</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Flex Message (Rich Text) -->
+                                <div v-if="msg.isFlex" class="flex items-start max-w-[95%] flex-row animate-fade-in">
+                                    <div class="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-[#00B900] mr-2 flex-shrink-0 flex items-center justify-center"><i class="fas fa-robot text-white text-[9px]"></i></div>
+                                    <div class="flex-card">
+                                        <div class="flex-header">{{ msg.flexTitle }}</div>
+                                        <div v-if="msg.hasHero" class="flex-hero">
+                                            <i class="fas fa-file-pdf text-4xl text-red-500"></i>
+                                        </div>
+                                        <div class="flex-body">
+                                            <div v-for="row in msg.flexRows" class="flex-row">
+                                                <span class="text-slate-400">{{ row.label }}</span>
+                                                <span class="font-bold text-[#333]">{{ row.value }}</span>
+                                            </div>
+                                            <div class="flex-btn">{{ msg.flexBtn }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+
                             </div>
-
                         </div>
-                    </div>
 
-                    <!-- Rich Menu -->
-                    <div v-if="showMenu" class="rich-menu animate-fade-in">
-                        <div class="menu-item"><i class="fas fa-box-open"></i><span>產品介紹</span></div>
-                        <div class="menu-item"><i class="fas fa-camera-retro"></i><span>相容性識別</span></div>
-                        <div class="menu-item"><i class="fas fa-book-reader"></i><span>手冊下載</span></div>
-                        <div class="menu-item"><i class="fas fa-user-shield"></i><span>會員中心</span></div>
-                        <div class="menu-item"><i class="fas fa-question-circle"></i><span>排除故障</span></div>
-                        <div class="menu-item" style="background: #f0fff0;"><i class="fas fa-headset"></i><span>真人專員</span></div>
-                    </div>
+                        <!-- Rich Menu -->
+                        <div v-if="showMenu" class="rich-menu animate-fade-in">
+                            <div class="menu-item"><i class="fas fa-box-open"></i><span>產品介紹</span></div>
+                            <div class="menu-item"><i class="fas fa-camera-retro"></i><span>相容性識別</span></div>
+                            <div class="menu-item"><i class="fas fa-book-reader"></i><span>手冊下載</span></div>
+                            <div class="menu-item"><i class="fas fa-user-shield"></i><span>會員中心</span></div>
+                            <div class="menu-item"><i class="fas fa-question-circle"></i><span>排除故障</span></div>
+                            <div class="menu-item" style="background: #f0fff0;"><i class="fas fa-headset"></i><span>真人專員</span></div>
+                        </div>
 
-                    <!-- Input Bar -->
-                    <div class="bg-white p-3 flex items-center space-x-3">
-                        <button @click="showMenu = !showMenu" class="text-slate-400"><i class="fas fa-th-large"></i></button>
-                        <div class="flex-1 bg-slate-100 rounded-full py-1.5 px-3 text-[10px] text-slate-400 italic">輸入訊息或上傳圖片...</div>
-                        <i class="far fa-smile text-slate-400"></i>
+                        <!-- Input Bar -->
+                        <div class="bg-white p-3 sm:p-4 flex items-center gap-2 sm:gap-3 flex-shrink-0">
+                            <button @click="showMenu = !showMenu" class="text-slate-400 flex-shrink-0 min-h-10 min-w-10 flex items-center justify-center"><i class="fas fa-th-large text-sm"></i></button>
+                            <div class="flex-1 bg-slate-100 rounded-full py-2 px-3 text-[9px] sm:text-[10px] text-slate-400 italic flex items-center min-h-10">輸入訊息或上傳圖片...</div>
+                            <button class="text-slate-400 flex-shrink-0 min-h-10 min-w-10 flex items-center justify-center"><i class="far fa-smile text-sm"></i></button>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
         <!-- Right: System Operations -->
-        <div class="flex-1 flex flex-col space-y-6">
+        <div class="flex-1 flex flex-col space-y-4 sm:space-y-6 w-full">
             <!-- Execution Step -->
-            <div class="premium-card p-6 flex flex-col border-l-4 border-blue-500">
-                <div class="flex items-center justify-between mb-4">
-                    <span class="text-[10px] font-black text-slate-500 uppercase tracking-widest">Automated Workflow Execution</span>
+            <div class="premium-card p-4 sm:p-6 flex flex-col border-l-4 border-blue-500 gap-3 sm:gap-4">
+                <div class="flex items-center justify-between flex-wrap gap-2">
+                    <span class="text-[8px] sm:text-[10px] font-black text-slate-500 uppercase tracking-widest">Automated Workflow Execution</span>
                     <span class="text-xs font-black text-blue-500">Step {{ currentStep }} / 14</span>
                 </div>
-                <h3 class="text-lg font-bold text-white mb-4 italic">目標：{{ currentStepLabel }}</h3>
-                <div class="flex items-center space-x-3">
-                    <button @click="prevStep" :disabled="currentStep === 1" class="w-10 h-10 rounded-xl bg-slate-800 flex items-center justify-center disabled:opacity-30"><i class="fas fa-chevron-left"></i></button>
-                    <div class="flex-1 p-3 bg-blue-500/10 border border-blue-500/30 rounded-xl">
-                        <p class="text-xs text-blue-300 font-bold leading-relaxed">{{ currentStepScript }}</p>
+                <h3 class="text-base sm:text-lg font-bold text-white mb-2 italic break-words">目標：{{ currentStepLabel }}</h3>
+                <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3">
+                    <button @click="prevStep" :disabled="currentStep === 1" class="w-full sm:w-10 h-10 rounded-xl bg-slate-800 flex items-center justify-center disabled:opacity-30 text-sm sm:text-base"><i class="fas fa-chevron-left"></i></button>
+                    <div class="flex-1 p-3 bg-blue-500/10 border border-blue-500/30 rounded-xl min-h-12 flex items-center">
+                        <p class="text-[9px] sm:text-xs text-blue-300 font-bold leading-relaxed break-words">{{ currentStepScript }}</p>
                     </div>
-                    <button @click="nextStep" :disabled="currentStep === 14" class="h-10 px-6 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-black text-xs shadow-lg shadow-blue-900/40 transition">下一階段</button>
+                    <button @click="nextStep" :disabled="currentStep === 14" class="w-full sm:w-auto h-10 px-4 sm:px-6 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-black text-xs shadow-lg shadow-blue-900/40 transition disabled:opacity-30">下一階段</button>
                 </div>
             </div>
 
-            <div class="flex-1 grid grid-cols-1 xl:grid-cols-2 gap-6">
-                <!-- RAG Logic Detail -->
+            <div class="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+                <!-- 流程進度和統計 -->
                 <div class="premium-card flex flex-col overflow-hidden">
-                    <div class="p-4 border-b border-white/5 bg-white/5 flex justify-between items-center">
-                        <span class="text-[10px] font-black text-slate-400 uppercase">Knowledge Retrieval Engine</span>
-                        <div class="flex space-x-2">
-                            <span class="text-[9px] text-blue-500 font-bold">Query Optimization: ON</span>
-                        </div>
+                    <div class="p-3 sm:p-4 border-b border-white/5 bg-white/5">
+                        <span class="text-[9px] sm:text-[10px] font-black text-slate-400 uppercase">流程進度分析</span>
                     </div>
-                    <div class="flex-1 p-5 overflow-y-auto no-scrollbar space-y-4 relative">
-                        <div v-if="isScanning" class="absolute inset-0 animate-scan z-10 pointer-events-none"></div>
-                        
-                        <div v-for="(chunk, idx) in visibleChunks" :key="idx" 
-                             class="p-4 rounded-xl border border-white/5 bg-slate-800/40 animate-fade-in">
-                            <div class="flex items-center justify-between mb-2">
-                                <div class="flex items-center space-x-2">
-                                    <i class="fas fa-database text-blue-500 text-[10px]"></i>
-                                    <span class="text-[9px] font-black text-slate-500 uppercase">Chunk #{{ idx+1 }}</span>
-                                </div>
-                                <span class="text-[8px] bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded">Score: 0.{{ 98 - idx }}</span>
+                    <div class="flex-1 p-4 sm:p-5 space-y-4">
+                        <!-- 主進度條 -->
+                        <div>
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-xs font-bold text-slate-300">整體進度</span>
+                                <span class="text-sm font-bold text-blue-400">{{ Math.round((currentStep / 14) * 100) }}%</span>
                             </div>
-                            <p class="text-[11px] text-slate-300 leading-relaxed italic">"{{ chunk }}"</p>
+                            <div class="progress-bar">
+                                <div class="progress-fill" :style="{ width: (currentStep / 14) * 100 + '%' }"></div>
+                            </div>
+                        </div>
+
+                        <!-- 統計卡片網格 -->
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="stat-card animate-slide-in">
+                                <span class="stat-value">{{ currentStep }}</span>
+                                <span class="stat-label">當前階段</span>
+                            </div>
+                            <div class="stat-card animate-slide-in">
+                                <span class="stat-value">{{ visibleMessages.length }}</span>
+                                <span class="stat-label">對話輪數</span>
+                            </div>
+                            <div class="stat-card animate-slide-in">
+                                <span class="stat-value">{{ conversationMetrics.questionCount }}</span>
+                                <span class="stat-label">提問次數</span>
+                            </div>
+                            <div class="stat-card animate-slide-in">
+                                <span class="stat-value">{{ conversationMetrics.videoFrames }}ms</span>
+                                <span class="stat-label">回應延遲</span>
+                            </div>
+                        </div>
+
+                        <!-- 步驟指示器 -->
+                        <div>
+                            <span class="text-xs font-bold text-slate-400 mb-2 block">步驟時間線</span>
+                            <div class="step-timeline">
+                                <div v-for="i in 14" :key="i" 
+                                     class="timeline-dot"
+                                     :class="{ 
+                                        'active': i === currentStep,
+                                        'completed': i < currentStep
+                                     }"
+                                     @click="goToStep(i)"
+                                     :title="`步驟 ${i}`">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 對話滿意度 -->
+                        <div>
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-xs font-bold text-slate-300">預估滿意度</span>
+                                <span class="text-sm font-bold text-green-400">{{ satisfactionScore }}%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" :style="{ width: satisfactionScore + '%', background: 'linear-gradient(90deg, #10b981, #34d399)' }"></div>
+                            </div>
+                            <span :class="['sentiment-badge', 'sentiment-' + sentimentType]">
+                                {{ sentimentLabel }}
+                            </span>
                         </div>
                     </div>
                 </div>
 
-                <!-- Live Logs -->
-                <div class="premium-card flex flex-col overflow-hidden">
-                    <div class="p-4 border-b border-white/5 bg-white/5">
-                        <span class="text-[10px] font-black text-slate-400 uppercase">System Integrity Log</span>
+                <!-- RAG Logic Detail -->
+                <div class="premium-card flex flex-col overflow-hidden min-h-96">
+                    <div class="p-3 sm:p-4 border-b border-white/5 bg-white/5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+                        <span class="text-[9px] sm:text-[10px] font-black text-slate-400 uppercase">知識檢索引擎</span>
+                        <div class="flex space-x-2">
+                            <span class="text-[8px] sm:text-[9px] text-blue-500 font-bold whitespace-nowrap">優化狀態: ON</span>
+                        </div>
                     </div>
-                    <div class="flex-1 p-5 overflow-y-auto no-scrollbar space-y-4">
-                        <div v-for="(log, idx) in currentLogs" :key="idx" class="flex space-x-3 border-b border-white/5 pb-3">
-                            <div class="w-1.5 h-1.5 rounded-full mt-1.5 shrink-0" :class="log.type === 'action' ? 'bg-green-500' : 'bg-blue-500'"></div>
-                            <div>
-                                <p class="text-[11px] font-bold text-slate-200">{{ log.title }}</p>
-                                <p class="text-[10px] text-slate-500">{{ log.desc }}</p>
+                    <div class="flex-1 p-4 sm:p-5 overflow-y-auto no-scrollbar space-y-3 sm:space-y-4 relative">
+                        <div v-if="isScanning" class="absolute inset-0 animate-scan z-10 pointer-events-none"></div>
+                        
+                        <div v-for="(chunk, idx) in visibleChunks" :key="idx" 
+                             class="p-3 sm:p-4 rounded-xl border border-white/5 bg-slate-800/40 animate-fade-in animate-slide-in"
+                             :style="{ 'animation-delay': idx * 100 + 'ms' }">
+                            <div class="flex items-center justify-between mb-2 gap-2 flex-wrap">
+                                <div class="flex items-center space-x-2">
+                                    <i class="fas fa-database text-blue-500 text-[9px] sm:text-[10px]"></i>
+                                    <span class="text-[8px] sm:text-[9px] font-black text-slate-500 uppercase">知識片段 #{{ idx+1 }}</span>
+                                </div>
+                                <span class="text-[7px] sm:text-[8px] bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded whitespace-nowrap">相關性: 0.{{ 98 - idx }}</span>
+                            </div>
+                            <p class="text-[10px] sm:text-[11px] text-slate-300 leading-relaxed italic break-words">"{{ chunk }}"</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Live Logs - 改進版 -->
+                <div class="premium-card flex flex-col overflow-hidden min-h-96 lg:col-span-2">
+                    <div class="p-3 sm:p-4 border-b border-white/5 bg-white/5 flex items-center justify-between">
+                        <span class="text-[9px] sm:text-[10px] font-black text-slate-400 uppercase">系統日誌 & 決策追蹤</span>
+                        <span class="text-[8px] text-blue-400">{{ currentLogs.length }} 個事件</span>
+                    </div>
+                    <div class="flex-1 p-4 sm:p-5 overflow-y-auto no-scrollbar">
+                        <div class="space-y-3 sm:space-y-4">
+                            <div v-for="(log, idx) in currentLogs" :key="idx" class="flex space-x-3 border-b border-white/5 pb-3 animate-slide-in"
+                                 :style="{ 'animation-delay': idx * 50 + 'ms' }">
+                                <div class="flex-shrink-0">
+                                    <div class="w-2 h-2 rounded-full mt-2" :class="log.type === 'action' ? 'bg-green-500' : log.type === 'vision' ? 'bg-yellow-500' : 'bg-blue-500'"></div>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex items-start justify-between gap-2">
+                                        <div>
+                                            <p class="text-[10px] sm:text-[11px] font-bold text-slate-200 break-words">{{ log.title }}</p>
+                                            <p class="text-[9px] sm:text-[10px] text-slate-500 break-words mt-1">{{ log.desc }}</p>
+                                        </div>
+                                        <span class="text-[7px] text-slate-600 whitespace-nowrap mt-0.5">{{ log.icon }}</span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -305,71 +781,179 @@ const { createApp, ref, computed, nextTick } = Vue;
 
 createApp({
     setup() {
+        // ========== 參數配置 ==========
+        const config = ref({
+            shopName: '智慧家居專家',
+            industry: 'smart-home',
+            mainProduct: '智能開關系統',
+            targetAudience: 'both'
+        });
+
+        const showConfigTip = ref(true);
+
+        const onConfigChange = () => {
+            // 重新生成流程內容（基於新配置）
+            regenerateFlow();
+        };
+
+        // ========== 狀態管理 ==========
         const currentStep = ref(1);
         const isScanning = ref(false);
         const showMenu = ref(true);
 
-        const flow = [
-            { step: 1, label: '需求啟動', role: 'user', text: '你好，我想了解智慧家居系統。', script: '用戶啟動會話，AI 進入「引導諮詢」模式，準備進行環境診斷。' },
-            { step: 2, label: '主動詢問', role: 'bot', text: '沒問題！為了給您最精準的建議，能先請問您目前家中的智慧設備品牌嗎？（例如：小米、Apple Home、或是傳統開關？）', script: 'AI 執行引導策略，試圖識別用戶既有設備生態系，以決定 RAG 檢索方向。' },
-            { step: 3, label: '用戶回饋', role: 'user', text: '我目前是用傳統開關，但有一些舊款的 Philips Hue 燈泡。', script: '用戶提供關鍵字「傳統開關」與「Philips Hue」，系統標記「混合環境相容性」需求。' },
-            { step: 4, label: '視覺識別引導', role: 'bot', text: '明白了！Philips Hue 可以完美整合。至於傳統開關的部分，您可以拍一張開關盒的照片傳給我嗎？我可以幫您識別是否具備「中性線」，這關係到安裝型號。', script: 'AI 啟動 Vision 模組預熱，要求特定圖像以解決「中性線」這個關鍵技術問題。' },
-            { step: 5, label: '圖片上傳', role: 'user', isImage: true, script: '用戶上傳開關盒內線路照片，系統啟動多模態識別。' },
-            { step: 6, label: 'AI 視覺識別', role: 'bot', text: '識別完成！從照片看，您的底盒具備中性線（零線），這表示您可以選擇免電池的『SmartHub Pro』系列開關。', script: 'Vision AI 成功識別中性線，RAG 立即鎖定對應的產品線規則。' },
-            { step: 7, label: '手冊與方案', role: 'bot', isFlex: true, 
-              flexTitle: '建議方案：SmartHub Pro (有線版)',
-              flexRows: [
-                  { label: '相容性', value: 'Philips Hue 橋接 OK' },
-                  { label: '安裝條件', value: '具備中性線' },
-                  { label: '建議型號', value: 'SW-PRO-101' }
-              ],
-              flexBtn: '查看安裝細節', script: '系統生成 Flex Message，將視覺識別結果轉化為具體購買建議。' },
-            { step: 8, label: '手冊下載', role: 'bot', isFlex: true,
-              hasHero: true,
-              flexTitle: 'SmartHub Pro 使用者手冊',
-              flexRows: [
-                  { label: '版本', value: 'v2.4 (2025)' },
-                  { label: '檔案大小', value: '4.2 MB' }
-              ],
-              flexBtn: '點擊下載 PDF', script: 'RAG 精準定位對應型號的 User Manual，並以圖文訊息推送下載連結。' },
-            { step: 9, label: '進階諮詢', role: 'user', text: '那如果斷網了，我的情境燈光還能動嗎？', script: '用戶提出核心技術疑慮（網路依賴性），系統調用「邊緣運算」知識庫。' },
-            { step: 10, label: '核心技術解答', role: 'bot', text: '這就是我們的優勢！SmartHub Pro 支援本地邊緣運算，即便網路斷開，您的本地自動化場景仍會照常運作。', script: 'AI 提取技術白皮書中關於「本地聯動」的段落進行專業回覆。' },
-            { step: 11, label: '大宗報價', role: 'user', text: '我們公司辦公室也想裝，大約需要 60 個開關。', script: '識別到商務大宗採購信號，系統將對話權重標記為「High Value」。' },
-            { step: 12, label: '初步報價', role: 'bot', isFlex: true,
-              flexTitle: '辦公室專案預估方案',
-              flexRows: [
-                  { label: '數量', value: '60 Units' },
-                  { label: '單價', value: 'NT$ 1,200' },
-                  { label: '專案折扣', value: '85 折' }
-              ],
-              flexBtn: '預約現場勘查', script: '自動計算 Tier-1 折扣，並產出商業報價卡片。' },
-            { step: 13, label: '真人介入', role: 'human', text: '您好，我是商務經理阿強。看到您有 60 台以上的建案需求，我可以直接帶樣品到貴司拜訪嗎？', script: '觸發自動轉接，真人經理帶入 AI 整理的診斷與報價數據進行對話。' },
-            { step: 14, label: '結案預約', role: 'user', text: '太好了，下週三下午可以嗎？', script: '成功完成從「產品識別」到「商務會面」的全自動引導流程。' }
-        ];
+        // ========== 基礎流程模板 ==========
+        const flowTemplate = {
+            'smart-home': [
+                { step: 1, label: '需求啟動', role: 'user', text: '你好，我想了解智慧家居系統。', script: '用戶啟動會話，AI 進入「引導諮詢」模式。' },
+                { step: 2, label: '主動詢問', role: 'bot', text: '歡迎！為了給您最精準的建議，能先請問您目前家中的智慧設備品牌嗎？', script: 'AI 執行引導策略，識別用戶設備生態系。' },
+                { step: 3, label: '用戶回饋', role: 'user', text: '我目前是用傳統開關，但有一些舊款的 Philips Hue 燈泡。', script: '用戶提供關鍵信息，系統標記「混合環境相容性」需求。' },
+                { step: 4, label: '視覺識別引導', role: 'bot', text: '明白了！Philips Hue 可以完美整合。您能拍一張開關盒的照片傳給我嗎？', script: 'AI 啟動 Vision 模組，要求特定圖像。' },
+                { step: 5, label: '圖片上傳', role: 'user', isImage: true, script: '用戶上傳照片，系統啟動多模態識別。' },
+                { step: 6, label: 'AI 視覺識別', role: 'bot', text: '識別完成！您的底盒具備中性線，可以選擇免電池的『SmartHub Pro』系列。', script: 'Vision AI 成功識別，RAG 鎖定對應產品線。' },
+                { step: 7, label: '產品推薦', role: 'bot', isFlex: true, 
+                  flexTitle: '建議方案：SmartHub Pro (有線版)',
+                  flexRows: [
+                      { label: '相容性', value: 'Philips Hue 可用' },
+                      { label: '安裝條件', value: '具備中性線' },
+                      { label: '型號', value: 'SW-PRO-101' }
+                  ],
+                  flexBtn: '查看詳情', script: '系統生成 Flex Message，推薦對應產品。' },
+                { step: 8, label: '文檔推送', role: 'bot', isFlex: true,
+                  hasHero: true,
+                  flexTitle: 'SmartHub Pro 安裝指南',
+                  flexRows: [
+                      { label: '版本', value: 'v2.4 (2025)' },
+                      { label: '大小', value: '4.2 MB' }
+                  ],
+                  flexBtn: '下載 PDF', script: 'RAG 定位相關文檔並推送。' },
+                { step: 9, label: '進階詢問', role: 'user', text: '斷網時本地聯動還能動嗎？', script: '用戶提出技術疑慮。' },
+                { step: 10, label: '技術解答', role: 'bot', text: 'SmartHub Pro 支援邊緣運算，斷網時本地場景仍正常運作！', script: 'AI 提取技術文檔進行解答。' },
+                { step: 11, label: '商務升級', role: 'user', text: '我們公司辦公室也想裝，需要 60 個開關。', script: '識別到大宗採購信號。' },
+                { step: 12, label: '報價方案', role: 'bot', isFlex: true,
+                  flexTitle: '商用方案報價',
+                  flexRows: [
+                      { label: '數量', value: '60 Units' },
+                      { label: '單價', value: 'NT$ 1,200' },
+                      { label: '折扣', value: '85 折' }
+                  ],
+                  flexBtn: '預約勘查', script: '自動計算折扣並生成報價。' },
+                { step: 13, label: '真人轉接', role: 'human', text: '您好，我是商務經理。看到您有大型建案需求，我可以帶樣品拜訪嗎？', script: '觸發自動轉接。' },
+                { step: 14, label: '完成預約', role: 'user', text: '太好了！下週三下午 2 點可以嗎？', script: '成功完成全流程。' }
+            ],
+            'restaurant': [
+                { step: 1, label: '初次問候', role: 'user', text: '你好，我想了解你們的菜單。', script: '客戶初次互動。' },
+                { step: 2, label: '歡迎回應', role: 'bot', text: '歡迎光臨！我們有特製咖啡和新鮮甜點，今天有什麼特別推薦給您嗎？', script: 'AI 展示菜單特色。' },
+                { step: 3, label: '客戶需求', role: 'user', text: '我對素食選項感興趣。', script: '客戶表達偏好。' },
+                { step: 4, label: '菜單推薦', role: 'bot', text: '太好了！我們有招牌素食沙拉和有機蔬菜湯。', script: 'RAG 檢索對應菜品。' },
+                { step: 5, label: '圖片確認', role: 'user', isImage: true, script: '客戶拍照確認菜品。' },
+                { step: 6, label: 'AI 識別', role: 'bot', text: '這是我們的有機沙拉，使用當季新鮮食材，今日特價 20% 折扣！', script: 'Vision 識別菜品，推薦優惠。' },
+                { step: 7, label: '優惠推薦', role: 'bot', isFlex: true,
+                  flexTitle: '今日推薦組合',
+                  flexRows: [
+                      { label: '沙拉 + 飲料', value: 'NT$ 280' },
+                      { label: '折扣', value: '20% 優惠' },
+                      { label: '有效期', value: '今日' }
+                  ],
+                  flexBtn: '立即訂購', script: '推送套餐優惠。' },
+                { step: 8, label: '訂單確認', role: 'user', text: '好的，我要點一份！', script: '客戶確認訂單。' },
+                { step: 9, label: '配送詢問', role: 'user', text: '可以外送嗎？', script: '客戶詢問配送。' },
+                { step: 10, label: '配送說明', role: 'bot', text: '當然可以！我們提供 30 分鐘內外送，配送費 NT$ 30。', script: 'RAG 提供配送信息。' },
+                { step: 11, label: '團購建議', role: 'user', text: '我們辦公室 10 人想團購午餐。', script: '升級為團購機會。' },
+                { step: 12, label: '團購方案', role: 'bot', isFlex: true,
+                  flexTitle: '團購優惠方案',
+                  flexRows: [
+                      { label: '人數', value: '10 人' },
+                      { label: '單人價', value: 'NT$ 250' },
+                      { label: '團購省', value: 'NT$ 200' }
+                  ],
+                  flexBtn: '確認團購', script: '生成團購報價。' },
+                { step: 13, label: '專員聯繫', role: 'human', text: '您好！我是餐飲經理。團購可以客製化菜單，我們可以詳談嗎？', script: '真人經理接手。' },
+                { step: 14, label: '預約確認', role: 'user', text: '好的，明天中午能討論嗎？', script: '成功轉換商機。' }
+            ]
+        };
 
-        const knowledgeChunks = [
-            "中性線(Neutral)判定邏輯：透過 Vision 識別藍色/白色線路，並確認與負載線之電位關係。",
-            "本地連線協定：系統採 Zigbee 3.0 與 Thread 混合網狀架構，不經雲端即可執行場景指令。",
-            "商務折扣規則：大宗採購 50-99 台為 Tier 1 (85折)，100台以上為 Tier 2 (75折)。",
-            "Philips Hue 整合：透過本地 Bridge API 進行 Token 握手，延遲低於 50ms。"
-        ];
+        // 當前流程
+        let flow = flowTemplate['smart-home'];
 
+        const regenerateFlow = () => {
+            const industry = config.value.industry;
+            flow = flowTemplate[industry] || flowTemplate['smart-home'];
+            currentStep.value = 1;
+            showMenu.value = true;
+        };
+
+        // ========== 知識庫 ==========
+        const knowledgeChunks = computed(() => {
+            const chunks = {
+                'smart-home': [
+                    "中性線判定邏輯：透過 Vision 識別藍色/白色線路，並確認電位關係。",
+                    "本地連線協定：Zigbee 3.0 與 Thread 混合架構，不經雲端。",
+                    "商務折扣規則：50-99 台為 85 折，100 台以上 75 折。",
+                    "Philips Hue 整合：本地 Bridge API 握手，延遲 < 50ms。"
+                ],
+                'restaurant': [
+                    "菜單優化：基於季節和客群偏好動態推薦。",
+                    "配送政策：30 分內外送，配費 NT$30，3 公里內免費。",
+                    "團購折扣：10-20 人 15% 折，20-30 人 20% 折。",
+                    "過敏信息：含堅果、乳製品菜品已標記。"
+                ]
+            };
+            return chunks[config.value.industry] || chunks['smart-home'];
+        });
+
+        // ========== 計算屬性 ==========
         const visibleMessages = computed(() => flow.filter(f => f.step <= currentStep.value));
         const currentStepLabel = computed(() => flow[currentStep.value-1]?.label);
         const currentStepScript = computed(() => flow[currentStep.value-1]?.script);
-        const visibleChunks = computed(() => knowledgeChunks.filter((_, i) => i < Math.ceil(currentStep.value / 3)));
+        const visibleChunks = computed(() => knowledgeChunks.value.filter((_, i) => i < Math.ceil(currentStep.value / 3)));
         
         const currentLogs = computed(() => {
             const l = [];
             const steps = flow.slice(0, currentStep.value).reverse();
             steps.forEach(s => {
-                l.push({ title: s.label, desc: s.script, type: s.role === 'human' ? 'action' : 'system' });
+                const iconMap = {
+                    'action': '✓',
+                    'vision': '👁️',
+                    'system': '⚙️'
+                };
+                const type = s.role === 'human' ? 'action' : s.isImage ? 'vision' : 'system';
+                l.push({ 
+                    title: s.label, 
+                    desc: s.script, 
+                    type: type,
+                    icon: iconMap[type]
+                });
             });
             return l;
         });
 
+        // ========== 對話指標 ==========
+        const conversationMetrics = computed(() => ({
+            questionCount: Math.ceil(visibleMessages.value.filter(m => m.role === 'user').length),
+            videoFrames: 150 + currentStep.value * 10
+        }));
+
+        const satisfactionScore = computed(() => {
+            let score = 60 + currentStep.value * 3;
+            if (currentStep.value > 10) score += 10;
+            return Math.min(score, 98);
+        });
+
+        const sentimentType = computed(() => {
+            if (satisfactionScore.value > 80) return 'positive';
+            if (satisfactionScore.value > 50) return 'neutral';
+            return 'negative';
+        });
+
+        const sentimentLabel = computed(() => {
+            if (sentimentType.value === 'positive') return '✓ 非常滿意';
+            if (sentimentType.value === 'neutral') return '◐ 中立';
+            return '✗ 需改進';
+        });
+
+        // ========== 操作方法 ==========
         const nextStep = () => {
-            if (currentStep.value < 14) {
+            if (currentStep.value < flow.length) {
                 isScanning.value = true;
                 setTimeout(() => {
                     currentStep.value++;
@@ -378,8 +962,24 @@ createApp({
                 }, 500);
             }
         };
-        const prevStep = () => { if (currentStep.value > 1) currentStep.value--; };
-        const resetFlow = () => { currentStep.value = 1; showMenu.value = true; };
+
+        const prevStep = () => { 
+            if (currentStep.value > 1) {
+                currentStep.value--;
+                scrollToBottom();
+            }
+        };
+
+        const goToStep = (step) => {
+            currentStep.value = step;
+            scrollToBottom();
+        };
+
+        const resetFlow = () => { 
+            currentStep.value = 1; 
+            showMenu.value = true;
+            scrollToBottom();
+        };
 
         const scrollToBottom = () => {
             nextTick(() => {
@@ -389,10 +989,20 @@ createApp({
         };
 
         return {
+            // 配置
+            config, showConfigTip, onConfigChange,
+            
+            // 狀態
             currentStep, isScanning, showMenu,
+            
+            // 計算屬性
             visibleMessages, currentStepLabel, currentStepScript,
             visibleChunks, currentLogs,
-            nextStep, prevStep, resetFlow
+            conversationMetrics, satisfactionScore,
+            sentimentType, sentimentLabel,
+            
+            // 方法
+            nextStep, prevStep, resetFlow, goToStep
         };
     }
 }).mount('#app');
@@ -401,6 +1011,67 @@ createApp({
 <style>
 @keyframes fade-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 .animate-fade-in { animation: fade-in 0.4s ease-out forwards; }
+
+/* Vue 過渡動畫 */
+.fade-enter-active, .fade-leave-active {
+    transition: opacity 0.3s ease;
+}
+.fade-enter-from, .fade-leave-to {
+    opacity: 0;
+}
+
+/* 按鈕點擊動畫 */
+button {
+    position: relative;
+    overflow: hidden;
+}
+
+button::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.5);
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+}
+
+button:active::after {
+    animation: ripple 0.6s ease-out;
+}
+
+@keyframes ripple {
+    to {
+        width: 300px;
+        height: 300px;
+        opacity: 0;
+    }
+}
+
+/* 統計卡片動畫延遲 */
+.stat-card:nth-child(1) { animation-delay: 0ms; }
+.stat-card:nth-child(2) { animation-delay: 100ms; }
+.stat-card:nth-child(3) { animation-delay: 200ms; }
+.stat-card:nth-child(4) { animation-delay: 300ms; }
+
+/* 訊息進入動畫 */
+.chat-message-enter-active {
+    animation: message-enter 0.3s ease-out;
+}
+
+@keyframes message-enter {
+    from {
+        opacity: 0;
+        transform: translateY(16px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
 </style>
 
 </body>
