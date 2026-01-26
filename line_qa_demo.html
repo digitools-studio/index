@@ -317,6 +317,258 @@
             border-color: rgba(16, 185, 129, 0.5);
         }
 
+        /* 情境模擬按鈕 */
+        .scenarios-section {
+            background: rgba(34, 211, 238, 0.08);
+            border: 1px solid rgba(34, 211, 238, 0.2);
+            border-radius: 12px;
+            padding: 14px;
+            margin-top: 12px;
+        }
+
+        .scenarios-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 10px;
+        }
+
+        .scenario-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 14px 12px;
+            border: 1px solid rgba(34, 211, 238, 0.3);
+            border-radius: 10px;
+            background: rgba(34, 211, 238, 0.05);
+            color: #f1f5f9;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 11px;
+        }
+
+        .scenario-btn i {
+            font-size: 20px;
+        }
+
+        .scenario-label {
+            font-weight: 600;
+            font-size: 12px;
+        }
+
+        .scenario-desc {
+            font-size: 10px;
+            color: #94a3b8;
+        }
+
+        .scenario-btn:hover {
+            background: rgba(34, 211, 238, 0.15);
+            border-color: rgba(34, 211, 238, 0.5);
+            transform: translateY(-2px);
+        }
+
+        .scenario-btn:active {
+            transform: translateY(0);
+        }
+
+        .scenario-quick {
+            border-color: rgba(248, 113, 113, 0.3);
+            background: rgba(248, 113, 113, 0.05);
+        }
+
+        .scenario-quick:hover {
+            background: rgba(248, 113, 113, 0.15);
+            border-color: rgba(248, 113, 113, 0.5);
+        }
+
+        .scenario-quick i {
+            color: #f87171;
+        }
+
+        .scenario-standard {
+            border-color: rgba(59, 130, 246, 0.3);
+            background: rgba(59, 130, 246, 0.05);
+        }
+
+        .scenario-standard:hover {
+            background: rgba(59, 130, 246, 0.15);
+            border-color: rgba(59, 130, 246, 0.5);
+        }
+
+        .scenario-standard i {
+            color: #3b82f6;
+        }
+
+        .scenario-premium {
+            border-color: rgba(250, 204, 21, 0.3);
+            background: rgba(250, 204, 21, 0.05);
+        }
+
+        .scenario-premium:hover {
+            background: rgba(250, 204, 21, 0.15);
+            border-color: rgba(250, 204, 21, 0.5);
+        }
+
+        .scenario-premium i {
+            color: #facc15;
+        }
+
+        /* 客戶互動檔案樣式 */
+        .customer-profile-card {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(34, 211, 238, 0.05));
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 12px;
+            padding: 14px;
+            overflow: hidden;
+        }
+
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .profile-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(59, 130, 246, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: #3b82f6;
+            flex-shrink: 0;
+        }
+
+        .profile-info {
+            min-width: 0;
+        }
+
+        .profile-info h4 {
+            font-size: 13px;
+            font-weight: 600;
+            color: #f1f5f9;
+            margin: 0;
+        }
+
+        .profile-info p {
+            font-size: 11px;
+            color: #94a3b8;
+            margin: 2px 0 0 0;
+        }
+
+        .profile-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .stat-title {
+            font-size: 9px;
+            color: #94a3b8;
+            text-transform: uppercase;
+        }
+
+        .stat-value {
+            font-size: 13px;
+            font-weight: 600;
+            color: #3b82f6;
+        }
+
+        .profile-section {
+            margin-bottom: 8px;
+        }
+
+        .profile-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .section-title {
+            display: block;
+            font-size: 10px;
+            font-weight: 600;
+            color: #6ee7b7;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+        .section-content {
+            font-size: 11px;
+            color: #cbd5e1;
+            line-height: 1.4;
+            margin: 0;
+        }
+
+        /* 對話歷史時間線 */
+        .dialogue-history {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .timeline {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .timeline-item {
+            display: flex;
+            gap: 12px;
+        }
+
+        .timeline-marker {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-top: 4px;
+            flex-shrink: 0;
+        }
+
+        .timeline-marker.action {
+            background: #22c55e;
+        }
+
+        .timeline-marker.vision {
+            background: #eab308;
+        }
+
+        .timeline-marker.system {
+            background: #3b82f6;
+        }
+
+        .timeline-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .timeline-title {
+            font-size: 11px;
+            font-weight: 600;
+            color: #e2e8f0;
+            margin-bottom: 2px;
+        }
+
+        .timeline-desc {
+            font-size: 10px;
+            color: #94a3b8;
+            line-height: 1.3;
+            word-break: break-word;
+        }
+
         /* 手機版：全寬調整 */
         @media (max-width: 1024px) {
             body { overflow: auto; }
@@ -642,6 +894,31 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- 情境模擬按鈕組 -->
+                <div class="scenarios-section">
+                    <h3 class="text-sm font-bold text-white mb-3 flex items-center gap-2">
+                        <i class="fas fa-play-circle text-cyan-400"></i>
+                        快速演示情境
+                    </h3>
+                    <div class="scenarios-grid">
+                        <button @click="runScenario('quick')" class="scenario-btn scenario-quick">
+                            <i class="fas fa-bolt"></i>
+                            <span class="scenario-label">閃電快速</span>
+                            <span class="scenario-desc">5 步 (30秒)</span>
+                        </button>
+                        <button @click="runScenario('standard')" class="scenario-btn scenario-standard">
+                            <i class="fas fa-user-circle"></i>
+                            <span class="scenario-label">完整諮詢</span>
+                            <span class="scenario-desc">14 步 (完整流程)</span>
+                        </button>
+                        <button @click="runScenario('premium')" class="scenario-btn scenario-premium">
+                            <i class="fas fa-crown"></i>
+                            <span class="scenario-label">商務導購</span>
+                            <span class="scenario-desc">14 步 + 報價</span>
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
@@ -869,23 +1146,59 @@
                 <!-- Live Logs - 改進版 -->
                 <div class="premium-card flex flex-col overflow-hidden min-h-96 lg:col-span-2">
                     <div class="p-3 sm:p-4 border-b border-white/5 bg-white/5 flex items-center justify-between">
-                        <span class="text-[9px] sm:text-[10px] font-black text-slate-400 uppercase">系統日誌 & 決策追蹤</span>
-                        <span class="text-[8px] text-blue-400">{{ currentLogs.length }} 個事件</span>
+                        <span class="text-[9px] sm:text-[10px] font-black text-slate-400 uppercase">客戶互動檔案 & 對話歷史</span>
+                        <span class="text-[8px] text-blue-400">{{ currentLogs.length }} 個互動</span>
                     </div>
                     <div class="flex-1 p-4 sm:p-5 overflow-y-auto no-scrollbar">
-                        <div class="space-y-3 sm:space-y-4">
-                            <div v-for="(log, idx) in currentLogs" :key="idx" class="flex space-x-3 border-b border-white/5 pb-3 animate-slide-in"
-                                 :style="{ 'animation-delay': idx * 50 + 'ms' }">
-                                <div class="flex-shrink-0">
-                                    <div class="w-2 h-2 rounded-full mt-2" :class="log.type === 'action' ? 'bg-green-500' : log.type === 'vision' ? 'bg-yellow-500' : 'bg-blue-500'"></div>
+                        <!-- 客戶基本資料卡片 -->
+                        <div class="customer-profile-card mb-4">
+                            <div class="profile-header">
+                                <div class="profile-icon">
+                                    <i class="fas fa-user-circle"></i>
                                 </div>
-                                <div class="flex-1 min-w-0">
-                                    <div class="flex items-start justify-between gap-2">
-                                        <div>
-                                            <p class="text-[10px] sm:text-[11px] font-bold text-slate-200 break-words">{{ log.title }}</p>
-                                            <p class="text-[9px] sm:text-[10px] text-slate-500 break-words mt-1">{{ log.desc }}</p>
-                                        </div>
-                                        <span class="text-[7px] text-slate-600 whitespace-nowrap mt-0.5">{{ log.icon }}</span>
+                                <div class="profile-info">
+                                    <h4>{{ getCustomerProfile().name }}</h4>
+                                    <p>{{ getCustomerProfile().type }}</p>
+                                </div>
+                            </div>
+                            <div class="profile-stats">
+                                <div class="stat-item">
+                                    <span class="stat-title">對話輪數</span>
+                                    <span class="stat-value">{{ visibleMessages.length }}</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-title">咨詢時長</span>
+                                    <span class="stat-value">{{ conversationMetrics.videoFrames }}ms</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-title">滿意度</span>
+                                    <span class="stat-value">{{ satisfactionScore }}%</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-title">推薦產品</span>
+                                    <span class="stat-value">{{ getCustomerProfile().product }}</span>
+                                </div>
+                            </div>
+                            <div class="profile-section">
+                                <span class="section-title">主要需求</span>
+                                <p class="section-content">{{ getCustomerProfile().mainConcern }}</p>
+                            </div>
+                            <div class="profile-section">
+                                <span class="section-title">後續建議</span>
+                                <p class="section-content">{{ getCustomerProfile().nextStep }}</p>
+                            </div>
+                        </div>
+
+                        <!-- 對話歷史時間線 -->
+                        <div class="dialogue-history">
+                            <h5 class="text-xs font-bold text-slate-400 mb-3 uppercase">對話時間線</h5>
+                            <div class="timeline">
+                                <div v-for="(log, idx) in currentLogs" :key="idx" class="timeline-item animate-slide-in"
+                                     :style="{ 'animation-delay': idx * 50 + 'ms' }">
+                                    <div class="timeline-marker" :class="log.type"></div>
+                                    <div class="timeline-content">
+                                        <div class="timeline-title">{{ log.title }}</div>
+                                        <div class="timeline-desc">{{ log.desc }}</div>
                                     </div>
                                 </div>
                             </div>
@@ -1135,6 +1448,41 @@ createApp({
             scrollToBottom();
         };
 
+        const runScenario = (scenario) => {
+            currentStep.value = 1;
+            showMenu.value = true;
+            
+            if (scenario === 'quick') {
+                // 快速演示：跑到第 5 步
+                setTimeout(() => {
+                    currentStep.value = 5;
+                    scrollToBottom();
+                }, 1000);
+            } else if (scenario === 'standard') {
+                // 完整諮詢：跑到第 14 步
+                let step = 1;
+                const interval = setInterval(() => {
+                    step++;
+                    currentStep.value = step;
+                    if (step >= 14) {
+                        clearInterval(interval);
+                        scrollToBottom();
+                    }
+                }, 300);
+            } else if (scenario === 'premium') {
+                // 商務導購：跑完全流程
+                let step = 1;
+                const interval = setInterval(() => {
+                    step++;
+                    currentStep.value = step;
+                    if (step >= 14) {
+                        clearInterval(interval);
+                        scrollToBottom();
+                    }
+                }, 250);
+            }
+        };
+
         const resetFlow = () => { 
             currentStep.value = 1; 
             showMenu.value = true;
@@ -1146,6 +1494,43 @@ createApp({
                 const box = document.getElementById('chat-box');
                 if (box) box.scrollTo({ top: box.scrollHeight, behavior: 'smooth' });
             });
+        };
+
+        // ========== 客戶資料方法 ==========
+        const customerProfiles = {
+            'smart-home': {
+                name: '王小姐',
+                type: '住宅用戶 | 首次諮詢',
+                product: 'SmartHub Pro 有線版',
+                mainConcern: '尋求安全可靠的智能家居系統，希望支援離線運作',
+                nextStep: '建議進行 1 對 1 居家勘查，評估安裝方案，7 天內簽約享 9 折優惠'
+            },
+            'fashion': {
+                name: '李經理',
+                type: '上班族 | 第 2 次購買',
+                product: '熟女氣質系列連身褲',
+                mainConcern: '尋找既舒適又顯氣質的上班服，色彩搭配要符合冬季色系',
+                nextStep: '建議加購配件（手錶、絲巾），預約線上穿搭諮詢，享團購 15% 折扣'
+            },
+            'beauty': {
+                name: '陳小姐',
+                type: '護膚愛好者 | 敏感肌',
+                product: '植萃修護精華液',
+                mainConcern: '尋找溫和不刺激的保養品，害怕成分複雜',
+                nextStep: '建議訂購體驗組合（3 件），享 30 天滿意度保證，定期護膚指導'
+            },
+            'food': {
+                name: '公司李主任',
+                type: '團購采購 | 企業客戶',
+                product: '新鮮有機蔬菜箱 (週配)',
+                mainConcern: '為辦公室同仁訂購健康餐點，要求可溯源且無農藥',
+                nextStep: '建議簽訂企業合約，享 20% 長期折扣，提供員工營養諮詢'
+            }
+        };
+
+        const getCustomerProfile = () => {
+            const product = config.value.mainProduct;
+            return customerProfiles[product] || customerProfiles['smart-home'];
         };
 
         return {
@@ -1162,8 +1547,11 @@ createApp({
             conversationMetrics, satisfactionScore,
             sentimentType, sentimentLabel,
             
+            // 客戶資料
+            getCustomerProfile,
+            
             // 方法
-            nextStep, prevStep, resetFlow, goToStep
+            nextStep, prevStep, resetFlow, goToStep, runScenario
         };
     }
 }).mount('#app');
