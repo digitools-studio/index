@@ -316,6 +316,12 @@
       padding: 2rem;
       position: relative;
       z-index: 10;
+      opacity: 0;
+      transition: opacity 0.6s ease-in;
+    }
+
+    .content-container.show {
+      opacity: 1;
     }
 
     .divider {
@@ -445,6 +451,7 @@
     @media (max-width: 640px) {
       .countdown-container {
         top: 15px;
+        left: 72%;
         padding: 5px 8px;
       }
       .countdown-title {
@@ -1242,12 +1249,17 @@
       if (!base) return;
 
       const url = buildUnsplashUrl(base);
+      const contentContainer = slideEl.querySelector('.content-container');
 
       try {
         // 先嘗試載入主要圖片（本地或 Unsplash）
         await preloadImage(url);
         bg.style.backgroundImage = `url('${url}')`;
         bg.dataset.loaded = '1';
+        // 圖片載入完成後，顯示內容
+        if (contentContainer) {
+          contentContainer.classList.add('show');
+        }
       } catch (e) {
         // 如果主要圖片失敗且有 fallback，嘗試載入 fallback
         if (fallback) {
@@ -1257,16 +1269,28 @@
             bg.style.backgroundImage = `url('${fallbackUrl}')`;
             bg.dataset.loaded = '1';
             console.log(`使用備用圖片: ${fallbackUrl}`);
+            // 圖片載入完成後，顯示內容
+            if (contentContainer) {
+              contentContainer.classList.add('show');
+            }
           } catch (fallbackError) {
             console.error('主要圖片和備用圖片都載入失敗', fallbackError);
             // 最後的保險：使用低解析度版本
             bg.style.backgroundImage = `url('${fallback}?auto=format&fit=crop&q=70&w=800')`;
             bg.dataset.loaded = '1';
+            // 圖片載入完成後，顯示內容
+            if (contentContainer) {
+              contentContainer.classList.add('show');
+            }
           }
         } else {
           // 沒有 fallback，使用較保守的參數重試
           bg.style.backgroundImage = `url('${base}?auto=format&fit=crop&q=70&w=1200')`;
           bg.dataset.loaded = '1';
+          // 圖片載入完成後，顯示內容
+          if (contentContainer) {
+            contentContainer.classList.add('show');
+          }
         }
       }
     }
