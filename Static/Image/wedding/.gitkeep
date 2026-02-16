@@ -1,0 +1,13 @@
+# 圖片佔位說明
+
+此處應放置6張婚禮照片，命名為：
+- slide-1.jpg
+- slide-2.jpg  
+- slide-3.jpg
+- slide-4.jpg
+- slide-5.jpg
+- slide-6.jpg
+
+詳細說明請參考 USAGE.md 文件。
+
+如果本地圖片不存在，系統會自動使用 Unsplash 的備用圖片。

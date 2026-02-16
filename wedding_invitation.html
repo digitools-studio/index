@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Wedding Invitation | 葉嘉宸 & 李庭妤</title>
+
+  <!-- DNS / Preconnect：加速第三方資源握手 -->
+  <meta http-equiv="x-dns-prefetch-control" content="on">
+  <link rel="dns-prefetch" href="//fonts.googleapis.com">
+  <link rel="dns-prefetch" href="//fonts.gstatic.com">
+  <link rel="dns-prefetch" href="//cdn.jsdelivr.net">
+  <link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
+  <link rel="dns-prefetch" href="//images.unsplash.com">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Noto+Serif+TC:wght@300;500;700&display=swap" rel="stylesheet">
+
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Animate.css -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+
+  <!-- Swiper CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+
+  <!-- 首屏圖片預載（優先載入本地圖片，若無則使用 Unsplash） -->
+  <link rel="preload" as="image"
+        href="Static/Image/wedding/001.jpg"
+        imagesrcset="
+          Static/Image/wedding/001.jpg 960w,
+          Static/Image/wedding/001.jpg 1600w,
+          Static/Image/wedding/001.jpg 2048w"
+        imagesizes="100vw"
+  >
+
+  <!-- Tailwind config -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            serif: ['"Noto Serif TC"', 'serif'],
+            cinzel: ['"Cinzel"', 'serif'],
+          },
+          colors: {
+            gold: '#D4AF37',
+            'dark-overlay': 'rgba(0, 0, 0, 0.4)'
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    * {
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body, html {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background-color: #000;
+      font-smooth: always;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    .swiper {
+      width: 100%;
+      height: 100%;
+    }
+
+    /* 電影級啟動畫面 */
+    .cinematic-intro {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      background: #000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 1.5s ease-out;
+    }
+
+    .cinematic-intro.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .intro-logo {
+      animation: fadeInScale 2s ease-out forwards;
+      opacity: 0;
+    }
+
+    @keyframes fadeInScale {
+      0% {
+        opacity: 0;
+        transform: scale(0.8);
+      }
+      60% {
+        opacity: 1;
+        transform: scale(1.05);
+      }
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    .intro-text {
+      animation: fadeInUp 1.5s ease-out 0.5s forwards;
+      opacity: 0;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .start-button {
+      animation: pulseGlow 2s ease-in-out 2s infinite;
+      opacity: 0;
+      animation-fill-mode: backwards;
+    }
+
+    .start-button.show {
+      animation: fadeIn 1s ease-out 2s forwards, pulseGlow 2s ease-in-out 3s infinite;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes pulseGlow {
+      0%, 100% { 
+        transform: scale(1);
+        box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+      }
+      50% { 
+        transform: scale(1.05);
+        box-shadow: 0 0 30px rgba(212, 175, 55, 0.6);
+      }
+    }
+
+    /* 背景圖容器：電影級Ken Burns效果 */
+    .slide-bg {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      background-size: contain;
+      background-position: center;
+      background-repeat: no-repeat;
+      z-index: -1;
+
+      /* 性能優化：讓瀏覽器知道會做 transform */
+      will-change: transform;
+      transform: translateZ(0);
+
+      /* 電影級Ken Burns效果 - 更細膩的縮放和移動 */
+      animation: cinematicKenburns 25s ease-in-out infinite alternate;
+    }
+
+    @keyframes cinematicKenburns {
+      0% { 
+        transform: scale(1) translate(0, 0);
+      }
+      25% {
+        transform: scale(1.02) translate(-1%, 1%);
+      }
+      50% {
+        transform: scale(1.05) translate(0.5%, -0.5%);
+      }
+      75% {
+        transform: scale(1.03) translate(-0.5%, 0.5%);
+      }
+      100% { 
+        transform: scale(1.06) translate(1%, -1%);
+      }
+    }
+
+    /* 為不同 slide 添加變化 */
+    .swiper-slide:nth-child(2n) .slide-bg {
+      animation: cinematicKenburns2 25s ease-in-out infinite alternate;
+    }
+
+    @keyframes cinematicKenburns2 {
+      0% { 
+        transform: scale(1.05) translate(1%, -1%);
+      }
+      25% {
+        transform: scale(1.02) translate(-0.5%, 0.5%);
+      }
+      50% {
+        transform: scale(1.01) translate(0.5%, 0.5%);
+      }
+      75% {
+        transform: scale(1.04) translate(1%, -0.5%);
+      }
+      100% { 
+        transform: scale(1) translate(-1%, 1%);
+      }
+    }
+
+    /* 低動態偏好：停掉 Ken Burns，省電也避免暈眩 */
+    @media (prefers-reduced-motion: reduce) {
+      .slide-bg { animation: none !important; }
+      .animate__animated { animation: none !important; }
+    }
+
+    .overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.4), rgba(0,0,0,0.2), rgba(0,0,0,0.6));
+      pointer-events: none;
+    }
+
+    /* 電影級光效 */
+    .overlay::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.3) 100%);
+      pointer-events: none;
+    }
+
+    /* 頂部和底部電影黑邊（可選） */
+    .cinematic-bars {
+      position: fixed;
+      left: 0;
+      right: 0;
+      height: 0;
+      background: #000;
+      z-index: 5;
+      transition: height 0.8s ease-out;
+      pointer-events: none;
+    }
+
+    .cinematic-bars.top { top: 0; }
+    .cinematic-bars.bottom { bottom: 0; }
+
+    /* Fade效果增強 */
+    .swiper-slide {
+      transition: opacity 1.2s ease-in-out;
+    }
+
+    .music-btn {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 50;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(5px);
+      border: 1px solid rgba(255,255,255,0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s;
+      opacity: 0.5; /* 初始狀態 */
+    }
+
+    .music-icon {
+      width: 20px;
+      height: 20px;
+      fill: white;
+    }
+
+    .playing .music-icon {
+      animation: spin 3s linear infinite;
+    }
+
+    @keyframes spin { 100% { transform: rotate(360deg); } }
+
+    /* 手機隱藏箭頭 */
+    @media (max-width: 768px) {
+      .swiper-button-next, .swiper-button-prev { display: none; }
+    }
+
+    /* 自定義導航點 */
+    .swiper-pagination-bullet {
+      background: #fff;
+      opacity: 0.5;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.45); /* 提升亮背景可讀性 */
+    }
+    .swiper-pagination-bullet-active {
+      background: #D4AF37;
+      opacity: 1;
+    }
+
+    .content-container {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      color: white;
+      padding: 2rem;
+      position: relative;
+      z-index: 10;
+    }
+
+    .divider {
+      width: 60px;
+      height: 1px;
+      background-color: #D4AF37;
+      margin: 20px auto;
+    }
+
+    /* 電影級文字陰影 */
+    .text-shadow-soft {
+      text-shadow: 0 2px 12px rgba(0,0,0,0.6), 0 4px 24px rgba(0,0,0,0.4);
+    }
+
+    .text-shadow-strong {
+      text-shadow: 0 3px 15px rgba(0,0,0,0.8), 0 6px 30px rgba(0,0,0,0.5);
+    }
+
+    /* 標題發光效果 */
+    .title-glow {
+      text-shadow: 0 0 20px rgba(212, 175, 55, 0.5), 0 2px 12px rgba(0,0,0,0.8);
+    }
+
+    /* 電影級過場效果 */
+    .swiper-slide-active .content-container {
+      animation: slideContentFadeIn 1.5s ease-out;
+    }
+
+    @keyframes slideContentFadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* 粒子效果容器（裝飾用） */
+    .particles {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 1;
+    }
+
+    /* 光暈裝飾 */
+    @keyframes floatLight {
+      0%, 100% { 
+        transform: translate(0, 0) scale(1);
+        opacity: 0.1;
+      }
+      50% { 
+        transform: translate(50px, -50px) scale(1.2);
+        opacity: 0.3;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- 電影級啟動畫面 -->
+  <div class="cinematic-intro" id="cinematic-intro">
+    <div class="intro-logo text-center px-6">
+      <svg class="w-16 h-16 mx-auto mb-8 text-gold" fill="currentColor" viewBox="0 0 24 24">
+        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+      </svg>
+      <h1 class="font-cinzel text-3xl md:text-4xl mb-4 text-white tracking-widest">WEDDING FILM</h1>
+      <div class="w-20 h-0.5 bg-gold mx-auto mb-6"></div>
+      <p class="font-serif text-xl md:text-2xl text-white mb-2">葉嘉宸 & 李庭妤</p>
+      <p class="font-cinzel text-sm md:text-base text-gray-400 tracking-widest">2026 . 03 . 28</p>
+    </div>
+    <button id="start-experience" class="start-button show mt-12 px-10 py-4 border-2 border-gold text-gold hover:bg-gold hover:text-black rounded-full transition-all font-serif tracking-widest text-sm font-medium cursor-pointer">
+      開始體驗
+    </button>
+  </div>
+
+  <!-- 電影黑邊（可選） -->
+  <div class="cinematic-bars top"></div>
+  <div class="cinematic-bars bottom"></div>
+
+  <!-- 背景音樂 -->
+  <audio id="bg-music" loop preload="auto">
+    <source src="Static/Image/wedding/Perfect - Ed Sheeran.mp3" type="audio/mpeg">
+    您的瀏覽器不支援音樂播放。
+  </audio>
+
+  <!-- 音樂控制按鈕 -->
+  <div class="music-btn" id="music-toggle" aria-label="Toggle music">
+    <svg class="music-icon" viewBox="0 0 24 24">
+      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 14.5c-2.49 0-4.5-2.01-4.5-4.5S9.51 7.5 12 7.5s4.5 2.01 4.5 4.5-2.01 4.5-4.5 4.5zm0-5.5c-.55 0-1 .45-1 1s.45 1 1 1 1-.45 1-1-.45-1-1-1z"/>
+    </svg>
+  </div>
+
+  <!-- Swiper 結構 -->
+  <div class="swiper mySwiper">
+    <div class="swiper-wrapper">
+
+      <!-- Slide 1 -->
+      <div class="swiper-slide">
+        <div class="slide-bg"
+             data-bg="Static/Image/wedding/001.jpg"
+             data-bg-fallback="https://images.unsplash.com/photo-1519741497674-611481863552"
+             data-bg-focus="center"></div>
+        <div class="overlay"></div>
+
+        <div class="content-container text-shadow-strong">
+          <h2 class="font-cinzel text-lg md:text-xl mb-2 tracking-widest text-gold animate-element title-glow"
+              data-animate="animate__fadeInDown">WEDDING INVITATION</h2>
+          <h1 class="font-serif text-4xl md:text-6xl mb-4 font-bold animate-element"
+              data-animate="animate__zoomIn" style="text-shadow: 0 0 30px rgba(212, 175, 55, 0.4), 0 2px 15px rgba(0,0,0,0.9);">葉嘉宸 & 李庭妤</h1>
+          <div class="divider animate-element" data-animate="animate__fadeIn" style="box-shadow: 0 0 10px rgba(212, 175, 55, 0.5);"></div>
+          <p class="font-serif text-xl md:text-2xl tracking-widest mb-8 animate-element text-shadow-soft"
+             data-animate="animate__fadeInUp">2026 . 03 . 28</p>
+
+          <div class="grid gap-6 text-sm md:text-base font-serif animate-element w-full max-w-md"
+               data-animate="animate__fadeInUp">
+            <div class="border-l-2 border-gold pl-4 text-left bg-white/5 p-3 rounded-r">
+              <p class="text-gold text-xs font-bold mb-1 tracking-wider">觀禮 CEREMONY</p>
+              <p class="font-bold">下午 2:00 入席</p>
+              <p class="text-lg">永康衛理堂</p>
+              <p class="text-xs opacity-80 mt-1">710臺南市永康區永興路351號</p>
+            </div>
+            <div class="border-l-2 border-gold pl-4 text-left bg-white/5 p-3 rounded-r">
+              <p class="text-gold text-xs font-bold mb-1 tracking-wider">宴客 BANQUET</p>
+              <p class="font-bold">下午 6:30 入席</p>
+              <p class="text-lg">愛情神殿</p>
+              <p class="text-xs opacity-80 mt-1">711臺南市歸仁區凱旋路二段1巷348號</p>
+            </div>
+          </div>
+
+          <p class="mt-8 text-xs opacity-60 animate-element" data-animate="animate__fadeIn"
+             style="animation-delay: 1.5s;">向右滑動開啟 &rarr;</p>
+        </div>
+      </div>
+
+      <!-- Slide 2 -->
+      <div class="swiper-slide">
+        <div class="slide-bg"
+             data-bg="Static/Image/wedding/002.jpg"
+             data-bg-fallback="https://images.unsplash.com/photo-1511285560982-1351cdeb9821"
+             data-bg-focus="center"></div>
+        <div class="overlay"></div>
+
+        <div class="content-container text-shadow-soft">
+          <div class="max-w-lg text-center leading-loose font-serif text-lg md:text-xl animate-element"
+               data-animate="animate__fadeInUp">
+            <p class="mb-2 text-gold font-bold tracking-wide">蓄謀已久，如我所願</p>
+            <p class="mb-8 text-gold font-bold tracking-wide">四季有你，勝卻人間無數</p>
+
+            <p class="mb-2 opacity-90 text-base">終於將故事寫成了我們</p>
+            <p class="mb-2 opacity-90 text-base">誠邀生命中不同階段重要的你們</p>
+            <p class="mb-8 opacity-90 text-base">參加這場以結婚為名的聚會</p>
+
+            <p class="text-xl font-bold mb-2">2026年3月28日</p>
+            <p class="text-sm tracking-widest border-t border-white/30 pt-4 inline-block px-8">我們不見不散</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 3: 純照片展示（仍保留 UI 可讀性，極淡遮罩可選） -->
+      <div class="swiper-slide">
+        <div class="slide-bg"
+             data-bg="Static/Image/wedding/003.jpg"
+             data-bg-fallback="https://images.unsplash.com/photo-1606800052052-a08af7148866"
+             data-bg-focus="center"></div>
+        <div class="overlay" style="background: linear-gradient(to bottom, rgba(0,0,0,0.05), rgba(0,0,0,0.25));"></div>
+      </div>
+
+      <!-- Slide 4 -->
+      <div class="swiper-slide">
+        <div class="slide-bg"
+             data-bg="Static/Image/wedding/004.jpg"
+             data-bg-fallback="https://images.unsplash.com/photo-1583939003579-730e3918a45a"
+             data-bg-focus="center"></div>
+        <div class="overlay"></div>
+
+        <div class="content-container text-shadow-soft">
+          <div class="font-serif text-xl md:text-2xl leading-loose tracking-wide animate-element border p-8 md:p-12 border-white/30 backdrop-blur-sm"
+               data-animate="animate__fadeIn">
+            <p class="mb-4">我們的誓言不變</p>
+            <p class="mb-0">我們的愛意永恆</p>
+            <div class="divider my-6 opacity-50"></div>
+            <p class="mb-4">今日佳偶天成</p>
+            <p class="mb-0">未來風雨同行</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 5 -->
+      <div class="swiper-slide">
+        <div class="slide-bg"
+             data-bg="Static/Image/wedding/005.jpg"
+             data-bg-fallback="https://images.unsplash.com/photo-1520854221250-8c12521743d2"
+             data-bg-focus="center"></div>
+        <div class="overlay"></div>
+
+        <div class="content-container text-shadow-soft">
+          <div class="font-serif text-2xl md:text-3xl leading-loose tracking-widest animate-element"
+               data-animate="animate__fadeInUp">
+            <p class="mb-4 font-light">願我們的愛</p>
+            <p class="mb-4 font-light">如星河長明</p>
+            <p class="mb-4 text-gold font-bold mt-8">歲歲年年</p>
+            <p class="font-bold">相伴相守</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 6 -->
+      <div class="swiper-slide">
+        <div class="slide-bg"
+             data-bg="Static/Image/wedding/006.jpg"
+             data-bg-fallback="https://images.unsplash.com/photo-1469334031218-e382a71b716b"
+             data-bg-focus="center"></div>
+        <div class="overlay"></div>
+
+        <div class="content-container text-shadow-soft">
+          <h3 class="font-cinzel text-3xl mb-6 text-gold animate-element" data-animate="animate__bounceIn">Save The Date</h3>
+
+          <div class="text-center font-serif animate-element w-full max-w-md" data-animate="animate__fadeInUp">
+            <p class="text-2xl md:text-3xl font-bold mb-8">2026年3月28日<br><span class="text-base font-normal opacity-80">星期六</span></p>
+
+            <div class="mb-8 space-y-1 relative">
+              <p class="text-gold text-sm tracking-widest font-bold">觀禮 CEREMONY</p>
+              <p class="text-lg font-bold">永康衛理堂</p>
+              <p class="text-base">下午 2:00 入席</p>
+              <p class="text-sm opacity-80 mt-1">710臺南市永康區永興路351號</p>
+              <a href="https://www.google.com/maps/search/?api=1&query=台南市永康區永興路351號" target="_blank" rel="noopener"
+                 class="inline-flex items-center mt-3 text-xs border border-white/50 px-4 py-2 rounded-full hover:bg-white hover:text-black transition">
+                <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                地圖導航
+              </a>
+            </div>
+
+            <div class="w-1/2 h-px bg-white/20 mx-auto my-6"></div>
+
+            <div class="space-y-1 relative">
+              <p class="text-gold text-sm tracking-widest font-bold">宴客 BANQUET</p>
+              <p class="text-lg font-bold">愛情神殿</p>
+              <p class="text-base">下午 6:30 入席</p>
+              <p class="text-sm opacity-80 mt-1">711臺南市歸仁區凱旋路二段1巷348號</p>
+              <a href="https://www.google.com/maps/search/?api=1&query=台南市歸仁區凱旋路二段1巷348號" target="_blank" rel="noopener"
+                 class="inline-flex items-center mt-3 text-xs border border-white/50 px-4 py-2 rounded-full hover:bg-white hover:text-black transition">
+                <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                地圖導航
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="swiper-pagination"></div>
+    <div class="swiper-button-next text-white"></div>
+    <div class="swiper-button-prev text-white"></div>
+  </div>
+
+  <!-- Swiper JS（defer：不阻塞首屏渲染） -->
+  <script defer src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+  <!-- 邏輯腳本 -->
+  <script>
+    // =========================
+    // A) 背景圖最佳化策略
+    // - Lazy Load：只載入 current / prev / next
+    // - 自動挑選合適尺寸（w=）
+    // - 預取下一張，降低換頁卡頓
+    // =========================
+
+    // 依裝置選擇最適圖片寬度（Unsplash: w=）
+    function chooseBestWidth() {
+      const dpr = Math.min(window.devicePixelRatio || 1, 2); // 不追求過高，控制流量
+      const vw = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+      const target = vw * dpr;
+
+      // 常用階梯（你可再加更細）
+      const candidates = [768, 960, 1200, 1600, 2048, 2560];
+      return candidates.reduce((prev, cur) => Math.abs(cur - target) < Math.abs(prev - target) ? cur : prev);
+    }
+
+    function buildUnsplashUrl(baseUrl) {
+      // 如果是本地圖片，直接返回
+      if (!baseUrl.startsWith('http')) {
+        return baseUrl;
+      }
+      const w = chooseBestWidth();
+      // q=70：視覺仍漂亮，體積會比 q=80 更友善（你要更銳利可改 75/80）
+      return `${baseUrl}?auto=format&fit=crop&q=70&w=${w}`;
+    }
+
+    // 預載圖片（避免滑到才開始抓）
+    function preloadImage(url) {
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.decoding = 'async';
+        img.onload = () => resolve(url);
+        img.onerror = reject;
+        img.src = url;
+      });
+    }
+
+    // 套用背景
+    async function ensureSlideBgLoaded(slideEl) {
+      const bg = slideEl.querySelector('.slide-bg');
+      if (!bg) return;
+      if (bg.dataset.loaded === '1') return;
+
+      const base = bg.dataset.bg;
+      const fallback = bg.dataset.bgFallback;
+      if (!base) return;
+
+      const url = buildUnsplashUrl(base);
+
+      try {
+        // 先嘗試載入主要圖片（本地或 Unsplash）
+        await preloadImage(url);
+        bg.style.backgroundImage = `url('${url}')`;
+        bg.dataset.loaded = '1';
+      } catch (e) {
+        // 如果主要圖片失敗且有 fallback，嘗試載入 fallback
+        if (fallback) {
+          try {
+            const fallbackUrl = buildUnsplashUrl(fallback);
+            await preloadImage(fallbackUrl);
+            bg.style.backgroundImage = `url('${fallbackUrl}')`;
+            bg.dataset.loaded = '1';
+            console.log(`使用備用圖片: ${fallbackUrl}`);
+          } catch (fallbackError) {
+            console.error('主要圖片和備用圖片都載入失敗', fallbackError);
+            // 最後的保險：使用低解析度版本
+            bg.style.backgroundImage = `url('${fallback}?auto=format&fit=crop&q=70&w=800')`;
+            bg.dataset.loaded = '1';
+          }
+        } else {
+          // 沒有 fallback，使用較保守的參數重試
+          bg.style.backgroundImage = `url('${base}?auto=format&fit=crop&q=70&w=1200')`;
+          bg.dataset.loaded = '1';
+        }
+      }
+    }
+
+    // 載入「當前 + 前後一張」，其餘延後
+    async function loadNearbySlides(swiper) {
+      const idx = swiper.activeIndex;
+      const targets = new Set([idx, idx - 1, idx + 1]);
+
+      const slides = swiper.slides;
+      const tasks = [];
+      targets.forEach(i => {
+        if (i >= 0 && i < slides.length) tasks.push(ensureSlideBgLoaded(slides[i]));
+      });
+
+      await Promise.allSettled(tasks);
+    }
+
+    // =========================
+    // B) 音樂控制（更穩，不雙觸發）
+    // =========================
+    const music = document.getElementById('bg-music');
+    const musicBtn = document.getElementById('music-toggle');
+    let isPlaying = false;
+
+    function setMusicUI(playing) {
+      isPlaying = playing;
+      if (playing) {
+        musicBtn.classList.add('playing');
+        musicBtn.style.opacity = '1';
+      } else {
+        musicBtn.classList.remove('playing');
+        musicBtn.style.opacity = '0.5';
+      }
+    }
+    setMusicUI(false);
+
+    async function toggleMusic() {
+      try {
+        if (isPlaying) {
+          music.pause();
+          setMusicUI(false);
+        } else {
+          await music.play();
+          setMusicUI(true);
+        }
+      } catch (e) {
+        console.log("播放失敗（可能是瀏覽器限制）", e);
+        setMusicUI(false);
+      }
+    }
+
+    // =========================
+    // 啟動畫面控制
+    // =========================
+    const cinematicIntro = document.getElementById('cinematic-intro');
+    const startBtn = document.getElementById('start-experience');
+    
+    if (startBtn) {
+      startBtn.addEventListener('click', async () => {
+        // 隱藏啟動畫面
+        cinematicIntro.classList.add('hidden');
+        
+        // 嘗試播放音樂
+        try {
+          await music.play();
+          isPlaying = true;
+          musicBtn.classList.add('playing');
+          setMusicUI(true);
+        } catch (e) {
+          console.log('音樂自動播放被阻止');
+        }
+      });
+    }
+
+    musicBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      toggleMusic();
+    });
+
+    // =========================
+    // C) Swiper + 動畫（減少 DOM 掃描）
+    // =========================
+    window.addEventListener('DOMContentLoaded', () => {
+      const swiper = new Swiper(".mySwiper", {
+        direction: "horizontal",
+        loop: true,
+        speed: 1200,
+        effect: "fade",
+        fadeEffect: {
+          crossFade: true
+        },
+        autoplay: {
+          delay: 5000,
+          disableOnInteraction: false,
+          pauseOnMouseEnter: true
+        },
+        pagination: { el: ".swiper-pagination", clickable: true },
+        navigation: { nextEl: ".swiper-button-next", prevEl: ".swiper-button-prev" },
+        on: {
+          init: async function () {
+            // 首屏：立刻載入附近背景（避免一開始空白）
+            await loadNearbySlides(this);
+            animateSlide(this.slides[this.activeIndex]);
+          },
+          slideChangeTransitionStart: function () {
+            const prevSlide = this.slides[this.previousIndex];
+            if (!prevSlide) return;
+
+            const prevEls = prevSlide.querySelectorAll('.animate-element');
+            prevEls.forEach(el => {
+              const animationClass = el.getAttribute('data-animate');
+              el.classList.remove('animate__animated', animationClass);
+              el.style.opacity = '0';
+              el.style.animationDelay = '';
+            });
+          },
+          slideChangeTransitionEnd: async function () {
+            // 滑到哪，才載入附近背景（Lazy）
+            await loadNearbySlides(this);
+            animateSlide(this.slides[this.activeIndex]);
+          }
+        }
+      });
+
+      function animateSlide(slideElement) {
+        const elements = slideElement.querySelectorAll('.animate-element');
+        elements.forEach((el, index) => {
+          const animationClass = el.getAttribute('data-animate');
+          el.style.opacity = '1';
+          el.classList.add('animate__animated', animationClass);
+          el.style.animationDelay = `${index * 0.2}s`;
+        });
+      }
+    });
+  </script>
+</body>
+</html>
