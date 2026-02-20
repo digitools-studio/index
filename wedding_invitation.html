@@ -724,18 +724,19 @@
   <div class="cinematic-bars top"></div>
   <div class="cinematic-bars bottom"></div>
 
-  <!-- 背景音樂 -->
+  <!--
+  背景音樂與控制按鈕（暫時停用）
   <audio id="bg-music" loop preload="auto">
     <source src="Static/Image/wedding/Perfect - Ed Sheeran.mp3" type="audio/mpeg">
     您的瀏覽器不支援音樂播放。
   </audio>
 
-  <!-- 音樂控制按鈕 -->
   <div class="music-btn" id="music-toggle" aria-label="Toggle music">
     <svg class="music-icon" viewBox="0 0 24 24">
       <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 14.5c-2.49 0-4.5-2.01-4.5-4.5S9.51 7.5 12 7.5s4.5 2.01 4.5 4.5-2.01 4.5-4.5 4.5zm0-5.5c-.55 0-1 .45-1 1s.45 1 1 1 1-.45 1-1-.45-1-1-1z"/>
     </svg>
   </div>
+  -->
 
   <!-- Swiper 結構 -->
   <div class="swiper mySwiper">
@@ -1313,8 +1314,9 @@
     }
 
     // =========================
-    // B) 音樂控制（更穩，不雙觸發）
+    // B) 音樂控制（暫時停用）
     // =========================
+    /*
     const music = document.getElementById('bg-music');
     const musicBtn = document.getElementById('music-toggle');
     let isPlaying = false;
@@ -1345,6 +1347,7 @@
         setMusicUI(false);
       }
     }
+    */
 
     // =========================
     // 啟動畫面控制
@@ -1356,23 +1359,8 @@
       startBtn.addEventListener('click', async () => {
         // 隱藏啟動畫面
         cinematicIntro.classList.add('hidden');
-        
-        // 嘗試播放音樂
-        try {
-          await music.play();
-          isPlaying = true;
-          musicBtn.classList.add('playing');
-          setMusicUI(true);
-        } catch (e) {
-          console.log('音樂自動播放被阻止');
-        }
       });
     }
-
-    musicBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      toggleMusic();
-    });
 
     // =========================
     // C) Swiper + 動畫（減少 DOM 掃描）
