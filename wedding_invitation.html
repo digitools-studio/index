@@ -256,7 +256,7 @@
 
     /* Fade效果增強 */
     .swiper-slide {
-      transition: opacity 1.2s ease-in-out;
+      transition: opacity 1.8s ease-in-out;
     }
 
     .music-btn {
@@ -711,7 +711,7 @@
       <svg class="w-16 h-16 mx-auto mb-8 text-gold" fill="currentColor" viewBox="0 0 24 24">
         <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
       </svg>
-      <h1 class="font-cinzel text-3xl md:text-4xl mb-4 text-white tracking-widest">WEDDING FILM</h1>
+      <h1 class="font-cinzel text-3xl md:text-4xl mb-4 text-white tracking-widest">WEDDING INVITATION</h1>
       <div class="w-20 h-0.5 bg-gold mx-auto mb-6"></div>
       <p class="font-serif text-xl md:text-2xl text-white mb-2">葉嘉宸 & 李庭妤</p>
       <p class="font-cinzel text-sm md:text-base text-gray-400 tracking-widest">2026 . 03 . 28</p>
@@ -725,19 +725,17 @@
   <div class="cinematic-bars top"></div>
   <div class="cinematic-bars bottom"></div>
 
-  <!--
-  背景音樂與控制按鈕（暫時停用）
-  <audio id="bg-music" loop preload="auto">
+  <!-- 背景音樂與控制按鈕 -->
+  <audio id="bg-music" loop preload="auto" playsinline>
     <source src="Static/Image/wedding/Perfect - Ed Sheeran.mp3" type="audio/mpeg">
     您的瀏覽器不支援音樂播放。
   </audio>
 
-  <div class="music-btn" id="music-toggle" aria-label="Toggle music">
+  <button class="music-btn" id="music-toggle" aria-label="背景音樂開關" aria-pressed="false" type="button" title="開啟背景音樂">
     <svg class="music-icon" viewBox="0 0 24 24">
       <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 14.5c-2.49 0-4.5-2.01-4.5-4.5S9.51 7.5 12 7.5s4.5 2.01 4.5 4.5-2.01 4.5-4.5 4.5zm0-5.5c-.55 0-1 .45-1 1s.45 1 1 1 1-.45 1-1-.45-1-1-1z"/>
     </svg>
-  </div>
-  -->
+  </button>
 
   <!-- Swiper 結構 -->
   <div class="swiper mySwiper">
@@ -1315,63 +1313,141 @@
     }
 
     // =========================
-    // B) 音樂控制（暫時停用）
+    // B) 音樂控制
     // =========================
-    /*
     const music = document.getElementById('bg-music');
     const musicBtn = document.getElementById('music-toggle');
-    let isPlaying = false;
+    let isMusicEnabled = false;
+    let musicRetryArmed = false;
 
     function setMusicUI(playing) {
-      isPlaying = playing;
+      isMusicEnabled = playing;
+      if (!musicBtn) return;
+
       if (playing) {
         musicBtn.classList.add('playing');
         musicBtn.style.opacity = '1';
+        musicBtn.setAttribute('aria-pressed', 'true');
+        musicBtn.setAttribute('title', '關閉背景音樂');
       } else {
         musicBtn.classList.remove('playing');
         musicBtn.style.opacity = '0.5';
+        musicBtn.setAttribute('aria-pressed', 'false');
+        musicBtn.setAttribute('title', '開啟背景音樂');
       }
     }
     setMusicUI(false);
 
-    async function toggleMusic() {
+    function armMusicRetryOnNextGesture() {
+      if (musicRetryArmed || !music) return;
+      musicRetryArmed = true;
+
+      const retryPlay = () => {
+        if (!music) return;
+        const playPromise = music.play();
+        if (playPromise && typeof playPromise.then === 'function') {
+          playPromise.then(() => {
+            setMusicUI(true);
+          }).catch(() => {
+            setMusicUI(false);
+          });
+        }
+
+        cleanupRetryListeners();
+      };
+
+      const cleanupRetryListeners = () => {
+        document.removeEventListener('pointerdown', retryPlay, true);
+        document.removeEventListener('touchstart', retryPlay, true);
+        document.removeEventListener('click', retryPlay, true);
+        document.removeEventListener('keydown', retryPlay, true);
+        musicRetryArmed = false;
+      };
+
+      document.addEventListener('pointerdown', retryPlay, { once: true, capture: true });
+      document.addEventListener('touchstart', retryPlay, { once: true, capture: true });
+      document.addEventListener('click', retryPlay, { once: true, capture: true });
+      document.addEventListener('keydown', retryPlay, { once: true, capture: true });
+    }
+
+    async function playMusic() {
+      if (!music) return false;
+
+      music.loop = true;
+      music.muted = false;
       try {
-        if (isPlaying) {
-          music.pause();
-          setMusicUI(false);
+        await music.play();
+        setMusicUI(true);
+        return true;
+      } catch (e) {
+        console.log('播放失敗（可能是瀏覽器限制）', e);
+        setMusicUI(false);
+        armMusicRetryOnNextGesture();
+        return false;
+      }
+    }
+
+    function stopMusic() {
+      if (!music) return;
+      music.pause();
+      music.currentTime = 0;
+      setMusicUI(false);
+    }
+
+    async function toggleMusic() {
+      if (!music) return;
+
+      try {
+        if (isMusicEnabled) {
+          stopMusic();
         } else {
-          await music.play();
-          setMusicUI(true);
+          await playMusic();
         }
       } catch (e) {
-        console.log("播放失敗（可能是瀏覽器限制）", e);
+        console.log('音樂切換失敗', e);
         setMusicUI(false);
       }
     }
-    */
+
+    function stopMusicWhenLeaveSite() {
+      if (document.visibilityState === 'hidden') {
+        stopMusic();
+      }
+    }
+
+    if (musicBtn) {
+      musicBtn.addEventListener('click', toggleMusic);
+    }
+
+    document.addEventListener('visibilitychange', stopMusicWhenLeaveSite);
+    window.addEventListener('pagehide', stopMusic);
+    window.addEventListener('beforeunload', stopMusic);
 
     // =========================
     // 啟動畫面控制
     // =========================
     const cinematicIntro = document.getElementById('cinematic-intro');
     const startBtn = document.getElementById('start-experience');
-    
-    if (startBtn) {
-      startBtn.addEventListener('click', async () => {
-        // 隱藏啟動畫面
-        cinematicIntro.classList.add('hidden');
-      });
-    }
 
     // =========================
     // C) Swiper + 動畫（減少 DOM 掃描）
     // =========================
     window.addEventListener('DOMContentLoaded', () => {
-      function updateAutoplayForMessageBoard(swiperInstance) {
-        const activeSlide = swiperInstance.slides[swiperInstance.activeIndex];
-        const isMessageBoardSlide = activeSlide && activeSlide.querySelector('.message-board-container');
+      let hasStartedExperience = false;
+      const initialSlides = Array.from(document.querySelectorAll('.mySwiper .swiper-wrapper > .swiper-slide'));
+      const messageBoardRealIndex = initialSlides.findIndex(slide => slide.querySelector('.message-board-container'));
 
+      function updateAutoplayForMessageBoard(swiperInstance) {
         if (!swiperInstance.autoplay) return;
+
+        if (!hasStartedExperience) {
+          if (swiperInstance.autoplay.running) {
+            swiperInstance.autoplay.stop();
+          }
+          return;
+        }
+
+        const isMessageBoardSlide = messageBoardRealIndex >= 0 && swiperInstance.realIndex === messageBoardRealIndex;
 
         if (isMessageBoardSlide) {
           if (swiperInstance.autoplay.running) {
@@ -1385,7 +1461,7 @@
       const swiper = new Swiper(".mySwiper", {
         direction: "horizontal",
         loop: true,
-        speed: 1200,
+        speed: 1800,
         effect: "fade",
         fadeEffect: {
           crossFade: true
@@ -1424,6 +1500,30 @@
           }
         }
       });
+
+      updateAutoplayForMessageBoard(swiper);
+
+      if (startBtn) {
+        const startMusicEarly = () => {
+          if (!isMusicEnabled) {
+            playMusic();
+          }
+        };
+
+        startBtn.addEventListener('pointerdown', startMusicEarly, { passive: true });
+        startBtn.addEventListener('touchstart', startMusicEarly, { passive: true });
+
+        startBtn.addEventListener('click', () => {
+          startMusicEarly();
+          swiper.slideToLoop(0, 0, false);
+          hasStartedExperience = true;
+          updateAutoplayForMessageBoard(swiper);
+
+          if (cinematicIntro) {
+            cinematicIntro.classList.add('hidden');
+          }
+        });
+      }
 
       function animateSlide(slideElement) {
         const elements = slideElement.querySelectorAll('.animate-element');
