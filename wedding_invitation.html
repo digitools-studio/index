@@ -574,11 +574,13 @@
       padding: 1.25rem;
       border-radius: 12px;
       width: 100%;
-      max-width: 320px;
+      max-width: 360px;
       flex: 1;
-      max-height: calc(100vh - 320px);
+      min-height: 0;
       overflow: hidden;
       position: relative;
+      display: flex;
+      flex-direction: column;
     }
 
     .messages-display-title {
@@ -589,13 +591,21 @@
       margin-bottom: 0.875rem;
       font-weight: 600;
       letter-spacing: 2px;
+      flex-shrink: 0;
     }
 
     .messages-scroll-container {
-      overflow: hidden;
+      flex: 1;
+      overflow-y: scroll;
       position: relative;
-      height: calc(100vh - 400px);
-      min-height: 350px;
+      min-height: 0;
+      /* 隱藏捲軸但保留功能 */
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+
+    .messages-scroll-container::-webkit-scrollbar {
+      display: none;
     }
 
     .messages-list {
@@ -671,7 +681,6 @@
       }
       .messages-display {
         padding: 1rem;
-        max-height: calc(100vh - 280px);
         max-width: 100%;
       }
       .messages-display-title {
@@ -679,8 +688,7 @@
         margin-bottom: 0.75rem;
       }
       .messages-scroll-container {
-        height: calc(100vh - 360px);
-        min-height: 280px;
+        min-height: 0;
       }
       .message-item {
         padding: 0.625rem 0.875rem;
@@ -1221,29 +1229,37 @@
 
       container.scrollTop = 0;
 
-      const canScroll = container.scrollHeight > container.clientHeight + 8;
-      if (!canScroll) return;
+      // 等待一個 frame 讓瀏覽器完成 layout，再量測是否需要捲動
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          const canScroll = container.scrollHeight > container.clientHeight + 8;
+          if (!canScroll) return;
 
-      let paused = false;
-      const pause = () => { paused = true; };
-      const resume = () => { paused = false; };
+          let paused = false;
+          const pause  = () => { paused = true; };
+          const resume = () => { paused = false; };
 
-      container.onmouseenter = pause;
-      container.onmouseleave = resume;
-      container.ontouchstart = pause;
-      container.ontouchend = resume;
+          container.onmouseenter = pause;
+          container.onmouseleave = resume;
+          container.ontouchstart = pause;
+          container.ontouchend   = resume;
 
-      messagesAutoScrollTimer = setInterval(() => {
-        if (paused) return;
+          messagesAutoScrollTimer = setInterval(() => {
+            if (paused) return;
 
-        const maxScrollTop = container.scrollHeight - container.clientHeight;
-        if (container.scrollTop >= maxScrollTop - 1) {
-          container.scrollTop = 0;
-          return;
-        }
+            const maxScrollTop = container.scrollHeight - container.clientHeight;
+            if (maxScrollTop <= 0) return;
 
-        container.scrollTop += 1;
-      }, 40);
+            if (container.scrollTop >= maxScrollTop - 1) {
+              // 捲到底：平滑回頂，製造循環感
+              container.scrollTop = 0;
+              return;
+            }
+
+            container.scrollTop += 1;
+          }, 40);
+        });
+      });
     }
     
     // 防止 XSS 攻擊
