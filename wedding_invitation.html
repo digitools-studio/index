@@ -949,6 +949,7 @@
                 maxlength="200"
                 required
               ></textarea>
+              <div id="messageFilterPreview" class="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2" style="display:none;"></div>
               <button type="submit" class="message-submit-btn" id="submitBtn">
                 送出祝福
               </button>
@@ -1113,6 +1114,187 @@
     const COOLDOWN_KEY = 'wedding_message_cooldown_until'; // 裝置層記憶（同裝置）
     let cooldownTimer = null;
     let messagesAutoScrollTimer = null;
+
+    // 留言敏感詞（中英文）
+    const SENSITIVE_WORDS_ZH = [
+      // 基礎辱罵
+      '幹', '靠北', '白癡', '智障', '低能', '廢物', '垃圾', '王八蛋',
+      '賤人', '畜生', '死全家', '去死', '神經病', '腦殘',
+
+      // 婚禮破壞
+      '小三', '狐狸精', '第三者', '外遇', '偷吃', '劈腿', '戴綠帽',
+      '綠帽', '出軌', '前任', '舊情人',
+
+      // 婚姻負面
+      '離婚', '分手', '不會幸福', '撐不久', '早晚離', '婚姻墳墓',
+
+      // 八卦挑釁
+      '真的假的', '騙婚', '假結婚', '奉子成婚',
+      '被逼結婚', '被綁架', '政治聯姻',
+
+      // 貶低新人
+      '配不上', '不適合', '不般配', '醜', '太老',
+      '太窮', '窮鬼', '沒錢', '吃軟飯',
+
+      // 詛咒
+      '倒楣', '不會長久', '會後悔', '不會幸福',
+      '早晚分', '不會好結果',
+
+      // 故意引戰
+      '渣男', '渣女', '玩玩而已', '只是利用',
+      '感情騙子', '騙錢',
+
+      // 成人不當
+      '床上', '性', '性愛', '開房', '一夜情',
+      '上床', '裸照',
+
+      // 網路破壞
+      '垃圾婚禮', '爛婚禮', '浪費錢',
+      '不想來', '不值得'
+    ];
+    const SENSITIVE_WORDS_EN = [
+      // 基礎辱罵
+      'fuck', 'shit', 'bitch', 'asshole', 'idiot', 'stupid',
+      'moron', 'retard', 'dumb', 'loser',
+
+      // 婚姻破壞
+      'mistress', 'affair', 'cheat', 'cheating', 'homewrecker',
+      'third party', 'ex girlfriend', 'ex boyfriend',
+
+      // 婚姻負面
+      'divorce', 'breakup', 'won’t last', 'not happy',
+      'fake marriage', 'forced marriage',
+
+      // 貶低
+      'ugly', 'poor', 'not good enough', 'gold digger',
+      'sugar daddy',
+
+      // 成人不當
+      'sex', 'sexual', 'bed', 'naked', 'porn',
+      'one night stand',
+
+      // 引戰
+      'scam', 'fake love', 'using him', 'using her'
+    ];
+    const SENSITIVE_WORDS = Array.from(new Set([...SENSITIVE_WORDS_ZH, ...SENSITIVE_WORDS_EN]))
+      .sort((a, b) => b.length - a.length);
+
+    const SENSITIVE_WORD_VARIANTS = [
+      ...SENSITIVE_WORDS,
+      'fck', 'fuk', 'fucck',
+      '小3', '小③', '小參', 'ㄒㄧㄠ三', 'ㄒㄧㄠˇ三'
+    ];
+
+    const LOOSE_CHAR_MAP = {
+      a: '[a4@]'
+      ,b: '[b8]'
+      ,e: '[e3]'
+      ,g: '[g69]'
+      ,i: '[i1!|]'
+      ,l: '[l1|]'
+      ,o: '[o0]'
+      ,s: '[s5$]'
+      ,t: '[t7+]'
+      ,u: '[u*v]'
+      ,'三': '[三3③參叁叄]'
+    };
+
+    function escapeRegExp(text) {
+      return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    }
+
+    function applyCompatibilityMappings(text) {
+      let result = String(text || '').normalize('NFKC');
+      result = result
+        .replace(/ㄒ\s*ㄧ\s*ㄠ\s*[ˇˊˋ˙]?/gi, '小')
+        .replace(/[③參叁叄]/g, '三');
+      return result;
+    }
+
+    function normalizeText(text) {
+      return applyCompatibilityMappings(text)
+        .toLowerCase()
+        .replace(/\s+/g, '')
+        .replace(/[^\w\u4e00-\u9fa5]/g, '');
+    }
+
+    function toRegexKeyword(word) {
+      return applyCompatibilityMappings(String(word || ''))
+        .replace(/\s+/g, '')
+        .replace(/[ˇˊˋ˙]/g, '');
+    }
+
+    function buildLooseCharPattern(char) {
+      const lower = String(char).toLowerCase();
+      return LOOSE_CHAR_MAP[lower] || escapeRegExp(char);
+    }
+
+    function buildLooseRegex(keyword) {
+      const cleaned = toRegexKeyword(keyword);
+      if (!cleaned) return null;
+
+      const chunks = Array.from(cleaned).map(buildLooseCharPattern);
+      const pattern = chunks.join('[\\s\\W_]*');
+      return new RegExp(pattern, 'gi');
+    }
+
+    const SENSITIVE_RULES = Array.from(new Set(SENSITIVE_WORD_VARIANTS))
+      .map(word => ({
+        sourceWord: word,
+        normalizedWord: normalizeText(word),
+        regex: buildLooseRegex(word)
+      }))
+      .filter(rule => rule.regex && rule.normalizedWord)
+      .sort((a, b) => b.normalizedWord.length - a.normalizedWord.length);
+
+    const NORMALIZED_SENSITIVE_WORDS = Array.from(
+      new Set(SENSITIVE_RULES.map(rule => rule.normalizedWord))
+    ).sort((a, b) => b.length - a.length);
+
+    function maskWithO(text) {
+      if (!text) return { sanitizedText: '', detectedWords: [] };
+
+      let sanitizedText = text;
+      const detectedWordMap = new Map();
+
+      SENSITIVE_RULES.forEach(rule => {
+        sanitizedText = sanitizedText.replace(rule.regex, (matched) => {
+          if (!detectedWordMap.has(rule.normalizedWord)) {
+            detectedWordMap.set(rule.normalizedWord, rule.sourceWord);
+          }
+          return matched.replace(/[^\s]/g, 'O');
+        });
+      });
+
+      const normalizedInput = normalizeText(text);
+      NORMALIZED_SENSITIVE_WORDS.forEach(word => {
+        if (word && normalizedInput.includes(word) && !detectedWordMap.has(word)) {
+          detectedWordMap.set(word, word);
+        }
+      });
+
+      return {
+        sanitizedText,
+        detectedWords: Array.from(detectedWordMap.values())
+      };
+    }
+
+    function updateMessageFilterPreview(rawMessage) {
+      const preview = document.getElementById('messageFilterPreview');
+      if (!preview) return;
+
+      const { sanitizedText, detectedWords } = maskWithO(rawMessage || '');
+      const hasDetected = detectedWords.length > 0 && sanitizedText !== (rawMessage || '');
+
+      if (!hasDetected) {
+        preview.style.display = 'none';
+        preview.textContent = '';
+        return;
+      }
+
+      preview.style.display = 'block';
+      preview.textContent = `已偵測到不適合字詞，送出後將替換為：${sanitizedText}`;
+    }
 
     function getCooldownRemainingSeconds() {
       const until = parseInt(localStorage.getItem(COOLDOWN_KEY) || '0', 10);
@@ -1294,13 +1476,22 @@
       const submitBtn = document.getElementById('submitBtn');
       const nicknameInput = document.getElementById('nicknameInput');
       const messageInput = document.getElementById('messageInput');
+
+      if (messageInput) {
+        messageInput.addEventListener('input', () => {
+          updateMessageFilterPreview(messageInput.value);
+        });
+      }
       
       if (messageForm) {
         messageForm.addEventListener('submit', async (e) => {
           e.preventDefault();
 
-          const nickname = nicknameInput.value.trim();
-          const message = messageInput.value.trim();
+          const nicknameRaw = nicknameInput.value.trim();
+          const messageRaw = messageInput.value.trim();
+
+          const { sanitizedText: nickname } = maskWithO(nicknameRaw);
+          const { sanitizedText: message, detectedWords } = maskWithO(messageRaw);
 
           if (!nickname || !message) {
             alert('請填寫暱稱和祝福語');
@@ -1333,13 +1524,15 @@
             trackWeddingEvent('wedding_message_submit_success', {
               nickname_length: nickname.length,
               message_length: message.length,
-              has_response: Boolean(res)
+              has_response: Boolean(res),
+              filtered_words_count: detectedWords.length
             });
             startCooldown(COOLDOWN_SECONDS);
 
             // 清空表單
             nicknameInput.value = '';
             messageInput.value = '';
+            updateMessageFilterPreview('');
 
             // 顯示成功訊息
             alert('感謝你的祝福！💝');
