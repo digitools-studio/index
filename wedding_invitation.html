@@ -730,7 +730,7 @@
   <div class="cinematic-bars bottom"></div>
 
   <!-- 背景音樂與控制按鈕 -->
-  <audio id="bg-music" loop preload="auto" playsinline>
+  <audio id="bg-music" loop preload="auto" playsinline webkit-playsinline>
     <source src="Static/Image/wedding/Perfect - Ed Sheeran.mp3" type="audio/mpeg">
     您的瀏覽器不支援音樂播放。
   </audio>
@@ -1510,6 +1510,17 @@
     }
     setMusicUI(false);
 
+    function syncMusicUIFromElement() {
+      if (!music) return;
+      setMusicUI(!music.paused && !music.ended);
+    }
+
+    if (music) {
+      music.addEventListener('playing', syncMusicUIFromElement);
+      music.addEventListener('pause', syncMusicUIFromElement);
+      music.addEventListener('ended', syncMusicUIFromElement);
+    }
+
     function armMusicRetryOnNextGesture() {
       if (musicRetryArmed || !music) return;
       musicRetryArmed = true;
@@ -1558,6 +1569,28 @@
         trackWeddingEvent('wedding_music_play_failed', { trigger });
         armMusicRetryOnNextGesture();
         return false;
+      }
+    }
+
+    function startMusicFromUserGesture(trigger = 'user_gesture') {
+      if (!music) return;
+
+      music.loop = true;
+      music.muted = false;
+
+      const playPromise = music.play();
+      if (playPromise && typeof playPromise.then === 'function') {
+        playPromise
+          .then(() => {
+            mutedAutoplayDone = false;
+            setMusicUI(true);
+            trackWeddingEvent('wedding_music_play', { trigger });
+          })
+          .catch(() => {
+            setMusicUI(false);
+            trackWeddingEvent('wedding_music_play_failed', { trigger });
+            armMusicRetryOnNextGesture();
+          });
       }
     }
 
@@ -1717,33 +1750,8 @@
         startBtn.addEventListener('click', () => {
           trackWeddingEvent('wedding_start_experience_click');
 
-          // ─── 音樂啟動（在 click 同步流程內，iOS/Android 皆認可此 gesture）───
-          if (music && !isMusicEnabled) {
-            if (mutedAutoplayDone) {
-              // 已在靜音播放中：直接解除靜音即可，不需重新 play()
-              music.muted = false;
-              setMusicUI(true);
-              trackWeddingEvent('wedding_music_play', { trigger: 'unmute_on_start' });
-            } else {
-              // 靜音播放尚未成功（嚴格政策裝置），在 click 手勢內直接 play()
-              music.muted = false;
-              music.loop = true;
-              const playPromise = music.play();
-              if (playPromise && typeof playPromise.then === 'function') {
-                playPromise
-                  .then(() => {
-                    setMusicUI(true);
-                    trackWeddingEvent('wedding_music_play', { trigger: 'click_start' });
-                  })
-                  .catch(() => {
-                    setMusicUI(false);
-                    trackWeddingEvent('wedding_music_play_failed', { trigger: 'click_start' });
-                    armMusicRetryOnNextGesture();
-                  });
-              }
-            }
-          }
-          // ─────────────────────────────────────────────────────────────────
+          // 在 click 手勢中「一定嘗試 play()」，避免只有解除靜音但未播放的狀況
+          startMusicFromUserGesture('start_experience_click');
 
           swiper.slideToLoop(0, 0, false);
           hasStartedExperience = true;
