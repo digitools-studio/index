@@ -599,20 +599,15 @@
     }
 
     .messages-list {
-      animation: scrollMessages 30s linear infinite;
+      animation: none;
     }
 
-    @keyframes scrollMessages {
-      0% {
-        transform: translateY(0);
-      }
-      100% {
-        transform: translateY(-50%);
-      }
-    }
-
-    .messages-list:hover {
-      animation-play-state: paused;
+    .message-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      margin-bottom: 0.2rem;
     }
 
     .message-item {
@@ -628,7 +623,7 @@
       font-size: 0.85rem;
       color: #D4AF37;
       font-weight: 600;
-      margin-bottom: 0.2rem;
+      margin-bottom: 0;
     }
 
     .message-content {
@@ -642,7 +637,8 @@
       font-family: 'Cinzel', serif;
       font-size: 0.65rem;
       color: rgba(255, 255, 255, 0.5);
-      margin-top: 0.2rem;
+      margin-top: 0;
+      white-space: nowrap;
     }
 
     /* 手機優化 */
@@ -959,19 +955,16 @@
               <div class="messages-list" id="messagesList">
                 <!-- 初始留言 -->
                 <div class="message-item">
-                  <div class="message-nickname">小明</div>
+                  <div class="message-meta"><div class="message-nickname">小明</div><div class="message-time">2天前</div></div>
                   <div class="message-content">太帥了，新婚快樂</div>
-                  <div class="message-time">2天前</div>
                 </div>
                 <div class="message-item">
-                  <div class="message-nickname">阿華</div>
+                  <div class="message-meta"><div class="message-nickname">阿華</div><div class="message-time">3天前</div></div>
                   <div class="message-content">學長新婚快樂~</div>
-                  <div class="message-time">3天前</div>
                 </div>
                 <div class="message-item">
-                  <div class="message-nickname">小美</div>
+                  <div class="message-meta"><div class="message-nickname">小美</div><div class="message-time">5天前</div></div>
                   <div class="message-content">祝福婚禮順利！</div>
-                  <div class="message-time">5天前</div>
                 </div>
               </div>
             </div>
@@ -1111,6 +1104,7 @@
     const COOLDOWN_SECONDS = 30;
     const COOLDOWN_KEY = 'wedding_message_cooldown_until'; // 裝置層記憶（同裝置）
     let cooldownTimer = null;
+    let messagesAutoScrollTimer = null;
 
     function getCooldownRemainingSeconds() {
       const until = parseInt(localStorage.getItem(COOLDOWN_KEY) || '0', 10);
@@ -1195,23 +1189,61 @@
       if (messages.length === 0) {
         messagesList.innerHTML = `
           <div class="message-item">
-            <div class="message-nickname">暫無留言</div>
+            <div class="message-meta"><div class="message-nickname">暫無留言</div><div class="message-time">現在</div></div>
             <div class="message-content">成為第一個留下祝福的人吧！</div>
           </div>
         `;
+        setupMessagesAutoScroll();
         return;
       }
-      
-      // 將留言複製一份用於無縫滾動
-      const duplicatedMessages = [...messages, ...messages];
-      
-      messagesList.innerHTML = duplicatedMessages.map(msg => `
+
+      messagesList.innerHTML = messages.map(msg => `
         <div class="message-item">
-          <div class="message-nickname">${escapeHtml(msg.nickname)}</div>
+          <div class="message-meta">
+            <div class="message-nickname">${escapeHtml(msg.nickname)}</div>
+            <div class="message-time">${formatTime(msg.timestamp)}</div>
+          </div>
           <div class="message-content">${escapeHtml(msg.message)}</div>
-          <div class="message-time">${formatTime(msg.timestamp)}</div>
         </div>
       `).join('');
+
+      setupMessagesAutoScroll();
+    }
+
+    function setupMessagesAutoScroll() {
+      const container = document.querySelector('.messages-scroll-container');
+      if (!container) return;
+
+      if (messagesAutoScrollTimer) {
+        clearInterval(messagesAutoScrollTimer);
+        messagesAutoScrollTimer = null;
+      }
+
+      container.scrollTop = 0;
+
+      const canScroll = container.scrollHeight > container.clientHeight + 8;
+      if (!canScroll) return;
+
+      let paused = false;
+      const pause = () => { paused = true; };
+      const resume = () => { paused = false; };
+
+      container.onmouseenter = pause;
+      container.onmouseleave = resume;
+      container.ontouchstart = pause;
+      container.ontouchend = resume;
+
+      messagesAutoScrollTimer = setInterval(() => {
+        if (paused) return;
+
+        const maxScrollTop = container.scrollHeight - container.clientHeight;
+        if (container.scrollTop >= maxScrollTop - 1) {
+          container.scrollTop = 0;
+          return;
+        }
+
+        container.scrollTop += 1;
+      }, 40);
     }
     
     // 防止 XSS 攻擊
@@ -1229,6 +1261,7 @@
         renderMessages(messages);
       }
       // 如果沒有配置 Lambda 或沒有留言，保持顯示初始的三個留言
+      setupMessagesAutoScroll();
       
       // 每30秒自動更新留言
       setInterval(async () => {
