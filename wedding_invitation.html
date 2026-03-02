@@ -1367,6 +1367,21 @@
     // C) Swiper + 動畫（減少 DOM 掃描）
     // =========================
     window.addEventListener('DOMContentLoaded', () => {
+      function updateAutoplayForMessageBoard(swiperInstance) {
+        const activeSlide = swiperInstance.slides[swiperInstance.activeIndex];
+        const isMessageBoardSlide = activeSlide && activeSlide.querySelector('.message-board-container');
+
+        if (!swiperInstance.autoplay) return;
+
+        if (isMessageBoardSlide) {
+          if (swiperInstance.autoplay.running) {
+            swiperInstance.autoplay.stop();
+          }
+        } else if (!swiperInstance.autoplay.running) {
+          swiperInstance.autoplay.start();
+        }
+      }
+
       const swiper = new Swiper(".mySwiper", {
         direction: "horizontal",
         loop: true,
@@ -1386,6 +1401,7 @@
           init: async function () {
             // 首屏：立刻載入附近背景（避免一開始空白）
             await loadNearbySlides(this);
+            updateAutoplayForMessageBoard(this);
             animateSlide(this.slides[this.activeIndex]);
           },
           slideChangeTransitionStart: function () {
@@ -1403,6 +1419,7 @@
           slideChangeTransitionEnd: async function () {
             // 滑到哪，才載入附近背景（Lazy）
             await loadNearbySlides(this);
+            updateAutoplayForMessageBoard(this);
             animateSlide(this.slides[this.activeIndex]);
           }
         }
