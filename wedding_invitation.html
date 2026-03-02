@@ -1474,6 +1474,7 @@
     const musicBtn = document.getElementById('music-toggle');
     let isMusicEnabled = false;
     let musicRetryArmed = false;
+    let mutedAutoplayDone = false;
 
     function setMusicUI(playing) {
       isMusicEnabled = playing;
@@ -1605,6 +1606,18 @@
         page_path: window.location.pathname
       });
 
+      // 嘗試靜音自動播放（大部分瀏覽器/裝置允許）
+      // 待使用者點「誠摯邀請」後立刻解除靜音，達成實質自動播的效果
+      if (music) {
+        music.muted = true;
+        music.loop = true;
+        music.play().then(() => {
+          mutedAutoplayDone = true;
+        }).catch(() => {
+          mutedAutoplayDone = false;
+        });
+      }
+
       function trackSlideView(swiperInstance, source) {
         const realIndex = swiperInstance.realIndex;
         if (viewedSlideIndexes.has(realIndex)) return;
@@ -1685,18 +1698,37 @@
       updateAutoplayForMessageBoard(swiper);
 
       if (startBtn) {
-        const startMusicEarly = () => {
-          if (!isMusicEnabled) {
-            playMusic('start_experience');
-          }
-        };
-
-        startBtn.addEventListener('pointerdown', startMusicEarly, { passive: true });
-        startBtn.addEventListener('touchstart', startMusicEarly, { passive: true });
-
         startBtn.addEventListener('click', () => {
           trackWeddingEvent('wedding_start_experience_click');
-          startMusicEarly();
+
+          // ─── 音樂啟動（在 click 同步流程內，iOS/Android 皆認可此 gesture）───
+          if (music && !isMusicEnabled) {
+            if (mutedAutoplayDone) {
+              // 已在靜音播放中：直接解除靜音即可，不需重新 play()
+              music.muted = false;
+              setMusicUI(true);
+              trackWeddingEvent('wedding_music_play', { trigger: 'unmute_on_start' });
+            } else {
+              // 靜音播放尚未成功（嚴格政策裝置），在 click 手勢內直接 play()
+              music.muted = false;
+              music.loop = true;
+              const playPromise = music.play();
+              if (playPromise && typeof playPromise.then === 'function') {
+                playPromise
+                  .then(() => {
+                    setMusicUI(true);
+                    trackWeddingEvent('wedding_music_play', { trigger: 'click_start' });
+                  })
+                  .catch(() => {
+                    setMusicUI(false);
+                    trackWeddingEvent('wedding_music_play_failed', { trigger: 'click_start' });
+                    armMusicRetryOnNextGesture();
+                  });
+              }
+            }
+          }
+          // ─────────────────────────────────────────────────────────────────
+
           swiper.slideToLoop(0, 0, false);
           hasStartedExperience = true;
           updateAutoplayForMessageBoard(swiper);
