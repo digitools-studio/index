@@ -166,6 +166,7 @@
       background-position: center;
       background-repeat: no-repeat;
       z-index: -1;
+      filter: brightness(1.08) saturate(1.03);
 
       /* 性能優化：讓瀏覽器知道會做 transform */
       will-change: transform;
@@ -225,7 +226,7 @@
     .overlay {
       position: absolute;
       inset: 0;
-      background: linear-gradient(to bottom, rgba(0,0,0,0.4), rgba(0,0,0,0.2), rgba(0,0,0,0.6));
+      background: linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.12), rgba(0,0,0,0.45));
       pointer-events: none;
     }
 
@@ -234,7 +235,7 @@
       content: '';
       position: absolute;
       inset: 0;
-      background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.3) 100%);
+      background: radial-gradient(ellipse at center, transparent 45%, rgba(0,0,0,0.2) 100%);
       pointer-events: none;
     }
 
@@ -1036,7 +1037,7 @@
     // =========================
     
     // ⚠️ 請替換為你的 AWS Lambda Function URL
-    const LAMBDA_FUNCTION_URL = 'YOUR_AWS_LAMBDA_FUNCTION_URL_HERE';
+    const LAMBDA_FUNCTION_URL = 'https://drl22kfmsgm7s52i3lamkgvsqy0zehqw.lambda-url.ap-northeast-1.on.aws/';
     
     // 獲取留言列表
     async function fetchMessages() {
