@@ -948,6 +948,7 @@
               <button type="submit" class="message-submit-btn" id="submitBtn">
                 送出祝福
               </button>
+              <div id="cooldownHint" class="text-xs text-center mt-2 text-gray-600" style="display:none;"></div>
             </form>
           </div>
 
@@ -990,6 +991,24 @@
 
   <!-- 邏輯腳本 -->
   <script>
+    function trackWeddingEvent(eventName, params = {}) {
+      if (typeof window.gtag !== 'function') return;
+      window.gtag('event', eventName, {
+        event_category: 'wedding',
+        ...params
+      });
+    }
+
+    document.addEventListener('click', (e) => {
+      const mapLink = e.target.closest('a[href*="google.com/maps"], a[href*="maps/search"]');
+      if (!mapLink) return;
+
+      trackWeddingEvent('wedding_map_click', {
+        link_text: (mapLink.textContent || '').trim() || 'map_link',
+        link_url: mapLink.getAttribute('href') || ''
+      });
+    });
+
     // =========================
     // 倒計時功能
     // =========================
@@ -1075,7 +1094,7 @@
         });
         
         if (!response.ok) {
-          throw new Error('Failed to submit message');
+          throw new Error(`Failed to submit message: ${response.status}`);
         }
         
         const data = await response.json();
@@ -1083,6 +1102,72 @@
       } catch (error) {
         console.error('Error submitting message:', error);
         throw error;
+      }
+    }
+
+    // =========================
+    // 裝置層 30 秒 cooldown（localStorage）
+    // =========================
+    const COOLDOWN_SECONDS = 30;
+    const COOLDOWN_KEY = 'wedding_message_cooldown_until'; // 裝置層記憶（同裝置）
+    let cooldownTimer = null;
+
+    function getCooldownRemainingSeconds() {
+      const until = parseInt(localStorage.getItem(COOLDOWN_KEY) || '0', 10);
+      const now = Date.now();
+      const diffMs = until - now;
+      return Math.max(0, Math.ceil(diffMs / 1000));
+    }
+
+    function startCooldown(seconds = COOLDOWN_SECONDS) {
+      const until = Date.now() + seconds * 1000;
+      localStorage.setItem(COOLDOWN_KEY, String(until));
+      renderCooldownUI();
+    }
+
+    function clearCooldown() {
+      localStorage.removeItem(COOLDOWN_KEY);
+      renderCooldownUI();
+    }
+
+    function renderCooldownUI() {
+      const submitBtn = document.getElementById('submitBtn');
+      const hint = document.getElementById('cooldownHint');
+      if (!submitBtn || !hint) return;
+
+      const remain = getCooldownRemainingSeconds();
+
+      if (cooldownTimer) {
+        clearInterval(cooldownTimer);
+        cooldownTimer = null;
+      }
+
+      if (remain > 0) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = `請稍候 ${remain}s`;
+        hint.style.display = 'block';
+        hint.textContent = `為了避免重複送出，同一裝置每 ${COOLDOWN_SECONDS} 秒只能送出一次祝福。`;
+
+        cooldownTimer = setInterval(() => {
+          const r = getCooldownRemainingSeconds();
+          if (r <= 0) {
+            clearInterval(cooldownTimer);
+            cooldownTimer = null;
+            submitBtn.disabled = false;
+            submitBtn.textContent = '送出祝福';
+            hint.style.display = 'none';
+            hint.textContent = '';
+            localStorage.removeItem(COOLDOWN_KEY);
+          } else {
+            submitBtn.disabled = true;
+            submitBtn.textContent = `請稍候 ${r}s`;
+          }
+        }, 250);
+      } else {
+        submitBtn.disabled = false;
+        submitBtn.textContent = '送出祝福';
+        hint.style.display = 'none';
+        hint.textContent = '';
       }
     }
     
@@ -1164,39 +1249,76 @@
       if (messageForm) {
         messageForm.addEventListener('submit', async (e) => {
           e.preventDefault();
-          
+
           const nickname = nicknameInput.value.trim();
           const message = messageInput.value.trim();
-          
+
           if (!nickname || !message) {
             alert('請填寫暱稱和祝福語');
+            trackWeddingEvent('wedding_message_submit_invalid', {
+              has_nickname: Boolean(nickname),
+              has_message: Boolean(message)
+            });
             return;
           }
-          
-          // 禁用按鈕
+
+          // ✅ 裝置層冷卻：30 秒內不再送 API
+          const remaining = getCooldownRemainingSeconds();
+          if (remaining > 0) {
+            renderCooldownUI(); // 確保按鈕與提示同步
+            trackWeddingEvent('wedding_message_submit_cooldown_blocked', {
+              remaining_seconds: remaining
+            });
+            return;
+          }
+
+          // 禁用按鈕（避免連點）
           submitBtn.disabled = true;
           submitBtn.textContent = '送出中...';
-          
+
           try {
-            await submitMessage(nickname, message);
-            
+            const res = await submitMessage(nickname, message);
+
+            // ✅ 送出成功：先顯示成功文案，再啟動裝置層 cooldown
+            submitBtn.textContent = '已送出 💝';
+            trackWeddingEvent('wedding_message_submit_success', {
+              nickname_length: nickname.length,
+              message_length: message.length,
+              has_response: Boolean(res)
+            });
+            startCooldown(COOLDOWN_SECONDS);
+
             // 清空表單
             nicknameInput.value = '';
             messageInput.value = '';
-            
+
             // 顯示成功訊息
             alert('感謝你的祝福！💝');
-            
+
             // 立即更新留言列表
             const messages = await fetchMessages();
-            renderMessages(messages);
-            
+            if (messages && messages.length > 0) renderMessages(messages);
+
           } catch (error) {
-            alert('送出失敗，請稍後再試');
-          } finally {
-            // 恢復按鈕
-            submitBtn.disabled = false;
-            submitBtn.textContent = '送出祝福';
+            const msg = String(error && error.message ? error.message : '');
+
+            // ✅ 若後端回 429：把它當作「冷卻中」而不是「失敗」
+            if (msg.includes('429')) {
+              startCooldown(COOLDOWN_SECONDS);
+              trackWeddingEvent('wedding_message_submit_rate_limited', {
+                cooldown_seconds: COOLDOWN_SECONDS
+              });
+              alert(`已收到！為避免重複送出，請稍候 ${COOLDOWN_SECONDS} 秒再送一次 💛`);
+            } else {
+              // 一般錯誤：可立即重試
+              alert('送出失敗，請稍後再試');
+              submitBtn.disabled = false;
+              submitBtn.textContent = '送出祝福';
+            }
+
+            trackWeddingEvent('wedding_message_submit_failed', {
+              error_message: msg || 'unknown_error'
+            });
           }
         });
       }
@@ -1370,7 +1492,7 @@
       document.addEventListener('keydown', retryPlay, { once: true, capture: true });
     }
 
-    async function playMusic() {
+    async function playMusic(trigger = 'unknown') {
       if (!music) return false;
 
       music.loop = true;
@@ -1378,20 +1500,27 @@
       try {
         await music.play();
         setMusicUI(true);
+        trackWeddingEvent('wedding_music_play', { trigger });
         return true;
       } catch (e) {
         console.log('播放失敗（可能是瀏覽器限制）', e);
         setMusicUI(false);
+        trackWeddingEvent('wedding_music_play_failed', { trigger });
         armMusicRetryOnNextGesture();
         return false;
       }
     }
 
-    function stopMusic() {
+    function stopMusic(reason = 'manual') {
       if (!music) return;
+      const wasPlaying = isMusicEnabled;
       music.pause();
       music.currentTime = 0;
       setMusicUI(false);
+
+      if (wasPlaying) {
+        trackWeddingEvent('wedding_music_stop', { reason });
+      }
     }
 
     async function toggleMusic() {
@@ -1399,9 +1528,9 @@
 
       try {
         if (isMusicEnabled) {
-          stopMusic();
+          stopMusic('manual_toggle');
         } else {
-          await playMusic();
+          await playMusic('manual_toggle');
         }
       } catch (e) {
         console.log('音樂切換失敗', e);
@@ -1411,7 +1540,7 @@
 
     function stopMusicWhenLeaveSite() {
       if (document.visibilityState === 'hidden') {
-        stopMusic();
+        stopMusic('leave_site_hidden');
       }
     }
 
@@ -1420,8 +1549,8 @@
     }
 
     document.addEventListener('visibilitychange', stopMusicWhenLeaveSite);
-    window.addEventListener('pagehide', stopMusic);
-    window.addEventListener('beforeunload', stopMusic);
+    window.addEventListener('pagehide', () => stopMusic('pagehide'));
+    window.addEventListener('beforeunload', () => stopMusic('beforeunload'));
 
     // =========================
     // 啟動畫面控制
@@ -1434,8 +1563,25 @@
     // =========================
     window.addEventListener('DOMContentLoaded', () => {
       let hasStartedExperience = false;
+      const viewedSlideIndexes = new Set();
       const initialSlides = Array.from(document.querySelectorAll('.mySwiper .swiper-wrapper > .swiper-slide'));
       const messageBoardRealIndex = initialSlides.findIndex(slide => slide.querySelector('.message-board-container'));
+
+      trackWeddingEvent('wedding_page_view', {
+        page_title: document.title,
+        page_path: window.location.pathname
+      });
+
+      function trackSlideView(swiperInstance, source) {
+        const realIndex = swiperInstance.realIndex;
+        if (viewedSlideIndexes.has(realIndex)) return;
+
+        viewedSlideIndexes.add(realIndex);
+        trackWeddingEvent('wedding_slide_view', {
+          slide_index: realIndex + 1,
+          source
+        });
+      }
 
       function updateAutoplayForMessageBoard(swiperInstance) {
         if (!swiperInstance.autoplay) return;
@@ -1477,6 +1623,7 @@
           init: async function () {
             // 首屏：立刻載入附近背景（避免一開始空白）
             await loadNearbySlides(this);
+            trackSlideView(this, 'init');
             updateAutoplayForMessageBoard(this);
             animateSlide(this.slides[this.activeIndex]);
           },
@@ -1495,6 +1642,7 @@
           slideChangeTransitionEnd: async function () {
             // 滑到哪，才載入附近背景（Lazy）
             await loadNearbySlides(this);
+            trackSlideView(this, 'slide_change');
             updateAutoplayForMessageBoard(this);
             animateSlide(this.slides[this.activeIndex]);
           }
@@ -1506,7 +1654,7 @@
       if (startBtn) {
         const startMusicEarly = () => {
           if (!isMusicEnabled) {
-            playMusic();
+            playMusic('start_experience');
           }
         };
 
@@ -1514,6 +1662,7 @@
         startBtn.addEventListener('touchstart', startMusicEarly, { passive: true });
 
         startBtn.addEventListener('click', () => {
+          trackWeddingEvent('wedding_start_experience_click');
           startMusicEarly();
           swiper.slideToLoop(0, 0, false);
           hasStartedExperience = true;
@@ -1538,6 +1687,7 @@
       // 初始化留言板功能
       initMessageBoard();
       initMessageForm();
+      renderCooldownUI();
     });
   </script>
 </body>
