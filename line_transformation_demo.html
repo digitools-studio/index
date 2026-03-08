@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LINE 預約分流轉型案例 | Digitools Studio</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-deep: #08131a;
+      --bg-mid: #0f2530;
+      --brand: #00b900;
+      --teal: #1ec8b0;
+      --amber: #f59e0b;
+      --ink: #10212b;
+      --panel: #f6fbf9;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Space Grotesk', 'Noto Sans TC', sans-serif;
+      color: #0f172a;
+      background:
+        radial-gradient(900px 400px at 20% -5%, rgba(0, 185, 0, 0.16), transparent 70%),
+        radial-gradient(700px 380px at 88% 3%, rgba(30, 200, 176, 0.13), transparent 70%),
+        linear-gradient(180deg, #f4fbf8 0%, #eef7ff 100%);
+      min-height: 100vh;
+    }
+
+    .hero-wrap {
+      background:
+        linear-gradient(140deg, var(--bg-deep) 0%, var(--bg-mid) 72%),
+        repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.02) 0, rgba(255, 255, 255, 0.02) 12px, transparent 12px, transparent 24px);
+      color: #f8fafc;
+    }
+
+    .glass {
+      background: rgba(255, 255, 255, 0.8);
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      backdrop-filter: blur(8px);
+    }
+
+    .phone-shell {
+      width: 100%;
+      max-width: 420px;
+      border-radius: 26px;
+      border: 12px solid #121b24;
+      background: #f0f4f8;
+      box-shadow: 0 24px 50px rgba(15, 23, 42, 0.28);
+      overflow: hidden;
+    }
+
+    .chat-window {
+      height: 360px;
+      overflow-y: auto;
+      background: #e9f0f7;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .bubble {
+      max-width: 84%;
+      padding: 10px 12px;
+      border-radius: 14px;
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    .bubble.bot {
+      align-self: flex-start;
+      background: #ffffff;
+      color: #0f172a;
+      border-bottom-left-radius: 6px;
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
+    }
+
+    .bubble.user {
+      align-self: flex-end;
+      background: var(--brand);
+      color: #ffffff;
+      border-bottom-right-radius: 6px;
+      box-shadow: 0 2px 10px rgba(0, 185, 0, 0.35);
+    }
+
+    .bubble.system {
+      align-self: center;
+      background: #0f172a;
+      color: #dbeafe;
+      font-size: 12px;
+      border-radius: 999px;
+      padding: 6px 10px;
+    }
+
+    .quick-btn {
+      border: 1px solid #cbd5e1;
+      background: #ffffff;
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-size: 12px;
+      font-weight: 700;
+      color: #0f172a;
+      transition: all 0.2s ease;
+    }
+
+    .quick-btn:hover {
+      border-color: var(--brand);
+      color: #0b5a0b;
+      transform: translateY(-1px);
+    }
+
+    .module-card {
+      border: 1px solid #dbe7ef;
+      border-radius: 16px;
+      background: #ffffff;
+      box-shadow: 0 6px 20px rgba(15, 23, 42, 0.07);
+    }
+
+    .kpi-card {
+      border-radius: 14px;
+      border: 1px solid #d9e8e4;
+      background: #ffffff;
+      padding: 14px;
+    }
+
+    .kpi-number {
+      font-size: 28px;
+      font-weight: 800;
+      line-height: 1;
+      color: #0f172a;
+    }
+
+    .funnel-bar {
+      height: 14px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--teal) 0%, #5eead4 100%);
+      transition: width 0.35s ease;
+    }
+
+    .ring {
+      --val: 64;
+      width: 120px;
+      height: 120px;
+      border-radius: 999px;
+      background: conic-gradient(var(--brand) calc(var(--val) * 1%), #dbe7ef 0%);
+      display: grid;
+      place-items: center;
+    }
+
+    .ring::before {
+      content: '';
+      width: 84px;
+      height: 84px;
+      border-radius: 999px;
+      background: #ffffff;
+      box-shadow: inset 0 0 0 1px #e2e8f0;
+    }
+
+    .ring-value {
+      position: absolute;
+      font-size: 21px;
+      font-weight: 800;
+      color: #0f172a;
+    }
+
+    .scenario-btn {
+      border: 1px solid #cbd5e1;
+      background: #fff;
+      color: #0f172a;
+      font-weight: 700;
+      border-radius: 12px;
+      padding: 9px 12px;
+      font-size: 13px;
+      transition: all 0.2s ease;
+    }
+
+    .scenario-btn.active {
+      border-color: #0f172a;
+      background: #0f172a;
+      color: #f8fafc;
+      box-shadow: 0 8px 18px rgba(15, 23, 42, 0.18);
+    }
+
+    @media (max-width: 768px) {
+      .chat-window {
+        height: 320px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="hero-wrap">
+    <div class="max-w-7xl mx-auto px-6 py-10 md:py-14">
+      <p class="inline-flex items-center px-4 py-1.5 rounded-full bg-white/10 text-slate-100 text-xs tracking-wide font-bold">LINE Transformation Demo</p>
+      <h1 class="text-3xl md:text-5xl font-black mt-4 leading-tight">LINE 預約分流轉型案例 Demo</h1>
+      <p class="mt-4 text-slate-300 max-w-3xl text-base md:text-lg">
+        從「人工回覆」升級成「分流 + 自動化流程整合」：包含預約諮詢、訂單管理、客戶管理，以及一個可快速檢視成效的小型分析平台。
+      </p>
+      <div class="mt-6 flex flex-wrap gap-3">
+        <a href="#reservation-flow" class="px-4 py-2 rounded-full bg-emerald-400 text-emerald-950 font-bold text-sm">看預約分流</a>
+        <a href="#qa-automation" class="px-4 py-2 rounded-full bg-cyan-300 text-cyan-950 font-bold text-sm">看 Q&A 自動化</a>
+        <a href="./index.html#cases" class="px-4 py-2 rounded-full bg-white/15 text-white font-bold text-sm border border-white/20">回轉型案例</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-6 py-8 md:py-10 space-y-8">
+    <section class="grid grid-cols-1 xl:grid-cols-12 gap-6">
+      <div class="xl:col-span-5 space-y-4" id="reservation-flow">
+        <div class="glass rounded-2xl p-5">
+          <h2 class="text-xl font-black text-slate-900">Mock LineBot 對話操作台</h2>
+          <p class="text-sm text-slate-600 mt-2">點選場景可切換對話流程，模擬實務中的分流與標籤化作業。</p>
+
+          <div class="mt-4 grid grid-cols-2 gap-2" id="scenarioButtons"></div>
+        </div>
+
+        <div class="phone-shell mx-auto">
+          <div class="bg-[#06c755] text-white px-4 py-3 flex items-center justify-between">
+            <div>
+              <div class="font-bold text-sm">Digitools LINE Assistant</div>
+              <div class="text-[11px] text-white/80" id="botStatus">分流流程待機中</div>
+            </div>
+            <span class="text-[11px] bg-white/20 px-2 py-1 rounded-full" id="activeScenarioPill">預約諮詢</span>
+          </div>
+          <div id="chatWindow" class="chat-window"></div>
+          <div class="bg-white border-t border-slate-200 p-3">
+            <div class="text-[11px] text-slate-500 font-semibold mb-2">Quick Reply（示意）</div>
+            <div id="quickReplies" class="flex flex-wrap gap-2"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="xl:col-span-7 space-y-6">
+        <div class="glass rounded-2xl p-5" id="qa-automation">
+          <h2 class="text-xl font-black text-slate-900">自動化流程整合看板</h2>
+          <p class="text-sm text-slate-600 mt-2">同一套 LINE 入口向後串接預約、訂單、客戶資料，減少重複人工處理。</p>
+          <div class="mt-4 grid grid-cols-1 md:grid-cols-3 gap-3">
+            <div class="module-card p-4">
+              <div class="text-xs font-bold text-emerald-700">預約諮詢</div>
+              <div class="text-lg font-extrabold mt-1" id="bookingToday">18</div>
+              <p class="text-xs text-slate-600 mt-2">今日新預約數</p>
+              <p class="text-xs text-slate-500 mt-2" id="bookingHint">45% 來自 LINE 快速選單</p>
+            </div>
+            <div class="module-card p-4">
+              <div class="text-xs font-bold text-amber-700">訂單管理</div>
+              <div class="text-lg font-extrabold mt-1" id="orderPending">11</div>
+              <p class="text-xs text-slate-600 mt-2">待處理訂單</p>
+              <p class="text-xs text-slate-500 mt-2" id="orderHint">自動推送付款提醒中</p>
+            </div>
+            <div class="module-card p-4">
+              <div class="text-xs font-bold text-cyan-700">客戶管理</div>
+              <div class="text-lg font-extrabold mt-1" id="customerTagged">126</div>
+              <p class="text-xs text-slate-600 mt-2">已標籤客戶數</p>
+              <p class="text-xs text-slate-500 mt-2" id="customerHint">可依需求分眾再行銷</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="module-card p-4">
+            <div class="flex items-center justify-between">
+              <h3 class="font-black text-slate-900">訂單管理（Mock）</h3>
+              <span class="text-xs bg-amber-100 text-amber-700 px-2 py-1 rounded-full">Order Flow</span>
+            </div>
+            <div class="mt-3 space-y-2 text-sm" id="orderList"></div>
+          </div>
+
+          <div class="module-card p-4">
+            <div class="flex items-center justify-between">
+              <h3 class="font-black text-slate-900">客戶管理（Mock）</h3>
+              <span class="text-xs bg-cyan-100 text-cyan-700 px-2 py-1 rounded-full">CRM Tags</span>
+            </div>
+            <div class="mt-3 space-y-2 text-sm" id="customerList"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="glass rounded-2xl p-5 md:p-6">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h2 class="text-xl font-black text-slate-900">小型分析平台（Demo）</h2>
+          <p class="text-sm text-slate-600 mt-1">觀察分流成效、預約完成率、與自動化覆蓋率。</p>
+        </div>
+        <span class="text-xs px-3 py-1 rounded-full bg-slate-900 text-white" id="analysisMode">模式：預約分流</span>
+      </div>
+
+      <div class="mt-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+        <div class="kpi-card">
+          <div class="text-xs text-slate-500">LINE 新進對話</div>
+          <div class="kpi-number" id="kpiConversations">358</div>
+        </div>
+        <div class="kpi-card">
+          <div class="text-xs text-slate-500">完成分流率</div>
+          <div class="kpi-number" id="kpiRouting">72%</div>
+        </div>
+        <div class="kpi-card">
+          <div class="text-xs text-slate-500">預約轉換率</div>
+          <div class="kpi-number" id="kpiBooking">18.6%</div>
+        </div>
+        <div class="kpi-card">
+          <div class="text-xs text-slate-500">自動化覆蓋率</div>
+          <div class="kpi-number" id="kpiAutomation">64%</div>
+        </div>
+      </div>
+
+      <div class="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-5">
+        <div class="lg:col-span-2 module-card p-4">
+          <h3 class="font-black text-slate-900">轉換漏斗</h3>
+          <div class="mt-3 space-y-3 text-sm" id="funnelBlock"></div>
+        </div>
+
+        <div class="module-card p-4">
+          <h3 class="font-black text-slate-900">自動化覆蓋</h3>
+          <div class="mt-4 flex items-center gap-4">
+            <div class="relative">
+              <div class="ring" id="coverageRing"></div>
+              <div class="ring-value" id="ringValue">64%</div>
+            </div>
+            <div class="text-sm text-slate-600">
+              <div>已自動處理：<span id="autoHandled" class="font-bold text-slate-900">229</span></div>
+              <div class="mt-1">需人工接手：<span id="humanHandled" class="font-bold text-slate-900">129</span></div>
+            </div>
+          </div>
+          <p class="text-xs text-slate-500 mt-4">建議先把高重複詢問流程改成標準腳本，再擴充 CRM 標籤與訂單通知。</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const scenarios = {
+      booking: {
+        key: 'booking',
+        label: '預約諮詢',
+        status: '預約分流執行中',
+        quickReplies: ['想預約下週', '先看可選時段', '我要改期'],
+        messages: [
+          { role: 'system', text: '已觸發：reservation_flow_v2' },
+          { role: 'bot', text: '您好，歡迎預約諮詢。請問您偏好「平日晚上」還是「週末白天」？' },
+          { role: 'user', text: '週末白天，兩位參加。' },
+          { role: 'bot', text: '已為您推薦 3 個時段，並建立暫存預約單。是否要直接確認？' }
+        ],
+        kpi: { conversations: 358, routing: 72, booking: 18.6, automation: 64, handled: 229, human: 129 },
+        bookingToday: 18,
+        bookingHint: '45% 來自 LINE 快速選單',
+        orderPending: 11,
+        orderHint: '自動推送付款提醒中',
+        customerTagged: 126,
+        customerHint: '可依需求分眾再行銷',
+        orderList: [
+          'ORD-2419｜待付款提醒｜預約方案 A',
+          'ORD-2422｜待人工確認｜多人諮詢案',
+          'ORD-2426｜已完成｜自動通知已送出'
+        ],
+        customerList: [
+          '林小姐｜標籤：新客 / 預約中 / 高意願',
+          '張先生｜標籤：回訪客 / 方案比較',
+          '王小姐｜標籤：婚禮案 / 已預約 / 待簽約'
+        ],
+        funnel: [
+          { label: '進入 LINE', value: 100 },
+          { label: '完成分流', value: 72 },
+          { label: '建立預約單', value: 36 },
+          { label: '完成預約', value: 18.6 }
+        ]
+      },
+      order: {
+        key: 'order',
+        label: '訂單管理',
+        status: '訂單流程同步中',
+        quickReplies: ['查訂單進度', '我要補款', '取消訂單'],
+        messages: [
+          { role: 'system', text: '已觸發：order_followup_flow' },
+          { role: 'user', text: '想查一下 ORD-2422 目前進度。' },
+          { role: 'bot', text: '您的訂單目前為「待確認款項」，已推送付款連結與客服協助入口。' },
+          { role: 'bot', text: '若 24 小時未完成，系統會自動排入提醒序列。' }
+        ],
+        kpi: { conversations: 291, routing: 78, booking: 14.2, automation: 71, handled: 207, human: 84 },
+        bookingToday: 12,
+        bookingHint: '訂單回流導入諮詢 27%',
+        orderPending: 8,
+        orderHint: '逾時單自動提醒已啟用',
+        customerTagged: 140,
+        customerHint: '新增付款風險標籤',
+        orderList: [
+          'ORD-2501｜待補件｜自動提醒 T+1',
+          'ORD-2503｜已付款｜進入交付排程',
+          'ORD-2509｜待追蹤｜標籤：付款風險'
+        ],
+        customerList: [
+          '陳小姐｜標籤：二次購買 / 已付款',
+          '李先生｜標籤：待補件 / 高需求',
+          '黃小姐｜標籤：促銷觸達 / 回流中'
+        ],
+        funnel: [
+          { label: '訂單查詢', value: 100 },
+          { label: '完成身份驗證', value: 78 },
+          { label: '進入付款頁', value: 42 },
+          { label: '完成付款', value: 23.7 }
+        ]
+      },
+      crm: {
+        key: 'crm',
+        label: '客戶管理',
+        status: '客戶標籤更新中',
+        quickReplies: ['我想看方案', '給我成功案例', '安排顧問電話'],
+        messages: [
+          { role: 'system', text: '已觸發：crm_tagging_flow' },
+          { role: 'bot', text: '已為您開啟「方案導覽」，可先選擇預算區間與需求目標。' },
+          { role: 'user', text: '預算 2 萬內，先想提升詢問量。' },
+          { role: 'bot', text: '了解，已標記為「潛在客-詢問導向」，並推送對應案例。' }
+        ],
+        kpi: { conversations: 412, routing: 81, booking: 16.1, automation: 76, handled: 313, human: 99 },
+        bookingToday: 15,
+        bookingHint: '分眾訊息導入諮詢 33%',
+        orderPending: 6,
+        orderHint: '訂單穩定，回購名單增加',
+        customerTagged: 188,
+        customerHint: '高意願客戶池持續擴大',
+        orderList: [
+          'ORD-2602｜新客試用包｜待成交追蹤',
+          'ORD-2607｜顧問方案｜已回訪',
+          'ORD-2610｜升級方案｜等待簽核'
+        ],
+        customerList: [
+          '吳小姐｜標籤：高意願 / 7 日內回訪',
+          '徐先生｜標籤：比較中 / 需案例佐證',
+          '郭小姐｜標籤：已諮詢 / 待方案確認'
+        ],
+        funnel: [
+          { label: '新進名單', value: 100 },
+          { label: '完成標籤', value: 81 },
+          { label: '推送對應內容', value: 49 },
+          { label: '轉為預約', value: 16.1 }
+        ]
+      }
+    };
+
+    const scenarioButtons = document.getElementById('scenarioButtons');
+    const chatWindow = document.getElementById('chatWindow');
+    const quickReplies = document.getElementById('quickReplies');
+    const activeScenarioPill = document.getElementById('activeScenarioPill');
+    const botStatus = document.getElementById('botStatus');
+    const analysisMode = document.getElementById('analysisMode');
+
+    const bookingToday = document.getElementById('bookingToday');
+    const bookingHint = document.getElementById('bookingHint');
+    const orderPending = document.getElementById('orderPending');
+    const orderHint = document.getElementById('orderHint');
+    const customerTagged = document.getElementById('customerTagged');
+    const customerHint = document.getElementById('customerHint');
+
+    const orderList = document.getElementById('orderList');
+    const customerList = document.getElementById('customerList');
+
+    const kpiConversations = document.getElementById('kpiConversations');
+    const kpiRouting = document.getElementById('kpiRouting');
+    const kpiBooking = document.getElementById('kpiBooking');
+    const kpiAutomation = document.getElementById('kpiAutomation');
+    const autoHandled = document.getElementById('autoHandled');
+    const humanHandled = document.getElementById('humanHandled');
+    const funnelBlock = document.getElementById('funnelBlock');
+    const coverageRing = document.getElementById('coverageRing');
+    const ringValue = document.getElementById('ringValue');
+
+    let currentKey = 'booking';
+
+    function renderScenarioButtons() {
+      scenarioButtons.innerHTML = '';
+      Object.values(scenarios).forEach((scenario) => {
+        const btn = document.createElement('button');
+        btn.className = 'scenario-btn' + (scenario.key === currentKey ? ' active' : '');
+        btn.textContent = scenario.label;
+        btn.addEventListener('click', () => {
+          currentKey = scenario.key;
+          renderAll();
+        });
+        scenarioButtons.appendChild(btn);
+      });
+    }
+
+    function renderChat(scenario) {
+      chatWindow.innerHTML = '';
+      scenario.messages.forEach((item) => {
+        const bubble = document.createElement('div');
+        bubble.className = 'bubble ' + item.role;
+        bubble.textContent = item.text;
+        chatWindow.appendChild(bubble);
+      });
+      chatWindow.scrollTop = chatWindow.scrollHeight;
+
+      quickReplies.innerHTML = '';
+      scenario.quickReplies.forEach((reply) => {
+        const btn = document.createElement('button');
+        btn.className = 'quick-btn';
+        btn.textContent = reply;
+        quickReplies.appendChild(btn);
+      });
+    }
+
+    function renderOps(scenario) {
+      bookingToday.textContent = scenario.bookingToday;
+      bookingHint.textContent = scenario.bookingHint;
+      orderPending.textContent = scenario.orderPending;
+      orderHint.textContent = scenario.orderHint;
+      customerTagged.textContent = scenario.customerTagged;
+      customerHint.textContent = scenario.customerHint;
+
+      orderList.innerHTML = scenario.orderList
+        .map((item) => `<div class="px-3 py-2 rounded-lg bg-amber-50 border border-amber-100">${item}</div>`)
+        .join('');
+
+      customerList.innerHTML = scenario.customerList
+        .map((item) => `<div class="px-3 py-2 rounded-lg bg-cyan-50 border border-cyan-100">${item}</div>`)
+        .join('');
+    }
+
+    function renderAnalytics(scenario) {
+      const { conversations, routing, booking, automation, handled, human } = scenario.kpi;
+      kpiConversations.textContent = conversations;
+      kpiRouting.textContent = routing + '%';
+      kpiBooking.textContent = booking.toFixed(1) + '%';
+      kpiAutomation.textContent = automation + '%';
+      autoHandled.textContent = handled;
+      humanHandled.textContent = human;
+
+      coverageRing.style.setProperty('--val', automation);
+      ringValue.textContent = automation + '%';
+
+      funnelBlock.innerHTML = scenario.funnel
+        .map((step) => {
+          return `
+            <div>
+              <div class="flex items-center justify-between text-xs text-slate-600 mb-1">
+                <span>${step.label}</span>
+                <span class="font-bold text-slate-800">${step.value}%</span>
+              </div>
+              <div class="w-full h-3 rounded-full bg-slate-200 overflow-hidden">
+                <div class="funnel-bar" style="width:${step.value}%"></div>
+              </div>
+            </div>
+          `;
+        })
+        .join('');
+    }
+
+    function renderAll() {
+      const scenario = scenarios[currentKey];
+      activeScenarioPill.textContent = scenario.label;
+      botStatus.textContent = scenario.status;
+      analysisMode.textContent = `模式：${scenario.label}`;
+      renderScenarioButtons();
+      renderChat(scenario);
+      renderOps(scenario);
+      renderAnalytics(scenario);
+    }
+
+    renderAll();
+  </script>
+</body>
+</html>
