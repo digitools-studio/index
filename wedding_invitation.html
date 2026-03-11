@@ -1114,6 +1114,9 @@
     const COOLDOWN_KEY = 'wedding_message_cooldown_until'; // 裝置層記憶（同裝置）
     let cooldownTimer = null;
     let messagesAutoScrollTimer = null;
+    let messagesAutoScrollSetupToken = 0;
+    const MESSAGE_SCROLL_STEP = 1;
+    const MESSAGE_SCROLL_INTERVAL = 110;
 
     // 留言敏感詞（中英文）
     const SENSITIVE_WORDS_ZH = [
@@ -1404,6 +1407,9 @@
       const container = document.querySelector('.messages-scroll-container');
       if (!container) return;
 
+      messagesAutoScrollSetupToken += 1;
+      const setupToken = messagesAutoScrollSetupToken;
+
       if (messagesAutoScrollTimer) {
         clearInterval(messagesAutoScrollTimer);
         messagesAutoScrollTimer = null;
@@ -1414,6 +1420,9 @@
       // 等待一個 frame 讓瀏覽器完成 layout，再量測是否需要捲動
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
+          // 只保留最後一次 setup，避免重複啟動造成速度倍增
+          if (setupToken !== messagesAutoScrollSetupToken) return;
+
           const canScroll = container.scrollHeight > container.clientHeight + 8;
           if (!canScroll) return;
 
@@ -1426,7 +1435,12 @@
           container.ontouchstart = pause;
           container.ontouchend   = resume;
 
-          messagesAutoScrollTimer = setInterval(() => {
+          const intervalId = setInterval(() => {
+            if (setupToken !== messagesAutoScrollSetupToken) {
+              clearInterval(intervalId);
+              return;
+            }
+
             if (paused) return;
 
             const maxScrollTop = container.scrollHeight - container.clientHeight;
@@ -1438,8 +1452,10 @@
               return;
             }
 
-            container.scrollTop += 1;
-          }, 80);
+            container.scrollTop += MESSAGE_SCROLL_STEP;
+          }, MESSAGE_SCROLL_INTERVAL);
+
+          messagesAutoScrollTimer = intervalId;
         });
       });
     }
@@ -1457,9 +1473,10 @@
       // 只有當 Lambda 配置正確且有返回留言時才更新
       if (messages && messages.length > 0) {
         renderMessages(messages);
+      } else {
+        // 沒有 API 留言時，維持初始留言並啟用自動捲動
+        setupMessagesAutoScroll();
       }
-      // 如果沒有配置 Lambda 或沒有留言，保持顯示初始的三個留言
-      setupMessagesAutoScroll();
       
       // 每30秒自動更新留言
       setInterval(async () => {
