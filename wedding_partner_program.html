@@ -108,6 +108,10 @@
             right: 20px;
             z-index: 60;
         }
+
+        .case-zoomable {
+            cursor: zoom-in;
+        }
     </style>
 </head>
 <body class="bg-background text-accent font-sans antialiased selection:bg-primary selection:text-white">
@@ -553,19 +557,22 @@
 
         </div>
 
-        <!-- Case images -->
+          <!-- Case images -->
          <div class="grid grid-cols-1 xl:grid-cols-[0.95fr_1.05fr] gap-4 items-start">
+             <p class="col-span-full text-xs text-gray-500">提示：點擊圖片可全螢幕檢視</p>
           <div class="space-y-4">
              <div class="rounded-2xl overflow-hidden shadow-lg border border-gray-100 bg-white h-64 md:h-72">
               <img src="Static/Image/wedding_digital/desktop_full.png"
                    alt="Case Desktop Screenshot"
-               class="block w-full h-full object-contain bg-gray-50">
+                    class="block w-full h-full object-contain bg-gray-50 case-zoomable"
+                    @click="openImageViewer('Static/Image/wedding_digital/desktop_full.png', 'Case Desktop Screenshot')">
             </div>
 
              <div class="rounded-2xl overflow-hidden shadow-lg border border-gray-100 bg-white h-64 md:h-72">
               <img src="Static/Image/wedding_digital/mobile_view.png"
                    alt="Case Mobile Screenshot"
-               class="block w-full h-full object-contain bg-gray-50">
+                    class="block w-full h-full object-contain bg-gray-50 case-zoomable"
+                    @click="openImageViewer('Static/Image/wedding_digital/mobile_view.png', 'Case Mobile Screenshot')">
             </div>
           </div>
 
@@ -573,13 +580,29 @@
              <div class="rounded-2xl overflow-hidden shadow-lg border border-gray-100 bg-white h-64 md:h-72">
               <img src="Static/Image/wedding_digital/message_wall.png"
                    alt="Case Message Wall"
-               class="block w-full h-full object-contain bg-gray-50">
+                    class="block w-full h-full object-contain bg-gray-50 case-zoomable"
+                    @click="openImageViewer('Static/Image/wedding_digital/message_wall.png', 'Case Message Wall')">
             </div>
 
              <div class="rounded-2xl overflow-hidden shadow-lg border border-gray-100 bg-white h-64 md:h-72">
               <img src="Static/Image/wedding_digital/photo_wall.png"
                    alt="Case Photo Wall"
-               class="block w-full h-full object-contain bg-gray-50">
+                    class="block w-full h-full object-contain bg-gray-50 case-zoomable"
+                    @click="openImageViewer('Static/Image/wedding_digital/photo_wall.png', 'Case Photo Wall')">
+            </div>
+
+           <div class="rounded-2xl overflow-hidden shadow-lg border border-gray-100 bg-white h-64 md:h-72">
+              <img src="Static/Image/wedding_digital/wedding_game.png"
+                   alt="Case Desktop Screenshot"
+                    class="block w-full h-full object-contain bg-gray-50 case-zoomable"
+                    @click="openImageViewer('Static/Image/wedding_digital/wedding_game.png', 'Case Wedding Game Screenshot')">
+            </div>
+
+            <div class="rounded-2xl overflow-hidden shadow-lg border border-gray-100 bg-white h-64 md:h-72">
+              <img src="Static/Image/wedding_digital/qr_scan.png"
+                   alt="Case QR Scan"
+                    class="block w-full h-full object-contain bg-gray-50 case-zoomable"
+                    @click="openImageViewer('Static/Image/wedding_digital/qr_scan.png', 'Case QR Scan')">
             </div>
           </div>
         </div>
@@ -915,6 +938,27 @@
         </div>
     </footer>
 
+    <!-- Image Lightbox -->
+    <div
+        v-if="imageViewer.show"
+        class="fixed inset-0 z-[100] bg-black/85 flex items-center justify-center p-4"
+        @click.self="closeImageViewer"
+    >
+        <button
+            class="absolute top-5 right-5 w-11 h-11 rounded-full bg-white/20 text-white text-xl hover:bg-white/30"
+            @click="closeImageViewer"
+            aria-label="關閉圖片預覽"
+        >
+            <i class="ph ph-x"></i>
+        </button>
+
+        <img
+            :src="imageViewer.src"
+            :alt="imageViewer.alt"
+            class="max-w-full max-h-[90vh] object-contain rounded-xl shadow-2xl"
+        >
+    </div>
+
 </div>
 
 <script>
@@ -932,6 +976,11 @@
                     show: false,
                     message: '',
                     type: 'success'
+                },
+                imageViewer: {
+                    show: false,
+                    src: '',
+                    alt: ''
                 },
                 lead: {
                     name: '',
@@ -1252,10 +1301,20 @@
                 if (!this.isMusicPlaying) this.playMusicWithFallback();
             };
             document.addEventListener('pointerdown', this._musicKickstartHandler, { once: true });
+
+            this._escCloseHandler = (event) => {
+                if (event.key === 'Escape' && this.imageViewer.show) {
+                    this.closeImageViewer();
+                }
+            };
+            document.addEventListener('keydown', this._escCloseHandler);
         },
         beforeUnmount() {
             if (this._musicKickstartHandler) {
                 document.removeEventListener('pointerdown', this._musicKickstartHandler);
+            }
+            if (this._escCloseHandler) {
+                document.removeEventListener('keydown', this._escCloseHandler);
             }
         },
         methods: {
@@ -1329,6 +1388,16 @@
                     this.isMusicPlaying = false;
                     this.musicNeedGesture = true;
                 }
+            },
+            openImageViewer(src, alt) {
+                this.imageViewer = {
+                    show: true,
+                    src,
+                    alt: alt || 'Case Image'
+                };
+            },
+            closeImageViewer() {
+                this.imageViewer.show = false;
             },
             async submitLead() {
                 if (this.isSubmitting) return;
