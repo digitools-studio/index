@@ -461,7 +461,26 @@
       return "";
     }
 
-    async function closeLiffWindowWithFallback() {
+    async function sendWelcomeMessage(displayName) {
+      const safeName = String(displayName || "").trim() || "您";
+
+      try {
+        if (window.liff && liff.isInClient()) {
+          await liff.sendMessages([
+            {
+              type: "text",
+              text: `${safeName} 歡迎註冊`
+            }
+          ]);
+        }
+      } catch (err) {
+        console.warn("sendMessages error:", err);
+      }
+    }
+
+    async function closeLiffWindowWithFallback(displayName) {
+      await sendWelcomeMessage(displayName);
+
       try {
         if (window.liff && liff.isInClient()) {
           liff.closeWindow();
@@ -545,7 +564,7 @@
           backBtn.classList.add("hidden");
 
           setTimeout(async () => {
-            await closeLiffWindowWithFallback();
+            await closeLiffWindowWithFallback(payload.full_name);
           }, 1200);
           return;
         }
@@ -555,7 +574,7 @@
           backBtn.classList.add("hidden");
 
           setTimeout(async () => {
-            await closeLiffWindowWithFallback();
+            await closeLiffWindowWithFallback(payload.full_name);
           }, 1200);
           return;
         }
