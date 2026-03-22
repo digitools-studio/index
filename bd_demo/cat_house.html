@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LINE Rich Menu 體驗升級提案｜寵物旅館 LINE 整合顧問方案</title>
+  <meta
+    name="description"
+    content="將既有 LINE Rich Menu 從關鍵字回覆升級為真正有用的品牌服務入口，提升顧客體驗、營運效率與品牌價值。"
+  />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#faf7f2',
+              100: '#f3ece3',
+              200: '#e7d8c8',
+              300: '#d7bea6',
+              400: '#c09d79',
+              500: '#aa815b',
+              600: '#8f6848',
+              700: '#73533b',
+              800: '#5f4534',
+              900: '#503b30'
+            },
+            ink: '#2f2a26',
+            soft: '#fffdf9'
+          },
+          boxShadow: {
+            soft: '0 10px 30px rgba(82, 63, 48, 0.08)',
+            card: '0 12px 36px rgba(79, 58, 43, 0.10)'
+          },
+          borderRadius: {
+            xl2: '1.25rem'
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-soft text-ink antialiased">
+  <!-- Top Bar -->
+  <div class="w-full border-b border-brand-100 bg-white/80 backdrop-blur">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between text-sm">
+      <div class="flex items-center gap-3 text-brand-700">
+        <span class="inline-flex items-center px-3 py-1 rounded-full bg-brand-50 border border-brand-200 font-medium">寵物服務品牌 LINE 顧問方案</span>
+        <span class="hidden md:inline">從既有 Rich Menu 出發，不需大幅重做</span>
+      </div>
+      <a href="#contact" class="font-semibold text-brand-700 hover:text-brand-900 transition">預約顧問交流</a>
+    </div>
+  </div>
+
+  <!-- Hero Section -->
+  <section class="relative overflow-hidden bg-gradient-to-b from-brand-50 to-white">
+    <div class="absolute inset-0 pointer-events-none">
+      <div class="absolute top-0 left-0 w-80 h-80 bg-brand-100 rounded-full blur-3xl opacity-40 -translate-x-1/3 -translate-y-1/3"></div>
+      <div class="absolute bottom-0 right-0 w-96 h-96 bg-brand-200 rounded-full blur-3xl opacity-30 translate-x-1/4 translate-y-1/4"></div>
+    </div>
+
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28">
+      <div class="grid lg:grid-cols-12 gap-12 items-center">
+        <div class="lg:col-span-7">
+          <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-brand-200 bg-white text-brand-700 text-sm font-medium shadow-soft">
+            <span>LINE Rich Menu 體驗升級</span>
+            <span class="w-1.5 h-1.5 rounded-full bg-brand-400"></span>
+            <span>寵物旅館 / 安親 / 美容皆可延伸</span>
+          </div>
+
+          <h1 class="mt-6 text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight leading-tight text-ink">
+            把 LINE 圖文選單，
+            <span class="text-brand-700">從關鍵字回覆</span>
+            升級成
+            <span class="text-brand-700">會工作的服務入口</span>
+          </h1>
+
+          <p class="mt-6 text-lg md:text-xl leading-8 text-brand-800 max-w-3xl">
+            許多品牌已經有 LINE 官方帳號與圖文選單，但點擊之後仍停留在制式訊息、人工補位與零散引導。
+            我們協助你在不破壞既有經營基礎的前提下，重新整合 Rich Menu、互動流程與顧客旅程，
+            讓 LINE 不只是聯絡工具，而是真正能提升體驗、效率與品牌價值的入口。
+          </p>
+
+          <div class="mt-8 flex flex-col sm:flex-row gap-4">
+            <a href="#effect" class="inline-flex items-center justify-center px-6 py-3.5 rounded-2xl bg-brand-700 text-white font-semibold shadow-card hover:bg-brand-800 transition">
+              查看整合效果
+            </a>
+            <a href="#contact" class="inline-flex items-center justify-center px-6 py-3.5 rounded-2xl border border-brand-300 bg-white text-brand-700 font-semibold hover:bg-brand-50 transition">
+              預約顧問交流
+            </a>
+          </div>
+
+          <div class="mt-8 flex flex-wrap gap-3 text-sm">
+            <span class="px-3 py-1.5 rounded-full bg-white border border-brand-200 text-brand-700">保留原有 LINE 官方帳號基礎</span>
+            <span class="px-3 py-1.5 rounded-full bg-white border border-brand-200 text-brand-700">可從既有 Rich Menu 直接優化</span>
+            <span class="px-3 py-1.5 rounded-full bg-white border border-brand-200 text-brand-700">適合高信任服務業</span>
+          </div>
+        </div>
+
+        <div class="lg:col-span-5">
+          <div class="rounded-[28px] border border-brand-200 bg-white shadow-card overflow-hidden">
+            <div class="px-6 py-5 border-b border-brand-100 flex items-center justify-between">
+              <div>
+                <p class="text-sm text-brand-500">示意畫面</p>
+                <h3 class="text-xl font-semibold text-ink mt-1">既有 Rich Menu 升級後的互動入口</h3>
+              </div>
+              <div class="px-3 py-1 rounded-full bg-brand-50 text-brand-700 text-xs font-semibold border border-brand-200">
+                Before → After
+              </div>
+            </div>
+
+            <div class="p-6 bg-gradient-to-b from-white to-brand-50/40">
+              <div class="rounded-3xl border border-brand-100 bg-[#d9c6af] p-4">
+                <div class="grid grid-cols-3 gap-3">
+                  <div class="rounded-2xl bg-white/75 border-2 border-white p-3 text-center shadow-sm">
+                    <div class="w-10 h-10 mx-auto rounded-xl bg-brand-100"></div>
+                    <p class="mt-2 text-sm font-medium text-brand-800">住宿須知</p>
+                  </div>
+                  <div class="rounded-2xl bg-white/75 border-2 border-white p-3 text-center shadow-sm">
+                    <div class="w-10 h-10 mx-auto rounded-xl bg-brand-100"></div>
+                    <p class="mt-2 text-sm font-medium text-brand-800">預約住宿</p>
+                  </div>
+                  <div class="rounded-2xl bg-white/75 border-2 border-white p-3 text-center shadow-sm">
+                    <div class="w-10 h-10 mx-auto rounded-xl bg-brand-100"></div>
+                    <p class="mt-2 text-sm font-medium text-brand-800">預約參觀</p>
+                  </div>
+                  <div class="rounded-2xl bg-white/75 border-2 border-white p-3 text-center shadow-sm">
+                    <div class="w-10 h-10 mx-auto rounded-xl bg-brand-100"></div>
+                    <p class="mt-2 text-sm font-medium text-brand-800">房型價目</p>
+                  </div>
+                  <div class="rounded-2xl bg-white/75 border-2 border-white p-3 text-center shadow-sm">
+                    <div class="w-10 h-10 mx-auto rounded-xl bg-brand-100"></div>
+                    <p class="mt-2 text-sm font-medium text-brand-800">貓家位置</p>
+                  </div>
+                  <div class="rounded-2xl bg-white/75 border-2 border-white p-3 text-center shadow-sm">
+                    <div class="w-10 h-10 mx-auto rounded-xl bg-brand-100"></div>
+                    <p class="mt-2 text-sm font-medium text-brand-800">Follow Us</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="mt-5 rounded-3xl bg-white border border-brand-100 p-5 shadow-soft">
+                <div class="flex items-center justify-between">
+                  <div>
+                    <p class="text-sm text-brand-500">點擊「預約住宿」後</p>
+                    <h4 class="text-lg font-semibold text-ink mt-1">不只是一段固定訊息，而是更順的預約前引導</h4>
+                  </div>
+                  <span class="hidden sm:inline-flex px-3 py-1 rounded-full bg-brand-50 text-brand-700 text-xs border border-brand-200">體驗導向</span>
+                </div>
+                <div class="mt-4 space-y-3">
+                  <div class="rounded-2xl bg-brand-50 p-4 border border-brand-100">
+                    <p class="text-sm text-brand-800 leading-7">
+                      歡迎詢問住宿安排，我們先帶您快速了解入住條件、房型差異與預約方式，
+                      讓第一次接觸也能更安心開始。
+                    </p>
+                  </div>
+                  <div class="grid sm:grid-cols-2 gap-3">
+                    <div class="rounded-2xl border border-brand-100 p-4 bg-white">
+                      <p class="font-semibold text-brand-700">先看入住須知</p>
+                      <p class="mt-1 text-sm text-brand-700">降低來回詢問與資訊落差</p>
+                    </div>
+                    <div class="rounded-2xl border border-brand-100 p-4 bg-white">
+                      <p class="font-semibold text-brand-700">再進入預約前引導</p>
+                      <p class="mt-1 text-sm text-brand-700">讓顧客更容易理解下一步</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>  
+    </div>
+  </section>
+
+  <!-- Problem Section -->
+  <section id="problems" class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="max-w-3xl">
+        <span class="inline-flex px-3 py-1.5 rounded-full bg-brand-50 border border-brand-200 text-sm font-medium text-brand-700">
+          現況診斷
+        </span>
+        <h2 class="mt-4 text-3xl md:text-4xl font-bold tracking-tight">
+          你已經有 LINE Rich Menu，<br class="hidden sm:block" />
+          但它可能還沒有真正發揮價值
+        </h2>
+        <p class="mt-5 text-lg leading-8 text-brand-800">
+          真正影響顧客體驗的，往往不是「有沒有按鈕」，而是按下去之後，顧客接收到什麼、
+          接下來怎麼走、最後有沒有更順利地完成下一步。
+        </p>
+      </div>
+
+      <div class="mt-12 grid md:grid-cols-2 xl:grid-cols-3 gap-6">
+        <div class="rounded-3xl border border-brand-100 bg-soft p-6 shadow-soft">
+          <h3 class="text-xl font-semibold">點擊後只觸發關鍵字</h3>
+          <p class="mt-3 leading-7 text-brand-800">
+            顧客點選「預約住宿」後，收到的是固定訊息，仍需要自己整理資料、自己提問、等待人工確認。
+          </p>
+        </div>
+        <div class="rounded-3xl border border-brand-100 bg-soft p-6 shadow-soft">
+          <h3 class="text-xl font-semibold">資訊有提供，但不夠好理解</h3>
+          <p class="mt-3 leading-7 text-brand-800">
+            住宿須知、房型價目、參觀流程都有放上去，但顧客仍反覆詢問，表示資訊呈現方式還能更順。
+          </p>
+        </div>
+        <div class="rounded-3xl border border-brand-100 bg-soft p-6 shadow-soft">
+          <h3 class="text-xl font-semibold">服務流程沒有被設計</h3>
+          <p class="mt-3 leading-7 text-brand-800">
+            從認識品牌、建立信任、開始詢問，到完成預約或參觀，中間少了引導節奏，容易在細節中流失客戶。
+          </p>
+        </div>
+        <div class="rounded-3xl border border-brand-100 bg-soft p-6 shadow-soft">
+          <h3 class="text-xl font-semibold">每次互動都靠人工補位</h3>
+          <p class="mt-3 leading-7 text-brand-800">
+            就算客服很細心，也難避免重複回答、漏接訊息與等待成本，久了會變成營運負擔。
+          </p>
+        </div>
+        <div class="rounded-3xl border border-brand-100 bg-soft p-6 shadow-soft">
+          <h3 class="text-xl font-semibold">LINE 存在，但沒有形成經營資產</h3>
+          <p class="mt-3 leading-7 text-brand-800">
+            使用者有進來，卻沒有被分眾、追蹤或累積成後續可經營的名單，等於每次互動都重來一次。
+          </p>
+        </div>
+        <div class="rounded-3xl border border-brand-100 bg-soft p-6 shadow-soft">
+          <h3 class="text-xl font-semibold">品牌感有了，但體驗還沒到位</h3>
+          <p class="mt-3 leading-7 text-brand-800">
+            寵物旅館是高信任服務，顧客在意的不只是功能，而是安心感、清楚感與被照顧的感受。
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Before After Section -->
+  <section class="py-20 bg-brand-50/60">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center max-w-3xl mx-auto">
+        <span class="inline-flex px-3 py-1.5 rounded-full bg-white border border-brand-200 text-sm font-medium text-brand-700">
+          Before / After
+        </span>
+        <h2 class="mt-4 text-3xl md:text-4xl font-bold tracking-tight">
+          不是重做一套系統，而是把既有 LINE 圖文選單，重新變成有效的顧客入口
+        </h2>
+      </div>
+
+      <div class="mt-12 grid lg:grid-cols-2 gap-8">
+        <div class="rounded-[28px] bg-white border border-brand-100 p-8 shadow-card">
+          <div class="inline-flex px-3 py-1 rounded-full bg-brand-100 text-brand-700 text-sm font-semibold">
+            現況 Before
+          </div>
+          <h3 class="mt-5 text-2xl font-bold">Rich Menu 已存在，但互動偏靜態</h3>
+          <ul class="mt-6 space-y-4 text-brand-800 leading-7">
+            <li>• 點選後以關鍵字回覆為主</li>
+            <li>• 顧客需要自己閱讀、自己整理、自己追問</li>
+            <li>• 店家需要人工持續補充說明</li>
+            <li>• 資訊分散，體驗容易中斷</li>
+            <li>• LINE 主要扮演聯絡工具，而非流程工具</li>
+          </ul>
+        </div>
+
+        <div class="rounded-[28px] bg-brand-800 text-white p-8 shadow-card">
+          <div class="inline-flex px-3 py-1 rounded-full bg-white/10 text-white text-sm font-semibold border border-white/20">
+            升級 After
+          </div>
+          <h3 class="mt-5 text-2xl font-bold">Rich Menu 成為品牌服務的第一線入口</h3>
+          <ul class="mt-6 space-y-4 leading-7 text-brand-100">
+            <li>• 依不同按鈕進入更清楚的互動流程</li>
+            <li>• 重新設計住宿須知、房型資訊、參觀方式與品牌亮點的呈現方式</li>
+            <li>• 讓顧客更快找到答案，也更容易完成下一步</li>
+            <li>• 讓店家減少重複說明與來回確認</li>
+            <li>• 把每一次點擊，轉化為更好的體驗與後續經營機會</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Rich Menu Effect Section -->
+  <section id="effect" class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="max-w-3xl">
+        <span class="inline-flex px-3 py-1.5 rounded-full bg-brand-50 border border-brand-200 text-sm font-medium text-brand-700">
+          整合效果
+        </span>
+        <h2 class="mt-4 text-3xl md:text-4xl font-bold tracking-tight">
+          以目前的圖文選單為基礎，優化每一個入口的價值
+        </h2>
+        <p class="mt-5 text-lg leading-8 text-brand-800">
+          你不一定需要新增更多按鈕。更重要的是，讓現有的六個入口各自承擔更明確的角色，
+          從單純資訊分類，變成真正能承接服務與信任的入口。
+        </p>
+      </div>
+
+      <div class="mt-12 grid md:grid-cols-2 xl:grid-cols-3 gap-6">
+        <div class="rounded-3xl border border-brand-100 p-6 shadow-soft bg-soft">
+          <h3 class="text-xl font-semibold">住宿須知</h3>
+          <p class="mt-3 leading-7 text-brand-800">
+            從條列告知，升級成更容易理解的入住引導。快速看懂入住條件、照護規範、準備事項與注意細節。
+          </p>
+          <p class="mt-3 text-sm text-brand-600">更清楚的分段與重點整理，讓第一次接觸的新客也能安心理解。</p>
+        </div>
+
+        <div class="rounded-3xl border border-brand-100 p-6 shadow-soft bg-soft">
+          <h3 class="text-xl font-semibold">預約住宿</h3>
+          <p class="mt-3 leading-7 text-brand-800">
+            不一定要先做完整預約系統，也能先優化成更順的預約前互動，清楚說明預約前要知道什麼、準備什麼、如何開始。
+          </p>
+          <p class="mt-3 text-sm text-brand-600">讓顧客少一點猶豫、少一點提問、少一點中途離開。</p>
+        </div>
+
+        <div class="rounded-3xl border border-brand-100 p-6 shadow-soft bg-soft">
+          <h3 class="text-xl font-semibold">預約參觀</h3>
+          <p class="mt-3 leading-7 text-brand-800">
+            把參觀行為變成建立信任的起點。提前建立期待感、專業感與安心感，讓到店前就先感受到品牌細緻度。
+          </p>
+          <p class="mt-3 text-sm text-brand-600">參觀不只是看環境，更是品牌說服力的重要環節。</p>
+        </div>
+
+        <div class="rounded-3xl border border-brand-100 p-6 shadow-soft bg-soft">
+          <h3 class="text-xl font-semibold">房型價目</h3>
+          <p class="mt-3 leading-7 text-brand-800">
+            不只是報價，而是選擇輔助。更清楚呈現適合對象、差異亮點與照護價值，幫助顧客更容易做決定。
+          </p>
+          <p class="mt-3 text-sm text-brand-600">把價格頁，變成能推進選擇的頁面。</p>
+        </div>
+
+        <div class="rounded-3xl border border-brand-100 p-6 shadow-soft bg-soft">
+          <h3 class="text-xl font-semibold">貓家位置</h3>
+          <p class="mt-3 leading-7 text-brand-800">
+            從地圖資訊延伸到到店體驗，整合交通、停車、到店提醒與參觀前準備，降低第一次來店的不安感。
+          </p>
+          <p class="mt-3 text-sm text-brand-600">把「怎麼到」變成「更安心地到」。</p>
+        </div>
+
+        <div class="rounded-3xl border border-brand-100 p-6 shadow-soft bg-soft">
+          <h3 class="text-xl font-semibold">Follow Us</h3>
+          <p class="mt-3 leading-7 text-brand-800">
+            不是只做社群導流，而是讓 LINE 與社群形成互補：LINE 負責服務與引導，社群負責感受與品牌記憶。
+          </p>
+          <p class="mt-3 text-sm text-brand-600">讓品牌不只是被看見，而是被持續記得。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- New Section 1: Six Entry Comparison -->
+  <section class="py-20 bg-brand-50/50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="max-w-4xl">
+        <span class="inline-flex px-3 py-1.5 rounded-full bg-white border border-brand-200 text-sm font-medium text-brand-700">
+          六入口對照
+        </span>
+        <h2 class="mt-4 text-3xl md:text-4xl font-bold tracking-tight">
+          貓家日子目前 Rich Menu 六入口，優化後可以如何升級
+        </h2>
+        <p class="mt-5 text-lg leading-8 text-brand-800">
+          不是把原本的設計推翻重來，而是讓每一個入口更清楚自己該承接什麼任務。
+          這樣做的好處，是店家容易導入、顧客容易理解、品牌感也更一致。
+        </p>
+      </div>
+
+      <div class="mt-12 overflow-hidden rounded-[28px] border border-brand-200 bg-white shadow-card">
+        <div class="hidden lg:grid lg:grid-cols-12 bg-brand-800 text-white text-sm font-semibold">
+          <div class="col-span-2 px-6 py-4">Rich Menu 入口</div>
+          <div class="col-span-4 px-6 py-4 border-l border-white/10">目前常見狀態</div>
+          <div class="col-span-6 px-6 py-4 border-l border-white/10">優化後的角色與效果</div>
+        </div>
+
+        <div class="divide-y divide-brand-100">
+          <div class="grid lg:grid-cols-12">
+            <div class="lg:col-span-2 p-6 bg-brand-50">
+              <h3 class="font-bold text-lg">住宿須知</h3>
+            </div>
+            <div class="lg:col-span-4 p-6">
+              <p class="leading-7 text-brand-800">以靜態資訊呈現為主，顧客需要自己消化與判讀，不清楚哪些是最重要的入住重點。</p>
+            </div>
+            <div class="lg:col-span-6 p-6 bg-soft">
+              <p class="leading-7 text-brand-800">重新整理成「新客快速理解版」須知頁，先講最在意的重點，再補充細節，降低第一次接觸的理解門檻與焦慮感。</p>
+            </div>
+          </div>
+
+          <div class="grid lg:grid-cols-12">
+            <div class="lg:col-span-2 p-6 bg-brand-50">
+              <h3 class="font-bold text-lg">預約住宿</h3>
+            </div>
+            <div class="lg:col-span-4 p-6">
+              <p class="leading-7 text-brand-800">點擊後多半進入固定關鍵字回覆，仍需顧客自行整理資訊與等待人工確認。</p>
+            </div>
+            <div class="lg:col-span-6 p-6 bg-soft">
+              <p class="leading-7 text-brand-800">先優化為「預約前引導入口」，讓顧客先理解房型、規則與預約準備事項，再自然引導到詢問或下一步行動。</p>
+            </div>
+          </div>
+
+          <div class="grid lg:grid-cols-12">
+            <div class="lg:col-span-2 p-6 bg-brand-50">
+              <h3 class="font-bold text-lg">預約參觀</h3>
+            </div>
+            <div class="lg:col-span-4 p-6">
+              <p class="leading-7 text-brand-800">只是功能入口，沒有把參觀前期待、到店前須知與品牌優勢先鋪陳起來。</p>
+            </div>
+            <div class="lg:col-span-6 p-6 bg-soft">
+              <p class="leading-7 text-brand-800">升級成「到店信任建立入口」，先讓顧客理解參觀能看見什麼、為何值得來、來之前要怎麼準備，提升到店意願。</p>
+            </div>
+          </div>
+
+          <div class="grid lg:grid-cols-12">
+            <div class="lg:col-span-2 p-6 bg-brand-50">
+              <h3 class="font-bold text-lg">房型價目</h3>
+            </div>
+            <div class="lg:col-span-4 p-6">
+              <p class="leading-7 text-brand-800">偏價格展示，顧客可能看得到價差，但不一定理解差異與適合情境。</p>
+            </div>
+            <div class="lg:col-span-6 p-6 bg-soft">
+              <p class="leading-7 text-brand-800">改成「房型選擇輔助頁」，不只告訴顧客多少錢，也幫助顧客理解每一種房型適合什麼樣的毛孩與需求。</p>
+            </div>
+          </div>
+
+          <div class="grid lg:grid-cols-12">
+            <div class="lg:col-span-2 p-6 bg-brand-50">
+              <h3 class="font-bold text-lg">貓家位置</h3>
+            </div>
+            <div class="lg:col-span-4 p-6">
+              <p class="leading-7 text-brand-800">通常只是單純地圖資訊，無法減少顧客對陌生環境與到店流程的不確定感。</p>
+            </div>
+            <div class="lg:col-span-6 p-6 bg-soft">
+              <p class="leading-7 text-brand-800">延伸成「到店體驗入口」，整合交通、停車、附近辨識點與參觀提醒，讓顧客從出發前就感受到照顧與細節。</p>
+            </div>
+          </div>
+
+          <div class="grid lg:grid-cols-12">
+            <div class="lg:col-span-2 p-6 bg-brand-50">
+              <h3 class="font-bold text-lg">Follow Us</h3>
+            </div>
+            <div class="lg:col-span-4 p-6">
+              <p class="leading-7 text-brand-800">只是單向導流至社群，缺乏與 LINE 的角色分工，品牌內容較分散。</p>
+            </div>
+            <div class="lg:col-span-6 p-6 bg-soft">
+              <p class="leading-7 text-brand-800">重新定義為「品牌關係延伸入口」，讓 LINE 承接服務與互動，社群承接日常感與信任累積，形成更完整的體驗閉環。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Value Section -->
+  <section class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center max-w-3xl mx-auto">
+        <span class="inline-flex px-3 py-1.5 rounded-full bg-brand-50 border border-brand-200 text-sm font-medium text-brand-700">
+          核心價值
+        </span>
+        <h2 class="mt-4 text-3xl md:text-4xl font-bold tracking-tight">
+          這不是單純的 LINE 功能優化，而是一次品牌互動體驗的升級
+        </h2>
+      </div>
+
+      <div class="mt-12 grid md:grid-cols-3 gap-6">
+        <div class="rounded-3xl border border-brand-100 p-8 shadow-soft bg-soft">
+          <h3 class="text-xl font-semibold">對顧客更友善</h3>
+          <p class="mt-4 leading-7 text-brand-800">
+            資訊更清楚、流程更順、理解成本更低，讓新客戶更容易開始接觸，也更願意留下來。
+          </p>
+        </div>
+        <div class="rounded-3xl border border-brand-100 p-8 shadow-soft bg-soft">
+          <h3 class="text-xl font-semibold">對店家更省力</h3>
+          <p class="mt-4 leading-7 text-brand-800">
+            減少重複回覆與人工補充說明，讓 LINE 不再只是客服壓力來源，而是協助營運的工具。
+          </p>
+        </div>
+        <div class="rounded-3xl border border-brand-100 p-8 shadow-soft bg-soft">
+          <h3 class="text-xl font-semibold">對品牌更有價值</h3>
+          <p class="mt-4 leading-7 text-brand-800">
+            每個入口都更能承接信任、體驗與後續互動，讓既有的 LINE 流量不只是被動接待，而能持續累積品牌資產。
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Suitable Brands -->
+  <section class="py-20 bg-brand-50/60">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid lg:grid-cols-12 gap-10 items-start">
+        <div class="lg:col-span-5">
+          <span class="inline-flex px-3 py-1.5 rounded-full bg-white border border-brand-200 text-sm font-medium text-brand-700">
+            適用對象
+          </span>
+          <h2 class="mt-4 text-3xl md:text-4xl font-bold tracking-tight">
+            特別適合這類型的寵物服務品牌
+          </h2>
+          <p class="mt-5 text-lg leading-8 text-brand-800">
+            如果你的品牌已經有 LINE 官方帳號，也已經有基本圖文選單，
+            但希望讓整體互動更細緻、服務感更完整、營運更順，這樣的整合方式會很適合你。
+          </p>
+        </div>
+
+        <div class="lg:col-span-7">
+          <div class="grid md:grid-cols-2 gap-5">
+            <div class="rounded-3xl bg-white p-6 border border-brand-100 shadow-soft">已有 LINE 官方帳號與基本圖文選單</div>
+            <div class="rounded-3xl bg-white p-6 border border-brand-100 shadow-soft">已有一定品牌風格，希望再提升專業感</div>
+            <div class="rounded-3xl bg-white p-6 border border-brand-100 shadow-soft">平常需要回覆重複問題</div>
+            <div class="rounded-3xl bg-white p-6 border border-brand-100 shadow-soft">想讓顧客更快理解服務內容</div>
+            <div class="rounded-3xl bg-white p-6 border border-brand-100 shadow-soft">希望 LINE 不只是聯絡工具，而是服務入口</div>
+            <div class="rounded-3xl bg-white p-6 border border-brand-100 shadow-soft">想從不大改動現況的方式開始優化</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Deliverables -->
+  <section class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="max-w-3xl">
+        <span class="inline-flex px-3 py-1.5 rounded-full bg-brand-50 border border-brand-200 text-sm font-medium text-brand-700">
+          整合內容
+        </span>
+        <h2 class="mt-4 text-3xl md:text-4xl font-bold tracking-tight">
+          可優化的整合內容
+        </h2>
+        <p class="mt-5 text-lg leading-8 text-brand-800">
+          依品牌現況不同，整合內容可以從輕量優化開始，也可以逐步擴展為更完整的顧客互動與營運支援。
+        </p>
+      </div>
+
+      <div class="mt-12 grid md:grid-cols-2 xl:grid-cols-4 gap-6">
+        <div class="rounded-3xl border border-brand-100 p-6 shadow-soft bg-soft">
+          <h3 class="text-xl font-semibold">Rich Menu 入口重整</h3>
+          <p class="mt-3 leading-7 text-brand-800">釐清每個按鈕的角色與目的，調整名稱、排序、導向內容與理解路徑。</p>
+        </div>
+        <div class="rounded-3xl border border-brand-100 p-6 shadow-soft bg-soft">
+          <h3 class="text-xl font-semibold">LINE 互動文案設計</h3>
+          <p class="mt-3 leading-7 text-brand-800">重新撰寫點擊後的訊息、分段方式、提示語與下一步引導。</p>
+        </div>
+        <div class="rounded-3xl border border-brand-100 p-6 shadow-soft bg-soft">
+          <h3 class="text-xl font-semibold">服務流程優化</h3>
+          <p class="mt-3 leading-7 text-brand-800">從住宿須知、房型選擇、參觀引導到後續追蹤，讓整體節奏更完整。</p>
+        </div>
+        <div class="rounded-3xl border border-brand-100 p-6 shadow-soft bg-soft">
+          <h3 class="text-xl font-semibold">品牌體驗一致化</h3>
+          <p class="mt-3 leading-7 text-brand-800">讓網站、LINE、社群與實體服務感受更一致，建立完整專業印象。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- New Section 2: User Journey -->
+  <section class="py-20 bg-brand-900 text-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="max-w-4xl">
+        <span class="inline-flex px-3 py-1.5 rounded-full bg-white/10 border border-white/20 text-sm font-medium text-white">
+          使用者旅程
+        </span>
+        <h2 class="mt-4 text-3xl md:text-4xl font-bold tracking-tight">
+          一位新客從第一次點進 LINE，到最後完成詢問或預約前理解的旅程
+        </h2>
+        <p class="mt-5 text-lg leading-8 text-brand-100">
+          真正有說服力的，不只是功能清單，而是顧客在整個互動過程中，
+          是否更安心、更清楚、更願意往下走。以下是一個更符合品牌體驗的互動旅程示意。
+        </p>
+      </div>
+
+      <div class="mt-12 grid lg:grid-cols-5 gap-6">
+        <div class="rounded-3xl bg-white/5 border border-white/10 p-6">
+          <div class="text-sm font-semibold text-brand-200">Step 01</div>
+          <h3 class="mt-3 text-xl font-semibold">第一次進入 LINE</h3>
+          <p class="mt-3 leading-7 text-brand-100">
+            顧客透過網站、社群或搜尋進入官方帳號，先看到清楚的品牌入口與功能分工。
+          </p>
+        </div>
+
+        <div class="rounded-3xl bg-white/5 border border-white/10 p-6">
+          <div class="text-sm font-semibold text-brand-200">Step 02</div>
+          <h3 class="mt-3 text-xl font-semibold">點擊感興趣入口</h3>
+          <p class="mt-3 leading-7 text-brand-100">
+            依需求點選住宿須知、預約住宿、預約參觀或房型價目，不再只是亂槍打鳥式發問。
+          </p>
+        </div>
+
+        <div class="rounded-3xl bg-white/5 border border-white/10 p-6">
+          <div class="text-sm font-semibold text-brand-200">Step 03</div>
+          <h3 class="mt-3 text-xl font-semibold">收到更有節奏的引導</h3>
+          <p class="mt-3 leading-7 text-brand-100">
+            LINE 先協助顧客理解規則、差異與下一步，而不是直接丟出一大段訊息讓人自行解讀。
+          </p>
+        </div>
+
+        <div class="rounded-3xl bg-white/5 border border-white/10 p-6">
+          <div class="text-sm font-semibold text-brand-200">Step 04</div>
+          <h3 class="mt-3 text-xl font-semibold">建立安心感與信任感</h3>
+          <p class="mt-3 leading-7 text-brand-100">
+            顧客開始感受到品牌的細緻度，對於住宿條件、房型差異與參觀流程更有把握。
+          </p>
+        </div>
+
+        <div class="rounded-3xl bg-white/5 border border-white/10 p-6">
+          <div class="text-sm font-semibold text-brand-200">Step 05</div>
+          <h3 class="mt-3 text-xl font-semibold">更順利完成下一步</h3>
+          <p class="mt-3 leading-7 text-brand-100">
+            無論是進一步詢問、安排參觀或進入預約流程，阻力都更低，也更容易成交。
+          </p>
+        </div>
+      </div>
+
+      <div class="mt-10 rounded-[28px] border border-white/10 bg-white/5 p-8">
+        <h3 class="text-2xl font-semibold">這段旅程的真正價值</h3>
+        <div class="mt-6 grid md:grid-cols-3 gap-6">
+          <div>
+            <p class="font-semibold text-brand-200">顧客角度</p>
+            <p class="mt-2 text-brand-100 leading-7">更少混亂、更少焦慮、更容易理解服務內容。</p>
+          </div>
+          <div>
+            <p class="font-semibold text-brand-200">店家角度</p>
+            <p class="mt-2 text-brand-100 leading-7">更少重複說明、更少無效來回、更高品質的詢問流入。</p>
+          </div>
+          <div>
+            <p class="font-semibold text-brand-200">品牌角度</p>
+            <p class="mt-2 text-brand-100 leading-7">每一次互動都更像品牌體驗，而不是客服負擔。LINE 終於不再只是會叫的工具人。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Outcomes -->
+  <section class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center max-w-3xl mx-auto">
+        <span class="inline-flex px-3 py-1.5 rounded-full bg-brand-50 border border-brand-200 text-sm font-medium text-brand-700">
+          成效想像
+        </span>
+        <h2 class="mt-4 text-3xl md:text-4xl font-bold tracking-tight">
+          當 LINE 入口被重新設計之後，會發生什麼改變
+        </h2>
+      </div>
+
+      <div class="mt-12 grid md:grid-cols-3 gap-6">
+        <div class="rounded-3xl border border-brand-100 p-8 shadow-soft bg-soft">
+          <h3 class="text-xl font-semibold">更少的重複詢問</h3>
+          <p class="mt-4 leading-7 text-brand-800">顧客更容易在第一次接觸時就理解規則、流程與服務內容。</p>
+        </div>
+        <div class="rounded-3xl border border-brand-100 p-8 shadow-soft bg-soft">
+          <h3 class="text-xl font-semibold">更順的詢問轉換</h3>
+          <p class="mt-4 leading-7 text-brand-800">從看到資訊、產生興趣、開始諮詢，到願意進一步行動，中間阻力明顯下降。</p>
+        </div>
+        <div class="rounded-3xl border border-brand-100 p-8 shadow-soft bg-soft">
+          <h3 class="text-xl font-semibold">更好的品牌印象</h3>
+          <p class="mt-4 leading-7 text-brand-800">在高信任產業中，細節就是說服力。互動更有秩序、更有溫度，品牌價值也會被放大。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Advisory CTA -->
+  <section class="py-20 bg-brand-50/70">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="rounded-[32px] bg-white border border-brand-200 shadow-card p-10 md:p-14 text-center">
+        <span class="inline-flex px-3 py-1.5 rounded-full bg-brand-50 border border-brand-200 text-sm font-medium text-brand-700">
+          顧問式切入
+        </span>
+        <h2 class="mt-4 text-3xl md:text-4xl font-bold tracking-tight">
+          先從小幅優化開始，也能看見差異
+        </h2>
+        <p class="mt-6 text-lg leading-8 text-brand-800 max-w-3xl mx-auto">
+          不是每個品牌都需要一開始就導入完整系統。很多時候，只要先把現有 Rich Menu 的內容、
+          引導與體驗設計好，就能讓顧客更容易理解、讓團隊更省力、讓 LINE 發揮更實際的價值。
+        </p>
+        <p class="mt-4 text-brand-700 font-medium">
+          我們更重視的是：如何在你目前已經擁有的基礎上，做出最有感的升級。
+        </p>
+        <div class="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
+          <a href="#contact" class="inline-flex items-center justify-center px-6 py-3.5 rounded-2xl bg-brand-700 text-white font-semibold shadow-card hover:bg-brand-800 transition">
+            先聊聊目前的 LINE 使用情況
+          </a>
+          <a href="#faq" class="inline-flex items-center justify-center px-6 py-3.5 rounded-2xl border border-brand-300 bg-white text-brand-700 font-semibold hover:bg-brand-50 transition">
+            了解常見問題
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Process -->
+  <section class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="max-w-3xl">
+        <span class="inline-flex px-3 py-1.5 rounded-full bg-brand-50 border border-brand-200 text-sm font-medium text-brand-700">
+          合作流程
+        </span>
+        <h2 class="mt-4 text-3xl md:text-4xl font-bold tracking-tight">
+          合作流程簡單清楚
+        </h2>
+      </div>
+
+      <div class="mt-12 grid md:grid-cols-2 xl:grid-cols-4 gap-6">
+        <div class="rounded-3xl border border-brand-100 p-8 bg-soft shadow-soft">
+          <div class="text-sm font-semibold text-brand-600">STEP 1</div>
+          <h3 class="mt-3 text-xl font-semibold">了解現況</h3>
+          <p class="mt-3 leading-7 text-brand-800">盤點目前的 Rich Menu、點擊後流程、常見問題與顧客互動方式。</p>
+        </div>
+        <div class="rounded-3xl border border-brand-100 p-8 bg-soft shadow-soft">
+          <div class="text-sm font-semibold text-brand-600">STEP 2</div>
+          <h3 class="mt-3 text-xl font-semibold">提出優化方向</h3>
+          <p class="mt-3 leading-7 text-brand-800">依品牌現況整理適合的入口設計、內容結構與顧客引導方式。</p>
+        </div>
+        <div class="rounded-3xl border border-brand-100 p-8 bg-soft shadow-soft">
+          <div class="text-sm font-semibold text-brand-600">STEP 3</div>
+          <h3 class="mt-3 text-xl font-semibold">進行整合調整</h3>
+          <p class="mt-3 leading-7 text-brand-800">將文案、流程與體驗重新整理，讓既有 LINE 使用起來更順。</p>
+        </div>
+        <div class="rounded-3xl border border-brand-100 p-8 bg-soft shadow-soft">
+          <div class="text-sm font-semibold text-brand-600">STEP 4</div>
+          <h3 class="mt-3 text-xl font-semibold">持續優化</h3>
+          <p class="mt-3 leading-7 text-brand-800">依實際使用情況持續調整細節，逐步放大互動成效與品牌感受。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq" class="py-20 bg-brand-50/60">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center max-w-3xl mx-auto">
+        <span class="inline-flex px-3 py-1.5 rounded-full bg-white border border-brand-200 text-sm font-medium text-brand-700">
+          FAQ
+        </span>
+        <h2 class="mt-4 text-3xl md:text-4xl font-bold tracking-tight">
+          常見問題
+        </h2>
+      </div>
+
+      <div class="mt-12 space-y-4">
+        <div class="rounded-3xl bg-white border border-brand-100 p-6 shadow-soft">
+          <h3 class="text-lg font-semibold">一定要重做整套 LINE 嗎？</h3>
+          <p class="mt-3 leading-7 text-brand-800">
+            不需要。很多品牌已經有不錯的基礎，重點在於重新整理入口設計與內容邏輯，讓既有的 Rich Menu 更有效。
+          </p>
+        </div>
+        <div class="rounded-3xl bg-white border border-brand-100 p-6 shadow-soft">
+          <h3 class="text-lg font-semibold">一定要做完整預約系統嗎？</h3>
+          <p class="mt-3 leading-7 text-brand-800">
+            不一定。可以先從互動流程優化、內容重整與顧客引導開始，再視需求逐步擴充。
+          </p>
+        </div>
+        <div class="rounded-3xl bg-white border border-brand-100 p-6 shadow-soft">
+          <h3 class="text-lg font-semibold">這種優化比較偏技術還是偏顧問？</h3>
+          <p class="mt-3 leading-7 text-brand-800">
+            兩者都有，但核心其實是體驗與流程設計。技術只是手段，真正的目標是讓顧客更順利、讓店家更省力。
+          </p>
+        </div>
+        <div class="rounded-3xl bg-white border border-brand-100 p-6 shadow-soft">
+          <h3 class="text-lg font-semibold">適合小型店家嗎？</h3>
+          <p class="mt-3 leading-7 text-brand-800">
+            很適合。尤其是已經有 LINE 官方帳號，但平時訊息量不小、需要兼顧服務品質與效率的品牌。
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Final CTA -->
+  <section id="contact" class="py-20 bg-brand-800 text-white">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <span class="inline-flex px-3 py-1.5 rounded-full bg-white/10 border border-white/20 text-sm font-medium text-white">
+        Final CTA
+      </span>
+      <h2 class="mt-4 text-3xl md:text-5xl font-bold tracking-tight">
+        讓你的 LINE 圖文選單，<br class="hidden sm:block" />
+        不只是好看，而是真的開始發揮作用
+      </h2>
+      <p class="mt-6 text-lg md:text-xl leading-8 text-brand-100 max-w-3xl mx-auto">
+        從既有基礎出發，重新整理每個入口的角色、互動文案與顧客旅程。
+        讓 LINE 從被動回覆工具，升級為更有價值的品牌服務入口。
+      </p>
+
+      <div class="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
+        <a href="#" class="inline-flex items-center justify-center px-6 py-3.5 rounded-2xl bg-white text-brand-800 font-semibold shadow-card hover:bg-brand-50 transition">
+          預約一次顧問交流
+        </a>
+        <a href="#" class="inline-flex items-center justify-center px-6 py-3.5 rounded-2xl border border-white/30 text-white font-semibold hover:bg-white/10 transition">
+          查看優化提案範例
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-white border-t border-brand-100">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <div class="flex flex-col md:flex-row gap-4 md:items-center md:justify-between">
+        <div>
+          <p class="text-lg font-semibold text-ink">為寵物服務品牌打造更有感的 LINE 體驗整合</p>
+          <p class="mt-2 text-brand-700">
+            從 Rich Menu、互動流程到品牌體驗，協助你在不大改現況的前提下，做出真正有差異的升級。
+          </p>
+        </div>
+        <div class="text-sm text-brand-600">
+          © 2026 LINE Experience Integration Proposal
+        </div>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

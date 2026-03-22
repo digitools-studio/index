@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>立即加入會員</title>
+  <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f5f7fb;
+      color: #222;
+    }
+    .wrap {
+      max-width: 520px;
+      margin: 0 auto;
+      padding: 24px 16px 48px;
+    }
+    .card {
+      background: #fff;
+      border-radius: 18px;
+      padding: 20px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+    }
+    h1 {
+      font-size: 24px;
+      margin: 0 0 8px;
+    }
+    p.desc {
+      color: #666;
+      margin: 0 0 20px;
+      line-height: 1.6;
+    }
+    .field {
+      margin-bottom: 14px;
+    }
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 600;
+    }
+    input {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 12px;
+      border: 1px solid #d9dee8;
+      border-radius: 10px;
+      font-size: 15px;
+    }
+    button {
+      width: 100%;
+      padding: 14px;
+      border: 0;
+      border-radius: 12px;
+      background: #06C755;
+      color: #fff;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    button:disabled {
+      opacity: .6;
+      cursor: not-allowed;
+    }
+    .msg {
+      margin-top: 14px;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    .success { color: #0b7a32; }
+    .error { color: #c62828; }
+    .loading { color: #555; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <h1>立即加入會員</h1>
+      <p class="desc">完成註冊後，即可建立會員資料，後續可延伸預約、查詢與專屬優惠。</p>
+
+      <form id="registerForm">
+        <div class="field">
+          <label for="lineName">LINE 顯示名稱</label>
+          <input id="lineName" readonly />
+        </div>
+
+        <div class="field">
+          <label for="fullName">姓名</label>
+          <input id="fullName" required />
+        </div>
+
+        <div class="field">
+          <label for="phone">手機</label>
+          <input id="phone" required />
+        </div>
+
+        <div class="field">
+          <label for="email">Email</label>
+          <input id="email" type="email" required />
+        </div>
+
+        <button id="submitBtn" type="submit">送出註冊</button>
+        <div id="message" class="msg"></div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const LIFF_ID = "YOUR_LIFF_ID";
+    const API_URL = "YOUR_LAMBDA_FUNCTION_URL";
+
+    let profileData = null;
+
+    async function initLiff() {
+      const msg = document.getElementById("message");
+      msg.textContent = "初始化中...";
+      msg.className = "msg loading";
+
+      await liff.init({ liffId: LIFF_ID });
+
+      if (!liff.isLoggedIn()) {
+        liff.login();
+        return;
+      }
+
+      profileData = await liff.getProfile();
+      document.getElementById("lineName").value = profileData.displayName || "";
+
+      msg.textContent = "";
+      msg.className = "msg";
+    }
+
+    document.getElementById("registerForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const msg = document.getElementById("message");
+      const submitBtn = document.getElementById("submitBtn");
+      submitBtn.disabled = true;
+      msg.textContent = "送出中...";
+      msg.className = "msg loading";
+
+      const payload = {
+        line_user_id: profileData?.userId || "",
+        line_display_name: profileData?.displayName || "",
+        full_name: document.getElementById("fullName").value.trim(),
+        phone: document.getElementById("phone").value.trim(),
+        email: document.getElementById("email").value.trim(),
+        register_source: "richmenu_liff_register"
+      };
+
+      try {
+        const res = await fetch(API_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          throw new Error(data.message || data.error || "註冊失敗");
+        }
+
+        msg.textContent = data.message || "註冊成功";
+        msg.className = "msg success";
+      } catch (err) {
+        msg.textContent = err.message || "送出失敗";
+        msg.className = "msg error";
+      } finally {
+        submitBtn.disabled = false;
+      }
+    });
+
+    initLiff().catch((err) => {
+      const msg = document.getElementById("message");
+      msg.textContent = "LIFF 初始化失敗";
+      msg.className = "msg error";
+      console.error(err);
+    });
+  </script>
+</body>
+</html>
