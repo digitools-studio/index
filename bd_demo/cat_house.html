@@ -191,6 +191,28 @@
         overflow-x: hidden;
       }
 
+      .mobile-topbar {
+        text-align: center;
+      }
+
+      .mobile-topbar > div {
+        justify-content: center;
+      }
+
+      .mobile-center-block {
+        text-align: center;
+      }
+
+      .mobile-center-block > .inline-flex,
+      .mobile-center-block .inline-flex.shadow-soft {
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .mobile-chip-wrap {
+        justify-content: center;
+      }
+
       .mobile-section {
         padding-top: 3.75rem !important;
         padding-bottom: 3.75rem !important;
@@ -235,6 +257,17 @@
 
       .mobile-section-intro {
         gap: 0.75rem;
+        justify-items: center;
+        text-align: center;
+      }
+
+      .mobile-section-intro p {
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .mobile-section-intro .section-eyebrow {
+        justify-self: center;
       }
 
       .mobile-phase-grid {
@@ -256,6 +289,15 @@
       .mobile-glance-card {
         padding: 1rem;
         border-radius: 1.5rem;
+      }
+
+      .mobile-line-copy {
+        text-align: center;
+      }
+
+      .mobile-line-copy .inline-flex {
+        margin-left: auto;
+        margin-right: auto;
       }
 
       .mobile-bottom-safe {
@@ -305,7 +347,7 @@
 
   <!-- Top Bar -->
   <div class="w-full border-b border-brand-100 bg-white/85 backdrop-blur">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between text-sm">
+    <div class="mobile-topbar max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between text-sm">
       <div class="flex items-center gap-3 text-brand-700">
         <span class="inline-flex items-center px-3 py-1 rounded-full bg-brand-50 border border-brand-200 font-medium">
           貓家日子專屬合作提案
@@ -339,7 +381,7 @@
 
     <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-28">
       <div class="grid lg:grid-cols-12 gap-8 lg:gap-12 items-center">
-        <div class="lg:col-span-7">
+        <div class="lg:col-span-7 mobile-center-block">
           <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-brand-200 bg-white text-brand-700 text-sm font-medium shadow-soft">
             <span>不是重做，而是升級既有基礎</span>
             <span class="w-1.5 h-1.5 rounded-full bg-brand-400"></span>
@@ -394,7 +436,7 @@
             </div>
           </div>
 
-          <div class="mt-8 flex flex-wrap gap-3 text-sm">
+          <div class="mobile-chip-wrap mt-8 flex flex-wrap gap-3 text-sm">
             <span class="px-3 py-1.5 rounded-full bg-white border border-brand-200 text-brand-700">顧客旅程導向</span>
             <span class="px-3 py-1.5 rounded-full bg-white border border-brand-200 text-brand-700">流程導向轉型經驗</span>
             <span class="px-3 py-1.5 rounded-full bg-white border border-brand-200 text-brand-700">陪跑分析而非一次性交件</span>
@@ -917,7 +959,7 @@
     <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="rounded-[32px] border border-brand-200 bg-gradient-to-b from-white to-brand-50/60 p-6 sm:p-8 md:p-10 shadow-soft">
         <div class="grid md:grid-cols-12 gap-6 sm:gap-8 items-center">
-          <div class="md:col-span-7">
+          <div class="md:col-span-7 mobile-line-copy">
             <span class="inline-flex px-3 py-1.5 rounded-full bg-line-soft border border-green-100 text-sm font-medium text-line-dark">
               LINE 諮詢入口
             </span>
