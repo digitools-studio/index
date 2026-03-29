@@ -1,724 +1,915 @@
 <!DOCTYPE html>
-<html lang="zh-Hant" class="scroll-smooth">
+<html lang="zh-TW" class="scroll-smooth">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Digitools Studio｜LINE 導入 × 數位轉型顧問陪跑</title>
-  <meta
-    name="description"
-    content="Digitools Studio 協助品牌從 LINE 官方帳號、LINE Profile 資料價值、顧客旅程、數位轉型分析到行銷整合，陪伴小型商家少走彎路，打造真正可持續的成長流程。"
-  />
-  <meta property="og:title" content="Digitools Studio｜LINE 導入 × 數位轉型顧問陪跑" />
-  <meta
-    property="og:description"
-    content="不是只做系統，而是從商業流程、顧客旅程與數位轉型角度，陪你找出更有效率的成長路徑。"
-  />
-  <meta property="og:type" content="website" />
-  <meta name="theme-color" content="#0f172a" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>從 0 開始建立 LINE 經營體系 | 數位轉型顧問</title>
+    
+    <!-- 引入 Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- 引入 FontAwesome (Icon) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-  <!-- GitHub Pages 可直接用 CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            brand: {
-              50: "#f3f8f7",
-              100: "#dceceb",
-              200: "#bad8d4",
-              300: "#8abdb8",
-              400: "#569e98",
-              500: "#3f857f",
-              600: "#316c67",
-              700: "#285652",
-              800: "#234643",
-              900: "#203b39"
-            },
-            accent: {
-              50: "#eff6ff",
-              100: "#dbeafe",
-              200: "#bfdbfe",
-              300: "#93c5fd",
-              400: "#60a5fa",
-              500: "#3b82f6",
-              600: "#2563eb"
-            },
-            ink: "#0f172a",
-            soft: "#f8fafc",
-            warm: "#fcfaf7",
-            gold: "#b78d52"
-          },
-          boxShadow: {
-            softxl: "0 30px 80px rgba(15, 23, 42, 0.10)",
-            card: "0 12px 32px rgba(15, 23, 42, 0.08)",
-            glow: "0 10px 35px rgba(63, 133, 127, 0.18)"
-          },
-          borderRadius: {
-            "4xl": "2rem"
-          },
-          backgroundImage: {
-            "hero-mesh":
-              "radial-gradient(circle at 20% 20%, rgba(63,133,127,0.16), transparent 26%), radial-gradient(circle at 80% 10%, rgba(59,130,246,0.12), transparent 25%), radial-gradient(circle at 80% 80%, rgba(183,141,82,0.10), transparent 22%), linear-gradient(135deg, rgba(255,255,255,1), rgba(248,250,252,1))"
-          }
+    <!-- 引入 Tailwind CSS (CDN) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Noto Sans TC"', 'sans-serif'],
+                    },
+                    colors: {
+                        line: {
+                            DEFAULT: '#00B900',
+                            dark: '#009900',
+                            light: '#e6f8e6',
+                        },
+                        brand: {
+                            50: '#f4fdf8',
+                            100: '#e5faed',
+                            500: '#10b981',
+                            600: '#059669',
+                            900: '#064e3b',
+                        }
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'float-delayed': 'float 6s ease-in-out 3s infinite',
+                        'float-fast': 'float 4s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-15px)' },
+                        }
+                    }
+                }
+            }
         }
-      }
-    };
-  </script>
+    </script>
 
-  <style>
-    body {
-      font-family: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
-      color: #1e293b;
-      background: #ffffff;
-    }
+    <!-- 自訂 CSS 補充 -->
+    <style>
+        body { font-family: 'Noto Sans TC', sans-serif; }
+        .glass-header {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        /* 進場動畫基礎設定 */
+        .reveal-element {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal-element.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .delay-100 { transition-delay: 100ms; }
+        .delay-200 { transition-delay: 200ms; }
+        .delay-300 { transition-delay: 300ms; }
+        
+        /* 隱藏滾動條但保持可滾動 */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
 
-    .glass {
-      background: rgba(255, 255, 255, 0.78);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-    }
-
-    .section-line {
-      background: linear-gradient(90deg, rgba(63,133,127,0.18), rgba(59,130,246,0.10), rgba(183,141,82,0.12));
-      height: 1px;
-      width: 100%;
-    }
-
-    .hero-badge {
-      box-shadow: 0 10px 30px rgba(63, 133, 127, 0.10);
-    }
-
-    .text-balance {
-      text-wrap: balance;
-    }
-  </style>
+    <!-- 引入 Vue 3 (CDN, Global Build, No Import Required) -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 </head>
-<body class="bg-white text-slate-800">
-  <!-- Header -->
-  <header class="sticky top-0 z-50 border-b border-slate-200/70 bg-white/85 backdrop-blur-xl">
-    <div class="max-w-7xl mx-auto px-5 lg:px-8">
-      <div class="flex items-center justify-between py-4">
-        <a href="#top" class="flex items-center gap-3">
-          <div class="w-11 h-11 rounded-2xl bg-ink text-white flex items-center justify-center text-lg font-bold shadow-card">
-            D
-          </div>
-          <div>
-            <div class="text-base md:text-lg font-bold text-ink tracking-tight">Digitools Studio</div>
-            <div class="text-xs text-slate-500">LINE × 顧客旅程 × 數位轉型顧問陪跑</div>
-          </div>
-        </a>
+<body class="bg-slate-50 text-slate-800 antialiased selection:bg-line selection:text-white">
 
-        <nav class="hidden xl:flex items-center gap-7 text-sm text-slate-600">
-          <a href="#why" class="hover:text-brand-700 transition">核心價值</a>
-          <a href="#advisory" class="hover:text-brand-700 transition">顧問式陪跑</a>
-          <a href="#line-profile" class="hover:text-brand-700 transition">LINE OA 基礎模組</a>
-          <a href="#integration" class="hover:text-brand-700 transition">整合服務</a>
-          <a href="#plans" class="hover:text-brand-700 transition">合作方案</a>
-          <a href="#faq" class="hover:text-brand-700 transition">常見問題</a>
-        </nav>
-
-        <a
-          href="#cta"
-          class="inline-flex items-center rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-white shadow-card hover:bg-slate-800 transition"
-        >
-          預約顧問諮詢
-        </a>
-      </div>
-    </div>
-  </header>
-
-  <!-- Hero -->
-  <section id="top" class="relative overflow-hidden bg-hero-mesh">
-    <div class="absolute inset-0 pointer-events-none">
-      <div class="absolute -top-24 left-[-80px] w-80 h-80 rounded-full bg-brand-100 blur-3xl opacity-80"></div>
-      <div class="absolute top-12 right-[-60px] w-80 h-80 rounded-full bg-accent-100 blur-3xl opacity-70"></div>
-      <div class="absolute bottom-[-80px] left-[35%] w-80 h-80 rounded-full bg-amber-100 blur-3xl opacity-50"></div>
-    </div>
-
-    <div class="relative max-w-7xl mx-auto px-5 lg:px-8 py-16 md:py-24 lg:py-28">
-      <div class="grid lg:grid-cols-12 gap-10 items-center">
-        <div class="lg:col-span-12">
-          <div class="inline-flex items-center gap-2 rounded-full border border-brand-200 bg-white px-4 py-2 text-sm text-brand-700 hero-badge">
-            <span class="inline-block w-2.5 h-2.5 rounded-full bg-brand-500"></span>
-            不是只做 LINE 建置，而是一起看懂商業成長路徑
-          </div>
-
-          <h1 class="mt-6 text-4xl md:text-5xl lg:text-6xl font-black leading-tight tracking-tight text-ink text-balance">
-            讓 LINE 成為品牌成長的
-            <span class="text-brand-600">策略入口</span><br />
-            而不是另一個需要被管理的工具
-          </h1>
-
-          <p class="mt-6 text-lg md:text-xl leading-8 text-slate-600 max-w-3xl">
-            Digitools Studio 以更高階的顧問式視角，協助小型商家與成長型品牌從
-            <span class="font-semibold text-slate-700">LINE 官方帳號、LINE Profile 的顧客資料價值、顧客旅程分析、數位轉型規劃與行銷整合</span>
-            出發，設計真正可落地、可使用、可放大的成長系統。
-          </p>
-
-          <p class="mt-4 text-base md:text-lg leading-8 text-slate-500 max-w-3xl">
-            我們更在意的不是功能有多少，而是你的品牌能否因此
-            <span class="font-semibold text-brand-700">少走彎路、提升轉換效率、強化顧客關係，並逐步建立自己的數位經營資產</span>。
-          </p>
-
-          <div class="mt-8 flex flex-col sm:flex-row gap-4">
-            <a
-              href="#plans"
-              class="inline-flex items-center justify-center rounded-full bg-brand-600 px-6 py-3.5 text-base font-semibold text-white shadow-glow hover:bg-brand-700 transition"
-            >
-              查看合作方案
-            </a>
-            <a
-              href="#cta"
-              class="inline-flex items-center justify-center rounded-full border border-slate-300 bg-white px-6 py-3.5 text-base font-semibold text-slate-700 hover:border-brand-300 hover:text-brand-700 transition"
-            >
-              掃描 LINE 立即諮詢
-            </a>
-          </div>
-
-          <div class="mt-10 grid sm:grid-cols-3 gap-4">
-            <div class="rounded-3xl border border-white/80 bg-white/80 p-5 shadow-card">
-              <div class="text-sm font-semibold text-brand-700">顧問式分析</div>
-              <div class="mt-2 text-sm text-slate-600 leading-7">
-                從商業流程、顧客接觸點與成長瓶頸出發，而非只討論功能。
-              </div>
-            </div>
-            <div class="rounded-3xl border border-white/80 bg-white/80 p-5 shadow-card">
-              <div class="text-sm font-semibold text-brand-700">LINE Profile 價值</div>
-              <div class="mt-2 text-sm text-slate-600 leading-7">
-                善用 LINE 身分與互動資料，建立更有溫度且可延續的顧客經營。
-              </div>
-            </div>
-            <div class="rounded-3xl border border-white/80 bg-white/80 p-5 shadow-card">
-              <div class="text-sm font-semibold text-brand-700">整合式提升</div>
-              <div class="mt-2 text-sm text-slate-600 leading-7">
-                串連預約、詢問、再行銷、內容導流與營運分析，放大整體效益。
-              </div>
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </section>
-
-  <!-- Why -->
-  <section id="why" class="py-20 bg-white">
-    <div class="max-w-7xl mx-auto px-5 lg:px-8">
-      <div class="max-w-4xl">
-        <div class="text-sm font-semibold tracking-wider text-brand-700 uppercase">Strategic value</div>
-        <h2 class="mt-3 text-3xl md:text-4xl font-black text-ink leading-tight">
-          很多品牌卡住的，不是沒有工具，而是少了一套看得更遠的數位分析視角
-        </h2>
-        <p class="mt-5 text-lg leading-8 text-slate-600">
-          常見情況是：品牌已經有 LINE、IG、網站、表單、電話、客服，但顧客資訊散落各處，詢問很多，轉換卻未必穩定。
-          問題往往不在於再多一個工具，而是缺少一位能協助你把
-          <span class="font-semibold text-slate-700">流程、資料、顧客旅程與品牌成長邏輯串起來</span> 的夥伴。
-        </p>
-      </div>
-
-      <div class="mt-12 grid md:grid-cols-2 xl:grid-cols-4 gap-6">
-        <div class="rounded-4xl border border-slate-200 p-7 shadow-card bg-white">
-          <div class="text-4xl">🧭</div>
-          <h3 class="mt-4 text-xl font-bold text-ink">少走彎路</h3>
-          <p class="mt-3 text-slate-600 leading-7">
-            不盲目導入功能，先判斷什麼值得做、什麼暫時不用做，避免投入成本後才發現與現場脫節。
-          </p>
-        </div>
-        <div class="rounded-4xl border border-slate-200 p-7 shadow-card bg-white">
-          <div class="text-4xl">📊</div>
-          <h3 class="mt-4 text-xl font-bold text-ink">看懂成長瓶頸</h3>
-          <p class="mt-3 text-slate-600 leading-7">
-            分析顧客從接觸品牌到詢問、預約、成交、回訪的每個節點，找出真正影響效益的環節。
-          </p>
-        </div>
-        <div class="rounded-4xl border border-slate-200 p-7 shadow-card bg-white">
-          <div class="text-4xl">🤝</div>
-          <h3 class="mt-4 text-xl font-bold text-ink">提升顧客關係</h3>
-          <p class="mt-3 text-slate-600 leading-7">
-            不只是把人導進來，而是善用互動資料與 LINE Profile 的可延續性，建立更高品質的品牌關係。
-          </p>
-        </div>
-        <div class="rounded-4xl border border-slate-200 p-7 shadow-card bg-white">
-          <div class="text-4xl">🚀</div>
-          <h3 class="mt-4 text-xl font-bold text-ink">放大整體效益</h3>
-          <p class="mt-3 text-slate-600 leading-7">
-            LINE 不再只是客服工具，而是能和預約、行銷、分眾經營、內容導流與營運優化一起運作的入口。
-          </p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Advisory -->
-  <section id="advisory" class="py-20 bg-warm">
-    <div class="max-w-7xl mx-auto px-5 lg:px-8">
-      <div class="grid lg:grid-cols-12 gap-10 items-start">
-        <div class="lg:col-span-5">
-          <div class="sticky top-28">
-            <div class="text-sm font-semibold tracking-wider text-brand-700 uppercase">Consulting first</div>
-            <h2 class="mt-3 text-3xl md:text-4xl font-black text-ink leading-tight">
-              顧問式陪跑，不只是把系統交付給你
-            </h2>
-            <p class="mt-5 text-lg leading-8 text-slate-600">
-              我們相信，對多數品牌來說，真正有價值的不是單次建置，而是
-              <span class="font-semibold text-slate-700">先看清楚方向，再做對的事</span>。
-              所以合作的重點不是「你要不要某個功能」，而是「你的品牌現在最需要先解決什麼」。
-            </p>
-
-            <div class="mt-8 rounded-4xl bg-ink p-7 text-white shadow-softxl">
-              <div class="text-sm font-semibold text-brand-100">Digitools Studio 顧問觀點</div>
-              <p class="mt-3 leading-8 text-slate-200">
-                先理解顧客旅程，再定義工具角色；先釐清營運優先順序，再談自動化；先把基礎使用做好，再逐步擴大成長飛輪。
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div class="lg:col-span-7">
-          <div class="grid md:grid-cols-2 gap-6">
-            <div class="rounded-4xl bg-white border border-slate-200 p-7 shadow-card">
-              <div class="text-sm font-semibold text-brand-700">01</div>
-              <h3 class="mt-3 text-2xl font-bold text-ink">現況盤點</h3>
-              <p class="mt-3 text-slate-600 leading-7">
-                盤點品牌現有的客戶接觸點、詢問方式、成交流程、回訪方式與內部營運習慣。
-              </p>
-            </div>
-
-            <div class="rounded-4xl bg-white border border-slate-200 p-7 shadow-card">
-              <div class="text-sm font-semibold text-brand-700">02</div>
-              <h3 class="mt-3 text-2xl font-bold text-ink">成長分析</h3>
-              <p class="mt-3 text-slate-600 leading-7">
-                看懂品牌目前哪個環節最值得優先優化，是詢問承接、回覆效率、預約流程還是再行銷節點。
-              </p>
-            </div>
-
-            <div class="rounded-4xl bg-white border border-slate-200 p-7 shadow-card">
-              <div class="text-sm font-semibold text-brand-700">03</div>
-              <h3 class="mt-3 text-2xl font-bold text-ink">設計導入路徑</h3>
-              <p class="mt-3 text-slate-600 leading-7">
-                依照品牌成熟度安排導入順序，先做最有感的改善，再規劃中長期的數位成長結構。
-              </p>
-            </div>
-
-            <div class="rounded-4xl bg-white border border-slate-200 p-7 shadow-card">
-              <div class="text-sm font-semibold text-brand-700">04</div>
-              <h3 class="mt-3 text-2xl font-bold text-ink">持續優化</h3>
-              <p class="mt-3 text-slate-600 leading-7">
-                陪你觀察上線後的真實使用情況，逐步修正策略與流程，而不是交件後就結束。
-              </p>
-            </div>
-          </div>
-
-          <div class="mt-6 rounded-4xl bg-white border border-slate-200 p-8 shadow-card">
-            <h3 class="text-2xl font-black text-ink">這樣做的好處，是讓數位轉型更像精準升級，而不是一次性賭注</h3>
-            <p class="mt-4 text-slate-600 leading-8">
-              品牌不需要一開始就承擔過大的成本與複雜度，而是透過更清楚的分析與陪跑，逐步把 LINE、行銷與營運整合成一套可持續放大的成長架構。
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- LINE OA Core Module -->
-  <section id="line-profile" class="py-20 bg-white">
-    <div class="max-w-7xl mx-auto px-5 lg:px-8">
-      <div class="max-w-4xl">
-        <div class="text-sm font-semibold tracking-wider text-brand-700 uppercase">LINE OA foundation module</div>
-        <h2 class="mt-3 text-3xl md:text-4xl font-black text-ink leading-tight">
-          LINE 官方帳號基礎模組
-        </h2>
-        <p class="mt-5 text-lg leading-8 text-slate-600">
-          先把最常影響轉換的基礎環節一次整理好，讓 LINE 從「可聯絡」升級成「可承接、可說明、可導流」的穩定入口。
-        </p>
-      </div>
-
-      <div class="mt-12 grid lg:grid-cols-12 gap-8 items-start">
-        <div class="lg:col-span-5">
-          <div class="rounded-4xl border border-slate-200 bg-slate-50 p-7 shadow-card sticky top-28">
-            <h3 class="text-2xl font-black text-ink">模組內容</h3>
-            <ul class="mt-5 space-y-3 text-slate-700 leading-7">
-              <li>• LINE 官方帳號建立</li>
-              <li>• 基本資料優化</li>
-              <li>• 歡迎訊息</li>
-              <li>• 圖文選單</li>
-              <li>• FAQ 文案</li>
-              <li>• 加好友導流建議</li>
-            </ul>
-
-            <div class="section-line my-6"></div>
-
-            <p class="text-sm text-slate-600 leading-7">
-              以上六項會先以「可上線、可理解、可維護」為目標，確保品牌第一階段就能穩定使用，不增加團隊操作負擔。
-            </p>
-          </div>
-        </div>
-
-        <div class="lg:col-span-7">
-          <h3 class="text-xl md:text-2xl font-black text-ink">高度 Demo 樣式（示意）</h3>
-          <p class="mt-3 text-slate-600 leading-7">
-            下列為不同資訊密度的版型示意，不需完整互動即可先評估畫面與閱讀節奏。
-          </p>
-
-          <div class="mt-6 grid md:grid-cols-3 gap-5">
-            <article class="rounded-4xl border border-slate-200 bg-white p-5 shadow-card">
-              <div class="text-xs font-semibold tracking-wide text-brand-700 uppercase">Demo S</div>
-              <h4 class="mt-2 text-lg font-bold text-ink">短版重點型</h4>
-              <div class="mt-4 h-44 rounded-3xl border border-dashed border-slate-300 bg-slate-50 p-4 flex flex-col justify-between">
-                <div class="space-y-2">
-                  <div class="h-3 rounded bg-slate-200 w-4/5"></div>
-                  <div class="h-3 rounded bg-slate-200 w-3/5"></div>
-                  <div class="h-3 rounded bg-slate-200 w-2/3"></div>
+    <div id="app">
+        
+        <!-- 1. Header -->
+        <header :class="['fixed w-full top-0 z-50 transition-all duration-300', isScrolled ? 'glass-header py-3' : 'bg-transparent py-5']">
+            <div class="max-w-7xl mx-auto px-5 lg:px-8 flex justify-between items-center">
+                <!-- 左側品牌與定位 -->
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-brand-900 text-white rounded-xl flex items-center justify-center font-bold text-xl shadow-lg">
+                        L
+                    </div>
+                    <div>
+                        <h1 class="font-bold text-slate-900 leading-tight">數位轉型顧問</h1>
+                        <p class="text-xs text-slate-500 hidden md:block">從 0 開始建立 LINE 經營體系</p>
+                    </div>
                 </div>
-                <div class="h-8 rounded-xl bg-brand-100"></div>
-              </div>
-              <p class="mt-3 text-sm text-slate-600">建議高度約 320-360px，適合快速介紹與強 CTA。</p>
-            </article>
 
-            <article class="rounded-4xl border border-slate-200 bg-white p-5 shadow-card">
-              <div class="text-xs font-semibold tracking-wide text-brand-700 uppercase">Demo M</div>
-              <h4 class="mt-2 text-lg font-bold text-ink">平衡資訊型</h4>
-              <div class="mt-4 h-56 rounded-3xl border border-dashed border-slate-300 bg-slate-50 p-4 flex flex-col justify-between">
-                <div class="space-y-2">
-                  <div class="h-3 rounded bg-slate-200 w-5/6"></div>
-                  <div class="h-3 rounded bg-slate-200 w-4/6"></div>
-                  <div class="h-3 rounded bg-slate-200 w-4/5"></div>
-                  <div class="h-3 rounded bg-slate-200 w-3/5"></div>
+                <!-- 右側導覽 -->
+                <nav class="hidden lg:flex items-center space-x-8 text-sm font-medium text-slate-600">
+                    <a href="#why-line" class="hover:text-line transition-colors">為什麼是 LINE</a>
+                    <a href="#how-we-help" class="hover:text-line transition-colors">我們怎麼協助</a>
+                    <a href="#process" class="hover:text-line transition-colors">導入流程</a>
+                    <a href="#faq" class="hover:text-line transition-colors">常見問題</a>
+                </nav>
+
+                <!-- CTA -->
+                <div class="flex items-center">
+                    <a href="#contact" class="hidden md:inline-block bg-slate-900 hover:bg-line text-white px-5 py-2.5 rounded-full text-sm font-medium transition-all shadow-md hover:shadow-lg">
+                        免費了解適合的導入方式
+                    </a>
+                    <!-- Mobile Menu Button (Simplified for demo) -->
+                    <button class="md:hidden text-slate-600 text-2xl ml-4">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
                 </div>
-                <div class="grid grid-cols-2 gap-2">
-                  <div class="h-8 rounded-xl bg-brand-100"></div>
-                  <div class="h-8 rounded-xl bg-slate-200"></div>
+            </div>
+        </header>
+
+        <!-- 整頁主敘事 (隱含在設計脈絡中) -->
+        <div class="hidden">不是只幫你開一個 LINE 官方帳號，而是幫你從 0 建立一套可以開始經營客戶的 LINE 基礎體系。</div>
+
+        <!-- 2. Hero 區 -->
+        <section class="pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden relative">
+            <!-- 背景裝飾 -->
+            <div class="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 bg-line-light rounded-full blur-3xl opacity-60"></div>
+            <div class="absolute bottom-0 left-0 -ml-20 w-72 h-72 bg-blue-50 rounded-full blur-3xl opacity-60"></div>
+
+            <div class="max-w-7xl mx-auto px-5 lg:px-8 relative z-10">
+                <div class="grid lg:grid-cols-2 gap-16 items-center">
+                    
+                    <!-- 左側文字 -->
+                    <div class="reveal-element active">
+                        <div class="inline-block px-4 py-1.5 bg-white border border-slate-200 rounded-full text-xs font-bold tracking-wide text-brand-600 mb-6 shadow-sm">
+                            <i class="fa-solid fa-seedling mr-2"></i>LINE 官方帳號導入顧問
+                        </div>
+                        <h2 class="text-4xl lg:text-5xl font-bold text-slate-900 leading-[1.2] mb-6">
+                            從 0 開始，建立你的<br>
+                            <span class="text-transparent bg-clip-text bg-gradient-to-r from-line to-brand-600">LINE 官方帳號</span><br>
+                            與客戶經營基礎
+                        </h2>
+                        <p class="text-lg text-slate-600 mb-8 leading-relaxed">
+                            如果你現在還沒有 LINE 官方帳號，我們會從帳號建立、品牌設定、內容入口到基礎經營規劃，一步一步協助你建立起屬於自己的 LINE 體系。讓 LINE 不只是聯絡工具，而是你開始經營客戶的第一步。
+                        </p>
+                        <div class="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4">
+                            <a href="#contact" class="text-center bg-line hover:bg-line-dark text-white px-8 py-3.5 rounded-full font-medium transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+                                免費取得導入建議
+                            </a>
+                            <a href="#process" class="text-center bg-white border border-slate-200 hover:border-slate-300 text-slate-700 px-8 py-3.5 rounded-full font-medium transition-all shadow-sm hover:bg-slate-50">
+                                先看看建立流程
+                            </a>
+                        </div>
+                        <div class="mt-6 flex items-center space-x-4 text-xs text-slate-400">
+                            <span><i class="fa-solid fa-check text-line mr-1"></i>給完全沒做過的人</span>
+                            <span><i class="fa-solid fa-check text-line mr-1"></i>給怕麻煩的人</span>
+                            <span><i class="fa-solid fa-check text-line mr-1"></i>給在意效益的人</span>
+                        </div>
+                    </div>
+
+                    <!-- 右側 Mockup (取代真人大頭照) -->
+                    <div class="relative h-[550px] w-full flex justify-center items-center reveal-element active delay-200">
+                        <!-- CSS 手機模型 -->
+                        <div class="relative w-72 h-[520px] bg-white rounded-[3rem] border-[12px] border-slate-800 shadow-2xl overflow-hidden z-10 flex flex-col">
+                            <!-- 頂部瀏海 -->
+                            <div class="absolute top-0 left-1/2 transform -translate-x-1/2 w-32 h-6 bg-slate-800 rounded-b-2xl z-20"></div>
+                            <!-- 畫面內容 (LINE 官方帳號示意) -->
+                            <div class="bg-slate-800 text-white p-4 pt-8 text-center">
+                                <div class="w-16 h-16 bg-white/20 rounded-full mx-auto mb-2 flex items-center justify-center text-xl font-bold">L</div>
+                                <div class="font-bold text-sm">您的品牌名稱</div>
+                                <div class="text-[10px] text-slate-300">官方帳號</div>
+                            </div>
+                            <div class="flex-1 bg-[#85a2b6] p-4 flex flex-col justify-end space-y-3 relative">
+                                <!-- 對話框 -->
+                                <div class="bg-white p-3 rounded-2xl rounded-tl-sm text-xs text-slate-700 shadow-sm w-4/5 self-start">
+                                    歡迎加入！我們將提供最新資訊與專屬優惠給您 🎉
+                                </div>
+                                <div class="bg-white p-3 rounded-2xl rounded-tr-sm text-xs text-slate-700 shadow-sm w-3/4 self-end bg-line-light">
+                                    好的，我想了解服務！
+                                </div>
+                            </div>
+                            <!-- 底部圖文選單示意 -->
+                            <div class="h-40 bg-white grid grid-cols-3 grid-rows-2 border-t border-slate-200">
+                                <div class="border-r border-b border-slate-100 flex flex-col items-center justify-center text-brand-600"><i class="fa-solid fa-store mb-1"></i><span class="text-[10px]">關於我們</span></div>
+                                <div class="border-r border-b border-slate-100 flex flex-col items-center justify-center text-brand-600"><i class="fa-solid fa-gift mb-1"></i><span class="text-[10px]">最新活動</span></div>
+                                <div class="border-b border-slate-100 flex flex-col items-center justify-center text-brand-600"><i class="fa-solid fa-ticket mb-1"></i><span class="text-[10px]">專屬優惠</span></div>
+                                <div class="border-r border-slate-100 flex flex-col items-center justify-center text-brand-600"><i class="fa-solid fa-clipboard-question mb-1"></i><span class="text-[10px]">常見問題</span></div>
+                                <div class="border-r border-slate-100 flex flex-col items-center justify-center text-brand-600"><i class="fa-solid fa-map-location-dot mb-1"></i><span class="text-[10px]">門市據點</span></div>
+                                <div class="flex flex-col items-center justify-center text-brand-600"><i class="fa-solid fa-headset mb-1"></i><span class="text-[10px]">客服聯繫</span></div>
+                            </div>
+                        </div>
+
+                        <!-- 懸浮概念卡片 (左上) -->
+                        <div class="absolute top-10 -left-6 lg:-left-12 bg-white p-4 rounded-xl shadow-xl z-20 animate-float flex items-center space-x-3 border border-slate-100 w-48">
+                            <div class="w-10 h-10 bg-blue-50 text-blue-500 rounded-full flex items-center justify-center"><i class="fa-regular fa-id-card text-lg"></i></div>
+                            <div>
+                                <div class="text-xs font-bold text-slate-800">品牌基本資訊卡</div>
+                                <div class="text-[10px] text-slate-400">建立數位門面</div>
+                            </div>
+                        </div>
+
+                        <!-- 懸浮概念卡片 (右上) -->
+                        <div class="absolute top-32 -right-4 lg:-right-10 bg-white p-4 rounded-xl shadow-xl z-20 animate-float-delayed flex items-center space-x-3 border border-slate-100 w-44">
+                            <div class="w-10 h-10 bg-purple-50 text-purple-500 rounded-full flex items-center justify-center"><i class="fa-solid fa-border-all text-lg"></i></div>
+                            <div>
+                                <div class="text-xs font-bold text-slate-800">圖文選單卡</div>
+                                <div class="text-[10px] text-slate-400">專屬互動入口</div>
+                            </div>
+                        </div>
+
+                        <!-- 懸浮概念卡片 (左下) -->
+                        <div class="absolute bottom-32 -left-8 lg:-left-16 bg-white p-4 rounded-xl shadow-xl z-20 animate-float-fast flex items-center space-x-3 border border-slate-100 w-44">
+                            <div class="w-10 h-10 bg-orange-50 text-orange-500 rounded-full flex items-center justify-center"><i class="fa-solid fa-percent text-lg"></i></div>
+                            <div>
+                                <div class="text-xs font-bold text-slate-800">優惠活動卡</div>
+                                <div class="text-[10px] text-slate-400">吸引持續關注</div>
+                            </div>
+                        </div>
+
+                        <!-- 懸浮概念卡片 (右下) -->
+                        <div class="absolute bottom-10 -right-6 lg:-right-8 bg-white p-4 rounded-xl shadow-xl z-20 animate-float flex items-center space-x-3 border border-slate-100 w-52">
+                            <div class="w-10 h-10 bg-line-light text-line rounded-full flex items-center justify-center"><i class="fa-solid fa-users text-lg"></i></div>
+                            <div>
+                                <div class="text-xs font-bold text-slate-800">好友累積與互動</div>
+                                <div class="text-[10px] text-slate-400">打造專屬客戶池</div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-              </div>
-              <p class="mt-3 text-sm text-slate-600">建議高度約 420-480px，適合大多數提案頁。</p>
-            </article>
+            </div>
+        </section>
 
-            <article class="rounded-4xl border border-slate-200 bg-white p-5 shadow-card">
-              <div class="text-xs font-semibold tracking-wide text-brand-700 uppercase">Demo L</div>
-              <h4 class="mt-2 text-lg font-bold text-ink">完整展示型</h4>
-              <div class="mt-4 h-72 rounded-3xl border border-dashed border-slate-300 bg-slate-50 p-4 flex flex-col justify-between">
-                <div class="space-y-2">
-                  <div class="h-3 rounded bg-slate-200 w-5/6"></div>
-                  <div class="h-3 rounded bg-slate-200 w-4/6"></div>
-                  <div class="h-3 rounded bg-slate-200 w-3/6"></div>
-                  <div class="h-3 rounded bg-slate-200 w-4/5"></div>
-                  <div class="h-3 rounded bg-slate-200 w-3/5"></div>
+        <!-- 3. 為什麼很多商家一直沒開始 -->
+        <section id="why-line" class="py-20 bg-white border-y border-slate-100">
+            <div class="max-w-7xl mx-auto px-5 lg:px-8">
+                <div class="text-center mb-16 reveal-element">
+                    <h2 class="text-3xl font-bold text-slate-900 mb-4">其實，大家都卡在類似的地方</h2>
+                    <p class="text-slate-500 max-w-2xl mx-auto">很多商家不是不想做，而是常常因為這些日常煩惱，遲遲沒有跨出第一步。</p>
                 </div>
-                <div class="space-y-2">
-                  <div class="h-8 rounded-xl bg-brand-100"></div>
-                  <div class="h-8 rounded-xl bg-slate-200"></div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
+                    <!-- 卡片 1 -->
+                    <div class="bg-slate-50 p-6 rounded-2xl border border-slate-100 hover:-translate-y-1 hover:shadow-lg transition-all duration-300 reveal-element delay-100 group">
+                        <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center text-slate-400 mb-4 group-hover:text-brand-500 group-hover:shadow-sm transition-all">
+                            <i class="fa-solid fa-circle-question text-xl"></i>
+                        </div>
+                        <h3 class="font-bold text-slate-800 mb-2">不確定有沒有必要</h3>
+                        <p class="text-sm text-slate-500">不確定 LINE 官方帳號到底能帶來什麼具體幫助。</p>
+                    </div>
+                    <!-- 卡片 2 -->
+                    <div class="bg-slate-50 p-6 rounded-2xl border border-slate-100 hover:-translate-y-1 hover:shadow-lg transition-all duration-300 reveal-element delay-200 group">
+                        <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center text-slate-400 mb-4 group-hover:text-brand-500 group-hover:shadow-sm transition-all">
+                            <i class="fa-solid fa-gears text-xl"></i>
+                        </div>
+                        <h3 class="font-bold text-slate-800 mb-2">以為建立會很複雜</h3>
+                        <p class="text-sm text-slate-500">看到別人的帳號功能很多，以為需要很懂技術才能開始。</p>
+                    </div>
+                    <!-- 卡片 3 -->
+                    <div class="bg-slate-50 p-6 rounded-2xl border border-slate-100 hover:-translate-y-1 hover:shadow-lg transition-all duration-300 reveal-element delay-300 group">
+                        <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center text-slate-400 mb-4 group-hover:text-brand-500 group-hover:shadow-sm transition-all">
+                            <i class="fa-solid fa-folder-open text-xl"></i>
+                        </div>
+                        <h3 class="font-bold text-slate-800 mb-2">不知道要準備什麼</h3>
+                        <p class="text-sm text-slate-500">想開始但毫無頭緒，連第一步該申請什麼帳號都不清楚。</p>
+                    </div>
+                    <!-- 卡片 4 -->
+                    <div class="bg-slate-50 p-6 rounded-2xl border border-slate-100 hover:-translate-y-1 hover:shadow-lg transition-all duration-300 reveal-element delay-100 group">
+                        <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center text-slate-400 mb-4 group-hover:text-brand-500 group-hover:shadow-sm transition-all">
+                            <i class="fa-solid fa-sitemap text-xl"></i>
+                        </div>
+                        <h3 class="font-bold text-slate-800 mb-2">有工具但沒有體系</h3>
+                        <p class="text-sm text-slate-500">申請了帳號，但資訊太分散，客戶來了沒有留下來。</p>
+                    </div>
+                    <!-- 卡片 5 -->
+                    <div class="bg-slate-50 p-6 rounded-2xl border border-slate-100 hover:-translate-y-1 hover:shadow-lg transition-all duration-300 reveal-element delay-200 group">
+                        <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center text-slate-400 mb-4 group-hover:text-brand-500 group-hover:shadow-sm transition-all">
+                            <i class="fa-solid fa-stopwatch text-xl"></i>
+                        </div>
+                        <h3 class="font-bold text-slate-800 mb-2">每天忙，沒空研究</h3>
+                        <p class="text-sm text-slate-500">生意已經夠忙了，擔心這只是多一個要管理的麻煩平台。</p>
+                    </div>
                 </div>
-              </div>
-              <p class="mt-3 text-sm text-slate-600">建議高度約 560-640px，適合完整功能導覽。</p>
-            </article>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
+            </div>
+        </section>
 
-  <!-- Integration -->
-  <section id="integration" class="py-20 bg-slate-50">
-    <div class="max-w-7xl mx-auto px-5 lg:px-8">
-      <div class="text-center max-w-4xl mx-auto">
-        <div class="text-sm font-semibold tracking-wider text-brand-700 uppercase">Integrated services</div>
-        <h2 class="mt-3 text-3xl md:text-4xl font-black text-ink leading-tight">
-          不只是一個 LINE 專案，而是整合多個面向，一起提升品牌的行銷與經營效益
-        </h2>
-        <p class="mt-5 text-lg leading-8 text-slate-600">
-          真正有競爭力的品牌成長，不是靠單一工具，而是把接觸、詢問、轉換、回訪與分析整合成一條更順暢的路徑。
-        </p>
-      </div>
+        <!-- 4. LINE 官方帳號到底能幫你做什麼 -->
+        <section class="py-24 bg-slate-50">
+            <div class="max-w-7xl mx-auto px-5 lg:px-8">
+                <div class="mb-16 reveal-element">
+                    <h2 class="text-3xl font-bold text-slate-900 mb-4">別把 LINE 只當作免費發訊息的工具</h2>
+                    <p class="text-slate-600 max-w-3xl leading-relaxed">
+                        本質上，它是品牌在 LINE 內的「正式經營入口」。我們不講艱澀的技術名詞，用商家的角度來看，它能為你做到這些事：
+                    </p>
+                </div>
 
-      <div class="mt-14 grid md:grid-cols-2 xl:grid-cols-3 gap-6">
-        <div class="rounded-4xl bg-white border border-slate-200 p-7 shadow-card">
-          <div class="text-3xl">📲</div>
-          <h3 class="mt-4 text-xl font-bold text-ink">LINE 官方帳號策略</h3>
-          <p class="mt-3 text-slate-600 leading-7">
-            從基本建置、歡迎訊息、圖文選單、常見問答到互動入口設計，提升詢問承接品質。
-          </p>
-        </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-8">
+                    <!-- Info Card 1 -->
+                    <div class="bg-white rounded-3xl overflow-hidden shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] border border-slate-100 reveal-element">
+                        <div class="h-40 bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center">
+                            <div class="w-20 h-20 bg-white rounded-2xl shadow-sm flex items-center justify-center transform rotate-3">
+                                <i class="fa-solid fa-comments text-3xl text-blue-500"></i>
+                            </div>
+                            <div class="w-16 h-16 bg-white rounded-2xl shadow-sm flex items-center justify-center -ml-4 -rotate-6 opacity-70">
+                                <i class="fa-solid fa-envelope text-xl text-slate-300"></i>
+                            </div>
+                        </div>
+                        <div class="p-8">
+                            <h3 class="text-xl font-bold text-slate-800 mb-3">成為你的正式聯絡入口</h3>
+                            <p class="text-slate-500 leading-relaxed">
+                                客戶不用再分散在電話、FB、IG、私訊裡。統一的管道讓客服回覆更有效率，不再漏接重要訊息。
+                            </p>
+                        </div>
+                    </div>
 
-        <div class="rounded-4xl bg-white border border-slate-200 p-7 shadow-card">
-          <div class="text-3xl">🧠</div>
-          <h3 class="mt-4 text-xl font-bold text-ink">顧客旅程分析</h3>
-          <p class="mt-3 text-slate-600 leading-7">
-            梳理顧客從認識品牌到成交與回訪的流程，找出最值得優先優化的接觸點。
-          </p>
-        </div>
+                    <!-- Info Card 2 -->
+                    <div class="bg-white rounded-3xl overflow-hidden shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] border border-slate-100 reveal-element delay-100">
+                        <div class="h-40 bg-gradient-to-br from-emerald-50 to-brand-100 flex items-center justify-center relative">
+                            <div class="absolute w-full flex justify-center space-x-2">
+                                <div class="w-24 h-6 bg-white rounded-full shadow-sm"></div>
+                                <div class="w-12 h-6 bg-white/50 rounded-full"></div>
+                            </div>
+                            <div class="absolute mt-12 w-32 h-20 bg-white rounded-xl shadow-sm flex items-center justify-center">
+                                <i class="fa-solid fa-store text-3xl text-brand-500"></i>
+                            </div>
+                        </div>
+                        <div class="p-8">
+                            <h3 class="text-xl font-bold text-slate-800 mb-3">先把品牌資訊整理好</h3>
+                            <p class="text-slate-500 leading-relaxed">
+                                建立如微型官網般的基礎檔案，包含商家介紹、營業時間、地點、服務內容，讓客戶一目了然。
+                            </p>
+                        </div>
+                    </div>
 
-        <div class="rounded-4xl bg-white border border-slate-200 p-7 shadow-card">
-          <div class="text-3xl">🗂️</div>
-          <h3 class="mt-4 text-xl font-bold text-ink">資料與表單整理</h3>
-          <p class="mt-3 text-slate-600 leading-7">
-            建立詢問資料、預約資訊、需求分類與後續追蹤的輕量流程，讓資料不再散落。
-          </p>
-        </div>
+                    <!-- Info Card 3 -->
+                    <div class="bg-white rounded-3xl overflow-hidden shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] border border-slate-100 reveal-element delay-200">
+                        <div class="h-40 bg-gradient-to-br from-purple-50 to-purple-100 flex items-center justify-center p-6">
+                            <div class="w-full max-w-[180px] grid grid-cols-2 gap-2">
+                                <div class="h-10 bg-white rounded-lg shadow-sm"></div>
+                                <div class="h-10 bg-white rounded-lg shadow-sm"></div>
+                                <div class="h-10 bg-white/60 rounded-lg"></div>
+                                <div class="h-10 bg-white/60 rounded-lg"></div>
+                            </div>
+                        </div>
+                        <div class="p-8">
+                            <h3 class="text-xl font-bold text-slate-800 mb-3">建立清楚的互動入口</h3>
+                            <p class="text-slate-500 leading-relaxed">
+                                透過圖文選單將常見問題、聯絡方式、活動資訊、加入好友後的導引一次整合，降低重複回覆成本。
+                            </p>
+                        </div>
+                    </div>
 
-        <div class="rounded-4xl bg-white border border-slate-200 p-7 shadow-card">
-          <div class="text-3xl">📣</div>
-          <h3 class="mt-4 text-xl font-bold text-ink">行銷導流整合</h3>
-          <p class="mt-3 text-slate-600 leading-7">
-            讓 LINE 能與社群、活動頁、網站、內容行銷與廣告流量更自然接合，提升導流效益。
-          </p>
-        </div>
+                    <!-- Info Card 4 -->
+                    <div class="bg-white rounded-3xl overflow-hidden shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] border border-slate-100 reveal-element">
+                        <div class="h-40 bg-gradient-to-br from-orange-50 to-orange-100 flex items-center justify-center relative overflow-hidden">
+                            <i class="fa-solid fa-users text-6xl text-orange-200 absolute -bottom-4 -left-4"></i>
+                            <div class="w-16 h-16 bg-white rounded-full shadow-md z-10 flex items-center justify-center border-4 border-orange-50">
+                                <i class="fa-solid fa-user-plus text-2xl text-orange-500"></i>
+                            </div>
+                        </div>
+                        <div class="p-8">
+                            <h3 class="text-xl font-bold text-slate-800 mb-3">開始累積自己的客戶名單</h3>
+                            <p class="text-slate-500 leading-relaxed">
+                                流量越來越貴，加進來的好友不是一次性過客，而是後續你可以主動聯繫、持續互動的重要資產。
+                            </p>
+                        </div>
+                    </div>
 
-        <div class="rounded-4xl bg-white border border-slate-200 p-7 shadow-card">
-          <div class="text-3xl">⚙️</div>
-          <h3 class="mt-4 text-xl font-bold text-ink">自動化升級規劃</h3>
-          <p class="mt-3 text-slate-600 leading-7">
-            在品牌基礎穩定後，再評估提醒、分流、標籤、客服與營運自動化等延伸方向。
-          </p>
-        </div>
+                    <!-- Info Card 5 -->
+                    <div class="bg-white rounded-3xl overflow-hidden shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] border border-slate-100 reveal-element delay-100 md:col-span-2 xl:col-span-2">
+                        <div class="flex flex-col md:flex-row h-full">
+                            <div class="md:w-2/5 h-48 md:h-auto bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center p-8 relative overflow-hidden">
+                                <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(#fff 1px, transparent 1px); background-size: 10px 10px;"></div>
+                                <div class="flex items-end space-x-3 w-full h-24 z-10">
+                                    <div class="w-1/4 bg-brand-500 rounded-t-sm animate-[h-12_2s_ease]"></div>
+                                    <div class="w-1/4 bg-blue-400 rounded-t-sm h-16"></div>
+                                    <div class="w-1/4 bg-line rounded-t-sm h-20"></div>
+                                    <div class="w-1/4 bg-yellow-400 rounded-t-sm h-full"></div>
+                                </div>
+                            </div>
+                            <div class="p-8 md:w-3/5 flex flex-col justify-center">
+                                <h3 class="text-xl font-bold text-slate-800 mb-3">慢慢進入更有系統的經營</h3>
+                                <p class="text-slate-500 leading-relaxed">
+                                    當基礎穩固後，就能進階到貼標籤、數據洞察、分眾推播與精準的內容規劃，把一般客戶培養成鐵粉。
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-        <div class="rounded-4xl bg-white border border-slate-200 p-7 shadow-card">
-          <div class="text-3xl">📈</div>
-          <h3 class="mt-4 text-xl font-bold text-ink">效益提升視角</h3>
-          <p class="mt-3 text-slate-600 leading-7">
-            聚焦提升回覆效率、顧客體驗、轉換率、再行銷能力與整體品牌經營的可持續性。
-          </p>
-        </div>
-      </div>
-    </div>
-  </section>
+        <!-- 5. 我們協助你建立的，不只是帳號 -->
+        <section id="how-we-help" class="py-24 bg-white relative overflow-hidden">
+            <div class="max-w-7xl mx-auto px-5 lg:px-8">
+                <div class="text-center mb-20 reveal-element">
+                    <span class="text-brand-600 font-bold tracking-wider text-sm mb-3 block">核心差異</span>
+                    <h2 class="text-3xl md:text-4xl font-bold text-slate-900 mb-6 leading-tight">
+                        多數服務只停在設定<br class="hidden md:block">
+                        我們幫你把<span class="text-line relative inline-block mx-2">第一套經營架構<svg class="absolute w-full h-3 -bottom-1 left-0 text-line/20" viewBox="0 0 100 10" preserveAspectRatio="none"><path d="M0 5 Q 50 10 100 5" stroke="currentColor" stroke-width="3" fill="none"/></svg></span>搭起來
+                    </h2>
+                </div>
 
-  <!-- Plans -->
-  <section id="plans" class="py-20 bg-white">
-    <div class="max-w-7xl mx-auto px-5 lg:px-8">
-      <div class="text-center max-w-4xl mx-auto">
-        <div class="text-sm font-semibold tracking-wider text-brand-700 uppercase">Plans</div>
-        <h2 class="mt-3 text-3xl md:text-4xl font-black text-ink">
-          從基礎導入到顧問陪跑，設計符合品牌成熟度的合作路徑
-        </h2>
-      </div>
+                <!-- 四段式建立系統圖 -->
+                <div class="max-w-4xl mx-auto relative">
+                    <!-- 左側連接線 (桌面版) -->
+                    <div class="hidden md:block absolute left-8 top-10 bottom-10 w-0.5 bg-gradient-to-b from-slate-200 via-line-light to-brand-200"></div>
 
-      <div class="mt-14 grid xl:grid-cols-3 gap-8">
-        <!-- Plan A -->
-        <div class="rounded-4xl border border-slate-200 bg-slate-50 p-8 shadow-card">
-          <div class="inline-flex rounded-full bg-brand-100 px-4 py-1.5 text-sm font-semibold text-brand-700">
-            方案 A
-          </div>
-          <h3 class="mt-4 text-3xl font-black text-ink">基礎導入版</h3>
-          <p class="mt-4 text-slate-600 leading-8">
-            適合剛開始建立品牌數位入口，希望先把 LINE 官方帳號與基本經營架構整理好的商家。
-          </p>
+                    <div class="space-y-12 relative">
+                        <!-- Level A -->
+                        <div class="relative flex flex-col md:flex-row gap-6 reveal-element">
+                            <div class="hidden md:flex flex-shrink-0 w-16 h-16 rounded-full bg-slate-100 border-4 border-white shadow-sm items-center justify-center text-slate-400 font-bold text-xl z-10">A</div>
+                            <div class="md:hidden inline-block px-3 py-1 bg-slate-100 text-slate-500 rounded-full text-xs font-bold w-max mb-2">階段 A</div>
+                            
+                            <div class="flex-1 bg-white border border-slate-100 rounded-2xl p-6 md:p-8 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
+                                <div class="absolute right-0 top-0 w-32 h-32 bg-slate-50 rounded-bl-full -z-10 transition-transform group-hover:scale-110"></div>
+                                <h3 class="text-xl font-bold text-slate-800 mb-3">建立官方帳號</h3>
+                                <p class="text-slate-600 mb-4">包含申請、登入管理、基本建置。協助確認適合的帳號型態，完成管理員權限指派，將地基打好。</p>
+                                <div class="text-xs text-slate-400 bg-slate-50 inline-block px-3 py-1 rounded">官方帳號可透過管理頁或 App 管理</div>
+                            </div>
+                        </div>
 
-          <div class="section-line my-7"></div>
+                        <!-- Level B -->
+                        <div class="relative flex flex-col md:flex-row gap-6 reveal-element delay-100">
+                            <div class="hidden md:flex flex-shrink-0 w-16 h-16 rounded-full bg-blue-50 border-4 border-white shadow-sm items-center justify-center text-blue-500 font-bold text-xl z-10">B</div>
+                            <div class="md:hidden inline-block px-3 py-1 bg-blue-50 text-blue-500 rounded-full text-xs font-bold w-max mb-2">階段 B</div>
+                            
+                            <div class="flex-1 bg-white border border-slate-100 rounded-2xl p-6 md:p-8 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
+                                <div class="absolute right-0 top-0 w-32 h-32 bg-blue-50/50 rounded-bl-full -z-10 transition-transform group-hover:scale-110"></div>
+                                <h3 class="text-xl font-bold text-slate-800 mb-3">建立品牌門面</h3>
+                                <p class="text-slate-600 mb-4">包含頭像、封面、名稱、簡介。整合地址、商品與營業時間，形成簡易但完整的專屬商家頁，展現專業度。</p>
+                            </div>
+                        </div>
 
-          <ul class="space-y-3 text-slate-600 leading-7">
-            <li>• LINE 官方帳號建置建議</li>
-            <li>• 基本資訊與品牌入口優化</li>
-            <li>• 歡迎訊息與圖文選單規劃</li>
-            <li>• FAQ 與標準回覆整理</li>
-            <li>• 基本導流與使用建議</li>
-          </ul>
+                        <!-- Level C -->
+                        <div class="relative flex flex-col md:flex-row gap-6 reveal-element delay-200">
+                            <div class="hidden md:flex flex-shrink-0 w-16 h-16 rounded-full bg-brand-50 border-4 border-white shadow-sm items-center justify-center text-brand-500 font-bold text-xl z-10">C</div>
+                            <div class="md:hidden inline-block px-3 py-1 bg-brand-50 text-brand-500 rounded-full text-xs font-bold w-max mb-2">階段 C</div>
+                            
+                            <div class="flex-1 bg-white border border-brand-100 rounded-2xl p-6 md:p-8 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group ring-1 ring-brand-50">
+                                <div class="absolute right-0 top-0 w-32 h-32 bg-brand-50 rounded-bl-full -z-10 transition-transform group-hover:scale-110"></div>
+                                <h3 class="text-xl font-bold text-slate-800 mb-3">建立基本互動入口</h3>
+                                <p class="text-slate-600 mb-4">設計直覺的圖文選單、規劃順暢的聊天動線與加入好友後的歡迎訊息，讓客戶一進來就知道能做什麼。</p>
+                            </div>
+                        </div>
 
-          <div class="mt-7 rounded-3xl bg-white border border-slate-200 p-5">
-            <div class="font-bold text-ink">最適合的情境</div>
-            <p class="mt-2 text-sm text-slate-600 leading-7">
-              品牌剛起步、目前主要靠人工回覆、尚未建立清楚的 LINE 入口與基本營運流程。
-            </p>
-          </div>
-        </div>
+                        <!-- Level D -->
+                        <div class="relative flex flex-col md:flex-row gap-6 reveal-element delay-300">
+                            <div class="hidden md:flex flex-shrink-0 w-16 h-16 rounded-full bg-line-light border-4 border-white shadow-sm items-center justify-center text-line-dark font-bold text-xl z-10">D</div>
+                            <div class="md:hidden inline-block px-3 py-1 bg-line-light text-line-dark rounded-full text-xs font-bold w-max mb-2">階段 D</div>
+                            
+                            <div class="flex-1 bg-gradient-to-br from-slate-900 to-slate-800 text-white rounded-2xl p-6 md:p-8 shadow-lg relative overflow-hidden group">
+                                <div class="absolute -right-10 -top-10 w-40 h-40 bg-white/5 rounded-full -z-0 transition-transform group-hover:scale-110"></div>
+                                <div class="relative z-10">
+                                    <h3 class="text-xl font-bold text-white mb-3 flex items-center"><i class="fa-solid fa-lightbulb text-yellow-400 mr-2"></i>建立基礎經營思維</h3>
+                                    <p class="text-slate-300 mb-4">這才是價值的核心。我們會提供訊息推播節奏、內容方向、好友經營方式，與未來成長策略的實務建議。</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-        <!-- Plan B -->
-        <div class="rounded-4xl border-2 border-brand-500 bg-white p-8 shadow-softxl relative overflow-hidden">
-          <div class="absolute top-5 right-5 rounded-full bg-brand-600 px-4 py-1.5 text-xs font-bold text-white">
-            成長推薦
-          </div>
-
-          <div class="inline-flex rounded-full bg-brand-100 px-4 py-1.5 text-sm font-semibold text-brand-700">
-            方案 B
-          </div>
-          <h3 class="mt-4 text-3xl font-black text-ink">營運升級版</h3>
-          <p class="mt-4 text-slate-600 leading-8">
-            適合已有一定詢問量，希望開始整理客戶資料、提升承接效率並建立更穩定經營節奏的品牌。
-          </p>
-
-          <div class="section-line my-7"></div>
-
-          <ul class="space-y-3 text-slate-600 leading-7">
-            <li>• 含方案 A 全部內容</li>
-            <li>• 詢問 / 預約表單規劃</li>
-            <li>• 關鍵字或互動流程建議</li>
-            <li>• 資料整理與欄位設計</li>
-            <li>• 輕量後台管理結構建議</li>
-            <li>• 品牌營運優化方向分析</li>
-          </ul>
-
-          <div class="mt-7 rounded-3xl bg-brand-50 border border-brand-100 p-5">
-            <div class="font-bold text-ink">最適合的情境</div>
-            <p class="mt-2 text-sm text-slate-700 leading-7">
-              已有穩定流量或詢問，但資訊與資料分散，希望把 LINE 轉成更有效率的品牌營運入口。
-            </p>
-          </div>
-        </div>
-
-        <!-- Advisory -->
-        <div class="rounded-4xl border border-ink bg-ink p-8 text-white shadow-softxl">
-          <div class="inline-flex rounded-full bg-white/10 px-4 py-1.5 text-sm font-semibold text-brand-100">
-            顧問陪跑計畫
-          </div>
-          <h3 class="mt-4 text-3xl font-black">策略成長版</h3>
-          <p class="mt-4 text-slate-200 leading-8">
-            適合希望以更高視角進行數位轉型分析，並逐步整合 LINE、資料、流程與行銷效益的品牌。
-          </p>
-
-          <div class="section-line my-7 opacity-40"></div>
-
-          <ul class="space-y-3 text-slate-200 leading-7">
-            <li>• 品牌現況與顧客旅程盤點</li>
-            <li>• 成長瓶頸與優先順序分析</li>
-            <li>• LINE Profile 與顧客經營策略建議</li>
-            <li>• 流程整合與中長期規劃</li>
-            <li>• 分階段導入與優化陪跑</li>
-            <li>• 更完整的行銷與效益提升視角</li>
-          </ul>
-
-          <div class="mt-7 rounded-3xl bg-white/10 border border-white/10 p-5">
-            <div class="font-bold">最適合的情境</div>
-            <p class="mt-2 text-sm text-slate-200 leading-7">
-              品牌想做的不只是工具導入，而是希望建立一套更清楚、可持續放大的數位成長架構。
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- FAQ -->
-  <section id="faq" class="py-20 bg-white">
-    <div class="max-w-5xl mx-auto px-5 lg:px-8">
-      <div class="text-center">
-        <div class="text-sm font-semibold tracking-wider text-brand-700 uppercase">FAQ</div>
-        <h2 class="mt-3 text-3xl md:text-4xl font-black text-ink">常見問題</h2>
-      </div>
-
-      <div class="mt-12 space-y-4">
-        <details class="group rounded-4xl bg-slate-50 border border-slate-200 p-6 shadow-card">
-          <summary class="flex cursor-pointer list-none items-center justify-between gap-4 text-lg font-bold text-ink">
-            我們目前只有基本的 LINE 或甚至還沒開始，也適合嗎？
-            <span class="text-brand-700 transition group-open:rotate-45">＋</span>
-          </summary>
-          <p class="mt-4 text-slate-600 leading-8">
-            很適合。越早從正確方向開始，越能避免後續重做與流程混亂。顧問式合作的好處，就是先幫你判斷什麼應該先做，什麼可以暫緩。
-          </p>
-        </details>
-
-        <details class="group rounded-4xl bg-slate-50 border border-slate-200 p-6 shadow-card">
-          <summary class="flex cursor-pointer list-none items-center justify-between gap-4 text-lg font-bold text-ink">
-            顧問陪跑和一般系統建置最大的差別是什麼？
-            <span class="text-brand-700 transition group-open:rotate-45">＋</span>
-          </summary>
-          <p class="mt-4 text-slate-600 leading-8">
-            一般建置多半聚焦把功能完成；顧問陪跑則更重視品牌現況分析、優先順序判斷、顧客旅程設計與後續優化方向，因此更能幫助品牌少走彎路。
-          </p>
-        </details>
-
-        <details class="group rounded-4xl bg-slate-50 border border-slate-200 p-6 shadow-card">
-          <summary class="flex cursor-pointer list-none items-center justify-between gap-4 text-lg font-bold text-ink">
-            LINE Profile 的價值真的能轉成經營優勢嗎？
-            <span class="text-brand-700 transition group-open:rotate-45">＋</span>
-          </summary>
-          <p class="mt-4 text-slate-600 leading-8">
-            可以，前提是品牌有把互動、分流、標籤與後續服務設計好。LINE 的價值不只是通訊，而是它能承接顧客關係並成為後續經營的基礎。
-          </p>
-        </details>
-
-        <details class="group rounded-4xl bg-slate-50 border border-slate-200 p-6 shadow-card">
-          <summary class="flex cursor-pointer list-none items-center justify-between gap-4 text-lg font-bold text-ink">
-            可以先從小範圍開始，再逐步擴充嗎？
-            <span class="text-brand-700 transition group-open:rotate-45">＋</span>
-          </summary>
-          <p class="mt-4 text-slate-600 leading-8">
-            可以，而且這通常是更穩健的方式。先從最需要的環節開始，等品牌真的用起來並看到價值，再往更深的整合與自動化延伸。
-          </p>
-        </details>
-      </div>
-    </div>
-  </section>
-
-  <!-- CTA -->
-  <section id="cta" class="py-20 bg-ink text-white">
-    <div class="max-w-7xl mx-auto px-5 lg:px-8">
-      <div class="grid lg:grid-cols-12 gap-10 items-center">
-        <div class="lg:col-span-7">
-          <div class="text-sm font-semibold tracking-wider text-brand-200 uppercase">Call to action</div>
-          <h2 class="mt-3 text-3xl md:text-5xl font-black leading-tight text-balance">
-            如果你希望品牌做的不只是導入工具，<br />
-            而是更有方向地提升整體效益
-          </h2>
-          <p class="mt-6 text-lg leading-8 text-slate-300 max-w-3xl">
-            歡迎先從一場對話開始。讓我們一起看你的品牌目前卡在哪裡、哪些地方最值得優先優化，以及 LINE 可以如何成為你更完整的品牌成長入口。
-          </p>
-
-          <div class="mt-8 flex flex-col sm:flex-row gap-4">
-            <a
-              href="https://line.me/ti/p/example"
-              target="_blank"
-              class="inline-flex items-center justify-center rounded-full bg-brand-500 px-6 py-3.5 text-base font-semibold text-white hover:bg-brand-400 transition"
-            >
-              立即加入 LINE
-            </a>
-            <a
-              href="#top"
-              class="inline-flex items-center justify-center rounded-full border border-white/20 px-6 py-3.5 text-base font-semibold text-white hover:bg-white/10 transition"
-            >
-              回到頁首
-            </a>
-          </div>
-        </div>
-
-        <div class="lg:col-span-5">
-          <div class="rounded-4xl bg-white p-8 text-slate-800 shadow-softxl">
-            <div class="text-center">
-              <div class="text-sm font-semibold text-brand-700">掃描 QR Code 加入 LINE</div>
-              <div class="mt-5 mx-auto w-full max-w-[300px] rounded-4xl border border-slate-200 p-4 bg-slate-50">
-                <!-- 替換成你的正式 QR Code -->
-                <img
-                  src="https://api.qrserver.com/v1/create-qr-code/?size=360x360&data=https%3A%2F%2Fline.me%2Fti%2Fp%2Fexample"
-                  alt="Digitools Studio LINE QR Code"
-                  class="w-full h-auto rounded-3xl"
-                />
-              </div>
-              <p class="mt-4 text-sm leading-7 text-slate-600">
-                掃描後可直接與 Digitools Studio 聯繫，討論你的品牌現況、LINE 規劃與數位轉型方向。
-              </p>
+        <!-- 6. 從無到有的導入內容 (橫向捲動模組) -->
+        <section class="py-24 bg-slate-900 text-white overflow-hidden">
+            <div class="max-w-7xl mx-auto px-5 lg:px-8 mb-12 reveal-element">
+                <h2 class="text-3xl font-bold mb-4">實務上，我們會幫你完成這些</h2>
+                <p class="text-slate-400 max-w-2xl">從無到有的完整導入內容，讓你清楚知道每一項交付物與價值。</p>
             </div>
 
-            <div class="mt-6 space-y-3 text-sm">
-              <div class="rounded-3xl bg-slate-50 border border-slate-200 p-4">
-                適合希望少走彎路的品牌
-              </div>
-              <div class="rounded-3xl bg-slate-50 border border-slate-200 p-4">
-                適合想從 LINE 延伸更完整成長策略的商家
-              </div>
-              <div class="rounded-3xl bg-slate-50 border border-slate-200 p-4">
-                適合需要顧問式分析而不只是功能建置的合作模式
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
+            <!-- 橫向模組區塊 -->
+            <div class="max-w-7xl mx-auto px-5 lg:px-8 relative">
+                <div class="flex overflow-x-auto space-x-6 pb-8 no-scrollbar snap-x reveal-element delay-100">
+                    
+                    <!-- Module 1 -->
+                    <div class="flex-none w-80 md:w-96 bg-slate-800 rounded-2xl p-8 snap-start border border-slate-700 relative group hover:bg-slate-750 transition-colors">
+                        <div class="text-5xl font-black text-slate-700 absolute top-4 right-6 group-hover:text-slate-600 transition-colors">1</div>
+                        <h3 class="text-xl font-bold mb-4 text-white relative z-10">官方帳號建立與開通</h3>
+                        <ul class="space-y-3 text-slate-300 text-sm mb-6 relative z-10">
+                            <li class="flex items-start"><i class="fa-solid fa-check text-line mt-1 mr-2"></i>協助建立帳號</li>
+                            <li class="flex items-start"><i class="fa-solid fa-check text-line mt-1 mr-2"></i>確認適合的帳號型態 (一般/認證)</li>
+                            <li class="flex items-start"><i class="fa-solid fa-check text-line mt-1 mr-2"></i>完成基本資料與管理員設定</li>
+                        </ul>
+                        <p class="text-xs text-slate-500 border-t border-slate-700 pt-4">一般帳號可免費申請；認證帳號有專屬盾牌與不同審核條件。</p>
+                    </div>
 
-  <!-- Footer -->
-  <footer class="border-t border-slate-200 bg-white">
-    <div class="max-w-7xl mx-auto px-5 lg:px-8 py-8">
-      <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-        <div>
-          <div class="text-base font-bold text-ink">Digitools Studio</div>
-          <div class="mt-1 text-sm text-slate-500">
-            LINE 導入 × 顧客旅程分析 × 數位轉型顧問陪跑
-          </div>
-        </div>
-        <div class="text-sm text-slate-500">
-          © 2026 Digitools Studio. All rights reserved.
-        </div>
-      </div>
+                    <!-- Module 2 -->
+                    <div class="flex-none w-80 md:w-96 bg-slate-800 rounded-2xl p-8 snap-start border border-slate-700 relative group hover:bg-slate-750 transition-colors">
+                        <div class="text-5xl font-black text-slate-700 absolute top-4 right-6 group-hover:text-slate-600 transition-colors">2</div>
+                        <h3 class="text-xl font-bold mb-4 text-white relative z-10">品牌形象與基本門面</h3>
+                        <ul class="space-y-3 text-slate-300 text-sm mb-6 relative z-10">
+                            <li class="flex items-start"><i class="fa-solid fa-check text-line mt-1 mr-2"></i>名稱、頭像、封面、簡介設定</li>
+                            <li class="flex items-start"><i class="fa-solid fa-check text-line mt-1 mr-2"></i>商家資訊與聯絡方式建置</li>
+                            <li class="flex items-start"><i class="fa-solid fa-check text-line mt-1 mr-2"></i>營業時間與基本問答配置</li>
+                        </ul>
+                        <p class="text-xs text-brand-400 border-t border-slate-700 pt-4">目標：讓客戶一進來就能理解你是誰、提供什麼服務。</p>
+                    </div>
+
+                    <!-- Module 3 -->
+                    <div class="flex-none w-80 md:w-96 bg-slate-800 rounded-2xl p-8 snap-start border border-slate-700 relative group hover:bg-slate-750 transition-colors">
+                        <div class="text-5xl font-black text-slate-700 absolute top-4 right-6 group-hover:text-slate-600 transition-colors">3</div>
+                        <h3 class="text-xl font-bold mb-4 text-white relative z-10">基本功能與動線規劃</h3>
+                        <ul class="space-y-3 text-slate-300 text-sm mb-6 relative z-10">
+                            <li class="flex items-start"><i class="fa-solid fa-check text-line mt-1 mr-2"></i>專屬圖文選單設計與設定</li>
+                            <li class="flex items-start"><i class="fa-solid fa-check text-line mt-1 mr-2"></i>歡迎訊息方向與自動回應規劃</li>
+                            <li class="flex items-start"><i class="fa-solid fa-check text-line mt-1 mr-2"></i>優惠券 / 問卷 基礎互動功能綁定</li>
+                        </ul>
+                        <p class="text-xs text-slate-500 border-t border-slate-700 pt-4">善用系統支援的多樣化模組，打造自動化服務流程。</p>
+                    </div>
+
+                    <!-- Module 4 -->
+                    <div class="flex-none w-80 md:w-96 bg-slate-800 rounded-2xl p-8 snap-start border border-slate-700 relative group hover:bg-slate-750 transition-colors">
+                        <div class="text-5xl font-black text-slate-700 absolute top-4 right-6 group-hover:text-slate-600 transition-colors">4</div>
+                        <h3 class="text-xl font-bold mb-4 text-white relative z-10">內容與行銷節奏建議</h3>
+                        <ul class="space-y-3 text-slate-300 text-sm mb-6 relative z-10">
+                            <li class="flex items-start"><i class="fa-solid fa-check text-line mt-1 mr-2"></i>第一波群發訊息要發什麼？</li>
+                            <li class="flex items-start"><i class="fa-solid fa-check text-line mt-1 mr-2"></i>檔期活動訊息該怎麼安排？</li>
+                            <li class="flex items-start"><i class="fa-solid fa-check text-line mt-1 mr-2"></i>平時怎麼維持存在感且不擾民？</li>
+                        </ul>
+                        <p class="text-xs text-brand-400 border-t border-slate-700 pt-4">確保帳號開了之後不會淪為蚊子館，有實際營運能力。</p>
+                    </div>
+
+                    <!-- Module 5 -->
+                    <div class="flex-none w-80 md:w-96 bg-slate-800 rounded-2xl p-8 snap-start border border-brand-800 relative group hover:bg-slate-750 transition-colors">
+                        <div class="text-5xl font-black text-brand-900 absolute top-4 right-6 transition-colors">5</div>
+                        <h3 class="text-xl font-bold mb-4 text-brand-400 relative z-10">後續進階經營藍圖</h3>
+                        <ul class="space-y-3 text-slate-300 text-sm mb-6 relative z-10">
+                            <li class="flex items-start"><i class="fa-solid fa-arrow-right text-brand-500 mt-1 mr-2"></i>何時適合開始做標籤分眾？</li>
+                            <li class="flex items-start"><i class="fa-solid fa-arrow-right text-brand-500 mt-1 mr-2"></i>何時適合導入 API 或進一步數位化？</li>
+                            <li class="flex items-start"><i class="fa-solid fa-arrow-right text-brand-500 mt-1 mr-2"></i>功能優先順序盤點 (先做什麼、後做什麼)</li>
+                        </ul>
+                        <p class="text-xs text-slate-500 border-t border-slate-700 pt-4">為未來的會員系統與數據分析預留發展空間。</p>
+                    </div>
+
+                </div>
+                <!-- 橫向捲動提示 -->
+                <div class="md:hidden flex items-center justify-center space-x-2 text-slate-500 text-sm mt-4">
+                    <i class="fa-solid fa-arrow-left-long"></i>
+                    <span>左右滑動查看完整項目</span>
+                    <i class="fa-solid fa-arrow-right-long"></i>
+                </div>
+            </div>
+        </section>
+
+        <!-- 7. 認真經營 LINE 之後，差別在哪裡 -->
+        <section class="py-24 bg-white">
+            <div class="max-w-7xl mx-auto px-5 lg:px-8">
+                <div class="text-center mb-16 reveal-element">
+                    <h2 class="text-3xl font-bold text-slate-900 mb-4">投入基礎建設後，帶來的實質改變</h2>
+                    <p class="text-slate-500 max-w-2xl mx-auto">不談虛構的 ROI，我們談每天經營上最真實的感受差異。</p>
+                </div>
+
+                <div class="flex flex-col lg:flex-row rounded-3xl overflow-hidden shadow-xl border border-slate-100 reveal-element delay-100">
+                    
+                    <!-- Before -->
+                    <div class="lg:w-1/2 bg-slate-50 p-10 lg:p-16 border-b lg:border-b-0 lg:border-r border-slate-200">
+                        <div class="inline-block px-3 py-1 bg-slate-200 text-slate-600 rounded-md text-sm font-bold mb-8">還沒建立 LINE 體系前</div>
+                        
+                        <ul class="space-y-6">
+                            <li class="flex items-start opacity-70">
+                                <i class="fa-solid fa-xmark text-slate-400 mt-1 mr-4 text-xl"></i>
+                                <div>
+                                    <h4 class="font-bold text-slate-700 mb-1">聯絡方式零散</h4>
+                                    <p class="text-slate-500 text-sm">客戶從 FB、IG、甚至私人 LINE 找你，難以統一管理。</p>
+                                </div>
+                            </li>
+                            <li class="flex items-start opacity-70">
+                                <i class="fa-solid fa-xmark text-slate-400 mt-1 mr-4 text-xl"></i>
+                                <div>
+                                    <h4 class="font-bold text-slate-700 mb-1">有問題就反覆回答</h4>
+                                    <p class="text-slate-500 text-sm">地址在哪？怎麼預約？每天都在複製貼上相同的答案。</p>
+                                </div>
+                            </li>
+                            <li class="flex items-start opacity-70">
+                                <i class="fa-solid fa-xmark text-slate-400 mt-1 mr-4 text-xl"></i>
+                                <div>
+                                    <h4 class="font-bold text-slate-700 mb-1">活動通知不穩定</h4>
+                                    <p class="text-slate-500 text-sm">發了貼文不知道誰看到，觸及率永遠是個謎。</p>
+                                </div>
+                            </li>
+                            <li class="flex items-start opacity-70">
+                                <i class="fa-solid fa-xmark text-slate-400 mt-1 mr-4 text-xl"></i>
+                                <div>
+                                    <h4 class="font-bold text-slate-700 mb-1">無法留下過客</h4>
+                                    <p class="text-slate-500 text-sm">客戶來買過一次就沒有後續，沒有一個可持續經營的名單。</p>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- After -->
+                    <div class="lg:w-1/2 bg-white p-10 lg:p-16 relative overflow-hidden">
+                        <div class="absolute top-0 right-0 w-64 h-64 bg-brand-50 rounded-bl-full -z-0 opacity-50"></div>
+                        <div class="relative z-10">
+                            <div class="inline-block px-3 py-1 bg-brand-100 text-brand-700 rounded-md text-sm font-bold mb-8">建立 LINE 體系後</div>
+                            
+                            <ul class="space-y-6">
+                                <li class="flex items-start">
+                                    <div class="w-6 h-6 rounded-full bg-brand-100 text-brand-600 flex items-center justify-center mt-0.5 mr-4 flex-shrink-0">
+                                        <i class="fa-solid fa-check text-xs"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-slate-800 mb-1">更容易建立關係</h4>
+                                        <p class="text-slate-600 text-sm">客戶互動有一個正式入口，更容易把一次性詢問，變成可持續聯繫的關係。</p>
+                                    </div>
+                                </li>
+                                <li class="flex items-start">
+                                    <div class="w-6 h-6 rounded-full bg-brand-100 text-brand-600 flex items-center justify-center mt-0.5 mr-4 flex-shrink-0">
+                                        <i class="fa-solid fa-check text-xs"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-slate-800 mb-1">統一品牌入口</h4>
+                                        <p class="text-slate-600 text-sm">更容易把品牌資訊整理成統一入口，常用資訊可更清楚透過圖文選單呈現。</p>
+                                    </div>
+                                </li>
+                                <li class="flex items-start">
+                                    <div class="w-6 h-6 rounded-full bg-brand-100 text-brand-600 flex items-center justify-center mt-0.5 mr-4 flex-shrink-0">
+                                        <i class="fa-solid fa-check text-xs"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-slate-800 mb-1">內容有固定出口</h4>
+                                        <p class="text-slate-600 text-sm">活動與內容發布更踏實，更容易開始做內容與第一手客戶經營。</p>
+                                    </div>
+                                </li>
+                                <li class="flex items-start">
+                                    <div class="w-6 h-6 rounded-full bg-brand-100 text-brand-600 flex items-center justify-center mt-0.5 mr-4 flex-shrink-0">
+                                        <i class="fa-solid fa-check text-xs"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-slate-800 mb-1">為未來打好基礎</h4>
+                                        <p class="text-slate-600 text-sm">好友逐步累積，後續更容易為會員、分眾與行銷分析打基礎，逐步擴充經營功能。</p>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- 8. 導入流程 -->
+        <section id="process" class="py-24 bg-slate-50 border-t border-slate-100">
+            <div class="max-w-7xl mx-auto px-5 lg:px-8">
+                <div class="text-center mb-16 reveal-element">
+                    <h2 class="text-3xl font-bold text-slate-900 mb-4">這是一個陪伴你落地的過程</h2>
+                    <p class="text-slate-500 max-w-2xl mx-auto">我們不是丟給你一本手冊，而是真的幫你把體系建立起來。</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 relative">
+                    <!-- 桌面版連接線 -->
+                    <div class="hidden lg:block absolute top-1/2 left-0 w-full h-0.5 bg-slate-200 -z-0 -translate-y-8"></div>
+
+                    <!-- Step 1 -->
+                    <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-100 relative z-10 reveal-element">
+                        <div class="w-12 h-12 bg-slate-800 text-white rounded-full flex items-center justify-center font-bold text-xl mb-6 shadow-md mx-auto lg:mx-0">1</div>
+                        <div class="text-brand-500 mb-3 text-center lg:text-left"><i class="fa-regular fa-comments text-2xl"></i></div>
+                        <h3 class="font-bold text-slate-800 mb-3 text-center lg:text-left">了解你的現況</h3>
+                        <p class="text-sm text-slate-500 text-center lg:text-left">先知道你現在有沒有 LINE、平常怎麼接觸客戶、主要想解決什麼營運痛點。</p>
+                    </div>
+
+                    <!-- Step 2 -->
+                    <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-100 relative z-10 reveal-element delay-100">
+                        <div class="w-12 h-12 bg-slate-800 text-white rounded-full flex items-center justify-center font-bold text-xl mb-6 shadow-md mx-auto lg:mx-0">2</div>
+                        <div class="text-brand-500 mb-3 text-center lg:text-left"><i class="fa-solid fa-pen-ruler text-2xl"></i></div>
+                        <h3 class="font-bold text-slate-800 mb-3 text-center lg:text-left">規劃適合的起點</h3>
+                        <p class="text-sm text-slate-500 text-center lg:text-left">不是每個商家都要一模一樣，我們會先幫你梳理最適合、負擔最小的建立方式。</p>
+                    </div>
+
+                    <!-- Step 3 -->
+                    <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-100 relative z-10 reveal-element delay-200">
+                        <div class="w-12 h-12 bg-line text-white rounded-full flex items-center justify-center font-bold text-xl mb-6 shadow-md mx-auto lg:mx-0 ring-4 ring-line/20">3</div>
+                        <div class="text-line mb-3 text-center lg:text-left"><i class="fa-solid fa-wand-magic-sparkles text-2xl"></i></div>
+                        <h3 class="font-bold text-slate-800 mb-3 text-center lg:text-left">協助完成設定</h3>
+                        <p class="text-sm text-slate-500 text-center lg:text-left">從官方帳號申請、品牌門面設計、基本內容到互動入口，一步一步實作完成。</p>
+                    </div>
+
+                    <!-- Step 4 -->
+                    <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-100 relative z-10 reveal-element delay-300">
+                        <div class="w-12 h-12 bg-slate-800 text-white rounded-full flex items-center justify-center font-bold text-xl mb-6 shadow-md mx-auto lg:mx-0">4</div>
+                        <div class="text-brand-500 mb-3 text-center lg:text-left"><i class="fa-solid fa-rocket text-2xl"></i></div>
+                        <h3 class="font-bold text-slate-800 mb-3 text-center lg:text-left">開始營運與建議</h3>
+                        <p class="text-sm text-slate-500 text-center lg:text-left">讓你不是只有一個空殼帳號，而是擁有一個可以立刻開始使用的 LINE 經營體系。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 9. FAQ -->
+        <section id="faq" class="py-24 bg-white">
+            <div class="max-w-3xl mx-auto px-5 lg:px-8">
+                <div class="text-center mb-16 reveal-element">
+                    <h2 class="text-3xl font-bold text-slate-900 mb-4">常見問題</h2>
+                    <p class="text-slate-500">專為 0 基礎的商家解答心中的疑慮</p>
+                </div>
+
+                <div class="space-y-4 reveal-element delay-100">
+                    <!-- Vue 迴圈渲染 FAQ -->
+                    <div v-for="(faq, index) in faqs" :key="index" class="border border-slate-200 rounded-xl overflow-hidden transition-all duration-300" :class="activeFaq === index ? 'shadow-md border-brand-200' : 'hover:border-slate-300'">
+                        <button @click="toggleFaq(index)" class="w-full px-6 py-5 text-left flex justify-between items-center bg-white focus:outline-none">
+                            <span class="font-bold text-slate-800 pr-8" :class="activeFaq === index ? 'text-brand-600' : ''">{{ faq.q }}</span>
+                            <i class="fa-solid fa-chevron-down text-slate-400 transition-transform duration-300" :class="activeFaq === index ? 'rotate-180 text-brand-500' : ''"></i>
+                        </button>
+                        
+                        <div v-show="activeFaq === index" class="px-6 pb-5 bg-white text-slate-600 text-sm leading-relaxed border-t border-slate-50" style="display: none;">
+                            {{ faq.a }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 10. 強 CTA 區 -->
+        <section id="contact" class="py-24 bg-slate-900 relative overflow-hidden">
+            <!-- 背景圖樣 -->
+            <div class="absolute inset-0 opacity-5" style="background-image: linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px); background-size: 30px 30px;"></div>
+            
+            <div class="max-w-4xl mx-auto px-5 lg:px-8 relative z-10 reveal-element">
+                <div class="bg-white rounded-3xl p-8 md:p-12 shadow-2xl">
+                    <div class="text-center mb-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-slate-900 mb-4 leading-tight">
+                            先把你的 LINE 官方入口建立起來，<br class="hidden md:block">
+                            再開始談更好的經營
+                        </h2>
+                        <p class="text-slate-500 max-w-xl mx-auto">
+                            如果你現在還沒有 LINE 官方帳號，或不知道該怎麼開始，我們可以先陪你把第一套基礎體系建立起來。
+                        </p>
+                    </div>
+
+                    <!-- 聯絡表單 (由 Vue 管理) -->
+                    <form @submit.prevent="submitForm" class="max-w-2xl mx-auto" v-if="!submitSuccess">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-2">姓名 / 品牌名稱 <span class="text-red-500">*</span></label>
+                                <input v-model="formData.name" type="text" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors outline-none bg-slate-50 focus:bg-white" placeholder="請輸入稱呼或品牌">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-2">聯絡方式 (Email或電話) <span class="text-red-500">*</span></label>
+                                <input v-model="formData.contact" type="text" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors outline-none bg-slate-50 focus:bg-white" placeholder="以便我們回覆您">
+                            </div>
+                        </div>
+
+                        <div class="mb-6">
+                            <label class="block text-sm font-medium text-slate-700 mb-2">目前是否已有 LINE 官方帳號？</label>
+                            <div class="flex space-x-6">
+                                <label class="flex items-center space-x-2 cursor-pointer">
+                                    <input type="radio" v-model="formData.hasAccount" value="no" class="w-4 h-4 text-brand-600 focus:ring-brand-500">
+                                    <span class="text-slate-600 text-sm">完全沒有，想從零開始</span>
+                                </label>
+                                <label class="flex items-center space-x-2 cursor-pointer">
+                                    <input type="radio" v-model="formData.hasAccount" value="yes" class="w-4 h-4 text-brand-600 focus:ring-brand-500">
+                                    <span class="text-slate-600 text-sm">已建立，但不知道怎麼用</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="mb-6">
+                            <label class="block text-sm font-medium text-slate-700 mb-2">想先改善的問題 / 備註</label>
+                            <textarea v-model="formData.message" rows="3" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors outline-none bg-slate-50 focus:bg-white resize-none" placeholder="例如：想做圖文選單、不知道發什麼內容..."></textarea>
+                        </div>
+
+                        <div class="text-center">
+                            <button type="submit" :disabled="isSubmitting" class="w-full md:w-auto bg-brand-600 hover:bg-brand-700 text-white px-10 py-4 rounded-xl font-bold text-lg transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 disabled:opacity-70 disabled:cursor-not-allowed">
+                                <span v-if="isSubmitting"><i class="fa-solid fa-circle-notch fa-spin mr-2"></i>處理中...</span>
+                                <span v-else>取得專屬建議 (預約免費初步評估)</span>
+                            </button>
+                            
+                            <div class="mt-4 flex flex-wrap justify-center items-center gap-3 text-xs text-slate-400">
+                                <span class="bg-slate-100 px-2 py-1 rounded"><i class="fa-solid fa-shield-halved mr-1"></i>不需要先懂技術</span>
+                                <span class="bg-slate-100 px-2 py-1 rounded"><i class="fa-solid fa-layer-group mr-1"></i>可先從基礎導入開始</span>
+                                <span class="bg-slate-100 px-2 py-1 rounded"><i class="fa-solid fa-handshake-angle mr-1"></i>我們會依你的現況提供建議</span>
+                            </div>
+                        </div>
+                    </form>
+
+                    <!-- 送出成功訊息 -->
+                    <div v-if="submitSuccess" class="text-center py-10 max-w-lg mx-auto animate-fade-in">
+                        <div class="w-20 h-20 bg-green-100 text-green-500 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <i class="fa-solid fa-check text-4xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-slate-800 mb-2">資料已送出！</h3>
+                        <p class="text-slate-600 mb-6">我們已收到您的初步資訊，顧問將於 1-2 個工作天內透過您留下的聯絡方式與您聯繫，討論最適合的建立方式。</p>
+                        <button @click="submitSuccess = false" class="text-brand-600 font-medium hover:text-brand-800 underline">重新填寫表單</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="bg-slate-900 border-t border-slate-800 text-slate-400 py-10 text-center text-sm">
+            <p>© 2026 數位轉型顧問 | 從 0 開始建立 LINE 經營體系. All rights reserved.</p>
+        </footer>
+
     </div>
-  </footer>
+
+    <!-- Vue App Logic -->
+    <script>
+        const { createApp, ref, onMounted, onUnmounted } = Vue;
+
+        createApp({
+            setup() {
+                // Header Scroll State
+                const isScrolled = ref(false);
+
+                const handleScroll = () => {
+                    isScrolled.value = window.scrollY > 50;
+                };
+
+                // FAQ Data & State
+                const activeFaq = ref(0); // 預設打開第一個
+                const faqs = ref([
+                    {
+                        q: '我現在完全沒有 LINE 官方帳號，也可以開始嗎？',
+                        a: '可以。一般官方帳號可直接線上免費申請，我們會協助您完成第一步，後續再依您的實際營業需求，判斷是否需要申請為認證帳號。'
+                    },
+                    {
+                        q: '會不會很複雜？我怕學不會。',
+                        a: '如果一開始只先建立「基礎體系」，通常不需要把所有進階功能一次做完。我們的方法論是：先把入口、門面與基本互動建立起來。這部分的管理介面相當直覺，我們會手把手帶您熟悉。'
+                    },
+                    {
+                        q: '一開始需要準備很多資料嗎？',
+                        a: '不用擔心。通常只需要準備：品牌名稱、基本介紹、聯絡方式、營業資訊與「希望客戶第一眼看到的重點」，我們就可以開始幫您規劃基礎架構與圖文選單了。'
+                    },
+                    {
+                        q: '一定要先花大錢買很多外掛功能才有用嗎？',
+                        a: '不一定！LINE 官方帳號本身就內建了基本檔案、聊天、圖文選單、優惠券、問卷、基礎洞察等功能。很多商家先把這套「內建的基礎」打好，就已經能解決 80% 的客服與留存問題了。'
+                    },
+                    {
+                        q: '後續如果想再往更完整的數位化走，可以嗎？',
+                        a: '絕對可以。我們的核心理念就是「先打底，再擴充」。基礎體系建立好、好友慢慢累積之後，未來要往會員系統、進階標籤分眾、或整合購物車延伸，才會水到渠成。'
+                    }
+                ]);
+
+                const toggleFaq = (index) => {
+                    activeFaq.value = activeFaq.value === index ? null : index;
+                };
+
+                // Form Data & State
+                const formData = ref({
+                    name: '',
+                    contact: '',
+                    hasAccount: 'no',
+                    message: ''
+                });
+                const isSubmitting = ref(false);
+                const submitSuccess = ref(false);
+
+                const submitForm = () => {
+                    isSubmitting.value = true;
+                    // 模擬 API 呼叫延遲
+                    setTimeout(() => {
+                        isSubmitting.value = false;
+                        submitSuccess.value = true;
+                        // 清空表單
+                        formData.value = {
+                            name: '',
+                            contact: '',
+                            hasAccount: 'no',
+                            message: ''
+                        };
+                    }, 1500);
+                };
+
+                // 滾動進場動畫 Observer
+                let observer;
+                
+                onMounted(() => {
+                    window.addEventListener('scroll', handleScroll);
+                    
+                    // 初始設定一下滾動狀態
+                    handleScroll();
+
+                    // 設定 Intersection Observer 處理動畫
+                    const revealElements = document.querySelectorAll('.reveal-element');
+                    
+                    observer = new IntersectionObserver((entries) => {
+                        entries.forEach(entry => {
+                            if (entry.isIntersecting) {
+                                entry.target.classList.add('active');
+                                // 可選：如果只要播放一次，可以解除觀察
+                                // observer.unobserve(entry.target);
+                            }
+                        });
+                    }, {
+                        threshold: 0.1, // 元素出現 10% 觸發
+                        rootMargin: "0px 0px -50px 0px" 
+                    });
+
+                    revealElements.forEach(el => observer.observe(el));
+                });
+
+                onUnmounted(() => {
+                    window.removeEventListener('scroll', handleScroll);
+                    if (observer) observer.disconnect();
+                });
+
+                return {
+                    isScrolled,
+                    faqs,
+                    activeFaq,
+                    toggleFaq,
+                    formData,
+                    isSubmitting,
+                    submitSuccess,
+                    submitForm
+                };
+            }
+        }).mount('#app');
+    </script>
 </body>
 </html>

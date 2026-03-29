@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="zh-Hant" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digitools | 客製化軟體開發與數位轉型顧問</title>
+    <meta name="description" content="協助企業梳理流程、設計系統、導入工具、優化營運的數位成長夥伴。提供客製化軟體開發與數位陪跑計畫。">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Noto Sans TC', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0fdfa',
+                            100: '#ccfbf1',
+                            200: '#99f6e4',
+                            300: '#5eead4',
+                            400: '#2dd4bf',
+                            500: '#14b8a6',
+                            600: '#0d9488',
+                            700: '#0f766e',
+                            800: '#115e59',
+                            900: '#134e4a',
+                            950: '#042f2e',
+                        },
+                        surface: {
+                            50: '#f8fafc',
+                            100: '#f1f5f9',
+                            800: '#1e293b',
+                            900: '#0f172a',
+                        }
+                    },
+                    boxShadow: {
+                        'soft': '0 4px 40px -2px rgba(0, 0, 0, 0.05)',
+                        'glow': '0 0 40px -10px rgba(13, 148, 136, 0.3)',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Scroll Reveal Animation Classes */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .reveal-delay-1 { transition-delay: 0.1s; }
+        .reveal-delay-2 { transition-delay: 0.2s; }
+        .reveal-delay-3 { transition-delay: 0.3s; }
+
+        /* Custom Gradients & Patterns */
+        .bg-grid-pattern {
+            background-image: radial-gradient(rgba(15, 23, 42, 0.1) 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+        .hero-glow {
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(20,184,166,0.15) 0%, rgba(255,255,255,0) 70%);
+            top: -100px;
+            right: -100px;
+            z-index: -1;
+            border-radius: 50%;
+        }
+        
+        /* Glassmorphism utility */
+        .glass {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        /* Abstract UI Mockup Elements */
+        .mockup-line {
+            height: 4px;
+            background: #e2e8f0;
+            border-radius: 2px;
+            margin-bottom: 12px;
+        }
+        .mockup-line.w-short { width: 40%; }
+        .mockup-line.w-long { width: 80%; }
+        .mockup-line.brand { background: #14b8a6; }
+    </style>
+</head>
+<body class="bg-surface-50 text-slate-800 font-sans antialiased overflow-x-hidden selection:bg-brand-500 selection:text-white">
+
+    <!-- 1. Navbar -->
+    <header id="navbar" class="fixed top-0 w-full z-50 transition-all duration-300 bg-transparent py-4">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8 flex justify-between items-center">
+            <!-- Logo -->
+            <a href="#" class="flex items-center gap-2 group">
+                <div class="w-8 h-8 rounded-lg bg-surface-900 flex items-center justify-center text-white group-hover:bg-brand-600 transition-colors">
+                    <i class="ph ph-hexagon text-xl"></i>
+                </div>
+                <span class="font-bold text-xl tracking-tight text-surface-900">Digitools.</span>
+            </a>
+
+            <!-- Desktop Nav -->
+            <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-slate-600">
+                <a href="#services" class="hover:text-brand-600 transition-colors">服務內容</a>
+                <a href="#cases" class="hover:text-brand-600 transition-colors">實際案例</a>
+                <a href="#process" class="hover:text-brand-600 transition-colors">合作方式</a>
+                <a href="#faq" class="hover:text-brand-600 transition-colors">常見問題</a>
+            </nav>
+
+            <!-- CTA & Mobile Toggle -->
+            <div class="flex items-center gap-4">
+                <a href="#contact" class="hidden md:inline-flex items-center justify-center px-5 py-2.5 text-sm font-medium text-white bg-surface-900 rounded-full hover:bg-brand-600 transition-colors shadow-sm">
+                    預約顧問聊聊
+                </a>
+                <button id="mobile-menu-btn" class="md:hidden text-slate-800 text-2xl p-2">
+                    <i class="ph ph-list"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden absolute top-full left-0 w-full bg-white shadow-lg border-t border-slate-100 p-6 flex-col gap-4 z-40">
+            <a href="#services" class="text-base font-medium text-slate-800 py-2 border-b border-slate-100">服務內容</a>
+            <a href="#cases" class="text-base font-medium text-slate-800 py-2 border-b border-slate-100">實際案例</a>
+            <a href="#process" class="text-base font-medium text-slate-800 py-2 border-b border-slate-100">合作方式</a>
+            <a href="#faq" class="text-base font-medium text-slate-800 py-2 border-b border-slate-100">常見問題</a>
+            <a href="#contact" class="mt-4 w-full text-center px-5 py-3 text-base font-medium text-white bg-surface-900 rounded-lg">預約顧問聊聊</a>
+        </div>
+    </header>
+
+    <!-- 2. Hero Section -->
+    <section class="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden bg-surface-50">
+        <div class="bg-grid-pattern absolute inset-0 opacity-40"></div>
+        <div class="hero-glow"></div>
+        
+        <div class="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
+            <div class="grid lg:grid-cols-2 gap-16 items-center">
+                
+                <!-- Text Content -->
+                <div class="reveal">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 border border-slate-200 text-xs font-semibold tracking-wider text-slate-600 uppercase mb-6">
+                        <span class="w-2 h-2 rounded-full bg-brand-500"></span>
+                        Strategic Build & Digital Growth
+                    </div>
+                    <h1 class="text-4xl md:text-5xl lg:text-6xl font-black text-surface-900 leading-[1.15] mb-6 tracking-tight">
+                        將混亂的人工作業<br>
+                        轉化為可規模化的<br>
+                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-600 to-blue-600">數位營運系統</span>
+                    </h1>
+                    <p class="text-lg md:text-xl text-slate-600 mb-10 leading-relaxed max-w-xl">
+                        我們不只寫程式。透過流程診斷、客製化工具開發與長期陪跑，我們協助企業將分散的資料與重複流程，打造成專屬的自動化工作流與管理大腦。
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <a href="#contact" class="inline-flex items-center justify-center gap-2 px-8 py-4 text-base font-medium text-white bg-surface-900 rounded-xl hover:bg-brand-600 transition-all shadow-md hover:shadow-xl hover:-translate-y-0.5">
+                            預約免費流程診斷
+                            <i class="ph ph-arrow-right"></i>
+                        </a>
+                        <a href="#cases" class="inline-flex items-center justify-center gap-2 px-8 py-4 text-base font-medium text-surface-900 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 transition-all">
+                            查看實際轉型案例
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Abstract Visual -->
+                <div class="relative w-full h-full min-h-[400px] reveal reveal-delay-2 hidden md:block">
+                    <!-- Before State (Chaos) -->
+                    <div class="absolute top-0 left-0 w-64 p-6 bg-white rounded-2xl shadow-soft border border-slate-100 transform -rotate-6 z-10 opacity-70 blur-[1px]">
+                        <div class="flex items-center gap-3 mb-4 text-slate-400">
+                            <i class="ph-fill ph-file-xls text-2xl text-green-600"></i>
+                            <span class="text-sm font-medium">人工報表_v7.xlsx</span>
+                        </div>
+                        <div class="mockup-line w-long"></div>
+                        <div class="mockup-line w-short"></div>
+                        <div class="mockup-line w-full"></div>
+                    </div>
+
+                    <div class="absolute top-24 left-12 w-56 p-4 bg-white rounded-xl shadow-soft border border-slate-100 transform -rotate-12 z-10 opacity-60 blur-[2px]">
+                        <div class="flex items-center gap-3 mb-2 text-slate-400">
+                            <i class="ph-fill ph-chat-circle-text text-xl text-green-500"></i>
+                            <span class="text-xs font-medium">散落的對話紀錄</span>
+                        </div>
+                        <div class="mockup-line w-long"></div>
+                        <div class="mockup-line w-short"></div>
+                    </div>
+
+                    <!-- Arrow/Flow -->
+                    <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20">
+                        <div class="w-12 h-12 bg-surface-900 rounded-full flex items-center justify-center text-white shadow-glow">
+                            <i class="ph ph-arrow-right text-xl"></i>
+                        </div>
+                    </div>
+
+                    <!-- After State (System) -->
+                    <div class="absolute top-12 right-0 w-80 p-6 glass rounded-2xl shadow-xl z-30">
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="text-sm font-bold text-surface-900">營運控制台</h3>
+                            <span class="px-2 py-1 bg-brand-50 text-brand-600 text-[10px] font-bold rounded">系統運作中</span>
+                        </div>
+                        <!-- Mockup Chart -->
+                        <div class="flex items-end gap-2 h-24 mb-6">
+                            <div class="w-1/6 bg-slate-100 rounded-t-sm h-[40%]"></div>
+                            <div class="w-1/6 bg-slate-100 rounded-t-sm h-[60%]"></div>
+                            <div class="w-1/6 bg-slate-200 rounded-t-sm h-[50%]"></div>
+                            <div class="w-1/6 bg-brand-200 rounded-t-sm h-[80%]"></div>
+                            <div class="w-1/6 bg-brand-400 rounded-t-sm h-[100%]"></div>
+                            <div class="w-1/6 bg-brand-500 rounded-t-sm h-[90%] relative">
+                                <div class="absolute -top-6 -right-2 bg-surface-900 text-white text-[10px] py-1 px-2 rounded">+45%</div>
+                            </div>
+                        </div>
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between p-3 bg-white rounded-lg border border-slate-100">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center"><i class="ph ph-arrows-merge"></i></div>
+                                    <div>
+                                        <div class="text-xs font-bold text-slate-800">資料自動同步</div>
+                                        <div class="text-[10px] text-slate-500">節省 12 小時/週</div>
+                                    </div>
+                                </div>
+                                <i class="ph-fill ph-check-circle text-brand-500"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. Pain Points Section -->
+    <section class="py-24 bg-white relative">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="text-center max-w-2xl mx-auto mb-16 reveal">
+                <h2 class="text-3xl font-bold text-surface-900 mb-4">營運成長的瓶頸<br>通常來自於系統跟不上業務</h2>
+                <p class="text-slate-600">當企業規模擴大，過去堪用的「人工拼湊」流程，將成為吃掉利潤與擴張速度的最大阻力。</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Pain Point 1 -->
+                <div class="p-8 rounded-2xl bg-surface-50 border border-slate-100 hover:-translate-y-1 transition-transform reveal reveal-delay-1">
+                    <div class="w-12 h-12 rounded-xl bg-red-50 text-red-600 flex items-center justify-center text-2xl mb-6">
+                        <i class="ph ph-files"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-surface-900 mb-3">資料碎裂在無數檔案中</h3>
+                    <p class="text-slate-600 text-sm leading-relaxed">
+                        客戶資料在 LINE、訂單在 Excel、任務在 Email。每次要找資訊或產出報表，都需要耗費大量人工比對與整理。
+                    </p>
+                </div>
+                <!-- Pain Point 2 -->
+                <div class="p-8 rounded-2xl bg-surface-50 border border-slate-100 hover:-translate-y-1 transition-transform reveal reveal-delay-2">
+                    <div class="w-12 h-12 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center text-2xl mb-6">
+                        <i class="ph ph-arrows-clockwise"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-surface-900 mb-3">高成本的重複性作業</h3>
+                    <p class="text-slate-600 text-sm leading-relaxed">
+                        員工每天花幾小時在複製貼上、手動發信、搬運資料。這些毫無產值的動作，佔據了團隊思考與服務客戶的時間。
+                    </p>
+                </div>
+                <!-- Pain Point 3 -->
+                <div class="p-8 rounded-2xl bg-surface-50 border border-slate-100 hover:-translate-y-1 transition-transform reveal reveal-delay-3">
+                    <div class="w-12 h-12 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center text-2xl mb-6">
+                        <i class="ph ph-eye-slash"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-surface-900 mb-3">缺乏即時數據，憑感覺決策</h3>
+                    <p class="text-slate-600 text-sm leading-relaxed">
+                        老闆或主管無法一眼看出目前的營運健康度、專案進度或異常狀況。問題往往要等到月底結算時才爆發。
+                    </p>
+                </div>
+                 <!-- Pain Point 4 -->
+                 <div class="p-8 rounded-2xl bg-surface-50 border border-slate-100 hover:-translate-y-1 transition-transform reveal reveal-delay-1">
+                    <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-2xl mb-6">
+                        <i class="ph ph-puzzle-piece"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-surface-900 mb-3">SaaS 工具很多，但互相斷鏈</h3>
+                    <p class="text-slate-600 text-sm leading-relaxed">
+                        買了各式各樣的標準化軟體，卻發現彼此無法串接，最後還是要靠人工在不同系統間當「人肉 API」。
+                    </p>
+                </div>
+                <!-- Pain Point 5 -->
+                <div class="p-8 rounded-2xl bg-surface-50 border border-slate-100 hover:-translate-y-1 transition-transform reveal reveal-delay-2">
+                    <div class="w-12 h-12 rounded-xl bg-yellow-50 text-yellow-600 flex items-center justify-center text-2xl mb-6">
+                        <i class="ph ph-users"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-surface-900 mb-3">高度依賴少數「熟手」</h3>
+                    <p class="text-slate-600 text-sm leading-relaxed">
+                        複雜的作業邏輯只存在某幾位老員工的腦袋裡。新人難以接手，一旦人員異動，營運就會面臨癱瘓風險。
+                    </p>
+                </div>
+                <!-- Pain Point 6 -->
+                <div class="p-8 rounded-2xl bg-surface-50 border border-slate-100 hover:-translate-y-1 transition-transform reveal reveal-delay-3">
+                    <div class="w-12 h-12 rounded-xl bg-slate-100 text-slate-600 flex items-center justify-center text-2xl mb-6">
+                        <i class="ph ph-question"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-surface-900 mb-3">想數位化，不知從何開始</h3>
+                    <p class="text-slate-600 text-sm leading-relaxed">
+                        知道必須轉型，但市面上的套裝軟體不合用，找一般外包又怕溝通落差做錯東西，導致計畫一再停擺。
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. Value Proposition -->
+    <section class="py-24 bg-surface-900 text-white relative overflow-hidden">
+        <!-- Decorative bg -->
+        <div class="absolute top-0 left-0 w-full h-full overflow-hidden z-0">
+            <div class="absolute -top-[20%] -right-[10%] w-[50%] h-[50%] rounded-full bg-brand-600/20 blur-[100px]"></div>
+            <div class="absolute -bottom-[20%] -left-[10%] w-[50%] h-[50%] rounded-full bg-blue-600/20 blur-[100px]"></div>
+        </div>
+
+        <div class="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
+            <div class="mb-16 reveal">
+                <span class="text-brand-400 font-semibold tracking-wider text-sm mb-2 block">Our Philosophy</span>
+                <h2 class="text-3xl md:text-4xl font-bold mb-6">我們不只開發工具<br>而是協助你建立更有效率的營運系統</h2>
+                <p class="text-slate-400 max-w-2xl text-lg">
+                    真正有效的數位化，不是導入更多複雜的軟體，而是讓混亂的流程變得可管理、可追蹤、可自動化。我們是介於「商業顧問」與「技術開發」之間的橋樑。
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8 border-t border-slate-800 pt-12">
+                <div class="reveal reveal-delay-1">
+                    <div class="text-4xl text-brand-400 mb-6 font-black opacity-50">01</div>
+                    <h3 class="text-xl font-bold mb-3">先看流程，再做系統</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">
+                        我們不會一開始就談要用什麼程式語言。我們第一步是拆解你的商業目標、業務邏輯與人工痛點，確保開發出來的系統真正解決核心問題。
+                    </p>
+                </div>
+                <div class="reveal reveal-delay-2">
+                    <div class="text-4xl text-brand-400 mb-6 font-black opacity-50">02</div>
+                    <h3 class="text-xl font-bold mb-3">客製設計，不硬套框架</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">
+                        每家企業的管理哲學都不同。我們不推銷削足適履的套裝軟體，而是針對你的實際運作場景，打造介面極簡、極度貼合工作習慣的專屬工具。
+                    </p>
+                </div>
+                <div class="reveal reveal-delay-3">
+                    <div class="text-4xl text-brand-400 mb-6 font-black opacity-50">03</div>
+                    <h3 class="text-xl font-bold mb-3">持續優化，而非做完消失</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">
+                        系統上線只是開始。我們透過陪跑計畫，根據實際使用數據與業務擴張需求，持續迭代系統功能，確保數位資產能跟著企業一起成長。
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. Accompaniment Program (Phases) -->
+    <section id="process" class="py-24 bg-surface-50">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-20 reveal">
+                <h2 class="text-3xl font-bold text-surface-900 mb-4">數位轉型不是一次性專案<br>而是持續成長的「陪跑計畫」</h2>
+                <p class="text-slate-600">
+                    我們提供彈性的合作模式。你可以依據需求選擇單一專案導入，或透過長期訂閱制，讓我們成為你的專屬數位營運團隊。
+                </p>
+            </div>
+
+            <div class="relative max-w-4xl mx-auto">
+                <!-- Vertical Line for Desktop -->
+                <div class="hidden md:block absolute left-[50%] top-0 bottom-0 w-px bg-slate-200 -translate-x-1/2"></div>
+
+                <!-- Phase 1 -->
+                <div class="relative flex flex-col md:flex-row items-center justify-between mb-16 reveal">
+                    <div class="md:w-[45%] text-right pr-0 md:pr-8 order-2 md:order-1 mt-6 md:mt-0 w-full">
+                        <h3 class="text-xl font-bold text-surface-900 mb-2">Phase 1: 流程診斷與問題盤點</h3>
+                        <p class="text-slate-600 text-sm mb-4">深入了解企業現狀，找出最耗時、最容易出錯的環節，評估數位化的優先順序與潛在 ROI。</p>
+                        <ul class="text-sm text-slate-500 space-y-1 inline-block text-left">
+                            <li><i class="ph ph-check text-brand-500 mr-1"></i> 跨部門訪談與痛點梳理</li>
+                            <li><i class="ph ph-check text-brand-500 mr-1"></i> 既有工具與資料流盤點</li>
+                            <li><i class="ph ph-check text-brand-500 mr-1"></i> 產出數位優化藍圖建議</li>
+                        </ul>
+                    </div>
+                    <div class="absolute left-0 md:left-[50%] -translate-x-0 md:-translate-x-1/2 w-10 h-10 rounded-full bg-white border-4 border-surface-50 shadow-md flex items-center justify-center text-brand-600 font-bold z-10 order-1 md:order-2">1</div>
+                    <div class="md:w-[45%] order-3 hidden md:block"></div>
+                </div>
+
+                <!-- Phase 2 -->
+                <div class="relative flex flex-col md:flex-row items-center justify-between mb-16 reveal">
+                    <div class="md:w-[45%] hidden md:block order-1"></div>
+                    <div class="absolute left-0 md:left-[50%] -translate-x-0 md:-translate-x-1/2 w-10 h-10 rounded-full bg-white border-4 border-surface-50 shadow-md flex items-center justify-center text-brand-600 font-bold z-10 order-1 md:order-2">2</div>
+                    <div class="md:w-[45%] text-left pl-12 md:pl-8 order-2 md:order-3 mt-6 md:mt-0 w-full relative">
+                        <h3 class="text-xl font-bold text-surface-900 mb-2">Phase 2: 解決方案與原型規劃</h3>
+                        <p class="text-slate-600 text-sm mb-4">不急著寫扣，先用 Wireframe 或原型確認系統操作邏輯，確保雙方對成品的想像完全一致。</p>
+                        <ul class="text-sm text-slate-500 space-y-1">
+                            <li><i class="ph ph-check text-brand-500 mr-1"></i> 資訊架構(IA)與資料庫規劃</li>
+                            <li><i class="ph ph-check text-brand-500 mr-1"></i> 使用者介面(UI)與操作動線設計</li>
+                            <li><i class="ph ph-check text-brand-500 mr-1"></i> 技術堆疊與 API 串接評估</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Phase 3 -->
+                <div class="relative flex flex-col md:flex-row items-center justify-between mb-16 reveal">
+                    <div class="md:w-[45%] text-left md:text-right pr-0 md:pr-8 pl-12 md:pl-0 order-2 md:order-1 mt-6 md:mt-0 w-full relative">
+                        <h3 class="text-xl font-bold text-surface-900 mb-2">Phase 3: 客製開發與無縫導入</h3>
+                        <p class="text-slate-600 text-sm mb-4">以敏捷方式進行開發，分階段交付核心功能。並協助內部教育訓練，確保團隊順利過渡到新系統。</p>
+                        <ul class="text-sm text-slate-500 space-y-1 inline-block text-left">
+                            <li><i class="ph ph-check text-brand-500 mr-1"></i> 前後端系統與自動化開發</li>
+                            <li><i class="ph ph-check text-brand-500 mr-1"></i> 舊資料清洗與轉移</li>
+                            <li><i class="ph ph-check text-brand-500 mr-1"></i> 內部操作手冊與上線培訓</li>
+                        </ul>
+                    </div>
+                    <div class="absolute left-0 md:left-[50%] -translate-x-0 md:-translate-x-1/2 w-10 h-10 rounded-full bg-surface-900 border-4 border-surface-50 shadow-md flex items-center justify-center text-white font-bold z-10 order-1 md:order-2">3</div>
+                    <div class="md:w-[45%] order-3 hidden md:block"></div>
+                </div>
+
+                <!-- Phase 4 -->
+                <div class="relative flex flex-col md:flex-row items-center justify-between reveal">
+                    <div class="md:w-[45%] hidden md:block order-1"></div>
+                    <div class="absolute left-0 md:left-[50%] -translate-x-0 md:-translate-x-1/2 w-10 h-10 rounded-full bg-brand-500 border-4 border-surface-50 shadow-md flex items-center justify-center text-white font-bold z-10 order-1 md:order-2"><i class="ph ph-infinity"></i></div>
+                    <div class="md:w-[45%] text-left pl-12 md:pl-8 order-2 md:order-3 mt-6 md:mt-0 w-full relative">
+                        <div class="inline-block px-2 py-1 bg-brand-50 text-brand-600 text-xs font-bold rounded mb-2">訂閱制/陪跑專屬</div>
+                        <h3 class="text-xl font-bold text-surface-900 mb-2">Phase 4: 數據追蹤與持續優化</h3>
+                        <p class="text-slate-600 text-sm mb-4">系統上線後，根據真實使用回饋進行微調，並隨業務擴張開發新模組，成為你長期的技術後盾。</p>
+                        <ul class="text-sm text-slate-500 space-y-1">
+                            <li><i class="ph ph-check text-brand-500 mr-1"></i> 系統維運與異常監控</li>
+                            <li><i class="ph ph-check text-brand-500 mr-1"></i> 營運數據報表分析與解讀</li>
+                            <li><i class="ph ph-check text-brand-500 mr-1"></i> 定期顧問會議與功能迭代</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 6. Solutions & Tech Capabilities -->
+    <section id="services" class="py-24 bg-white">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="mb-16 reveal">
+                <h2 class="text-3xl font-bold text-surface-900 mb-4">以商業結果為導向的技術實力</h2>
+                <p class="text-slate-600 max-w-2xl">我們不推銷花俏的技術名詞，只提供能實際降低成本、提升效率、驅動營收的解決方案。</p>
+            </div>
+
+            <div class="grid lg:grid-cols-2 gap-8">
+                <!-- Sol 1 -->
+                <div class="p-8 rounded-2xl bg-surface-50 border border-slate-100 hover:shadow-lg transition-all group reveal">
+                    <div class="w-14 h-14 rounded-xl bg-white shadow-sm flex items-center justify-center text-2xl text-slate-700 mb-6 group-hover:text-brand-600 transition-colors">
+                        <i class="ph ph-spider-web"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-surface-900 mb-3">資料蒐集與自動爬蟲</h3>
+                    <p class="text-slate-600 text-sm mb-6">取代人工搜尋與複製貼上。自動從網路獲取關鍵資訊，整理成結構化資料，為決策提供彈藥。</p>
+                    <ul class="text-sm text-slate-700 space-y-2">
+                        <li class="flex items-center gap-2"><i class="ph ph-caret-right text-brand-500"></i> 競品價格與庫存即時監測</li>
+                        <li class="flex items-center gap-2"><i class="ph ph-caret-right text-brand-500"></i> 潛在客戶名單自動收集與過濾</li>
+                        <li class="flex items-center gap-2"><i class="ph ph-caret-right text-brand-500"></i> 產業新聞與政府公開資料整合</li>
+                    </ul>
+                </div>
+
+                <!-- Sol 2 -->
+                <div class="p-8 rounded-2xl bg-surface-50 border border-slate-100 hover:shadow-lg transition-all group reveal reveal-delay-1">
+                    <div class="w-14 h-14 rounded-xl bg-white shadow-sm flex items-center justify-center text-2xl text-slate-700 mb-6 group-hover:text-brand-600 transition-colors">
+                        <i class="ph ph-chart-line-up"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-surface-900 mb-3">營運儀表板 (Dashboard)</h3>
+                    <p class="text-slate-600 text-sm mb-6">打破資料黑箱。將散落各處的營運數據匯整，建立可視化的決策中心，讓管理層一目瞭然。</p>
+                    <ul class="text-sm text-slate-700 space-y-2">
+                        <li class="flex items-center gap-2"><i class="ph ph-caret-right text-brand-500"></i> 跨平台銷售數據視覺化</li>
+                        <li class="flex items-center gap-2"><i class="ph ph-caret-right text-brand-500"></i> 員工 KPI 與專案進度即時追蹤</li>
+                        <li class="flex items-center gap-2"><i class="ph ph-caret-right text-brand-500"></i> 異常警報與自訂報表自動寄送</li>
+                    </ul>
+                </div>
+
+                <!-- Sol 3 -->
+                <div class="p-8 rounded-2xl bg-surface-50 border border-slate-100 hover:shadow-lg transition-all group reveal">
+                    <div class="w-14 h-14 rounded-xl bg-white shadow-sm flex items-center justify-center text-2xl text-slate-700 mb-6 group-hover:text-brand-600 transition-colors">
+                        <i class="ph ph-desktop"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-surface-900 mb-3">客製化後台與系統開發</h3>
+                    <p class="text-slate-600 text-sm mb-6">告別不合用的套裝軟體。從零打造專屬於你商業邏輯的內部管理系統或客戶服務平台。</p>
+                    <ul class="text-sm text-slate-700 space-y-2">
+                        <li class="flex items-center gap-2"><i class="ph ph-caret-right text-brand-500"></i> 訂單/庫存/進銷存管理後台</li>
+                        <li class="flex items-center gap-2"><i class="ph ph-caret-right text-brand-500"></i> 企業內部簽核與派單系統</li>
+                        <li class="flex items-center gap-2"><i class="ph ph-caret-right text-brand-500"></i> B2B 客戶專屬入口網站 (Portal)</li>
+                    </ul>
+                </div>
+
+                <!-- Sol 4 -->
+                <div class="p-8 rounded-2xl bg-surface-50 border border-slate-100 hover:shadow-lg transition-all group reveal reveal-delay-1">
+                    <div class="w-14 h-14 rounded-xl bg-white shadow-sm flex items-center justify-center text-2xl text-slate-700 mb-6 group-hover:text-brand-600 transition-colors">
+                        <i class="ph ph-brain"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-surface-900 mb-3">AI 流程設計與自動化整合</h3>
+                    <p class="text-slate-600 text-sm mb-6">不只是聊天機器人。將 LLM (大型語言模型) 融入日常工作流，處理耗時的判斷與內容生成。</p>
+                    <ul class="text-sm text-slate-700 space-y-2">
+                        <li class="flex items-center gap-2"><i class="ph ph-caret-right text-brand-500"></i> 企業專屬知識庫 AI 查詢問答</li>
+                        <li class="flex items-center gap-2"><i class="ph ph-caret-right text-brand-500"></i> 客服信件自動分類與草稿生成</li>
+                        <li class="flex items-center gap-2"><i class="ph ph-caret-right text-brand-500"></i> 文件資料擷取 (PDF轉結構化資料)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 7. Case Studies -->
+    <!-- 實際落地的商業轉變：以下案例內容已清空，請依需求替換為你自己的案例 -->
+    <section id="cases" class="py-24 bg-surface-900 text-white relative">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="mb-16 reveal">
+                <h2 class="text-3xl font-bold mb-4">實際落地的商業轉變</h2>
+                <p class="text-slate-400 max-w-2xl">看看我們如何協助不同產業的客戶，將混亂轉化為秩序，將人力轉化為算力。</p>
+            </div>
+
+            <div class="grid lg:grid-cols-2 gap-6">
+                <!-- Case 1：請替換為你的案例內容 -->
+                <div class="bg-surface-800 rounded-2xl p-8 border border-slate-700 hover:border-brand-500/50 transition-colors reveal">
+                    <div class="flex items-center gap-2 mb-4">
+                        <span class="px-2 py-1 bg-slate-700 text-slate-300 text-xs rounded"></span>
+                        <span class="px-2 py-1 bg-slate-700 text-slate-300 text-xs rounded"></span>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4"></h3>
+                    <div class="space-y-4 mb-6">
+                        <div>
+                            <div class="text-xs text-brand-400 font-semibold mb-1">面臨挑戰</div>
+                            <p class="text-sm text-slate-400"></p>
+                        </div>
+                        <div>
+                            <div class="text-xs text-brand-400 font-semibold mb-1">解決方案</div>
+                            <p class="text-sm text-slate-400"></p>
+                        </div>
+                    </div>
+                    <div class="pt-4 border-t border-slate-700">
+                        <div class="text-sm font-bold text-white mb-2">商業成果</div>
+                        <ul class="text-sm text-slate-400 space-y-1"></ul>
+                    </div>
+                </div>
+
+                <!-- Case 2：請替換為你的案例內容 -->
+                <div class="bg-surface-800 rounded-2xl p-8 border border-slate-700 hover:border-brand-500/50 transition-colors reveal reveal-delay-1">
+                    <div class="flex items-center gap-2 mb-4">
+                        <span class="px-2 py-1 bg-slate-700 text-slate-300 text-xs rounded"></span>
+                        <span class="px-2 py-1 bg-slate-700 text-slate-300 text-xs rounded"></span>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4"></h3>
+                    <div class="space-y-4 mb-6">
+                        <div>
+                            <div class="text-xs text-brand-400 font-semibold mb-1">面臨挑戰</div>
+                            <p class="text-sm text-slate-400"></p>
+                        </div>
+                        <div>
+                            <div class="text-xs text-brand-400 font-semibold mb-1">解決方案</div>
+                            <p class="text-sm text-slate-400"></p>
+                        </div>
+                    </div>
+                    <div class="pt-4 border-t border-slate-700">
+                        <div class="text-sm font-bold text-white mb-2">商業成果</div>
+                        <ul class="text-sm text-slate-400 space-y-1"></ul>
+                    </div>
+                </div>
+
+                <!-- Case 3：請替換為你的案例內容 -->
+                <div class="bg-surface-800 rounded-2xl p-8 border border-slate-700 hover:border-brand-500/50 transition-colors reveal">
+                    <div class="flex items-center gap-2 mb-4">
+                        <span class="px-2 py-1 bg-slate-700 text-slate-300 text-xs rounded"></span>
+                        <span class="px-2 py-1 bg-slate-700 text-slate-300 text-xs rounded"></span>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4"></h3>
+                    <div class="space-y-4 mb-6">
+                        <div>
+                            <div class="text-xs text-brand-400 font-semibold mb-1">面臨挑戰</div>
+                            <p class="text-sm text-slate-400"></p>
+                        </div>
+                        <div>
+                            <div class="text-xs text-brand-400 font-semibold mb-1">解決方案</div>
+                            <p class="text-sm text-slate-400"></p>
+                        </div>
+                    </div>
+                    <div class="pt-4 border-t border-slate-700">
+                        <div class="text-sm font-bold text-white mb-2">商業成果</div>
+                        <ul class="text-sm text-slate-400 space-y-1"></ul>
+                    </div>
+                </div>
+
+                <!-- Case 4：請替換為你的案例內容 -->
+                <div class="bg-surface-800 rounded-2xl p-8 border border-slate-700 hover:border-brand-500/50 transition-colors reveal reveal-delay-1">
+                    <div class="flex items-center gap-2 mb-4">
+                        <span class="px-2 py-1 bg-slate-700 text-slate-300 text-xs rounded"></span>
+                        <span class="px-2 py-1 bg-slate-700 text-slate-300 text-xs rounded"></span>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4"></h3>
+                    <div class="space-y-4 mb-6">
+                        <div>
+                            <div class="text-xs text-brand-400 font-semibold mb-1">面臨挑戰</div>
+                            <p class="text-sm text-slate-400"></p>
+                        </div>
+                        <div>
+                            <div class="text-xs text-brand-400 font-semibold mb-1">解決方案</div>
+                            <p class="text-sm text-slate-400"></p>
+                        </div>
+                    </div>
+                    <div class="pt-4 border-t border-slate-700">
+                        <div class="text-sm font-bold text-white mb-2">商業成果</div>
+                        <ul class="text-sm text-slate-400 space-y-1"></ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 9. Comparison Section -->
+    <section class="py-24 bg-surface-50">
+        <div class="max-w-5xl mx-auto px-6 lg:px-8">
+            <div class="text-center mb-16 reveal">
+                <h2 class="text-3xl font-bold text-surface-900 mb-4">為什麼不找一般外包就好？</h2>
+                <p class="text-slate-600">你買的不只是幾行程式碼，而是確保這套系統真的能幫公司賺錢或省錢的能力。</p>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden reveal">
+                <div class="grid grid-cols-3 bg-surface-100 border-b border-slate-200">
+                    <div class="p-6 font-bold text-slate-500">比較項目</div>
+                    <div class="p-6 font-bold text-slate-500 text-center">一般接案外包</div>
+                    <div class="p-6 font-bold text-brand-700 bg-brand-50 text-center flex flex-col items-center justify-center">
+                        <div class="w-8 h-8 rounded-lg bg-brand-600 text-white flex items-center justify-center mb-2">
+                            <i class="ph ph-hexagon text-lg"></i>
+                        </div>
+                        Digitools 數位顧問
+                    </div>
+                </div>
+                
+                <!-- Row 1 -->
+                <div class="grid grid-cols-3 border-b border-slate-100 hover:bg-slate-50 transition-colors">
+                    <div class="p-4 md:p-6 font-medium text-slate-800 flex items-center">出發點</div>
+                    <div class="p-4 md:p-6 text-slate-500 text-center text-sm">按照客戶開的規格單，照圖施工</div>
+                    <div class="p-4 md:p-6 text-surface-900 font-medium bg-brand-50/30 text-center text-sm">從商業痛點出發，主動建議最佳解法</div>
+                </div>
+                <!-- Row 2 -->
+                <div class="grid grid-cols-3 border-b border-slate-100 hover:bg-slate-50 transition-colors">
+                    <div class="p-4 md:p-6 font-medium text-slate-800 flex items-center">對流程的理解</div>
+                    <div class="p-4 md:p-6 text-slate-500 text-center text-sm">只懂技術語言，需客戶自行轉換邏輯</div>
+                    <div class="p-4 md:p-6 text-surface-900 font-medium bg-brand-50/30 text-center text-sm">懂營運與管理，能梳理跨部門流程</div>
+                </div>
+                <!-- Row 3 -->
+                <div class="grid grid-cols-3 border-b border-slate-100 hover:bg-slate-50 transition-colors">
+                    <div class="p-4 md:p-6 font-medium text-slate-800 flex items-center">功能規劃</div>
+                    <div class="p-4 md:p-6 text-slate-500 text-center text-sm">功能越多越好，容易做出沒人用的蚊子館</div>
+                    <div class="p-4 md:p-6 text-surface-900 font-medium bg-brand-50/30 text-center text-sm">極簡設計，專注核心 MVP，降低上手門檻</div>
+                </div>
+                <!-- Row 4 -->
+                <div class="grid grid-cols-3 hover:bg-slate-50 transition-colors">
+                    <div class="p-4 md:p-6 font-medium text-slate-800 flex items-center">上線後支援</div>
+                    <div class="p-4 md:p-6 text-slate-500 text-center text-sm">保固期過後修改困難，結案即失聯</div>
+                    <div class="p-4 md:p-6 text-surface-900 font-medium bg-brand-50/30 text-center text-sm">提供長期陪跑方案，隨業務擴張持續迭代</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 10. ROI / Business Benefits -->
+    <section class="py-24 bg-white border-t border-slate-100">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="text-center mb-16 reveal">
+                <span class="text-brand-600 font-semibold tracking-wider text-sm mb-2 block">Business Impact</span>
+                <h2 class="text-3xl font-bold text-surface-900">投資一套好系統，是報酬率最高的決策</h2>
+            </div>
+
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+                <div class="text-center reveal">
+                    <div class="text-4xl lg:text-5xl font-black text-surface-900 mb-2 font-sans tracking-tighter">↓ 70<span class="text-2xl text-slate-400 font-medium">%</span></div>
+                    <div class="text-sm font-bold text-slate-800 mb-1">降低重複作業</div>
+                    <p class="text-xs text-slate-500">將人力從複製貼上釋放，轉向高價值工作</p>
+                </div>
+                <div class="text-center reveal reveal-delay-1">
+                    <div class="text-4xl lg:text-5xl font-black text-surface-900 mb-2 font-sans tracking-tighter">100<span class="text-2xl text-slate-400 font-medium">%</span></div>
+                    <div class="text-sm font-bold text-slate-800 mb-1">資訊透明度</div>
+                    <p class="text-xs text-slate-500">告別黑箱管理，隨時掌握營運真實數據</p>
+                </div>
+                <div class="text-center reveal reveal-delay-2">
+                    <div class="text-4xl lg:text-5xl font-black text-surface-900 mb-2 font-sans tracking-tighter">↑ 3<span class="text-2xl text-slate-400 font-medium">x</span></div>
+                    <div class="text-sm font-bold text-slate-800 mb-1">加快回應速度</div>
+                    <p class="text-xs text-slate-500">自動化資料流讓跨部門溝通零時差</p>
+                </div>
+                <div class="text-center reveal reveal-delay-3">
+                    <div class="text-4xl lg:text-5xl font-black text-surface-900 mb-2 font-sans tracking-tighter">∞</div>
+                    <div class="text-sm font-bold text-slate-800 mb-1">營運擴張力</div>
+                    <p class="text-xs text-slate-500">建立標準數位流程，接單再多也不怕崩潰</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 11. FAQ -->
+    <section id="faq" class="py-24 bg-surface-50 border-t border-slate-200">
+        <div class="max-w-3xl mx-auto px-6 lg:px-8">
+            <div class="text-center mb-16 reveal">
+                <h2 class="text-3xl font-bold text-surface-900 mb-4">常見問題 FAQ</h2>
+            </div>
+
+            <div class="space-y-4 reveal">
+                <!-- FAQ Item 1 -->
+                <div class="faq-item bg-white rounded-xl border border-slate-200 overflow-hidden">
+                    <button class="faq-btn w-full px-6 py-5 text-left flex justify-between items-center focus:outline-none">
+                        <span class="font-bold text-surface-900">你們適合什麼類型的公司？</span>
+                        <i class="ph ph-plus text-slate-400 transition-transform duration-300"></i>
+                    </button>
+                    <div class="faq-content hidden px-6 pb-5 text-slate-600 text-sm leading-relaxed">
+                        我們最常協助：傳統產業（製造、貿易）、中小企業、有一定營收規模的 B2B 服務業、或電商團隊。只要你感覺目前的 Excel/LINE/紙本流程已經成為阻礙擴張的瓶頸，需要一套專屬管理工具，我們都很適合聊聊。
+                    </div>
+                </div>
+
+                <!-- FAQ Item 2 -->
+                <div class="faq-item bg-white rounded-xl border border-slate-200 overflow-hidden">
+                    <button class="faq-btn w-full px-6 py-5 text-left flex justify-between items-center focus:outline-none">
+                        <span class="font-bold text-surface-900">我們沒有明確的需求規格書，也可以先聊嗎？</span>
+                        <i class="ph ph-plus text-slate-400 transition-transform duration-300"></i>
+                    </button>
+                    <div class="faq-content hidden px-6 pb-5 text-slate-600 text-sm leading-relaxed">
+                        當然可以。這正是我們「顧問式開發」的價值。大部分客戶一開始只有「覺得某個流程很卡」的感覺。我們會在前期交流中，透過提問與分析，幫你把模糊的痛點梳理成明確的系統功能需求。
+                    </div>
+                </div>
+
+                <!-- FAQ Item 3 -->
+                <div class="faq-item bg-white rounded-xl border border-slate-200 overflow-hidden">
+                    <button class="faq-btn w-full px-6 py-5 text-left flex justify-between items-center focus:outline-none">
+                        <span class="font-bold text-surface-900">只能開發大型系統嗎？想先做個小工具可以嗎？</span>
+                        <i class="ph ph-plus text-slate-400 transition-transform duration-300"></i>
+                    </button>
+                    <div class="faq-content hidden px-6 pb-5 text-slate-600 text-sm leading-relaxed">
+                        非常歡迎。我們其實非常鼓勵「從小處著手，逐步擴張 (Start small, scale fast)」。可以先針對最痛的單一環節（例如：自動抓競品資料、或是把一個耗時的報表自動化）開發一個小工具，看到成效後再考慮擴大規模。
+                    </div>
+                </div>
+
+                <!-- FAQ Item 4 -->
+                <div class="faq-item bg-white rounded-xl border border-slate-200 overflow-hidden">
+                    <button class="faq-btn w-full px-6 py-5 text-left flex justify-between items-center focus:outline-none">
+                        <span class="font-bold text-surface-900">如果公司已經有買了一些 SaaS 工具，可以跟你們開發的系統整合嗎？</span>
+                        <i class="ph ph-plus text-slate-400 transition-transform duration-300"></i>
+                    </button>
+                    <div class="faq-content hidden px-6 pb-5 text-slate-600 text-sm leading-relaxed">
+                        可以的。只要你們現有的 SaaS 系統有提供開放的 API (例如 Slack, LINE, Hubspot, Google Sheets 等)，我們都可以將客製化系統與之串接，打破工具間的資訊孤島。
+                    </div>
+                </div>
+
+                <!-- FAQ Item 5 -->
+                <div class="faq-item bg-white rounded-xl border border-slate-200 overflow-hidden">
+                    <button class="faq-btn w-full px-6 py-5 text-left flex justify-between items-center focus:outline-none">
+                        <span class="font-bold text-surface-900">合作方式一定是訂閱制嗎？費用怎麼算？</span>
+                        <i class="ph ph-plus text-slate-400 transition-transform duration-300"></i>
+                    </button>
+                    <div class="faq-content hidden px-6 pb-5 text-slate-600 text-sm leading-relaxed">
+                        我們提供彈性選擇。你可以採用「單次專案制」（報價買斷，含一定時間保固），也可以選擇「訂閱制/陪跑計畫」（每月支付固定費用，包含系統維運、微調與持續的顧問服務）。具體費用會根據需求複雜度，在第一次初步評估後提供。
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 12. Final CTA -->
+    <section id="contact" class="py-24 bg-surface-900 text-white relative overflow-hidden">
+        <div class="absolute inset-0 bg-brand-900/20"></div>
+        <div class="max-w-4xl mx-auto px-6 lg:px-8 relative z-10 text-center reveal">
+            <h2 class="text-4xl md:text-5xl font-bold mb-6 tracking-tight">
+                如果流程已經開始限制你的成長<br>就是時候重新設計工作方式了
+            </h2>
+            <p class="text-xl text-slate-300 mb-10 max-w-2xl mx-auto">
+                不需要一開始就規劃龐大的計畫。<br>我們可以先從一次 30 分鐘的免費顧問交流開始，幫你釐清目前的營運痛點與數位化優先順序。
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="javascript:void(0)" class="inline-flex items-center justify-center gap-2 px-8 py-4 text-lg font-bold text-surface-900 bg-brand-400 rounded-xl hover:bg-brand-300 transition-all shadow-glow hover:-translate-y-1">
+                    預約顧問免費診斷
+                    <i class="ph ph-calendar-plus text-xl"></i>
+                </a>
+            </div>
+            <p class="mt-6 text-xs text-slate-500">不推銷套裝軟體，只談實實在在的商業問題解決方案。</p>
+        </div>
+    </section>
+
+    <!-- 13. Footer -->
+    <footer class="bg-surface-950 pt-16 pb-8 border-t border-slate-800">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="grid md:grid-cols-4 gap-12 mb-12 border-b border-slate-800 pb-12">
+                <div class="md:col-span-2">
+                    <a href="#" class="flex items-center gap-2 mb-4 group inline-flex">
+                        <div class="w-8 h-8 rounded-lg bg-brand-600 flex items-center justify-center text-white">
+                            <i class="ph ph-hexagon text-xl"></i>
+                        </div>
+                        <span class="font-bold text-xl tracking-tight text-white">Digitools.</span>
+                    </a>
+                    <p class="text-slate-400 text-sm leading-relaxed max-w-sm">
+                        數位成長顧問與客製化軟體開發夥伴。<br>
+                        我們專注於將混亂的人工作業，轉化為可追蹤、可自動化、可規模化的營運系統。
+                    </p>
+                </div>
+                <div>
+                    <h4 class="text-white font-bold mb-4">導覽</h4>
+                    <ul class="space-y-2 text-sm text-slate-400">
+                        <li><a href="#services" class="hover:text-brand-400 transition-colors">服務內容</a></li>
+                        <li><a href="#cases" class="hover:text-brand-400 transition-colors">實際案例</a></li>
+                        <li><a href="#process" class="hover:text-brand-400 transition-colors">合作方式</a></li>
+                        <li><a href="#faq" class="hover:text-brand-400 transition-colors">常見問題</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-white font-bold mb-4">聯絡我們</h4>
+                    <ul class="space-y-2 text-sm text-slate-400">
+                        <li class="flex items-center gap-2"><i class="ph ph-envelope text-brand-500"></i> hello@digitools.studio</li>
+                        <li class="flex items-center gap-2"><i class="ph ph-map-pin text-brand-500"></i> 台北市, 台灣</li>
+                    </ul>
+                    <a href="#contact" class="inline-block mt-4 text-brand-400 text-sm font-medium hover:text-brand-300">
+                        立即預約諮詢 &rarr;
+                    </a>
+                </div>
+            </div>
+            <div class="flex flex-col md:flex-row justify-between items-center text-xs text-slate-500">
+                <p>&copy; 2024 Digitools Studio. All rights reserved.</p>
+                <div class="mt-4 md:mt-0 space-x-4">
+                    <a href="#" class="hover:text-slate-300">隱私權政策</a>
+                    <a href="#" class="hover:text-slate-300">服務條款</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // 1. Navbar Scroll Effect
+            const navbar = document.getElementById('navbar');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 20) {
+                    navbar.classList.add('glass', 'shadow-sm');
+                    navbar.classList.remove('bg-transparent', 'py-4');
+                    navbar.classList.add('py-3');
+                } else {
+                    navbar.classList.remove('glass', 'shadow-sm', 'py-3');
+                    navbar.classList.add('bg-transparent', 'py-4');
+                }
+            });
+
+            // 2. Mobile Menu Toggle
+            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const mobileLinks = mobileMenu.querySelectorAll('a');
+
+            mobileMenuBtn.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+                mobileMenu.classList.toggle('flex');
+            });
+
+            mobileLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    mobileMenu.classList.add('hidden');
+                    mobileMenu.classList.remove('flex');
+                });
+            });
+
+            // 3. Scroll Reveal Animation using Intersection Observer
+            const revealElements = document.querySelectorAll('.reveal');
+            
+            const revealOptions = {
+                threshold: 0.15, // 元素出現 15% 時觸發
+                rootMargin: "0px 0px -50px 0px"
+            };
+
+            const revealObserver = new IntersectionObserver(function(entries, observer) {
+                entries.forEach(entry => {
+                    if (!entry.isIntersecting) {
+                        return;
+                    } else {
+                        entry.target.classList.add('active');
+                        observer.unobserve(entry.target); // 觸發過後就停止觀察
+                    }
+                });
+            }, revealOptions);
+
+            revealElements.forEach(el => {
+                revealObserver.observe(el);
+            });
+
+            // 4. FAQ Accordion Logic
+            const faqItems = document.querySelectorAll('.faq-item');
+
+            faqItems.forEach(item => {
+                const btn = item.querySelector('.faq-btn');
+                const content = item.querySelector('.faq-content');
+                const icon = item.querySelector('.ph-plus');
+
+                btn.addEventListener('click', () => {
+                    const isOpen = !content.classList.contains('hidden');
+
+                    // Close all others
+                    faqItems.forEach(otherItem => {
+                        otherItem.querySelector('.faq-content').classList.add('hidden');
+                        otherItem.querySelector('.ph-plus').style.transform = 'rotate(0deg)';
+                    });
+
+                    // Toggle current
+                    if (!isOpen) {
+                        content.classList.remove('hidden');
+                        icon.style.transform = 'rotate(45deg)';
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
