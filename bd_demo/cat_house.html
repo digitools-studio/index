@@ -59,6 +59,12 @@
       background: rgba(255,255,255,0.78);
       backdrop-filter: blur(10px);
     }
+    .glass-header {
+      background: rgba(255, 255, 255, 0.90);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
     .icon-wrap svg {
       width: 22px;
       height: 22px;
@@ -345,8 +351,51 @@
 </head>
 <body class="bg-soft text-ink antialiased mobile-bottom-safe">
 
+  <!-- Fixed Header -->
+  <header id="navbar" class="fixed w-full top-0 z-50 transition-all duration-300 py-4 bg-white/90 backdrop-blur">
+    <div class="max-w-7xl mx-auto px-5 lg:px-8 flex justify-between items-center">
+      <!-- 品牌 -->
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 bg-slate-900 text-white rounded-xl flex items-center justify-center font-bold text-xl shadow-lg">D</div>
+        <div>
+          <p class="font-bold text-slate-900 leading-tight">Digitools Studio</p>
+          <p class="text-xs text-slate-500 hidden md:block">顧客旅程升級 × 數位陪跑</p>
+        </div>
+      </div>
+
+      <!-- 導覽 -->
+      <nav class="hidden lg:flex items-center space-x-8 text-sm font-medium text-slate-600">
+        <a href="#analysis" class="hover:text-brand-700 transition-colors">現況分析</a>
+        <a href="#dashboard" class="hover:text-brand-700 transition-colors">Dashboard</a>
+        <a href="#cooperation" class="hover:text-brand-700 transition-colors">合作方式</a>
+        <a href="#benefits" class="hover:text-brand-700 transition-colors">合作效益</a>
+      </nav>
+
+      <!-- CTA -->
+      <div class="flex items-center">
+        <a href="#line-consult" class="hidden md:inline-block bg-slate-900 hover:bg-brand-800 text-white px-5 py-2.5 rounded-full text-sm font-medium transition-all shadow-md hover:shadow-lg">
+          預約交流
+        </a>
+        <button id="mobile-menu-btn" class="md:hidden text-slate-700 p-2 ml-4">
+          <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="hidden absolute top-full left-0 w-full bg-white/95 backdrop-blur-md shadow-lg border-t border-brand-100 py-4 px-4 flex flex-col space-y-4">
+      <a href="#analysis" class="text-base font-medium text-slate-800 hover:text-brand-700 py-2 border-b border-slate-100">現況分析</a>
+      <a href="#dashboard" class="text-base font-medium text-slate-800 hover:text-brand-700 py-2 border-b border-slate-100">Dashboard</a>
+      <a href="#cooperation" class="text-base font-medium text-slate-800 hover:text-brand-700 py-2 border-b border-slate-100">合作方式</a>
+      <a href="#benefits" class="text-base font-medium text-slate-800 hover:text-brand-700 py-2 border-b border-slate-100">合作效益</a>
+      <a href="#line-consult" class="mt-4 w-full text-center px-5 py-3 rounded-lg text-white bg-brand-800 font-medium shadow-md">預約交流</a>
+    </div>
+  </header>
+
   <!-- Top Bar -->
-  <div class="w-full border-b border-brand-100 bg-white/85 backdrop-blur">
+  <div class="w-full border-b border-brand-100 bg-white/85 backdrop-blur pt-20">
     <div class="mobile-topbar max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between text-sm">
       <div class="flex items-center gap-3 text-brand-700">
         <span class="inline-flex items-center px-3 py-1 rounded-full bg-brand-50 border border-brand-200 font-medium">
@@ -997,12 +1046,45 @@
     </div>
   </section>
 
-  <!-- Footer (sync with Digital Studio Index) -->
-  <footer class="bg-gray-800 text-white">
-    <div class="py-4 px-4">
-      <p class="text-sm text-gray-300 text-center">
-        © <span id="year"></span> 數轉工作室 Digitools Studio · All rights reserved.
-      </p>
+  <!-- Footer -->
+  <footer class="bg-slate-900 border-t border-slate-800 text-slate-400">
+    <div class="max-w-7xl mx-auto px-5 lg:px-8 py-12">
+      <div class="grid md:grid-cols-3 gap-10 mb-10 pb-10 border-b border-slate-800">
+        <!-- 品牌 -->
+        <div>
+          <div class="flex items-center space-x-3 mb-4">
+            <div class="w-8 h-8 bg-slate-700 text-white rounded-lg flex items-center justify-center font-bold text-sm">D</div>
+            <span class="font-bold text-white text-base">Digitools Studio</span>
+          </div>
+          <p class="text-sm leading-relaxed">協助品牌梳理顧客旅程、建立數位入口與 LINE 連結流程，讓信任與成交更自然。</p>
+        </div>
+        <!-- 頁面導覽 -->
+        <div>
+          <h5 class="text-white font-semibold mb-4 text-sm">頁面導覽</h5>
+          <ul class="space-y-2 text-sm">
+            <li><a href="#analysis" class="hover:text-white transition-colors">現況分析</a></li>
+            <li><a href="#cooperation" class="hover:text-white transition-colors">合作方式</a></li>
+            <li><a href="#benefits" class="hover:text-white transition-colors">合作效益</a></li>
+            <li><a href="#line-consult" class="hover:text-white transition-colors">LINE 諮詢入口</a></li>
+          </ul>
+        </div>
+        <!-- 聯絡 -->
+        <div>
+          <h5 class="text-white font-semibold mb-4 text-sm">聯絡我們</h5>
+          <ul class="space-y-2 text-sm">
+            <li>hello@digitools.studio</li>
+            <li>台北市, 台灣</li>
+            <li>週一至週五 09:30 – 18:30</li>
+          </ul>
+        </div>
+      </div>
+      <div class="flex flex-col md:flex-row justify-between items-center text-xs text-slate-500">
+        <p>© 2026 Digitools Studio. All rights reserved.</p>
+        <div class="flex space-x-4 mt-3 md:mt-0">
+          <a href="#" class="hover:text-slate-300">隱私權政策</a>
+          <a href="#" class="hover:text-slate-300">服務條款</a>
+        </div>
+      </div>
     </div>
   </footer>
 
@@ -1018,12 +1100,23 @@
   </div>
 
   <script>
-    (function () {
-      var el = document.getElementById('year');
-      if (el) {
-        el.textContent = new Date().getFullYear();
+    // Navbar scroll effect
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 50) {
+        navbar.classList.add('glass-header');
+        navbar.classList.remove('bg-white/90', 'backdrop-blur');
+      } else {
+        navbar.classList.remove('glass-header');
+        navbar.classList.add('bg-white/90', 'backdrop-blur');
       }
-    })();
+    });
+
+    // Mobile menu toggle
+    const mobileBtn = document.getElementById('mobile-menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    mobileBtn.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
+    mobileMenu.querySelectorAll('a').forEach(l => l.addEventListener('click', () => mobileMenu.classList.add('hidden')));
   </script>
 
 </body>

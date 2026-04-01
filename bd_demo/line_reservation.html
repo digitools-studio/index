@@ -1,0 +1,1081 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LINE 客製開發與流程顧問 | 從預約管理開始，解放團隊雙手</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Alpine.js for interactions -->
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Noto Sans TC"', 'sans-serif'],
+                    },
+                    colors: {
+                        line: {
+                            DEFAULT: '#06C755',
+                            hover: '#05b04b',
+                            light: '#e6faef',
+                            dark: '#048c3b'
+                        },
+                        brand: {
+                            50: '#f8fafc',
+                            100: '#f1f5f9',
+                            200: '#e2e8f0',
+                            300: '#cbd5e1',
+                            400: '#94a3b8',
+                            500: '#64748b',
+                            600: '#475569',
+                            700: '#334155',
+                            800: '#1e293b',
+                            900: '#0f172a',
+                        }
+                    },
+                    boxShadow: {
+                        'glass': '0 4px 30px rgba(0, 0, 0, 0.05)',
+                        'panel': '0 10px 40px -10px rgba(15, 23, 42, 0.1)',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Noto Sans TC', sans-serif; background-color: #f8fafc; color: #0f172a; }
+        .bg-grid-pattern {
+            background-image: linear-gradient(to right, #e2e8f0 1px, transparent 1px),
+                              linear-gradient(to bottom, #e2e8f0 1px, transparent 1px);
+            background-size: 40px 40px;
+            mask-image: radial-gradient(circle at center, black, transparent 80%);
+            -webkit-mask-image: radial-gradient(circle at center, black, transparent 80%);
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+        .glass-header {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-line selection:text-white">
+
+    <!-- Navigation -->
+    <nav id="navbar" class="fixed w-full top-0 z-50 transition-all duration-300 py-5 bg-transparent">
+        <div class="max-w-7xl mx-auto px-5 lg:px-8 flex justify-between items-center">
+            <!-- 品牌 -->
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 bg-slate-900 text-white rounded-xl flex items-center justify-center font-bold text-xl shadow-lg">D</div>
+                <div>
+                    <p class="font-bold text-slate-900 leading-tight">Digitools Studio</p>
+                    <p class="text-xs text-slate-500 hidden md:block">LINE 客製開發與流程顧問</p>
+                </div>
+            </div>
+
+            <!-- 導覽 -->
+            <nav class="hidden lg:flex items-center space-x-8 text-sm font-medium text-slate-600">
+                <a href="#pain-points" class="hover:text-line transition-colors">現況痛點</a>
+                <a href="#core-module" class="hover:text-line transition-colors">預約升級</a>
+                <a href="#process" class="hover:text-line transition-colors">合作流程</a>
+                <a href="#pricing" class="hover:text-line transition-colors">費用方案</a>
+            </nav>
+
+            <!-- CTA -->
+            <div class="flex items-center">
+                <a href="#contact" class="hidden md:inline-block bg-slate-900 hover:bg-line text-white px-5 py-2.5 rounded-full text-sm font-medium transition-all shadow-md hover:shadow-lg">
+                    預約流程諮詢
+                </a>
+                <button id="mobile-menu-btn" class="md:hidden text-slate-600 p-2 ml-4">
+                    <i data-lucide="menu" class="w-6 h-6"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden absolute top-full left-0 w-full bg-white/95 backdrop-blur-md shadow-lg border-t border-slate-100 py-4 px-4 flex flex-col space-y-4">
+            <a href="#pain-points" class="text-base font-medium text-slate-800 hover:text-line py-2 border-b border-slate-100">現況痛點</a>
+            <a href="#core-module" class="text-base font-medium text-slate-800 hover:text-line py-2 border-b border-slate-100">預約升級</a>
+            <a href="#process" class="text-base font-medium text-slate-800 hover:text-line py-2 border-b border-slate-100">合作流程</a>
+            <a href="#pricing" class="text-base font-medium text-slate-800 hover:text-line py-2 border-b border-slate-100">費用方案</a>
+            <a href="#contact" class="mt-4 w-full text-center px-5 py-3 rounded-lg text-white bg-brand-900 font-medium shadow-md">預約流程諮詢</a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden bg-brand-50">
+        <div class="absolute inset-0 bg-grid-pattern opacity-40"></div>
+        
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="grid lg:grid-cols-2 gap-16 items-center">
+                <!-- Text Content -->
+                <div class="max-w-2xl">
+                    <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white border border-brand-200 shadow-sm mb-6">
+                        <span class="w-2 h-2 rounded-full bg-brand-900"></span>
+                        <span class="text-xs font-semibold text-brand-700 tracking-wider">數位轉型顧問 × LINE 客製化開發</span>
+                    </div>
+                    <h1 class="text-4xl lg:text-6xl font-bold leading-tight mb-6 text-brand-900 tracking-tight">
+                        你的 LINE 不缺好友，<br>
+                        缺的是一套<span class="text-line">流暢的預約流程</span>
+                    </h1>
+                    <p class="text-lg text-brand-600 mb-8 leading-relaxed">
+                        我們不賣死板的罐頭工具。我們協助你從最耗時的「預約/預定管理」切入，<strong class="text-brand-900 font-medium">先梳理凌亂的客服現況，再為你客製化開發 LINE 專屬系統。</strong>把手動對齊時間的災難，轉變為全自動的營收管線。
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <a href="#contact" class="bg-brand-900 hover:bg-brand-800 text-white px-8 py-3.5 rounded-full text-center font-medium transition-all shadow-lg shadow-brand-900/20 flex items-center justify-center gap-2 text-lg">
+                            丟出你的現況，我們來梳理
+                            <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                        </a>
+                    </div>
+                    
+                    <div class="mt-10 flex flex-wrap items-center gap-x-6 gap-y-3 text-sm text-brand-600 font-medium">
+                        <div class="flex items-center gap-1.5">
+                            <i data-lucide="check" class="w-4 h-4 text-line"></i> 不需自己寫規格表
+                        </div>
+                        <div class="flex items-center gap-1.5">
+                            <i data-lucide="check" class="w-4 h-4 text-line"></i> 先諮詢確立優先順序
+                        </div>
+                        <div class="flex items-center gap-1.5">
+                            <i data-lucide="check" class="w-4 h-4 text-line"></i> 顧問費可全額折抵開發
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Concept Visual Mockup -->
+                <div class="relative w-full aspect-square lg:aspect-auto lg:h-[600px] flex items-center justify-center">
+                    
+                    <!-- Background abstract shape -->
+                    <div class="absolute inset-0 bg-gradient-to-tr from-brand-200 to-white rounded-full blur-3xl opacity-50"></div>
+
+                    <!-- Flow representation -->
+                    <div class="relative z-20 w-full max-w-md">
+                        
+                        <!-- Messy State (Top) -->
+                        <div class="bg-white/60 backdrop-blur border border-brand-200 p-5 rounded-2xl shadow-sm mb-8 transform -rotate-2 relative">
+                            <div class="absolute -top-3 -left-3 bg-red-100 text-red-700 text-[10px] font-bold px-2 py-1 rounded shadow-sm">現況：人工處理</div>
+                            <div class="space-y-3">
+                                <div class="flex justify-end"><div class="bg-line-light text-brand-800 text-xs p-2.5 rounded-2xl rounded-tr-sm">請問下週三下午兩點有空嗎？</div></div>
+                                <div class="flex justify-start"><div class="bg-brand-100 text-brand-800 text-xs p-2.5 rounded-2xl rounded-tl-sm">抱歉那時候滿了，週四上午可以嗎？</div></div>
+                                <div class="flex justify-end"><div class="bg-line-light text-brand-800 text-xs p-2.5 rounded-2xl rounded-tr-sm">週四不行欸...那下週五呢？</div></div>
+                            </div>
+                        </div>
+
+                        <!-- The Intervention -->
+                        <div class="flex justify-center mb-8 relative">
+                            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-0.5 h-32 bg-brand-300 -z-10"></div>
+                            <div class="bg-brand-900 text-white px-5 py-2.5 rounded-full text-sm font-bold flex items-center gap-2 shadow-lg">
+                                <i data-lucide="settings-2" class="w-4 h-4"></i> 顧問梳理與流程整合
+                            </div>
+                        </div>
+
+                        <!-- System State (Bottom) -->
+                        <div class="bg-white p-5 rounded-2xl shadow-panel border border-brand-100 transform rotate-1 relative">
+                             <div class="absolute -top-3 -right-3 bg-line text-white text-[10px] font-bold px-2 py-1 rounded shadow-sm">升級後：客製化預約系統</div>
+                            <div class="flex items-center gap-3 mb-4 pb-3 border-b border-brand-50">
+                                <div class="w-10 h-10 rounded-full bg-brand-50 flex items-center justify-center"><i data-lucide="calendar-check" class="w-5 h-5 text-brand-700"></i></div>
+                                <div>
+                                    <div class="text-sm font-bold text-brand-900">專屬預約管線</div>
+                                    <div class="text-[10px] text-brand-500">已自動比對設計師班表與空檔</div>
+                                </div>
+                            </div>
+                            <div class="space-y-2">
+                                <div class="flex justify-between items-center bg-brand-50 p-2 rounded text-xs border border-brand-100">
+                                    <span class="text-brand-600">顧客選擇：</span>
+                                    <span class="font-medium text-brand-900">下週三 14:00</span>
+                                </div>
+                                <div class="flex justify-between items-center bg-brand-50 p-2 rounded text-xs border border-brand-100">
+                                    <span class="text-brand-600">需求確認：</span>
+                                    <span class="font-medium text-brand-900">深層護理 (首次體驗)</span>
+                                </div>
+                                <div class="mt-3 flex items-center justify-center gap-1 text-[10px] text-line font-medium bg-line-light py-1.5 rounded">
+                                    <i data-lucide="check-circle-2" class="w-3 h-3"></i> 系統已自動確認並發送行事曆
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pain Points Section -->
+    <section id="pain-points" class="py-20 bg-white border-b border-brand-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <h2 class="text-brand-500 font-semibold tracking-wide uppercase text-sm mb-3">The Reality</h2>
+                <h3 class="text-3xl font-bold text-brand-900 mb-6">有了 LINE 官方帳號，然後呢？</h3>
+                <p class="text-lg text-brand-600">
+                    導入 LINE 是為了更靠近顧客，卻往往讓團隊陷入無止盡的人工客服泥淖。你是否也面臨以下狀況？
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-6">
+                <div class="bg-brand-50 p-6 rounded-2xl border border-brand-100 relative">
+                    <div class="absolute top-0 right-0 p-4 opacity-10"><i data-lucide="message-square-dashed" class="w-12 h-12"></i></div>
+                    <div class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center mb-4">
+                        <i data-lucide="clock" class="w-5 h-5 text-red-600"></i>
+                    </div>
+                    <h4 class="font-bold text-brand-900 mb-2">來回確認時間的夢魘</h4>
+                    <p class="text-sm text-brand-600">「請問明天下午有空嗎？」「那後天呢？」客服每天花大量時間跟顧客對齊空檔，效率極低。</p>
+                </div>
+                <div class="bg-brand-50 p-6 rounded-2xl border border-brand-100 relative">
+                    <div class="absolute top-0 right-0 p-4 opacity-10"><i data-lucide="bell-off" class="w-12 h-12"></i></div>
+                    <div class="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center mb-4">
+                        <i data-lucide="calendar-x" class="w-5 h-5 text-orange-600"></i>
+                    </div>
+                    <h4 class="font-bold text-brand-900 mb-2">漏記預約與忘記提醒</h4>
+                    <p class="text-sm text-brand-600">訊息一多就容易漏看。沒有自動化提醒機制，導致顧客爽約率居高不下，浪費寶貴的營業時段。</p>
+                </div>
+                <div class="bg-brand-50 p-6 rounded-2xl border border-brand-100 relative">
+                    <div class="absolute top-0 right-0 p-4 opacity-10"><i data-lucide="users-round" class="w-12 h-12"></i></div>
+                    <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center mb-4">
+                        <i data-lucide="clipboard-list" class="w-5 h-5 text-blue-600"></i>
+                    </div>
+                    <h4 class="font-bold text-brand-900 mb-2">需求不清，後續難處理</h4>
+                    <p class="text-sm text-brand-600">顧客只留了名字就說要預約，到底要什麼服務？什麼條件？內部人員還是得手動一一追問。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why Start With Booking (Value Proposition) -->
+    <section class="py-24 bg-brand-900 text-white relative overflow-hidden">
+        <div class="absolute inset-0 bg-grid-pattern opacity-10"></div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="grid lg:grid-cols-2 gap-16 items-center">
+                <div>
+                    <h2 class="text-line font-semibold tracking-wide uppercase text-sm mb-3">Our Philosophy</h2>
+                    <h3 class="text-3xl md:text-4xl font-bold mb-6">為什麼我們主張：先從「預約管理」開始升級？</h3>
+                    <div class="space-y-6 text-brand-300">
+                        <p>
+                            許多品牌一開始就想做複雜的 CRM 點數或再行銷，卻忽略了**「第一線的承接能力」才是瓶頸**。
+                        </p>
+                        <ul class="space-y-4">
+                            <li class="flex items-start gap-3">
+                                <div class="w-6 h-6 rounded bg-brand-800 text-line flex items-center justify-center flex-shrink-0 mt-0.5"><i data-lucide="arrow-right" class="w-4 h-4"></i></div>
+                                <div>
+                                    <strong class="text-white block mb-1">止血大於一切：解放人力</strong>
+                                    預約佔據了客服 70% 的時間。搞定預約自動化，團隊才有餘力去做好現場服務與深度經營。
+                                </div>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <div class="w-6 h-6 rounded bg-brand-800 text-line flex items-center justify-center flex-shrink-0 mt-0.5"><i data-lucide="arrow-right" class="w-4 h-4"></i></div>
+                                <div>
+                                    <strong class="text-white block mb-1">最精準的需求收集點</strong>
+                                    在預約的當下，依照服務特性引導填寫客製表單，未來的準備、報價與排程才能一次到位。
+                                </div>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <div class="w-6 h-6 rounded bg-brand-800 text-line flex items-center justify-center flex-shrink-0 mt-0.5"><i data-lucide="arrow-right" class="w-4 h-4"></i></div>
+                                <div>
+                                    <strong class="text-white block mb-1">為後續行銷打底</strong>
+                                    結構化的預約資料，本身就是最棒的標籤（做了什麼服務、頻率多高），這讓未來的再行銷推播水到渠成。
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="relative">
+                    <div class="bg-brand-800 rounded-2xl p-8 border border-brand-700 shadow-2xl relative z-10">
+                        <div class="text-center mb-6">
+                            <div class="text-sm text-brand-400 font-medium mb-1">轉型路徑建議</div>
+                            <div class="text-xl font-bold text-white">LINE 營運升級藍圖</div>
+                        </div>
+                        
+                        <div class="relative">
+                            <!-- Line connecting steps -->
+                            <div class="absolute left-6 top-6 bottom-6 w-0.5 bg-brand-700"></div>
+                            
+                            <!-- Step 1 (Focus) -->
+                            <div class="flex items-start gap-4 mb-8 relative">
+                                <div class="w-12 h-12 rounded-full bg-line flex items-center justify-center z-10 flex-shrink-0 shadow-[0_0_15px_rgba(6,199,85,0.4)]">
+                                    <i data-lucide="calendar-check" class="w-6 h-6 text-white"></i>
+                                </div>
+                                <div class="pt-2.5">
+                                    <div class="font-bold text-white text-lg">Phase 1: 預約與流程整合</div>
+                                    <div class="text-sm text-line mt-1">我們目前專注為您解決的痛點</div>
+                                </div>
+                            </div>
+                            
+                            <!-- Step 2 -->
+                            <div class="flex items-start gap-4 mb-8 relative opacity-50">
+                                <div class="w-12 h-12 rounded-full bg-brand-700 border-2 border-brand-600 flex items-center justify-center z-10 flex-shrink-0">
+                                    <i data-lucide="tags" class="w-5 h-5 text-brand-300"></i>
+                                </div>
+                                <div class="pt-2.5">
+                                    <div class="font-bold text-brand-300 text-lg">Phase 2: 標籤與自動化通知</div>
+                                    <div class="text-sm text-brand-500 mt-1">基於預約資料，自動分眾與提醒</div>
+                                </div>
+                            </div>
+
+                            <!-- Step 3 -->
+                            <div class="flex items-start gap-4 relative opacity-50">
+                                <div class="w-12 h-12 rounded-full bg-brand-700 border-2 border-brand-600 flex items-center justify-center z-10 flex-shrink-0">
+                                    <i data-lucide="gift" class="w-5 h-5 text-brand-300"></i>
+                                </div>
+                                <div class="pt-2.5">
+                                    <div class="font-bold text-brand-300 text-lg">Phase 3: 留客與再互動機制</div>
+                                    <div class="text-sm text-brand-500 mt-1">集點、會員分級與精準行銷</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Core & Extension Modules -->
+    <section id="core-module" class="py-24 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <h2 class="text-brand-600 font-semibold tracking-wide uppercase text-sm mb-3">Custom Solutions</h2>
+                <h3 class="text-3xl md:text-4xl font-bold text-brand-900 mb-6">不硬套版，為你的業務邏輯量身打造</h3>
+                <p class="text-lg text-brand-600">
+                    我們會根據您的實際作業方式，將以下模組進行客製化組合與串接。
+                </p>
+            </div>
+
+            <!-- CORE: Booking Module (Highlighted) -->
+            <div class="bg-brand-50 rounded-3xl p-8 lg:p-12 border border-brand-200 shadow-sm mb-12">
+                <div class="flex flex-col lg:flex-row gap-12 items-center">
+                    <div class="lg:w-1/2">
+                        <div class="inline-flex items-center gap-2 px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-bold mb-4">
+                            <i data-lucide="star" class="w-3 h-3"></i> 核心切入點
+                        </div>
+                        <h4 class="text-2xl font-bold text-brand-900 mb-4">客製化預約 / 預定管理模組</h4>
+                        <p class="text-brand-600 mb-6 leading-relaxed">
+                            這不是一個簡單的 Google 表單。我們將您的營業規則（可預約時段、服務項目時長、指定人員排班）寫入系統，讓顧客在 LINE 上順暢完成預約，而您在後台獲得乾淨的排程表。
+                        </p>
+                        <ul class="space-y-3 mb-8">
+                            <li class="flex items-start gap-2 text-brand-700">
+                                <i data-lucide="check-circle-2" class="w-5 h-5 text-line flex-shrink-0"></i> 
+                                <span><strong>防呆機制：</strong>自動過濾已滿檔或非營業時段，杜絕重複預約。</span>
+                            </li>
+                            <li class="flex items-start gap-2 text-brand-700">
+                                <i data-lucide="check-circle-2" class="w-5 h-5 text-line flex-shrink-0"></i> 
+                                <span><strong>引導式流程：</strong>依據服務類型，分層級讓顧客選擇（如：選服務 -> 選技師 -> 選時間）。</span>
+                            </li>
+                            <li class="flex items-start gap-2 text-brand-700">
+                                <i data-lucide="check-circle-2" class="w-5 h-5 text-line flex-shrink-0"></i> 
+                                <span><strong>自動確認與提醒：</strong>預約成功自動發送確認信，設定時間發送行前提醒。</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="lg:w-1/2 w-full">
+                        <!-- Admin Dashboard Mockup -->
+                        <div class="bg-slate-800 rounded-2xl shadow-2xl overflow-hidden border border-slate-700" style="font-size:11px">
+                            <!-- Browser chrome bar -->
+                            <div class="bg-slate-900 px-3 py-2 flex items-center gap-2">
+                                <div class="flex gap-1.5">
+                                    <div class="w-2.5 h-2.5 rounded-full bg-red-400"></div>
+                                    <div class="w-2.5 h-2.5 rounded-full bg-amber-400"></div>
+                                    <div class="w-2.5 h-2.5 rounded-full bg-green-400"></div>
+                                </div>
+                                <div class="flex-1 bg-slate-700 rounded-md px-3 py-1 text-slate-400 text-[9px] ml-2">booking.admin.digitools.studio</div>
+                            </div>
+                            <!-- Dashboard UI -->
+                            <div class="bg-gray-50 p-3">
+                                <!-- Topbar -->
+                                <div class="flex items-center justify-between mb-3">
+                                    <div>
+                                        <div class="font-bold text-slate-800 text-xs">預約後台管理</div>
+                                        <div class="text-[9px] text-slate-500">2026年4月2日 星期四</div>
+                                    </div>
+                                    <div class="flex gap-1.5">
+                                        <div class="bg-white border border-slate-200 text-slate-600 text-[9px] px-2 py-1 rounded-md shadow-sm">匯出 CSV</div>
+                                        <div class="bg-[#06C755] text-white text-[9px] px-2 py-1 rounded-md shadow-sm">+ 手動建單</div>
+                                    </div>
+                                </div>
+                                <!-- KPIs -->
+                                <div class="grid grid-cols-3 gap-2 mb-3">
+                                    <div class="bg-white rounded-lg p-2 border border-slate-100 shadow-sm">
+                                        <div class="text-[9px] text-slate-500 mb-0.5">今日預約</div>
+                                        <div class="text-lg font-bold text-slate-800">7</div>
+                                        <div class="text-[8px] text-green-500">↑ 較昨日 +2</div>
+                                    </div>
+                                    <div class="bg-white rounded-lg p-2 border border-slate-100 shadow-sm">
+                                        <div class="text-[9px] text-slate-500 mb-0.5">待確認</div>
+                                        <div class="text-lg font-bold text-amber-500">2</div>
+                                        <div class="text-[8px] text-amber-400">需處理</div>
+                                    </div>
+                                    <div class="bg-white rounded-lg p-2 border border-slate-100 shadow-sm">
+                                        <div class="text-[9px] text-slate-500 mb-0.5">本週收入</div>
+                                        <div class="text-lg font-bold text-slate-800">$18,400</div>
+                                        <div class="text-[8px] text-green-500">↑ +12%</div>
+                                    </div>
+                                </div>
+                                <!-- Timeline -->
+                                <div class="bg-white rounded-lg border border-slate-100 shadow-sm mb-2 overflow-hidden">
+                                    <div class="bg-slate-800 text-white text-[9px] px-3 py-1.5 flex justify-between">
+                                        <span class="font-medium">今日時程</span>
+                                        <span class="text-slate-400">Ken / Mia / Lisa</span>
+                                    </div>
+                                    <div class="p-2 space-y-1.5">
+                                        <div class="flex items-center gap-2">
+                                            <div class="text-[9px] text-slate-400 w-10 text-right shrink-0">10:00</div>
+                                            <div class="flex-1 bg-blue-50 border-l-2 border-blue-500 px-2 py-1 rounded-r-md">
+                                                <div class="flex justify-between items-center">
+                                                    <span class="font-bold text-[9px] text-blue-800">剪髮+染髮 · 林小姐</span>
+                                                    <span class="bg-green-100 text-green-700 text-[8px] px-1.5 rounded">已確認</span>
+                                                </div>
+                                                <div class="text-[8px] text-slate-500">Ken · 90min · 10:00–11:30</div>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center gap-2">
+                                            <div class="text-[9px] text-slate-400 w-10 text-right shrink-0">13:00</div>
+                                            <div class="flex-1 bg-purple-50 border-l-2 border-purple-500 px-2 py-1 rounded-r-md">
+                                                <div class="flex justify-between items-center">
+                                                    <span class="font-bold text-[9px] text-purple-800">頭皮護理 · 張先生</span>
+                                                    <span class="bg-amber-100 text-amber-700 text-[8px] px-1.5 rounded">待確認</span>
+                                                </div>
+                                                <div class="text-[8px] text-slate-500">不指定 · 60min · 13:00–14:00</div>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center gap-2">
+                                            <div class="text-[9px] text-slate-400 w-10 text-right shrink-0">14:30</div>
+                                            <div class="flex-1 bg-emerald-50 border-l-2 border-emerald-500 px-2 py-1 rounded-r-md">
+                                                <div class="flex justify-between items-center">
+                                                    <span class="font-bold text-[9px] text-emerald-800">燙髮 · 陳太太</span>
+                                                    <span class="bg-green-100 text-green-700 text-[8px] px-1.5 rounded">已確認</span>
+                                                </div>
+                                                <div class="text-[8px] text-slate-500">Mia · 120min · 14:30–16:30</div>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center gap-2">
+                                            <div class="text-[9px] text-slate-400 w-10 text-right shrink-0">16:00</div>
+                                            <div class="flex-1 bg-red-50 border-l-2 border-dashed border-red-400 px-2 py-1 rounded-r-md relative">
+                                                <div class="absolute top-1 right-2 w-1.5 h-1.5 bg-red-500 rounded-full animate-ping"></div>
+                                                <div class="flex justify-between items-center">
+                                                    <span class="font-bold text-[9px] text-red-700">剪髮 · 新客戶</span>
+                                                    <span class="bg-red-100 text-red-700 text-[8px] px-1.5 rounded">新進 ●</span>
+                                                </div>
+                                                <div class="text-[8px] text-slate-500">LINE 剛提交 · 待核對</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Auto reminder notice -->
+                                <div class="bg-[#e6faef] border border-[#06C755]/30 rounded-lg px-2 py-1.5 flex items-center gap-2">
+                                    <span class="text-[#06C755] text-xs">🔔</span>
+                                    <div class="text-[9px] text-slate-700">系統已自動發送明日 <span class="font-bold text-slate-900">3 則行前提醒</span>，無需人工處理。</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Extension Modules Grid -->
+            <div class="text-center mb-8">
+                <h4 class="text-xl font-bold text-brand-900">擴充營運積木</h4>
+                <p class="text-sm text-brand-500 mt-2">根據您的產業特性，我們可將預約系統向外擴充以下能力：</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Extension 1 -->
+                <div class="bg-white p-6 rounded-2xl border border-brand-100 hover:shadow-md transition-shadow">
+                    <div class="w-10 h-10 rounded-lg bg-emerald-50 flex items-center justify-center mb-4">
+                        <i data-lucide="clock" class="w-5 h-5 text-emerald-600"></i>
+                    </div>
+                    <h5 class="font-bold text-brand-900 mb-2 text-sm">營業時間與排班模組</h5>
+                    <p class="text-xs text-brand-600 leading-relaxed">將內部人員班表與前端預約系統連動，顧客只會看到該人員有上班且空閒的時段。</p>
+                </div>
+                <!-- Extension 2 -->
+                <div class="bg-white p-6 rounded-2xl border border-brand-100 hover:shadow-md transition-shadow">
+                    <div class="w-10 h-10 rounded-lg bg-purple-50 flex items-center justify-center mb-4">
+                        <i data-lucide="users-round" class="w-5 h-5 text-purple-600"></i>
+                    </div>
+                    <h5 class="font-bold text-brand-900 mb-2 text-sm">團課與活動報名模組</h5>
+                    <p class="text-xs text-brand-600 leading-relaxed">適合健身、講座。管理課程名額上限，自動處理額滿、候補機制與課前群發提醒。</p>
+                </div>
+                <!-- Extension 3 -->
+                <div class="bg-white p-6 rounded-2xl border border-brand-100 hover:shadow-md transition-shadow">
+                    <div class="w-10 h-10 rounded-lg bg-amber-50 flex items-center justify-center mb-4">
+                        <i data-lucide="clipboard-signature" class="w-5 h-5 text-amber-600"></i>
+                    </div>
+                    <h5 class="font-bold text-brand-900 mb-2 text-sm">需求表單與工單模組</h5>
+                    <p class="text-xs text-brand-600 leading-relaxed">適合維修、客製報價。讓顧客上傳照片與填寫條件，後台轉為追蹤工單，指派專人處理。</p>
+                </div>
+                <!-- Extension 4 -->
+                <div class="bg-white p-6 rounded-2xl border border-brand-100 hover:shadow-md transition-shadow">
+                    <div class="w-10 h-10 rounded-lg bg-pink-50 flex items-center justify-center mb-4">
+                        <i data-lucide="heart-handshake" class="w-5 h-5 text-pink-600"></i>
+                    </div>
+                    <h5 class="font-bold text-brand-900 mb-2 text-sm">留客與再互動模組</h5>
+                    <p class="text-xs text-brand-600 leading-relaxed">數位集點卡、優惠券、抽獎。將預約客轉為長期熟客，並根據互動行為貼標籤。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Industry Scenarios (Interactive Demo) -->
+    <section id="scenarios" class="py-24 bg-brand-50 border-y border-brand-200" x-data="{ activeTab: 'service' }">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <h2 class="text-brand-600 font-semibold tracking-wide uppercase text-sm mb-3">Scenarios</h2>
+                <h3 class="text-3xl font-bold text-brand-900 mb-6">不同產業的流程整合示範</h3>
+            </div>
+
+            <div class="flex flex-col lg:flex-row gap-12 items-start">
+                
+                <!-- Tab Controls -->
+                <div class="w-full lg:w-1/3 flex flex-col gap-3">
+                    <button @click="activeTab = 'service'" :class="{'bg-white border-brand-400 shadow-md': activeTab === 'service', 'bg-transparent border-transparent hover:bg-white/50': activeTab !== 'service'}" class="text-left px-6 py-4 rounded-xl border-2 transition-all flex items-center gap-4">
+                        <div :class="{'bg-blue-100 text-blue-600': activeTab === 'service', 'bg-brand-100 text-brand-500': activeTab !== 'service'}" class="p-3 rounded-lg transition-colors">
+                            <i data-lucide="scissors" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <div class="font-bold text-brand-900">美容/美髮/專人預約</div>
+                            <div class="text-sm text-brand-500 mt-0.5">指定人員、排班比對、提醒</div>
+                        </div>
+                    </button>
+
+                    <button @click="activeTab = 'class'" :class="{'bg-white border-brand-400 shadow-md': activeTab === 'class', 'bg-transparent border-transparent hover:bg-white/50': activeTab !== 'class'}" class="text-left px-6 py-4 rounded-xl border-2 transition-all flex items-center gap-4">
+                        <div :class="{'bg-purple-100 text-purple-600': activeTab === 'class', 'bg-brand-100 text-brand-500': activeTab !== 'class'}" class="p-3 rounded-lg transition-colors">
+                            <i data-lucide="dumbbell" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <div class="font-bold text-brand-900">健身/課程/活動報名</div>
+                            <div class="text-sm text-brand-500 mt-0.5">名額控管、候補、課前通知</div>
+                        </div>
+                    </button>
+
+                    <button @click="activeTab = 'ticket'" :class="{'bg-white border-brand-400 shadow-md': activeTab === 'ticket', 'bg-transparent border-transparent hover:bg-white/50': activeTab !== 'ticket'}" class="text-left px-6 py-4 rounded-xl border-2 transition-all flex items-center gap-4">
+                        <div :class="{'bg-amber-100 text-amber-600': activeTab === 'ticket', 'bg-brand-100 text-brand-500': activeTab !== 'ticket'}" class="p-3 rounded-lg transition-colors">
+                            <i data-lucide="wrench" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <div class="font-bold text-brand-900">維修/客製/報價需求</div>
+                            <div class="text-sm text-brand-500 mt-0.5">需求表單、照片上傳、工單追蹤</div>
+                        </div>
+                    </button>
+                </div>
+
+                <!-- Visual Workflow Demo -->
+                <div class="w-full lg:w-2/3 bg-white rounded-3xl p-5 border border-brand-200 shadow-xl relative overflow-hidden">
+                    <div class="absolute inset-0 bg-brand-50/30"></div>
+                    
+                    <!-- Service Booking Content -->
+                    <div x-show="activeTab === 'service'" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0" class="relative z-10 w-full">
+                        <div class="text-xs font-bold text-slate-500 mb-3 text-center tracking-wide uppercase">美髮沙龍：LINE 預約 → 後台即時同步，全程零人工</div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <!-- LINE Phone UI -->
+                            <div>
+                                <div class="text-[10px] text-center text-slate-400 mb-1.5">① 顧客端 LINE 預約流程</div>
+                                <div class="bg-slate-800 rounded-2xl overflow-hidden shadow-lg" style="font-size:10px">
+                                    <div class="bg-[#00B900] px-3 py-2 flex items-center gap-2">
+                                        <div class="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center text-white font-bold text-[9px]">M</div>
+                                        <div>
+                                            <div class="text-white font-bold text-[9px]">MOMO Hair Salon</div>
+                                            <div class="text-white/70 text-[8px]">官方帳號</div>
+                                        </div>
+                                    </div>
+                                    <div class="bg-[#a5c5b5] p-3 space-y-2">
+                                        <div class="flex items-end gap-1.5">
+                                            <div class="w-5 h-5 bg-white rounded-full flex items-center justify-center text-[7px] font-bold text-green-700 shrink-0">M</div>
+                                            <div class="bg-white rounded-2xl rounded-bl-sm px-2.5 py-1.5 max-w-[82%] shadow-sm">
+                                                <div class="text-[9px] text-slate-700 mb-1">請選擇您想預約的服務：</div>
+                                                <div class="space-y-1">
+                                                    <div class="bg-slate-100 rounded px-2 py-0.5 text-[8px] text-slate-500">✂️ 剪髮（60分）</div>
+                                                    <div class="bg-[#00B900] rounded px-2 py-0.5 text-[8px] text-white">💇 剪髮+染髮（90分）✓</div>
+                                                    <div class="bg-slate-100 rounded px-2 py-0.5 text-[8px] text-slate-500">🌊 燙髮（120分）</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-end gap-1.5">
+                                            <div class="w-5 h-5 bg-white rounded-full flex items-center justify-center text-[7px] font-bold text-green-700 shrink-0">M</div>
+                                            <div class="bg-white rounded-2xl rounded-bl-sm px-2.5 py-1.5 max-w-[82%] shadow-sm">
+                                                <div class="text-[9px] text-slate-700 mb-1">指定設計師？</div>
+                                                <div class="grid grid-cols-3 gap-1">
+                                                    <div class="bg-blue-50 border border-blue-200 rounded px-1 py-1 text-center">
+                                                        <div class="text-[8px] font-bold text-blue-700">Ken</div>
+                                                        <div class="text-[7px] text-slate-400">有空</div>
+                                                    </div>
+                                                    <div class="bg-slate-100 rounded px-1 py-1 text-center opacity-50">
+                                                        <div class="text-[8px] text-slate-600">Mia</div>
+                                                        <div class="text-[7px] text-slate-400">已滿</div>
+                                                    </div>
+                                                    <div class="bg-blue-50 border border-blue-200 rounded px-1 py-1 text-center">
+                                                        <div class="text-[7px] font-bold text-blue-700">不指定</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-end gap-1.5">
+                                            <div class="w-5 h-5 bg-white rounded-full flex items-center justify-center text-[7px] font-bold text-green-700 shrink-0">M</div>
+                                            <div class="bg-white rounded-2xl rounded-bl-sm px-2.5 py-1.5 max-w-[85%] shadow-sm">
+                                                <div class="text-[8px] text-green-600 font-bold mb-0.5">✅ 預約成功！</div>
+                                                <div class="text-[8px] text-slate-600">📅 4/3（五）10:00 · Ken</div>
+                                                <div class="text-[7px] text-slate-400 mt-0.5">行前提醒將自動發送</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Admin side -->
+                            <div>
+                                <div class="text-[10px] text-center text-slate-400 mb-1.5">② 後台即時同步更新</div>
+                                <div class="bg-white rounded-2xl border border-slate-200 shadow-lg overflow-hidden" style="font-size:10px">
+                                    <div class="bg-slate-800 text-white px-3 py-2 text-[9px] font-bold flex justify-between">
+                                        <span>預約管理後台</span>
+                                        <span class="text-green-400">● 即時</span>
+                                    </div>
+                                    <div class="p-3 space-y-2">
+                                        <div class="grid grid-cols-3 gap-1.5">
+                                            <div class="bg-slate-50 rounded-lg p-1.5 text-center border border-slate-100">
+                                                <div class="text-[8px] text-slate-500">今日</div>
+                                                <div class="font-bold text-slate-800">7 件</div>
+                                            </div>
+                                            <div class="bg-amber-50 rounded-lg p-1.5 text-center border border-amber-100">
+                                                <div class="text-[8px] text-amber-500">待確認</div>
+                                                <div class="font-bold text-amber-600">2 件</div>
+                                            </div>
+                                            <div class="bg-green-50 rounded-lg p-1.5 text-center border border-green-100">
+                                                <div class="text-[8px] text-green-500">已完成</div>
+                                                <div class="font-bold text-green-600">3 件</div>
+                                            </div>
+                                        </div>
+                                        <div class="space-y-1.5">
+                                            <div class="bg-blue-50 border-l-2 border-blue-500 px-2 py-1.5 rounded-r-lg">
+                                                <div class="flex justify-between items-center">
+                                                    <span class="font-bold text-blue-800 text-[9px]">林小姐 — 剪髮+染髮</span>
+                                                    <span class="bg-green-100 text-green-700 text-[7px] px-1.5 rounded-full">已確認</span>
+                                                </div>
+                                                <div class="text-[8px] text-slate-500">10:00–11:30 · Ken</div>
+                                            </div>
+                                            <div class="bg-purple-50 border-l-2 border-purple-400 px-2 py-1.5 rounded-r-lg">
+                                                <div class="flex justify-between items-center">
+                                                    <span class="font-bold text-purple-800 text-[9px]">張先生 — 頭皮護理</span>
+                                                    <span class="bg-amber-100 text-amber-700 text-[7px] px-1.5 rounded-full">待確認</span>
+                                                </div>
+                                                <div class="text-[8px] text-slate-500">13:00–14:00 · 不指定</div>
+                                            </div>
+                                            <div class="bg-red-50 border-l-2 border-red-400 px-2 py-1.5 rounded-r-lg relative">
+                                                <div class="absolute top-1.5 right-2 w-1.5 h-1.5 bg-red-500 rounded-full animate-ping"></div>
+                                                <div class="flex justify-between items-center">
+                                                    <span class="font-bold text-red-700 text-[9px]">新客戶 — 剪髮</span>
+                                                    <span class="bg-red-100 text-red-700 text-[7px] px-1.5 rounded-full">新進 ●</span>
+                                                </div>
+                                                <div class="text-[8px] text-slate-500">LINE 剛提交</div>
+                                            </div>
+                                        </div>
+                                        <div class="bg-[#e6faef] border border-[#06C755]/30 rounded-lg px-2 py-1.5">
+                                            <div class="text-[8px] text-slate-700">🔔 系統將於 19:00 自動發送 <span class="font-bold">3 則</span>行前提醒</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Group Class Content -->
+                    <div x-show="activeTab === 'class'" style="display: none;" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0" class="relative z-10 w-full">
+                        <div class="text-xs font-bold text-slate-500 mb-3 text-center tracking-wide uppercase">健身中心：名額管理 × 候補自動通知，無需盯著群組</div>
+                        <div class="grid grid-cols-2 gap-3 mb-3">
+                            <!-- Course 1: Full -->
+                            <div class="bg-white rounded-xl border-2 border-red-200 p-3 shadow-sm" style="font-size:10px">
+                                <div class="flex justify-between items-start mb-2">
+                                    <div>
+                                        <div class="font-bold text-slate-800">TRX 懸吊核心燃脂</div>
+                                        <div class="text-[8px] text-slate-500">週四 19:00–20:00 · Lisa</div>
+                                    </div>
+                                    <span class="text-[8px] bg-red-100 text-red-600 px-1.5 py-0.5 rounded-full font-bold shrink-0">額滿</span>
+                                </div>
+                                <div class="mb-2">
+                                    <div class="flex justify-between text-[8px] text-slate-500 mb-1">
+                                        <span>名額</span><span class="font-bold text-red-500">12/12</span>
+                                    </div>
+                                    <div class="h-2 bg-slate-100 rounded-full overflow-hidden">
+                                        <div class="h-full bg-red-400 rounded-full" style="width:100%"></div>
+                                    </div>
+                                </div>
+                                <div class="flex gap-1 flex-wrap mb-2">
+                                    <div class="w-5 h-5 bg-purple-300 rounded-full text-[7px] flex items-center justify-center text-white">林</div>
+                                    <div class="w-5 h-5 bg-purple-300 rounded-full text-[7px] flex items-center justify-center text-white">張</div>
+                                    <div class="w-5 h-5 bg-purple-300 rounded-full text-[7px] flex items-center justify-center text-white">王</div>
+                                    <div class="w-5 h-5 bg-purple-200 rounded-full text-[7px] flex items-center justify-center text-purple-600">+9</div>
+                                </div>
+                                <div class="bg-amber-50 border border-amber-200 rounded-lg px-2 py-1">
+                                    <div class="text-[8px] text-amber-700 font-bold">候補名單：3 人排隊中</div>
+                                    <div class="text-[7px] text-amber-600">有人取消時系統自動通知</div>
+                                </div>
+                            </div>
+                            <!-- Course 2: Available -->
+                            <div class="bg-white rounded-xl border-2 border-green-200 p-3 shadow-sm" style="font-size:10px">
+                                <div class="flex justify-between items-start mb-2">
+                                    <div>
+                                        <div class="font-bold text-slate-800">瑜珈伸展・晨間班</div>
+                                        <div class="text-[8px] text-slate-500">週五 07:30–08:30 · Tina</div>
+                                    </div>
+                                    <span class="text-[8px] bg-green-100 text-green-600 px-1.5 py-0.5 rounded-full font-bold shrink-0">尚有名額</span>
+                                </div>
+                                <div class="mb-2">
+                                    <div class="flex justify-between text-[8px] text-slate-500 mb-1">
+                                        <span>名額</span><span class="font-bold text-green-600">7/12</span>
+                                    </div>
+                                    <div class="h-2 bg-slate-100 rounded-full overflow-hidden">
+                                        <div class="h-full bg-green-400 rounded-full" style="width:58%"></div>
+                                    </div>
+                                </div>
+                                <div class="flex gap-1 flex-wrap mb-2">
+                                    <div class="w-5 h-5 bg-green-300 rounded-full text-[7px] flex items-center justify-center text-white">許</div>
+                                    <div class="w-5 h-5 bg-green-300 rounded-full text-[7px] flex items-center justify-center text-white">黃</div>
+                                    <div class="w-5 h-5 bg-slate-100 rounded-full text-[7px] flex items-center justify-center text-slate-400">+</div>
+                                    <div class="w-5 h-5 bg-slate-100 rounded-full text-[7px] flex items-center justify-center text-slate-400">+</div>
+                                    <div class="w-5 h-5 bg-slate-100 rounded-full text-[7px] flex items-center justify-center text-slate-400">+</div>
+                                </div>
+                                <div class="bg-green-50 border border-green-200 rounded-lg px-2 py-1">
+                                    <div class="text-[8px] text-green-700">仍剩 <span class="font-bold">5 個</span>空位</div>
+                                    <div class="text-[7px] text-green-600">LINE 點選即可報名</div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Auto flow row -->
+                        <div class="bg-slate-50 border border-slate-200 rounded-xl p-3" style="font-size:10px">
+                            <div class="text-[9px] font-bold text-slate-700 mb-2">⚡ 自動候補通知流程（無需人工介入）</div>
+                            <div class="flex items-center gap-1.5">
+                                <div class="bg-red-100 text-red-700 rounded-lg px-2 py-2 text-[8px] text-center flex-1">
+                                    <div class="font-bold">有人取消</div>
+                                    <div class="text-[7px]">TRX 19:00</div>
+                                </div>
+                                <div class="text-slate-400">→</div>
+                                <div class="bg-amber-100 text-amber-700 rounded-lg px-2 py-2 text-[8px] text-center flex-1">
+                                    <div class="font-bold">系統偵測</div>
+                                    <div class="text-[7px]">候補 #1：吳小姐</div>
+                                </div>
+                                <div class="text-slate-400">→</div>
+                                <div class="bg-green-100 text-green-700 rounded-lg px-2 py-2 text-[8px] text-center flex-1">
+                                    <div class="font-bold">LINE 通知</div>
+                                    <div class="text-[7px]">15分鐘確認</div>
+                                </div>
+                                <div class="text-slate-400">→</div>
+                                <div class="bg-blue-100 text-blue-700 rounded-lg px-2 py-2 text-[8px] text-center flex-1">
+                                    <div class="font-bold">自動補位</div>
+                                    <div class="text-[7px]">名單即時更新</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Ticketing Content -->
+                    <div x-show="activeTab === 'ticket'" style="display: none;" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0" class="relative z-10 w-full">
+                        <div class="text-xs font-bold text-slate-500 mb-3 text-center tracking-wide uppercase">物業維修：需求工單三欄看板，資訊不再漏接</div>
+                        <div class="grid grid-cols-3 gap-2 mb-2" style="font-size:9px">
+                            <!-- Col 1: 待受理 -->
+                            <div class="bg-slate-100 rounded-xl overflow-hidden">
+                                <div class="bg-slate-700 text-white px-2 py-1.5 flex items-center justify-between">
+                                    <span class="font-bold">待受理</span>
+                                    <span class="bg-slate-500 text-white text-[8px] px-1.5 py-0.5 rounded-full">2</span>
+                                </div>
+                                <div class="p-1.5 space-y-1.5">
+                                    <div class="bg-white rounded-lg p-2 shadow-sm border-l-2 border-red-400">
+                                        <div class="font-bold text-slate-800 mb-0.5">冷氣漏水</div>
+                                        <div class="text-[7px] text-slate-500 mb-1">單號 #R892 · 王先生</div>
+                                        <div class="flex gap-1 flex-wrap">
+                                            <span class="bg-red-50 text-red-600 px-1 py-0.5 rounded text-[7px]">緊急</span>
+                                            <span class="bg-slate-100 text-slate-600 px-1 py-0.5 rounded text-[7px]">📷 附照</span>
+                                        </div>
+                                    </div>
+                                    <div class="bg-white rounded-lg p-2 shadow-sm border-l-2 border-amber-400">
+                                        <div class="font-bold text-slate-800 mb-0.5">廚房水管異音</div>
+                                        <div class="text-[7px] text-slate-500 mb-1">單號 #R893 · 陳小姐</div>
+                                        <span class="bg-amber-50 text-amber-600 px-1 py-0.5 rounded text-[7px]">一般</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Col 2: 處理中 -->
+                            <div class="bg-blue-50 rounded-xl overflow-hidden">
+                                <div class="bg-blue-600 text-white px-2 py-1.5 flex items-center justify-between">
+                                    <span class="font-bold">處理中</span>
+                                    <span class="bg-blue-400 text-white text-[8px] px-1.5 py-0.5 rounded-full">2</span>
+                                </div>
+                                <div class="p-1.5 space-y-1.5">
+                                    <div class="bg-white rounded-lg p-2 shadow-sm border-l-2 border-blue-500">
+                                        <div class="font-bold text-slate-800 mb-0.5">浴室磁磚修繕</div>
+                                        <div class="text-[7px] text-slate-500 mb-1">單號 #R889 · 林太太</div>
+                                        <div class="bg-blue-50 rounded p-1 text-[7px] text-blue-700">指派：Johnson<br>預計 4/3 完工</div>
+                                    </div>
+                                    <div class="bg-white rounded-lg p-2 shadow-sm border-l-2 border-blue-400">
+                                        <div class="font-bold text-slate-800 mb-0.5">大門門鎖更換</div>
+                                        <div class="text-[7px] text-slate-500 mb-1">單號 #R891 · 黃先生</div>
+                                        <div class="bg-blue-50 rounded p-1 text-[7px] text-blue-700">今日排定上門</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Col 3: 已完成 -->
+                            <div class="bg-green-50 rounded-xl overflow-hidden">
+                                <div class="bg-green-600 text-white px-2 py-1.5 flex items-center justify-between">
+                                    <span class="font-bold">已完成</span>
+                                    <span class="bg-green-400 text-white text-[8px] px-1.5 py-0.5 rounded-full">3</span>
+                                </div>
+                                <div class="p-1.5 space-y-1.5">
+                                    <div class="bg-white rounded-lg p-2 shadow-sm border-l-2 border-green-400 opacity-80">
+                                        <div class="font-bold text-slate-800 mb-0.5">熱水器安裝</div>
+                                        <div class="text-[7px] text-slate-500 mb-1">單號 #R886</div>
+                                        <div class="text-[7px] text-green-600">✅ 4/1 完工 · ⭐⭐⭐⭐⭐</div>
+                                    </div>
+                                    <div class="bg-white rounded-lg p-2 shadow-sm border-l-2 border-green-400 opacity-80">
+                                        <div class="font-bold text-slate-800 mb-0.5">馬桶漏水修繕</div>
+                                        <div class="text-[7px] text-slate-500 mb-1">單號 #R884</div>
+                                        <div class="text-[7px] text-green-600">✅ 3/28 完工</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-white border border-slate-200 rounded-lg px-3 py-2 flex items-center gap-2" style="font-size:10px">
+                            <span>📱</span>
+                            <div class="text-[8px] text-slate-600">工單完成後，系統自動透過 LINE 發送<span class="font-bold text-slate-800">完工通知 + 評價連結</span>，建立完整服務閉環。</div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Workflow Section (Consulting Approach) -->
+    <section id="process" class="py-24 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <h2 class="text-brand-600 font-semibold tracking-wide uppercase text-sm mb-3">How We Work</h2>
+                <h3 class="text-3xl font-bold text-brand-900 mb-6">不需自己寫規格，把現況交給我們</h3>
+                <p class="text-lg text-brand-600">
+                    我們的合作從「理解你的商業邏輯」開始，而不是一上來就談技術規格。
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8 relative">
+                <!-- Connecting line for desktop -->
+                <div class="hidden md:block absolute top-12 left-1/6 right-1/6 h-0.5 bg-brand-100 -z-10 w-2/3 mx-auto"></div>
+
+                <!-- Step 1 -->
+                <div class="text-center relative">
+                    <div class="w-24 h-24 mx-auto bg-white border-4 border-brand-100 rounded-full flex items-center justify-center shadow-sm mb-6 relative z-10">
+                        <i data-lucide="folder-open" class="w-10 h-10 text-brand-400"></i>
+                    </div>
+                    <div class="inline-block bg-brand-100 text-brand-700 px-3 py-1 rounded-full text-xs font-bold mb-3">Step 1. 拋出資訊</div>
+                    <h4 class="font-bold text-brand-900 text-lg mb-2">提供現有資料</h4>
+                    <p class="text-sm text-brand-600">不需要寫 PRD。把你們現有的價目表、常被問的 FAQ、班表 Excel、或是對話截圖直接交給我們即可。</p>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="text-center relative">
+                    <div class="w-24 h-24 mx-auto bg-white border-4 border-line rounded-full flex items-center justify-center shadow-md mb-6 relative z-10">
+                        <i data-lucide="git-merge" class="w-10 h-10 text-line"></i>
+                    </div>
+                    <div class="inline-block bg-line-light text-line-dark px-3 py-1 rounded-full text-xs font-bold mb-3">Step 2. 顧問梳理</div>
+                    <h4 class="font-bold text-brand-900 text-lg mb-2">流程提案與確認</h4>
+                    <p class="text-sm text-brand-600">我們負責收斂這些資訊，設計成結構化的預約流程、畫出流程圖，並與您確認優先解決的卡點。</p>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="text-center relative">
+                    <div class="w-24 h-24 mx-auto bg-brand-900 border-4 border-brand-800 rounded-full flex items-center justify-center shadow-lg mb-6 relative z-10">
+                        <i data-lucide="code-2" class="w-10 h-10 text-white"></i>
+                    </div>
+                    <div class="inline-block bg-brand-800 text-brand-200 px-3 py-1 rounded-full text-xs font-bold mb-3">Step 3. 客製開發</div>
+                    <h4 class="font-bold text-brand-900 text-lg mb-2">系統建置與上線</h4>
+                    <p class="text-sm text-brand-600">確認邏輯無誤後，進入客製化開發與測試階段。上線後提供教育訓練，確保團隊順利上手。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Comparison Section -->
+    <section class="py-20 bg-brand-50 border-t border-brand-200">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h3 class="text-2xl font-bold text-brand-900">為什麼選擇顧問式開發？</h3>
+            </div>
+            
+            <div class="bg-white rounded-2xl shadow-sm border border-brand-200 overflow-hidden">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-brand-900 text-white">
+                            <th class="p-4 font-medium text-sm w-1/3">比較維度</th>
+                            <th class="p-4 font-medium text-sm w-1/3 border-l border-brand-700 bg-brand-800">一般罐頭模組平台</th>
+                            <th class="p-4 font-bold text-sm w-1/3 border-l border-brand-700 text-line-light">FlowConsulting 顧問開發</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-sm">
+                        <tr class="border-b border-brand-100">
+                            <td class="p-4 font-medium text-brand-900">業務邏輯適配性</td>
+                            <td class="p-4 text-brand-600 border-l border-brand-100">只能削足適履，配合系統既有欄位</td>
+                            <td class="p-4 text-brand-900 font-medium border-l border-brand-100 bg-line-light/30">完全依照您的營業規則客製開發</td>
+                        </tr>
+                        <tr class="border-b border-brand-100">
+                            <td class="p-4 font-medium text-brand-900">需求確認過程</td>
+                            <td class="p-4 text-brand-600 border-l border-brand-100">自己摸索後台怎麼設定</td>
+                            <td class="p-4 text-brand-900 font-medium border-l border-brand-100 bg-line-light/30">專人顧問梳理現況，畫出流程圖</td>
+                        </tr>
+                        <tr class="border-b border-brand-100">
+                            <td class="p-4 font-medium text-brand-900">未來擴充性</td>
+                            <td class="p-4 text-brand-600 border-l border-brand-100">受限於平台提供的功能</td>
+                            <td class="p-4 text-brand-900 font-medium border-l border-brand-100 bg-line-light/30">模組化架構，隨時可加開新功能或串接 API</td>
+                        </tr>
+                        <tr>
+                            <td class="p-4 font-medium text-brand-900">導入成本結構</td>
+                            <td class="p-4 text-brand-600 border-l border-brand-100">每月固定訂閱費 (可能綁定無用功能)</td>
+                            <td class="p-4 text-brand-900 font-medium border-l border-brand-100 bg-line-light/30">顧問費 + 一次性開發費 (或合理的維護費)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!--flow -->
+    <section class="py-24 bg-brand-900 text-white" id="process"> <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"> <div class="text-center max-w-3xl mx-auto mb-16 reveal"> <span class="text-line font-semibold tracking-wider text-sm mb-2 block uppercase">How we work</span> <h2 class="text-3xl md:text-4xl font-bold mb-4">我們怎麼開始？先收資料，再談技術。</h2> <p class="text-brand-300 text-lg">您不需要一開始就把技術規格想得非常清楚。把混亂的現況交給我們，由我們為您梳理出高價值的升級路徑。</p> </div> <div class="grid md:grid-cols-4 gap-8 relative"> <!-- Connecting line for desktop --> <div class="hidden md:block absolute top-12 left-0 w-full h-0.5 bg-brand-700/50 z-0"></div> <!-- Step 1 --> <div class="relative z-10 text-center reveal"> <div class="w-24 h-24 mx-auto bg-brand-800 rounded-full border-4 border-brand-900 shadow-xl flex items-center justify-center mb-6"> <svg class="w-10 h-10 text-brand-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg> </div> <div class="inline-block px-3 py-1 bg-line/20 rounded-full text-line font-bold text-xs mb-3">Step 1</div> <h3 class="text-xl font-bold mb-3">提交現狀與卡點</h3> <p class="text-brand-300 text-sm leading-relaxed text-left md:text-center mx-auto max-w-xs">不須整理精美規格文件。把現在遇到的問題、客服常被問的 QA、服務價目表、對話截圖傳給我們。</p> </div> <!-- Step 2 --> <div class="relative z-10 text-center reveal" style="transition-delay: 100ms;"> <div class="w-24 h-24 mx-auto bg-brand-800 rounded-full border-4 border-brand-900 shadow-xl flex items-center justify-center mb-6"> <svg class="w-10 h-10 text-brand-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 21h7a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v11m0 5l4.879-4.879m0 0a3 3 0 104.243-4.242 3 3 0 00-4.243 4.242z"></path></svg> </div> <div class="inline-block px-3 py-1 bg-brand-700 rounded-full text-brand-300 font-bold text-xs mb-3">Step 2</div> <h3 class="text-xl font-bold mb-3">初步梳理商業邏輯</h3> <p class="text-brand-300 text-sm leading-relaxed text-left md:text-center mx-auto max-w-xs">我們會從營運與轉換率的角度出發，幫您評估哪些環節最值得自動化，並提出初步的架構建議。</p> </div> <!-- Step 3 --> <div class="relative z-10 text-center reveal" style="transition-delay: 200ms;"> <div class="w-24 h-24 mx-auto bg-brand-800 rounded-full border-4 border-brand-900 shadow-xl flex items-center justify-center mb-6"> <svg class="w-10 h-10 text-brand-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z"></path></svg> </div> <div class="inline-block px-3 py-1 bg-brand-700 rounded-full text-brand-300 font-bold text-xs mb-3">Step 3</div> <h3 class="text-xl font-bold mb-3">訪談與確認方向</h3> <p class="text-brand-300 text-sm leading-relaxed text-left md:text-center mx-auto max-w-xs">線上會議對焦。確認您的商業優先順序，確保我們設計的 LINE 流程符合團隊實際工作模式。</p> </div> <!-- Step 4 --> <div class="relative z-10 text-center reveal" style="transition-delay: 300ms;"> <div class="w-24 h-24 mx-auto bg-line border-4 border-brand-900 shadow-xl flex items-center justify-center mb-6 text-white font-bold"> <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> </div> <div class="inline-block px-3 py-1 bg-line/20 rounded-full text-line font-bold text-xs mb-3">Step 4</div> <h3 class="text-xl font-bold mb-3">正式提案與專案展開</h3> <p class="text-brand-300 text-sm leading-relaxed text-left md:text-center mx-auto max-w-xs">進入技術諮詢與細部流程設計。此階段的顧問費將可折抵後續的模組開發與系統建置費用。</p> </div> </div> </div> </section>
+
+    <!-- LINE 諮詢入口 -->
+    <section id="contact" class="py-24 bg-slate-900 relative overflow-hidden">
+        <!-- 背景格線 -->
+        <div class="absolute inset-0 opacity-5" style="background-image: linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px); background-size: 30px 30px;"></div>
+
+        <div class="max-w-4xl mx-auto px-5 lg:px-8 relative z-10">
+            <div class="bg-white rounded-3xl p-8 md:p-12 shadow-2xl">
+                <div class="grid md:grid-cols-12 gap-8 items-center">
+
+                    <!-- 左側文字 -->
+                    <div class="md:col-span-7">
+                        <span class="inline-flex items-center px-3 py-1.5 rounded-full bg-green-50 border border-green-100 text-sm font-medium text-green-700">
+                            <i class="fa-brands fa-line mr-2"></i>LINE 預約諮詢入口
+                        </span>
+                        <h2 class="mt-5 text-3xl md:text-4xl font-bold text-slate-900 leading-tight">
+                            帶著你最頭痛的預約問題，<br class="hidden md:block">
+                            <span class="text-line">我們來幫你梳理出第一步</span>
+                        </h2>
+                        <p class="mt-3 text-slate-500 text-sm leading-relaxed">
+                            不用準備完美的企劃書。排班 Excel、客服截圖或一句話描述都可以。<br>
+                            初步諮詢完全免費，確認有合作空間才進入正式提案。
+                        </p>
+                        <p class="mt-2 text-xs text-slate-400">
+                            手機用戶可直接一鍵開啟 LINE，桌機或平板可掃描右方 QR Code 加入。
+                        </p>
+                        <div class="mt-6 flex flex-col sm:flex-row gap-3">
+                            <a href="https://lin.ee/6IdgZC4" target="_blank" rel="noopener noreferrer"
+                               class="inline-flex items-center justify-center gap-2 bg-line hover:bg-line-dark text-white px-8 py-3.5 rounded-full font-medium transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+                                <i class="fa-brands fa-line text-lg"></i>立即 LINE 諮詢
+                            </a>
+                            <a href="https://lin.ee/6IdgZC4" target="_blank" rel="noopener noreferrer"
+                               class="inline-flex items-center justify-center gap-2 border border-slate-200 hover:border-line text-slate-700 hover:text-line px-8 py-3.5 rounded-full font-medium transition-all bg-white hover:bg-green-50">
+                                開啟 LINE 連結
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- 右側 QR Code -->
+                    <div class="md:col-span-5 flex justify-center">
+                        <div class="w-full max-w-[240px] rounded-3xl border border-slate-200 bg-white p-5 shadow-xl">
+                            <img
+                                src="https://api.qrserver.com/v1/create-qr-code/?size=280x280&data=https%3A%2F%2Flin.ee%2F6IdgZC4"
+                                alt="Digitools Studio LINE 官方帳號 QR Code"
+                                class="w-full h-auto rounded-2xl border border-slate-100"
+                                loading="lazy"
+                            />
+                            <p class="mt-3 text-sm text-center text-slate-500">掃描加入 LINE 官方帳號</p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 border-t border-slate-800 text-slate-400">
+        <div class="max-w-7xl mx-auto px-5 lg:px-8 py-12">
+            <div class="grid md:grid-cols-3 gap-10 mb-10 pb-10 border-b border-slate-800">
+                <!-- 品牌 -->
+                <div>
+                    <div class="flex items-center space-x-3 mb-4">
+                        <div class="w-8 h-8 bg-slate-700 text-white rounded-lg flex items-center justify-center font-bold text-sm">D</div>
+                        <span class="font-bold text-white text-base">Digitools Studio</span>
+                    </div>
+                    <p class="text-sm leading-relaxed">數位成長夥伴，協助企業梳理流程、導入工具、建立可持續經營的 LINE 客戶體系。</p>
+                </div>
+                <!-- 頁面導覽 -->
+                <div>
+                    <h5 class="text-white font-semibold mb-4 text-sm">頁面導覽</h5>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#pain-points" class="hover:text-white transition-colors">現況痛點</a></li>
+                        <li><a href="#core-module" class="hover:text-white transition-colors">預約升級</a></li>
+                        <li><a href="#process" class="hover:text-white transition-colors">合作流程</a></li>
+                        <li><a href="#pricing" class="hover:text-white transition-colors">費用方案</a></li>
+                        <li><a href="#contact" class="hover:text-white transition-colors">免費諮詢</a></li>
+                    </ul>
+                </div>
+                <!-- 聯絡 -->
+                <div>
+                    <h5 class="text-white font-semibold mb-4 text-sm">聯絡我們</h5>
+                    <ul class="space-y-2 text-sm">
+                        <li>digitalaaronl@gmail.com</li>
+                        <li>新北-個人工作室</li>
+                        <li>週一至週五 09:30 – 21:30</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="flex flex-col md:flex-row justify-between items-center text-xs text-slate-500">
+                <p>© 2026 Digitools Studio. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 浮動 LINE 諮詢按鈕 -->
+    <div class="fixed bottom-6 right-6 z-50 group">
+        <a href="https://lin.ee/6IdgZC4" target="_blank" rel="noopener noreferrer"
+           class="flex items-center gap-2.5 bg-line hover:bg-line-hover text-white shadow-2xl rounded-full px-5 py-3.5 transition-all duration-300 hover:scale-105"
+           title="LINE 諮詢">
+            <i data-lucide="message-circle" class="w-6 h-6"></i>
+            <span class="text-sm font-semibold hidden md:block">LINE 諮詢</span>
+        </a>
+        <!-- QR Code tooltip (hover, 桌機) -->
+        <div class="absolute bottom-full right-0 mb-3 hidden md:group-hover:block pointer-events-none">
+            <div class="bg-white rounded-2xl p-4 shadow-2xl border border-slate-100 w-48">
+                <img
+                    src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https%3A%2F%2Flin.ee%2F6IdgZC4"
+                    alt="LINE QR Code" class="w-full rounded-xl" />
+                <p class="text-xs text-center text-slate-500 mt-2">掃描加入 LINE</p>
+            </div>
+            <!-- 小三角 -->
+            <div class="w-3 h-3 bg-white rotate-45 absolute -bottom-1.5 right-8 border-r border-b border-slate-100"></div>
+        </div>
+    </div>
+
+    <script>
+        // Navbar scroll effect
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.classList.add('glass-header', 'py-3');
+                navbar.classList.remove('bg-transparent', 'py-5');
+            } else {
+                navbar.classList.remove('glass-header', 'py-3');
+                navbar.classList.add('bg-transparent', 'py-5');
+            }
+        });
+
+        // Mobile menu toggle
+        const mobileBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        mobileBtn.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
+        mobileMenu.querySelectorAll('a').forEach(l => l.addEventListener('click', () => mobileMenu.classList.add('hidden')));
+
+        // Initialize Lucide icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>
