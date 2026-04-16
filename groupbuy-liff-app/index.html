@@ -1302,49 +1302,9 @@
 
       /*
         orders 是「我的訂單」資料
-        mock 模式先放假資料
         正式模式應改成後端 API 取得
       */
-      orders: [
-        {
-          order_id: "GB20260413-001",
-          line_user_id: "U_demo_user_001",
-          customer_name: "Ken",
-          item_summary: "舒肥雞胸肉 原味 x2",
-          items: [
-            {
-              product_name: "舒肥雞胸肉",
-              option_name: "原味",
-              qty: 2,
-              unit_price: 120,
-              subtotal: 240
-            }
-          ],
-          total_amount: 240,
-          payment_status: "UNPAID",
-          fulfillment_status: "NOT_READY",
-          created_at: "2026-04-13 19:20"
-        },
-        {
-          order_id: "GB20260412-008",
-          line_user_id: "U_demo_user_001",
-          customer_name: "Ken",
-          item_summary: "手作冷泡茶 無糖 x3",
-          items: [
-            {
-              product_name: "手作冷泡茶",
-              option_name: "無糖",
-              qty: 3,
-              unit_price: 65,
-              subtotal: 195
-            }
-          ],
-          total_amount: 195,
-          payment_status: "PAID",
-          fulfillment_status: "READY",
-          created_at: "2026-04-12 13:05"
-        }
-      ],
+      orders: [],
 
       currentOrderId: null,
       isSubmittingOrder: false,
