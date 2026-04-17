@@ -1,0 +1,1452 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>團購管理後台</title>
+  <style>
+    :root {
+      --bg: #f5f8fd;
+      --bg-2: #edf4ff;
+      --surface: rgba(255, 255, 255, 0.88);
+      --surface-strong: #ffffff;
+      --text: #152033;
+      --muted: #69768a;
+      --line: rgba(17, 24, 39, 0.08);
+      --primary: #1f6fff;
+      --primary-soft: rgba(31, 111, 255, 0.08);
+      --success: #10b981;
+      --success-soft: rgba(16, 185, 129, 0.12);
+      --warning: #f59e0b;
+      --warning-soft: rgba(245, 158, 11, 0.12);
+      --danger: #ef4444;
+      --danger-soft: rgba(239, 68, 68, 0.12);
+      --slate-soft: rgba(100, 116, 139, 0.12);
+      --radius-xl: 30px;
+      --radius-lg: 22px;
+      --radius-md: 16px;
+      --radius-sm: 12px;
+      --shadow-lg: 0 24px 60px rgba(24, 39, 75, 0.12);
+      --shadow-md: 0 14px 34px rgba(24, 39, 75, 0.08);
+      --shadow-sm: 0 8px 20px rgba(24, 39, 75, 0.05);
+      --maxw: 1280px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      background:
+        radial-gradient(circle at top right, rgba(74, 144, 255, 0.12), transparent 18%),
+        linear-gradient(180deg, var(--bg-2) 0%, var(--bg) 42%, #f7f9fc 100%);
+      color: var(--text);
+      font-family: Inter, "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+    }
+
+    button, input, textarea, select {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+      border: 0;
+    }
+
+    .wrap {
+      max-width: var(--maxw);
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    .glass {
+      background: var(--surface);
+      border: 1px solid rgba(255, 255, 255, 0.9);
+      box-shadow: var(--shadow-lg);
+      backdrop-filter: blur(18px);
+    }
+
+    .hero {
+      border-radius: 32px;
+      padding: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      width: 240px;
+      height: 240px;
+      right: -80px;
+      top: -80px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(31, 111, 255, 0.18) 0%, rgba(31, 111, 255, 0) 70%);
+      pointer-events: none;
+    }
+
+    .hero-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 18px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-kicker {
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      color: var(--primary);
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .hero h1 {
+      margin: 8px 0 6px;
+      font-size: 34px;
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+    }
+
+    .hero p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 14px;
+      max-width: 760px;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .btn {
+      border-radius: 14px;
+      padding: 12px 16px;
+      font-weight: 800;
+      transition: transform 0.12s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .btn:active {
+      transform: translateY(1px) scale(0.995);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), #72a7ff);
+      color: #fff;
+    }
+
+    .btn-secondary {
+      background: #fff;
+      color: var(--text);
+      border: 1px solid var(--line);
+    }
+
+    .btn-soft {
+      background: var(--primary-soft);
+      color: var(--primary);
+    }
+
+    .config-grid {
+      display: grid;
+      grid-template-columns: 1fr 280px;
+      gap: 14px;
+      margin-top: 18px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .field label {
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 800;
+    }
+
+    .input {
+      width: 100%;
+      border: 1px solid var(--line);
+      background: #f9fbff;
+      color: var(--text);
+      border-radius: 16px;
+      padding: 13px 14px;
+      outline: none;
+      transition: 0.2s ease;
+    }
+
+    .input:focus {
+      border-color: rgba(31, 111, 255, 0.4);
+      box-shadow: 0 0 0 4px rgba(31, 111, 255, 0.08);
+      background: #fff;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 14px;
+      margin-top: 18px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .stat-card {
+      background: rgba(255, 255, 255, 0.82);
+      border: 1px solid rgba(255, 255, 255, 0.92);
+      border-radius: 20px;
+      padding: 16px;
+      box-shadow: var(--shadow-md);
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .stat-value {
+      margin-top: 8px;
+      font-size: 28px;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 18px;
+      margin-top: 18px;
+      align-items: start;
+    }
+
+    .sidebar,
+    .content-panel {
+      border-radius: 28px;
+      padding: 18px;
+    }
+
+    .sidebar h3,
+    .content-panel h3 {
+      margin: 0;
+      font-size: 18px;
+      letter-spacing: -0.02em;
+    }
+
+    .sidebar-sub {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6;
+      margin-top: 6px;
+    }
+
+    .filter-group {
+      margin-top: 18px;
+    }
+
+    .filter-title {
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 800;
+      margin-bottom: 10px;
+    }
+
+    .filter-stack {
+      display: grid;
+      gap: 10px;
+    }
+
+    .filter-btn {
+      width: 100%;
+      text-align: left;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 12px 14px;
+      font-weight: 800;
+      color: var(--text);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .filter-btn.active {
+      background: linear-gradient(135deg, rgba(31, 111, 255, 0.10), rgba(114, 167, 255, 0.16));
+      color: var(--primary);
+      border-color: rgba(31, 111, 255, 0.12);
+    }
+
+    .content-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .content-sub {
+      margin-top: 6px;
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .toolbar {
+      display: grid;
+      grid-template-columns: 1fr 150px 150px;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .select {
+      width: 100%;
+      border: 1px solid var(--line);
+      background: #f9fbff;
+      color: var(--text);
+      border-radius: 16px;
+      padding: 13px 14px;
+      outline: none;
+    }
+
+    .mode-switch {
+      display: inline-flex;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 4px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .mode-btn {
+      padding: 10px 14px;
+      border-radius: 12px;
+      background: transparent;
+      color: var(--muted);
+      font-weight: 800;
+    }
+
+    .mode-btn.active {
+      background: linear-gradient(135deg, rgba(31, 111, 255, 0.10), rgba(114, 167, 255, 0.16));
+      color: var(--primary);
+    }
+
+    .error-box,
+    .info-box {
+      margin-top: 14px;
+      border-radius: 16px;
+      padding: 12px 14px;
+      line-height: 1.6;
+      display: none;
+      white-space: pre-wrap;
+    }
+
+    .error-box {
+      background: rgba(239, 68, 68, 0.08);
+      color: #b91c1c;
+    }
+
+    .info-box {
+      background: rgba(31, 111, 255, 0.08);
+      color: #1d4ed8;
+    }
+
+    .table-wrap {
+      overflow: auto;
+      margin-top: 16px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0 10px;
+    }
+
+    th {
+      font-size: 12px;
+      color: var(--muted);
+      text-align: left;
+      padding: 0 10px 8px;
+      white-space: nowrap;
+    }
+
+    td {
+      background: #fff;
+      padding: 14px 10px;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+    }
+
+    td:first-child {
+      border-left: 1px solid var(--line);
+      border-radius: 16px 0 0 16px;
+    }
+
+    td:last-child {
+      border-right: 1px solid var(--line);
+      border-radius: 0 16px 16px 0;
+    }
+
+    .cell-main {
+      font-weight: 800;
+    }
+
+    .cell-sub {
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .mini-btn {
+      padding: 8px 10px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 800;
+      border: 0;
+      cursor: pointer;
+    }
+
+    .mini-secondary {
+      background: #fff;
+      border: 1px solid var(--line);
+      color: var(--text);
+    }
+
+    .mini-success {
+      background: var(--success-soft);
+      color: #047857;
+    }
+
+    .mini-danger {
+      background: var(--danger-soft);
+      color: #b91c1c;
+    }
+
+    .mini-warning {
+      background: var(--warning-soft);
+      color: #92400e;
+    }
+
+    .mini-primary {
+      background: var(--primary-soft);
+      color: var(--primary);
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 7px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .b-unpaid {
+      background: var(--warning-soft);
+      color: #b45309;
+    }
+
+    .b-pending {
+      background: rgba(96, 165, 250, 0.14);
+      color: #1d4ed8;
+    }
+
+    .b-paid {
+      background: var(--success-soft);
+      color: #047857;
+    }
+
+    .b-rejected {
+      background: var(--danger-soft);
+      color: #b91c1c;
+    }
+
+    .b-notready {
+      background: var(--slate-soft);
+      color: #475569;
+    }
+
+    .b-ready {
+      background: rgba(34, 197, 94, 0.14);
+      color: #166534;
+    }
+
+    .b-picked {
+      background: rgba(15, 23, 42, 0.10);
+      color: #0f172a;
+    }
+
+    .cards {
+      display: none;
+      gap: 14px;
+      margin-top: 16px;
+    }
+
+    .order-card {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 16px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .order-card + .order-card {
+      margin-top: 12px;
+    }
+
+    .card-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .card-id {
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 800;
+    }
+
+    .card-summary {
+      margin-top: 5px;
+      font-weight: 800;
+      line-height: 1.5;
+    }
+
+    .card-meta {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+
+    .card-footer {
+      margin-top: 14px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .empty {
+      padding: 28px;
+      text-align: center;
+      color: var(--muted);
+    }
+
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(17, 24, 39, 0.40);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 50;
+    }
+
+    .overlay.show {
+      display: flex;
+    }
+
+    .modal-card {
+      max-width: 980px;
+      width: 100%;
+      max-height: 90vh;
+      overflow: auto;
+      border-radius: 30px;
+      padding: 20px;
+      background: rgba(255,255,255,0.96);
+      box-shadow: 0 28px 80px rgba(17, 24, 39, 0.22);
+    }
+
+    .modal-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .modal-title {
+      margin: 6px 0 0;
+      font-size: 26px;
+      letter-spacing: -0.03em;
+    }
+
+    .grid2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    .box {
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 16px;
+      background: #fff;
+    }
+
+    .box h3 {
+      margin: 0 0 12px;
+      font-size: 17px;
+    }
+
+    .kv {
+      display: grid;
+      gap: 10px;
+    }
+
+    .kv-row {
+      display: grid;
+      grid-template-columns: 100px 1fr;
+      gap: 10px;
+      align-items: start;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .kv-row .k {
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .event {
+      padding: 10px 0;
+      border-bottom: 1px dashed rgba(100, 116, 139, 0.25);
+    }
+
+    .event:last-child {
+      border-bottom: none;
+    }
+
+    .modal-actions {
+      margin-top: 16px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .loader {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255,255,255,0.45);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin .8s linear infinite;
+      vertical-align: middle;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    @media (max-width: 1080px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .stats {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    @media (max-width: 860px) {
+      .toolbar {
+        grid-template-columns: 1fr;
+      }
+
+      .stats {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .config-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .grid2 {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 700px) {
+      .wrap {
+        padding: 16px;
+      }
+
+      .hero h1 {
+        font-size: 28px;
+      }
+
+      .stats {
+        grid-template-columns: 1fr;
+      }
+
+      .table-wrap {
+        display: none;
+      }
+
+      .cards {
+        display: block;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="hero glass">
+      <div class="hero-top">
+        <div>
+          <div class="hero-kicker">GROUPBUY ADMIN</div>
+          <h1>團購管理後台</h1>
+          <p>
+            集中處理付款審核、正式成立、可交貨與交貨完成。這一頁會直接呼叫你的 API Gateway，
+            所以只要填入 API Base URL 與 Admin Token 就能開始操作。
+          </p>
+        </div>
+        <div class="hero-actions">
+          <button class="btn btn-secondary" id="refreshBtn">重新整理</button>
+          <button class="btn btn-primary" id="exportBtn">匯出 CSV</button>
+        </div>
+      </div>
+
+      <div class="config-grid">
+        <div class="field">
+          <label>API Base URL</label>
+          <input
+            id="apiBase"
+            class="input"
+            placeholder="例如：https://2wtu5r0w8k.execute-api.ap-northeast-1.amazonaws.com"
+          />
+        </div>
+        <div class="field">
+          <label>Admin Token</label>
+          <input
+            id="adminToken"
+            class="input"
+            placeholder="請貼上 x-admin-token"
+          />
+        </div>
+      </div>
+
+      <div class="stats" id="stats"></div>
+
+      <div class="error-box" id="errorBox"></div>
+      <div class="info-box" id="infoBox"></div>
+    </section>
+
+    <section class="layout">
+      <aside class="sidebar glass">
+        <h3>篩選與視圖</h3>
+        <div class="sidebar-sub">先切狀態再查詢，會比你盯著全部訂單更不容易眼神死。</div>
+
+        <div class="filter-group">
+          <div class="filter-title">快速篩選</div>
+          <div class="filter-stack">
+            <button class="filter-btn active" data-filter="all">全部訂單</button>
+            <button class="filter-btn" data-payment="UNPAID">待付款</button>
+            <button class="filter-btn" data-payment="PENDING">待確認付款</button>
+            <button class="filter-btn" data-payment="PAID">已正式成立</button>
+            <button class="filter-btn" data-fulfillment="READY">可取貨</button>
+            <button class="filter-btn" data-fulfillment="PICKED">已完成</button>
+          </div>
+        </div>
+
+        <div class="filter-group">
+          <div class="filter-title">列表模式</div>
+          <div class="mode-switch">
+            <button class="mode-btn active" data-mode="table">表格</button>
+            <button class="mode-btn" data-mode="card">卡片</button>
+          </div>
+        </div>
+      </aside>
+
+      <section class="content-panel glass">
+        <div class="content-head">
+          <div>
+            <h3>訂單列表</h3>
+            <div class="content-sub">支援關鍵字搜尋與狀態篩選；操作按鈕會依狀態自動切換。</div>
+          </div>
+        </div>
+
+        <div class="toolbar">
+          <input id="keyword" class="input" placeholder="搜尋訂單編號 / 客戶 / 商品摘要" />
+          <select id="paymentSelect" class="select">
+            <option value="">付款狀態：全部</option>
+            <option value="UNPAID">待付款</option>
+            <option value="PENDING">待確認付款</option>
+            <option value="PAID">已確認</option>
+            <option value="REJECTED">已退回</option>
+          </select>
+          <select id="fulfillmentSelect" class="select">
+            <option value="">交貨狀態：全部</option>
+            <option value="NOT_READY">未備貨</option>
+            <option value="READY">可取貨</option>
+            <option value="PICKED">已完成</option>
+          </select>
+        </div>
+
+        <div class="table-wrap" id="tableWrap">
+          <table>
+            <thead>
+              <tr>
+                <th>訂單編號</th>
+                <th>客戶 / 商品摘要</th>
+                <th>金額</th>
+                <th>付款狀態</th>
+                <th>交貨狀態</th>
+                <th>更新時間</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody id="tbody">
+              <tr>
+                <td colspan="7" class="empty">請先輸入 API Base URL 與 Admin Token，再按重新整理。</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="cards" id="cards"></div>
+      </section>
+    </section>
+  </div>
+
+  <div class="overlay" id="overlay">
+    <div class="modal-card">
+      <div class="modal-head">
+        <div>
+          <div class="muted" id="modalOrderId">訂單編號</div>
+          <div class="modal-title" id="modalTitle">訂單詳情</div>
+        </div>
+        <button class="btn btn-secondary" id="closeModal">關閉</button>
+      </div>
+
+      <div class="grid2">
+        <div class="box">
+          <h3>訂單資訊</h3>
+          <div class="kv" id="orderDetail"></div>
+        </div>
+
+        <div class="box">
+          <h3>付款資訊</h3>
+          <div class="kv" id="paymentDetail"></div>
+        </div>
+      </div>
+
+      <div class="grid2">
+        <div class="box">
+          <h3>商品明細</h3>
+          <div id="itemDetail"></div>
+        </div>
+
+        <div class="box">
+          <h3>事件歷程</h3>
+          <div id="eventDetail"></div>
+        </div>
+      </div>
+
+      <div class="modal-actions" id="modalActions"></div>
+    </div>
+  </div>
+
+  <script>
+    const state = {
+      apiBase: "",
+      adminToken: "",
+      orders: [],
+      filters: {
+        payment_status: "",
+        fulfillment_status: "",
+        keyword: ""
+      },
+      selectedOrder: null,
+      viewMode: "table",
+      loading: false
+    };
+
+    const refs = {
+      apiBase: document.getElementById("apiBase"),
+      adminToken: document.getElementById("adminToken"),
+      tbody: document.getElementById("tbody"),
+      cards: document.getElementById("cards"),
+      stats: document.getElementById("stats"),
+      keyword: document.getElementById("keyword"),
+      paymentSelect: document.getElementById("paymentSelect"),
+      fulfillmentSelect: document.getElementById("fulfillmentSelect"),
+      tableWrap: document.getElementById("tableWrap"),
+      overlay: document.getElementById("overlay"),
+      modalOrderId: document.getElementById("modalOrderId"),
+      modalTitle: document.getElementById("modalTitle"),
+      orderDetail: document.getElementById("orderDetail"),
+      paymentDetail: document.getElementById("paymentDetail"),
+      itemDetail: document.getElementById("itemDetail"),
+      eventDetail: document.getElementById("eventDetail"),
+      modalActions: document.getElementById("modalActions"),
+      errorBox: document.getElementById("errorBox"),
+      infoBox: document.getElementById("infoBox")
+    };
+
+    const paymentMap = {
+      UNPAID: ["待付款", "b-unpaid"],
+      PENDING: ["待確認", "b-pending"],
+      PAID: ["已確認", "b-paid"],
+      REJECTED: ["已退回", "b-rejected"]
+    };
+
+    const fulfillmentMap = {
+      NOT_READY: ["未備貨", "b-notready"],
+      READY: ["可取貨", "b-ready"],
+      PICKED: ["已完成", "b-picked"]
+    };
+
+    function showError(message) {
+      refs.errorBox.style.display = "block";
+      refs.errorBox.textContent = message;
+    }
+
+    function clearError() {
+      refs.errorBox.style.display = "none";
+      refs.errorBox.textContent = "";
+    }
+
+    function showInfo(message) {
+      refs.infoBox.style.display = "block";
+      refs.infoBox.textContent = message;
+    }
+
+    function clearInfo() {
+      refs.infoBox.style.display = "none";
+      refs.infoBox.textContent = "";
+    }
+
+    function badge(status, map) {
+      const entry = map[status] || [status, "b-notready"];
+      return `<span class="badge ${entry[1]}">${entry[0]}</span>`;
+    }
+
+    function formatCurrency(value) {
+      return `$${Number(value || 0).toLocaleString("zh-TW")}`;
+    }
+
+    function updateLocalConfig() {
+      state.apiBase = refs.apiBase.value.trim().replace(/\/$/, "");
+      state.adminToken = refs.adminToken.value.trim();
+
+      localStorage.setItem("groupbuy_admin_api_base", state.apiBase);
+      localStorage.setItem("groupbuy_admin_token", state.adminToken);
+      localStorage.setItem("groupbuy_admin_view_mode", state.viewMode);
+    }
+
+    function loadLocalConfig() {
+      refs.apiBase.value = localStorage.getItem("groupbuy_admin_api_base") || "";
+      refs.adminToken.value = localStorage.getItem("groupbuy_admin_token") || "";
+      state.viewMode = localStorage.getItem("groupbuy_admin_view_mode") || "table";
+      updateLocalConfig();
+      applyViewMode();
+    }
+
+    function applyViewMode() {
+      document.querySelectorAll("[data-mode]").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.mode === state.viewMode);
+      });
+
+      if (state.viewMode === "card") {
+        refs.tableWrap.style.display = "none";
+        refs.cards.style.display = "block";
+      } else {
+        refs.tableWrap.style.display = "block";
+        refs.cards.style.display = "none";
+      }
+    }
+
+    async function api(path, options = {}) {
+      updateLocalConfig();
+
+      if (!state.apiBase) throw new Error("請先填寫 API Base URL");
+      if (!state.adminToken) throw new Error("請先填寫 Admin Token");
+
+      const res = await fetch(`${state.apiBase}${path}`, {
+        ...options,
+        headers: {
+          "Content-Type": "application/json",
+          "x-admin-token": state.adminToken,
+          ...(options.headers || {})
+        }
+      });
+
+      const contentType = res.headers.get("content-type") || "";
+
+      if (contentType.includes("text/csv")) {
+        return await res.text();
+      }
+
+      const json = await res.json();
+
+      if (!res.ok || !json.ok) {
+        throw new Error(json.message || "API error");
+      }
+
+      return json.data;
+    }
+
+    function renderStats() {
+      const total = state.orders.length;
+      const unpaid = state.orders.filter(o => o.payment_status === "UNPAID").length;
+      const pending = state.orders.filter(o => o.payment_status === "PENDING").length;
+      const paid = state.orders.filter(o => o.payment_status === "PAID").length;
+      const ready = state.orders.filter(o => o.fulfillment_status === "READY").length;
+
+      refs.stats.innerHTML = `
+        <div class="stat-card">
+          <div class="stat-label">全部訂單</div>
+          <div class="stat-value">${total}</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">待付款</div>
+          <div class="stat-value">${unpaid}</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">待確認付款</div>
+          <div class="stat-value">${pending}</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">已正式成立</div>
+          <div class="stat-value">${paid}</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">可取貨</div>
+          <div class="stat-value">${ready}</div>
+        </div>
+      `;
+    }
+
+    function getActionButtons(order) {
+      const buttons = [
+        `<button class="mini-btn mini-secondary" data-detail="${order.order_id}">查看</button>`
+      ];
+
+      if (order.payment_status === "PENDING") {
+        buttons.push(`<button class="mini-btn mini-success" data-confirm="${order.order_id}">確認付款</button>`);
+        buttons.push(`<button class="mini-btn mini-danger" data-reject="${order.order_id}">駁回付款</button>`);
+      }
+
+      if (order.payment_status === "PAID" && order.fulfillment_status === "NOT_READY") {
+        buttons.push(`<button class="mini-btn mini-warning" data-ready="${order.order_id}">標記可交貨</button>`);
+      }
+
+      if (order.payment_status === "PAID" && order.fulfillment_status === "READY") {
+        buttons.push(`<button class="mini-btn mini-primary" data-picked="${order.order_id}">標記已交貨</button>`);
+      }
+
+      return buttons.join("");
+    }
+
+    function renderTable() {
+      if (!state.orders.length) {
+        refs.tbody.innerHTML = `
+          <tr>
+            <td colspan="7" class="empty">目前查無資料。</td>
+          </tr>
+        `;
+        return;
+      }
+
+      refs.tbody.innerHTML = state.orders.map(order => `
+        <tr>
+          <td>
+            <div class="cell-main">${order.order_id}</div>
+            <div class="cell-sub">${order.customer_name || "-"}</div>
+          </td>
+          <td>
+            <div class="cell-main">${order.item_summary || "-"}</div>
+            <div class="cell-sub">LINE：${order.line_user_id || "-"}</div>
+          </td>
+          <td>
+            <div class="cell-main">${formatCurrency(order.total_amount)}</div>
+          </td>
+          <td>${badge(order.payment_status, paymentMap)}</td>
+          <td>${badge(order.fulfillment_status, fulfillmentMap)}</td>
+          <td>
+            <div class="cell-main">${order.updated_at || "-"}</div>
+            <div class="cell-sub">建立：${order.created_at || "-"}</div>
+          </td>
+          <td>
+            <div class="actions">
+              ${getActionButtons(order)}
+            </div>
+          </td>
+        </tr>
+      `).join("");
+
+      bindOrderActionButtons();
+    }
+
+    function renderCards() {
+      if (!state.orders.length) {
+        refs.cards.innerHTML = `<div class="empty">目前查無資料。</div>`;
+        return;
+      }
+
+      refs.cards.innerHTML = state.orders.map(order => `
+        <div class="order-card">
+          <div class="card-top">
+            <div>
+              <div class="card-id">訂單編號｜${order.order_id}</div>
+              <div class="card-summary">${order.item_summary || "-"}</div>
+            </div>
+            <div style="font-weight:900;font-size:20px;">${formatCurrency(order.total_amount)}</div>
+          </div>
+
+          <div class="cell-sub" style="margin-top:8px;">客戶：${order.customer_name || "-"}｜LINE：${order.line_user_id || "-"}</div>
+
+          <div class="card-meta">
+            ${badge(order.payment_status, paymentMap)}
+            ${badge(order.fulfillment_status, fulfillmentMap)}
+          </div>
+
+          <div class="cell-sub" style="margin-top:10px;">更新時間：${order.updated_at || "-"}</div>
+
+          <div class="card-footer">
+            <div class="actions">
+              ${getActionButtons(order)}
+            </div>
+          </div>
+        </div>
+      `).join("");
+
+      bindOrderActionButtons();
+    }
+
+    function bindOrderActionButtons() {
+      document.querySelectorAll("[data-detail]").forEach(btn => {
+        btn.onclick = () => openDetail(btn.dataset.detail);
+      });
+
+      document.querySelectorAll("[data-confirm]").forEach(btn => {
+        btn.onclick = () => confirmPayment(btn.dataset.confirm);
+      });
+
+      document.querySelectorAll("[data-reject]").forEach(btn => {
+        btn.onclick = () => rejectPayment(btn.dataset.reject);
+      });
+
+      document.querySelectorAll("[data-ready]").forEach(btn => {
+        btn.onclick = () => markReady(btn.dataset.ready);
+      });
+
+      document.querySelectorAll("[data-picked]").forEach(btn => {
+        btn.onclick = () => markPicked(btn.dataset.picked);
+      });
+    }
+
+    function renderOrders() {
+      renderStats();
+      renderTable();
+      renderCards();
+      applyViewMode();
+    }
+
+    async function loadOrders() {
+      clearError();
+      clearInfo();
+
+      const qs = new URLSearchParams();
+
+      if (state.filters.payment_status) qs.set("payment_status", state.filters.payment_status);
+      if (state.filters.fulfillment_status) qs.set("fulfillment_status", state.filters.fulfillment_status);
+      if (state.filters.keyword) qs.set("keyword", state.filters.keyword);
+
+      const data = await api(`/admin/orders${qs.toString() ? "?" + qs.toString() : ""}`);
+      state.orders = data || [];
+      renderOrders();
+      showInfo(`已載入 ${state.orders.length} 筆訂單`);
+    }
+
+    function kvRow(k, v) {
+      return `
+        <div class="kv-row">
+          <div class="k">${k}</div>
+          <div class="v">${v || "-"}</div>
+        </div>
+      `;
+    }
+
+    async function openDetail(orderId) {
+      clearError();
+      clearInfo();
+
+      const data = await api(`/admin/orders/${orderId}`);
+      state.selectedOrder = data;
+
+      const { order, events } = data;
+
+      refs.modalOrderId.textContent = `訂單編號｜${order.order_id}`;
+      refs.modalTitle.textContent = `${order.customer_name || "未命名客戶"} 的訂單`;
+
+      refs.orderDetail.innerHTML = [
+        kvRow("客戶名稱", order.customer_name || "-"),
+        kvRow("LINE ID", order.line_user_id || "-"),
+        kvRow("付款狀態", paymentMap[order.payment_status]?.[0] || order.payment_status),
+        kvRow("交貨狀態", fulfillmentMap[order.fulfillment_status]?.[0] || order.fulfillment_status),
+        kvRow("主狀態", order.order_status || "-"),
+        kvRow("備註", order.remark || "-")
+      ].join("");
+
+      const payment = order.payment_report || {};
+
+      refs.paymentDetail.innerHTML = [
+        kvRow("付款金額", payment.paid_amount ? formatCurrency(payment.paid_amount) : "-"),
+        kvRow("末五碼", payment.last5_code || "-"),
+        kvRow("付款時間", payment.paid_at || "-"),
+        kvRow("付款備註", payment.note || "-"),
+        kvRow(
+          "付款截圖",
+          payment.proof_image_url
+            ? `<a href="${payment.proof_image_url}" target="_blank">查看截圖</a>`
+            : "-"
+        )
+      ].join("");
+
+      refs.itemDetail.innerHTML = (order.items || []).map(item => `
+        <div class="event">
+          <div><strong>${item.product_name}</strong> ${item.option_name || ""}</div>
+          <div class="muted" style="margin-top:6px;">
+            數量：${item.qty}｜單價：${formatCurrency(item.unit_price)}｜小計：${formatCurrency(item.subtotal)}
+          </div>
+        </div>
+      `).join("") || `<div class="muted">無商品明細</div>`;
+
+      refs.eventDetail.innerHTML = (events || []).map(evt => `
+        <div class="event">
+          <div><strong>${evt.event_type}</strong></div>
+          <div class="muted" style="margin-top:4px;">Actor：${evt.actor_type} / ${evt.actor_id || "-"}</div>
+          <div class="muted" style="margin-top:4px;">${evt.created_at || "-"}</div>
+        </div>
+      `).join("") || `<div class="muted">尚無事件紀錄</div>`;
+
+      refs.modalActions.innerHTML = getActionButtons(order);
+      bindOrderActionButtons();
+      refs.overlay.classList.add("show");
+    }
+
+    async function confirmPayment(orderId) {
+      if (!confirm(`確認付款：${orderId}？`)) return;
+
+      try {
+        clearError();
+        clearInfo();
+
+        await api(`/admin/orders/${orderId}/confirm-payment`, {
+          method: "POST",
+          body: JSON.stringify({ admin_id: "merchant_admin" })
+        });
+
+        await loadOrders();
+        if (state.selectedOrder?.order?.order_id === orderId) {
+          await openDetail(orderId);
+        }
+        showInfo(`已確認付款：${orderId}`);
+      } catch (e) {
+        showError(e.message);
+      }
+    }
+
+    async function rejectPayment(orderId) {
+      const reason = prompt("請輸入駁回原因：", "末五碼不符");
+      if (reason === null) return;
+
+      try {
+        clearError();
+        clearInfo();
+
+        await api(`/admin/orders/${orderId}/reject-payment`, {
+          method: "POST",
+          body: JSON.stringify({
+            admin_id: "merchant_admin",
+            reason
+          })
+        });
+
+        await loadOrders();
+        if (state.selectedOrder?.order?.order_id === orderId) {
+          await openDetail(orderId);
+        }
+        showInfo(`已駁回付款：${orderId}`);
+      } catch (e) {
+        showError(e.message);
+      }
+    }
+
+    async function markReady(orderId) {
+      if (!confirm(`標記可交貨：${orderId}？`)) return;
+
+      try {
+        clearError();
+        clearInfo();
+
+        await api(`/admin/orders/${orderId}/mark-ready`, {
+          method: "POST",
+          body: JSON.stringify({ admin_id: "merchant_admin" })
+        });
+
+        await loadOrders();
+        if (state.selectedOrder?.order?.order_id === orderId) {
+          await openDetail(orderId);
+        }
+        showInfo(`已標記可交貨：${orderId}`);
+      } catch (e) {
+        showError(e.message);
+      }
+    }
+
+    async function markPicked(orderId) {
+      if (!confirm(`標記已交貨：${orderId}？`)) return;
+
+      try {
+        clearError();
+        clearInfo();
+
+        await api(`/admin/orders/${orderId}/mark-picked`, {
+          method: "POST",
+          body: JSON.stringify({ admin_id: "merchant_admin" })
+        });
+
+        await loadOrders();
+        if (state.selectedOrder?.order?.order_id === orderId) {
+          await openDetail(orderId);
+        }
+        showInfo(`已標記已交貨：${orderId}`);
+      } catch (e) {
+        showError(e.message);
+      }
+    }
+
+    async function exportCsv() {
+      try {
+        clearError();
+        clearInfo();
+
+        const qs = new URLSearchParams();
+        if (state.filters.payment_status) qs.set("payment_status", state.filters.payment_status);
+        if (state.filters.fulfillment_status) qs.set("fulfillment_status", state.filters.fulfillment_status);
+        if (state.filters.keyword) qs.set("keyword", state.filters.keyword);
+
+        const csv = await api(`/admin/orders/export${qs.toString() ? "?" + qs.toString() : ""}`);
+        const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "groupbuy-orders.csv";
+        a.click();
+        URL.revokeObjectURL(url);
+
+        showInfo("CSV 已匯出");
+      } catch (e) {
+        showError(e.message);
+      }
+    }
+
+    function setActiveFilterButton(target) {
+      document.querySelectorAll(".filter-btn").forEach(btn => btn.classList.remove("active"));
+      if (target) target.classList.add("active");
+    }
+
+    function bind() {
+      document.getElementById("refreshBtn").onclick = () => {
+        loadOrders().catch(e => showError(e.message));
+      };
+
+      document.getElementById("exportBtn").onclick = () => {
+        exportCsv();
+      };
+
+      document.getElementById("closeModal").onclick = () => {
+        refs.overlay.classList.remove("show");
+      };
+
+      refs.overlay.onclick = (e) => {
+        if (e.target === refs.overlay) {
+          refs.overlay.classList.remove("show");
+        }
+      };
+
+      refs.keyword.oninput = () => {
+        state.filters.keyword = refs.keyword.value.trim();
+      };
+
+      refs.paymentSelect.onchange = () => {
+        state.filters.payment_status = refs.paymentSelect.value;
+      };
+
+      refs.fulfillmentSelect.onchange = () => {
+        state.filters.fulfillment_status = refs.fulfillmentSelect.value;
+      };
+
+      document.querySelectorAll("[data-filter]").forEach(btn => {
+        btn.onclick = () => {
+          state.filters.payment_status = "";
+          state.filters.fulfillment_status = "";
+          refs.paymentSelect.value = "";
+          refs.fulfillmentSelect.value = "";
+          setActiveFilterButton(btn);
+          loadOrders().catch(e => showError(e.message));
+        };
+      });
+
+      document.querySelectorAll("[data-payment]").forEach(btn => {
+        btn.onclick = () => {
+          state.filters.payment_status = btn.dataset.payment;
+          state.filters.fulfillment_status = "";
+          refs.paymentSelect.value = btn.dataset.payment;
+          refs.fulfillmentSelect.value = "";
+          setActiveFilterButton(btn);
+          loadOrders().catch(e => showError(e.message));
+        };
+      });
+
+      document.querySelectorAll("[data-fulfillment]").forEach(btn => {
+        btn.onclick = () => {
+          state.filters.payment_status = "";
+          state.filters.fulfillment_status = btn.dataset.fulfillment;
+          refs.paymentSelect.value = "";
+          refs.fulfillmentSelect.value = btn.dataset.fulfillment;
+          setActiveFilterButton(btn);
+          loadOrders().catch(e => showError(e.message));
+        };
+      });
+
+      document.querySelectorAll("[data-mode]").forEach(btn => {
+        btn.onclick = () => {
+          state.viewMode = btn.dataset.mode;
+          updateLocalConfig();
+          applyViewMode();
+        };
+      });
+    }
+
+    loadLocalConfig();
+    bind();
+  </script>
+</body>
+</html>
