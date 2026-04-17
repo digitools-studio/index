@@ -252,43 +252,53 @@
       return list;
     }
 
-    // 財政部 invoice.xml（依序嘗試多個 CORS proxy，任一成功即用）
+    // 財政部 invoice.xml — 平行發送所有 proxy，取最快成功的
     const XML_URL = 'https://invoice.etax.nat.gov.tw/invoice.xml';
 
-    // 各 proxy 的 URL 產生方式（注意 thingproxy 不 encode）
     const PROXIES = [
-      u => `https://api.allorigins.win/raw?url=${encodeURIComponent(u)}`,
-      u => `https://thingproxy.freeboard.io/fetch/${u}`,
-      u => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(u)}`,
-      u => `https://yacdn.org/proxy/${u}`,
+      // allorigins /get 回 JSON，較穩定（contents 欄位含原始 XML）
+      {
+        url:     u => `https://api.allorigins.win/get?url=${encodeURIComponent(u)}`,
+        extract: async r => { const j = await r.json(); return j.contents || ''; }
+      },
+      // allorigins /raw 直接回原始內容
+      {
+        url:     u => `https://api.allorigins.win/raw?url=${encodeURIComponent(u)}`,
+        extract: r => r.text()
+      },
+      // thingproxy：URL 不 encode
+      {
+        url:     u => `https://thingproxy.freeboard.io/fetch/${u}`,
+        extract: r => r.text()
+      },
+      // codetabs
+      {
+        url:     u => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(u)}`,
+        extract: r => r.text()
+      },
     ];
 
-    // 單次 fetch，帶 timeout（預設 10 秒）
-    async function fetchWithTimeout(url, ms = 10000) {
-      const ctrl = new AbortController();
-      const timer = setTimeout(() => ctrl.abort(), ms);
-      try {
-        return await fetch(url, { cache: 'no-store', signal: ctrl.signal });
-      } finally {
-        clearTimeout(timer);
-      }
-    }
-
     async function fetchXml() {
-      const errors = [];
-      for (const makeUrl of PROXIES) {
-        const proxyUrl = makeUrl(XML_URL);
+      const attempts = PROXIES.map(async proxy => {
+        const ctrl  = new AbortController();
+        const timer = setTimeout(() => ctrl.abort(), 15000);
         try {
-          const resp = await fetchWithTimeout(proxyUrl);
+          const resp = await fetch(proxy.url(XML_URL), { cache: 'no-store', signal: ctrl.signal });
           if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-          const text = await resp.text();
-          if (!text.trim().startsWith('<')) throw new Error('非 XML 回應');
+          const text = await proxy.extract(resp);
+          if (!text || !text.trim().startsWith('<')) throw new Error('非 XML 回應');
           return text;
-        } catch (e) {
-          errors.push(`[${new URL(proxyUrl).hostname}] ${e.message}`);
+        } finally {
+          clearTimeout(timer);
         }
+      });
+
+      // Promise.any：任一成功即回傳，全失敗才拋錯
+      try {
+        return await Promise.any(attempts);
+      } catch {
+        throw new Error('所有 CORS proxy 均無法取得財政部資料，請稍後再試。');
       }
-      throw new Error(errors.join(' / '));
     }
 
     // 解析 XML items
