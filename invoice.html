@@ -1,0 +1,418 @@
+﻿<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>電子發票對獎</title>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: "Segoe UI", "Noto Sans TC", "PingFang TC", sans-serif;
+      background: #f1f5f9;
+      color: #1e293b;
+      min-height: 100vh;
+    }
+
+    .app {
+      max-width: 520px;
+      margin: 0 auto;
+      padding: 40px 16px 72px;
+    }
+
+    /* Header */
+    .hd { text-align: center; margin-bottom: 28px; }
+    .hd h1 { font-size: 26px; font-weight: 900; letter-spacing: -0.5px; }
+    .hd p  { margin-top: 7px; font-size: 13px; color: #64748b; line-height: 1.65; }
+
+    /* Card */
+    .card {
+      background: #fff;
+      border-radius: 18px;
+      padding: 22px;
+      box-shadow: 0 2px 14px rgba(0,0,0,0.07);
+      margin-bottom: 14px;
+    }
+
+    /* Fields */
+    .fields {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+    @media (max-width: 420px) { .fields { grid-template-columns: 1fr; } }
+
+    label {
+      display: block;
+      font-size: 11px;
+      font-weight: 700;
+      color: #64748b;
+      margin-bottom: 5px;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+    }
+
+    select, input[type="text"] {
+      width: 100%;
+      padding: 11px 13px;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 10px;
+      font-size: 15px;
+      color: #1e293b;
+      background: #fff;
+      outline: none;
+      font-family: inherit;
+      transition: border-color .18s, box-shadow .18s;
+    }
+    select:focus, input[type="text"]:focus {
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59,130,246,.12);
+    }
+
+    /* Button */
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 14px;
+      background: #1d4ed8;
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 800;
+      cursor: pointer;
+      letter-spacing: 0.5px;
+      transition: background .15s, transform .1s, box-shadow .15s;
+      box-shadow: 0 4px 14px rgba(29,78,216,.25);
+    }
+    .btn:hover:not(:disabled) { background: #1e40af; box-shadow: 0 6px 18px rgba(29,78,216,.30); }
+    .btn:active:not(:disabled) { transform: scale(0.98); }
+    .btn:disabled { opacity: 0.55; cursor: not-allowed; box-shadow: none; }
+
+    /* Result */
+    .result {
+      margin-top: 14px;
+      padding: 16px 18px;
+      border-radius: 12px;
+      border-left: 4px solid;
+    }
+    .result .rank { font-size: 20px; font-weight: 900; margin-bottom: 3px; }
+    .result .msg  { font-size: 14px; line-height: 1.65; }
+    .result.success { background: #f0fdf4; border-color: #16a34a; color: #166534; }
+    .result.warning { background: #fffbeb; border-color: #d97706; color: #92400e; }
+    .result.danger  { background: #fef2f2; border-color: #dc2626; color: #991b1b; }
+
+    /* Prize display */
+    .prize-title {
+      font-size: 14px;
+      font-weight: 800;
+      color: #374151;
+      margin-bottom: 14px;
+    }
+    .prize-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 9px 0;
+      border-bottom: 1px solid #f1f5f9;
+    }
+    .prize-row:last-child { border-bottom: none; }
+
+    .plabel {
+      flex-shrink: 0;
+      width: 64px;
+      font-size: 12px;
+      font-weight: 700;
+      color: #94a3b8;
+      padding-top: 5px;
+    }
+    .pnums { display: flex; flex-wrap: wrap; gap: 6px; }
+    .ntag {
+      background: #f1f5f9;
+      border-radius: 7px;
+      padding: 4px 10px;
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+      color: #1e293b;
+    }
+
+    /* Footer */
+    .foot {
+      text-align: center;
+      font-size: 11.5px;
+      color: #94a3b8;
+      line-height: 1.8;
+      margin-top: 6px;
+    }
+    .foot a { color: #94a3b8; }
+  </style>
+</head>
+<body>
+  <div id="app" class="app">
+
+    <div class="hd">
+      <h1>電子發票對獎</h1>
+      <p>選擇期別・輸入 8 碼號碼・按下按鈕<br>即時從財政部取得中獎號碼直接比對</p>
+    </div>
+
+    <div class="card">
+      <div class="fields">
+        <div>
+          <label>期別</label>
+          <select v-model="selectedPeriod">
+            <option v-for="p in periods" :value="p" :key="p">{{ p }}</option>
+          </select>
+        </div>
+        <div>
+          <label>發票號碼（8碼）</label>
+          <input
+            type="text"
+            inputmode="numeric"
+            maxlength="8"
+            v-model="invoiceInput"
+            @input="invoiceInput = invoiceInput.replace(/\D/g,'').slice(0,8)"
+            @keyup.enter="check"
+            placeholder="例：12345678"
+          />
+        </div>
+      </div>
+
+      <button class="btn" @click="check" :disabled="checking">
+        {{ checking ? '查詢中…' : '立即對獎' }}
+      </button>
+
+      <div v-if="result" class="result" :class="result.type">
+        <div class="rank">{{ result.rank }}</div>
+        <div class="msg">{{ result.msg }}</div>
+      </div>
+    </div>
+
+    <div v-if="prizeData" class="card">
+      <div class="prize-title">{{ prizeData.title }}・開獎號碼</div>
+
+      <div class="prize-row">
+        <span class="plabel">特別獎</span>
+        <div class="pnums">
+          <span class="ntag" v-if="prizeData.specialPrize">{{ prizeData.specialPrize }}</span>
+          <span v-else style="color:#9ca3af;font-size:13px;">—</span>
+        </div>
+      </div>
+
+      <div class="prize-row">
+        <span class="plabel">特獎</span>
+        <div class="pnums">
+          <span class="ntag" v-if="prizeData.grandPrize">{{ prizeData.grandPrize }}</span>
+          <span v-else style="color:#9ca3af;font-size:13px;">—</span>
+        </div>
+      </div>
+
+      <div class="prize-row">
+        <span class="plabel">頭獎</span>
+        <div class="pnums">
+          <span class="ntag" v-for="n in prizeData.firstPrizes" :key="n">{{ n }}</span>
+          <span v-if="!prizeData.firstPrizes.length" style="color:#9ca3af;font-size:13px;">—</span>
+        </div>
+      </div>
+
+      <div class="prize-row" v-if="prizeData.sixthExtra.length">
+        <span class="plabel">增開六獎</span>
+        <div class="pnums">
+          <span class="ntag" v-for="n in prizeData.sixthExtra" :key="n">{{ n }}</span>
+        </div>
+      </div>
+    </div>
+
+    <p class="foot">
+      資料來源：<a href="https://invoice.etax.nat.gov.tw" target="_blank" rel="noopener">財政部電子發票整合服務平台</a><br>
+      即時抓取・不儲存任何個人資料
+    </p>
+
+  </div>
+
+  <script>
+    const { createApp } = Vue;
+
+    // 產生最近 8 個雙月期別（ROC 曆）
+    function generatePeriods() {
+      const now = new Date();
+      const roc = now.getFullYear() - 1911;
+      const mon = now.getMonth() + 1;
+      let m = Math.floor((mon - 1) / 2) * 2 + 1;
+      let y = roc;
+      const list = [];
+      for (let i = 0; i < 8; i++) {
+        list.push(`${y}年${String(m).padStart(2,'0')}-${String(m+1).padStart(2,'0')}月`);
+        m -= 2;
+        if (m < 1) { m += 12; y--; }
+      }
+      return list;
+    }
+
+    // 財政部 invoice.xml（依序嘗試多個 CORS proxy，任一成功即用）
+    const XML_URL = 'https://invoice.etax.nat.gov.tw/invoice.xml';
+
+    // 各 proxy 的 URL 產生方式（注意 thingproxy 不 encode）
+    const PROXIES = [
+      u => `https://api.allorigins.win/raw?url=${encodeURIComponent(u)}`,
+      u => `https://thingproxy.freeboard.io/fetch/${u}`,
+      u => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(u)}`,
+      u => `https://yacdn.org/proxy/${u}`,
+    ];
+
+    // 單次 fetch，帶 timeout（預設 10 秒）
+    async function fetchWithTimeout(url, ms = 10000) {
+      const ctrl = new AbortController();
+      const timer = setTimeout(() => ctrl.abort(), ms);
+      try {
+        return await fetch(url, { cache: 'no-store', signal: ctrl.signal });
+      } finally {
+        clearTimeout(timer);
+      }
+    }
+
+    async function fetchXml() {
+      const errors = [];
+      for (const makeUrl of PROXIES) {
+        const proxyUrl = makeUrl(XML_URL);
+        try {
+          const resp = await fetchWithTimeout(proxyUrl);
+          if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+          const text = await resp.text();
+          if (!text.trim().startsWith('<')) throw new Error('非 XML 回應');
+          return text;
+        } catch (e) {
+          errors.push(`[${new URL(proxyUrl).hostname}] ${e.message}`);
+        }
+      }
+      throw new Error(errors.join(' / '));
+    }
+
+    // 解析 XML items
+    function parseItems(xmlText) {
+      const doc = new DOMParser().parseFromString(xmlText, 'text/xml');
+      return Array.from(doc.querySelectorAll('item')).map(el => ({
+        title: (el.querySelector('title')?.textContent || '').trim(),
+        desc:  (el.querySelector('description')?.textContent || '').trim(),
+      }));
+    }
+
+    // 期別匹配（容許前導零差異）
+    function extractNums(s) {
+      const m = s.match(/(\d+)年(\d+)[\-－~～–—](\d+)月/);
+      return m ? { y: +m[1], m1: +m[2], m2: +m[3] } : null;
+    }
+    function matchPeriod(items, selected) {
+      const sel = extractNums(selected);
+      if (!sel) return null;
+      return items.find(it => {
+        const p = extractNums(it.title);
+        return p && p.y === sel.y && p.m1 === sel.m1 && p.m2 === sel.m2;
+      }) || null;
+    }
+
+    // 解析開獎號碼（從 description HTML 純文字擷取）
+    function parsePrizes(title, descHtml) {
+      const doc = new DOMParser().parseFromString(descHtml, 'text/html');
+      const raw = (doc.body.textContent || '').replace(/\s+/g, ' ').trim();
+
+      function grab(text, keyword, len, max) {
+        const idx = text.indexOf(keyword);
+        if (idx < 0) return [];
+        return (text.slice(idx + keyword.length).match(/\d+/g) || [])
+          .filter(s => s.length === len)
+          .slice(0, max);
+      }
+
+      const specialPrize = grab(raw, '特別獎', 8, 1)[0] || '';
+      const postSpec = specialPrize && raw.indexOf(specialPrize) >= 0
+        ? raw.slice(raw.indexOf(specialPrize) + 8) : raw;
+
+      const grandPrize = grab(postSpec, '特獎', 8, 1)[0] || '';
+      const postGrand = grandPrize && postSpec.indexOf(grandPrize) >= 0
+        ? postSpec.slice(postSpec.indexOf(grandPrize) + 8) : postSpec;
+
+      const hi = postGrand.indexOf('頭獎');
+      const si = postGrand.indexOf('增開六獎');
+      const headSec = hi >= 0 ? postGrand.slice(hi, si >= 0 ? si : undefined) : '';
+      const firstPrizes = (headSec.match(/\d+/g) || []).filter(s => s.length === 8).slice(0, 6);
+
+      const sixthSec   = si >= 0 ? postGrand.slice(si) : '';
+      const sixthExtra = (sixthSec.match(/\d+/g) || []).filter(s => s.length === 3).slice(0, 8);
+
+      return { title, specialPrize, grandPrize, firstPrizes, sixthExtra };
+    }
+
+    createApp({
+      data() {
+        const periods = generatePeriods();
+        return {
+          periods,
+          selectedPeriod: periods[0],
+          invoiceInput:   '',
+          checking:       false,
+          result:         null,
+          prizeData:      null,
+        };
+      },
+      methods: {
+        headRank(invoice, fp) {
+          if (invoice          === fp)          return '頭獎';
+          if (invoice.slice(1) === fp.slice(1)) return '二獎';
+          if (invoice.slice(2) === fp.slice(2)) return '三獎';
+          if (invoice.slice(3) === fp.slice(3)) return '四獎';
+          if (invoice.slice(4) === fp.slice(4)) return '五獎';
+          if (invoice.slice(5) === fp.slice(5)) return '六獎';
+          return null;
+        },
+        compare(invoice, pd) {
+          if (!pd.specialPrize && !pd.grandPrize && !pd.firstPrizes.length) {
+            return { type: 'danger', rank: '⚠️ 解析失敗', msg: '無法從官方資料解析中獎號碼，請確認期別是否已公布或稍後再試。' };
+          }
+          if (invoice === pd.specialPrize)
+            return { type: 'success', rank: '🎉 特別獎', msg: '恭喜！本張發票命中特別獎。' };
+          if (invoice === pd.grandPrize)
+            return { type: 'success', rank: '🎉 特獎',   msg: '恭喜！本張發票命中特獎。' };
+          for (const fp of pd.firstPrizes) {
+            const r = this.headRank(invoice, fp);
+            if (r) return { type: 'success', rank: `🎉 ${r}`, msg: `恭喜！本張發票符合${r}中獎條件。` };
+          }
+          if (pd.sixthExtra.includes(invoice.slice(-3)))
+            return { type: 'success', rank: '🎉 增開六獎', msg: '恭喜！本張發票命中增開六獎。' };
+          return { type: 'warning', rank: '未中獎', msg: '很遺憾，本張發票未中獎，繼續加油！' };
+        },
+        async check() {
+          const invoice = this.invoiceInput.replace(/\D/g, '').slice(0, 8);
+          this.invoiceInput = invoice;
+          if (invoice.length !== 8) {
+            this.result = { type: 'danger', rank: '格式錯誤', msg: '請輸入完整 8 碼發票號碼。' };
+            return;
+          }
+          this.checking  = true;
+          this.result    = null;
+          this.prizeData = null;
+          try {
+            const xml     = await fetchXml();
+            const items   = parseItems(xml);
+            const matched = matchPeriod(items, this.selectedPeriod);
+            if (!matched) {
+              this.result = { type: 'danger', rank: '查無資料', msg: `官方尚未公布「${this.selectedPeriod}」的開獎結果，請選擇其他期別或稍後再試。` };
+              return;
+            }
+            const pd       = parsePrizes(matched.title, matched.desc);
+            this.prizeData = pd;
+            this.result    = this.compare(invoice, pd);
+          } catch (err) {
+            this.result = { type: 'danger', rank: '連線失敗', msg: `無法從財政部取得資料（${err.message}），請確認網路連線後重試。` };
+          } finally {
+            this.checking = false;
+          }
+        },
+      },
+    }).mount('#app');
+  </script>
+</body>
+</html>
