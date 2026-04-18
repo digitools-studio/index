@@ -898,6 +898,47 @@
         grid-template-columns: 1fr;
       }
     }
+
+    /*
+      =========================================================
+      LIFF 錯誤 / 降級提示
+      =========================================================
+    */
+    .liff-error-banner {
+      display: none;
+      margin-top: 16px;
+      border-radius: var(--radius-lg);
+      padding: 18px 16px;
+      background: rgba(239, 68, 68, 0.08);
+      border: 1px solid rgba(239, 68, 68, 0.2);
+      color: #b91c1c;
+      font-size: 14px;
+      line-height: 1.65;
+    }
+
+    .liff-error-banner h3 {
+      margin: 0 0 8px;
+      font-size: 16px;
+      font-weight: 800;
+    }
+
+    .liff-error-banner p {
+      margin: 0;
+    }
+
+    .liff-error-banner.show {
+      display: block;
+    }
+
+    /* 當 LIFF 失敗時禁止所有操作按鈕 */
+    .app-disabled .primary-btn,
+    .app-disabled .secondary-btn,
+    .app-disabled .ghost-btn,
+    .app-disabled .mini-btn {
+      opacity: 0.35;
+      pointer-events: none;
+      cursor: not-allowed;
+    }
   </style>
 </head>
 <body>
@@ -970,6 +1011,21 @@
         <button class="mini-btn" id="btnGoOrdersTop">查看訂單</button>
       </div>
     </header>
+
+    <!--
+      =========================================================
+      LIFF 身份驗證失敗提示區塊
+      非 LINE 環境、未登入或 getProfile 失敗時顯示，
+      此時禁止下單、付款等操作。
+      =========================================================
+    -->
+    <div class="liff-error-banner" id="liffErrorBanner">
+      <h3>⚠️ 無法取得 LINE 身份</h3>
+      <p>
+        請透過 <strong>LINE 應用程式</strong>開啟此頁面，或確認你已登入 LINE 帳號後再試。<br />
+        下單、查單與付款回報功能皆需要 LINE 身份驗證後才能使用。
+      </p>
+    </div>
 
     <main>
       <!--
@@ -1285,8 +1341,8 @@
     const state = {
       currentView: "order",
       user: {
-        lineUserId: "U_demo_user_001",
-        displayName: "Ken"
+        lineUserId: "",
+        displayName: ""
       },
 
       /*
@@ -1749,6 +1805,11 @@
     }
 
     function validateOrderPayload(payload) {
+      if (!state.user.lineUserId) {
+        alert("無法取得 LINE 身份，請重新透過 LINE 開啟此頁面。");
+        return false;
+      }
+
       if (!payload.items.length) {
         alert("請至少選擇一項商品後再送出。");
         return false;
@@ -1763,6 +1824,11 @@
     }
 
     function validatePaymentForm() {
+      if (!state.user.lineUserId) {
+        alert("無法取得 LINE 身份，請重新透過 LINE 開啟此頁面。");
+        return false;
+      }
+
       const order = getOrderById(state.currentOrderId);
 
       if (!order) {
@@ -1809,8 +1875,12 @@
         }
 
         const newOrder = result.data;
-        state.orders.unshift(newOrder);
         state.currentOrderId = newOrder.order_id;
+
+        /*
+          mutation 後從 API 重新載入訂單，避免前端狀態漂移
+        */
+        await loadMyOrders(state.user.lineUserId);
 
         /*
           下單成功後，清空購物狀態
@@ -1874,10 +1944,10 @@
         }
 
         /*
-          mock 模式下，直接更新前端資料
+          mutation 後從 API 重新載入訂單，確保資料與後端同步，
+          不直接操作本地 state
         */
-        order.payment_status = "PENDING";
-        order.payment_report = payload;
+        await loadMyOrders(state.user.lineUserId);
 
         refs.last5Code.value = "";
         refs.paymentNote.value = "";
@@ -1935,38 +2005,89 @@
 
     /*
       =========================================================
+      LIFF 錯誤顯示
+      =========================================================
+      顯示錯誤橫幅並禁用所有互動按鈕。
+      不提供 fallback mock user，避免身份偽造風險。
+    */
+    function showLiffError() {
+      const banner = document.getElementById("liffErrorBanner");
+      if (banner) banner.classList.add("show");
+      document.querySelector(".app-shell").classList.add("app-disabled");
+    }
+
+    /*
+      =========================================================
+      訂單資料載入（與身份綁定）
+      =========================================================
+      GET /api/orders/me?line_user_id=xxx
+      所有 mutation 後皆重新呼叫此函式，避免前端狀態漂移。
+    */
+    async function loadMyOrders(lineUserId) {
+      try {
+        const result = await apiGetMyOrders(lineUserId);
+        if (result.ok) {
+          state.orders = result.data || [];
+        }
+      } catch (err) {
+        console.error("loadMyOrders failed:", err);
+      }
+    }
+
+    /*
+      =========================================================
       LIFF 初始化
       =========================================================
-      正式接 LINE 時：
-      1. 在 LINE Developers 建 LIFF App
-      2. 把 LIFF ID 填入 CONFIG.LIFF_ID
-      3. 若登入成功，可取得 profile
-      4. 建議正式版把 token 傳後端驗證
+      啟動順序：
+      1. liff.init()
+      2. 若未登入 → liff.login()（頁面重導向）
+      3. liff.getProfile()
+      4. 寫入 state.user
+      5. 回傳 true（成功）或 false（失敗）
+
+      失敗情境：
+      - 非 LINE 環境（window.liff 不存在）
+      - LIFF ID 未設定
+      - liff.init() 拋出例外
+      - getProfile() 拋出例外
+
+      失敗時：呼叫 showLiffError()，禁止所有操作。
+      嚴禁：fallback 至 mock user。
     */
     async function initLiffSafely() {
-      if (!window.liff) return;
-      if (!CONFIG.LIFF_ID || CONFIG.LIFF_ID === "YOUR_LIFF_ID") return;
+      if (!window.liff) {
+        console.warn("LIFF SDK not loaded");
+        showLiffError();
+        return false;
+      }
+
+      if (!CONFIG.LIFF_ID || CONFIG.LIFF_ID === "YOUR_LIFF_ID") {
+        console.warn("LIFF ID not configured");
+        showLiffError();
+        return false;
+      }
 
       try {
         await liff.init({ liffId: CONFIG.LIFF_ID });
 
-        if (liff.isLoggedIn()) {
-          const profile = await liff.getProfile();
-
-          state.user.lineUserId = profile.userId;
-          state.user.displayName = profile.displayName || state.user.displayName;
-
-          refs.customerName.value = state.user.displayName;
-          refs.userAvatar.textContent = (profile.displayName || "客").slice(0, 1);
-
-          /*
-            正式版如果要從後端讀真實訂單，可在這裡呼叫：
-            const result = await apiGetMyOrders(profile.userId)
-            if (result.ok) state.orders = result.data
-          */
+        if (!liff.isLoggedIn()) {
+          liff.login();
+          return false; // 頁面將重導向至 LINE 登入，後續不繼續執行
         }
+
+        const profile = await liff.getProfile();
+
+        state.user.lineUserId = profile.userId;
+        state.user.displayName = profile.displayName || "";
+
+        refs.customerName.value = state.user.displayName;
+        refs.userAvatar.textContent = (profile.displayName || "客").slice(0, 1);
+
+        return true;
       } catch (err) {
         console.warn("LIFF init failed:", err);
+        showLiffError();
+        return false;
       }
     }
 
@@ -2029,18 +2150,35 @@
       =========================================================
       初始渲染
       =========================================================
+      正確啟動順序：
+      1. 渲染靜態商品目錄（不依賴身份）
+      2. 綁定所有事件
+      3. initLiffSafely() → getProfile → set state.user
+      4. loadMyOrders(lineUserId)
+      5. renderOrders / renderPaymentView（需身份的 UI）
+
+      如果 LIFF 失敗，showLiffError() 已在內部呼叫，
+      按鈕會被禁用，步驟 4-5 跳過，不顯示空訂單假資料。
     */
     async function bootstrap() {
-      refs.customerName.value = state.user.displayName;
-      refs.userAvatar.textContent = state.user.displayName.slice(0, 1);
-
+      // Step 1：先渲染靜態商品目錄（不需身份）
       renderProducts();
       bindProductEvents();
       renderSummary();
+
+      // Step 2：綁定頁面事件
+      bindEvents();
+
+      // Step 3：LIFF 初始化 → 取得身份
+      const liffOk = await initLiffSafely();
+
+      // Step 4 & 5：有身份後才載入訂單並渲染
+      if (liffOk) {
+        await loadMyOrders(state.user.lineUserId);
+      }
+
       renderOrders();
       renderPaymentView();
-      bindEvents();
-      await initLiffSafely();
     }
 
     bootstrap();
