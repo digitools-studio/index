@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>LogicCraft | 專業軟體與工具開發接案</title>
+    
+    <!-- 引入 Vue 3 (CDN) -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <!-- 引入 Tailwind CSS (CDN) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <!-- 引入 FontAwesome (Icon) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Noto Sans TC"', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            900: '#1e3a8a',
+                        },
+                        line: {
+                            DEFAULT: '#00B900',
+                            dark: '#009900',
+                            light: '#e6f8e6',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Noto Sans TC', sans-serif; }
+        
+        /* 遊戲面板防止手機滑動時觸發螢幕滾動 */
+        .touch-none-area {
+            touch-action: none;
+        }
+
+        /* 簡單的方塊出現動畫 */
+        @keyframes pop {
+            0% { transform: scale(0); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        .tile-new {
+            animation: pop 0.2s ease-in-out;
+        }
+
+        /* 漸變文字效果 */
+        .text-gradient {
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-image: linear-gradient(to right, #2563eb, #10b981);
+        }
+        /* 毛玻璃 Header */
+        .glass-header {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 antialiased selection:bg-brand-500 selection:text-white">
+    <div id="app">
+        <!-- Header -->
+        <header :class="['fixed w-full top-0 z-50 transition-all duration-300', isScrolled ? 'glass-header py-3' : 'bg-transparent py-5']">
+            <div class="max-w-7xl mx-auto px-5 lg:px-8 flex justify-between items-center">
+                <!-- 左側品牌 -->
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-slate-900 text-white rounded-xl flex items-center justify-center font-bold text-xl shadow-lg">D</div>
+                    <div>
+                        <p class="font-bold text-slate-900 leading-tight">Digitools Studio</p>
+                        <p class="text-xs text-slate-500 hidden md:block">專業軟體與工具開發接案</p>
+                    </div>
+                </div>
+
+                <!-- 右側導覽 -->
+                <nav class="hidden lg:flex items-center space-x-8 text-sm font-medium text-slate-600">
+                    <a href="#demo" class="hover:text-line transition-colors">技術展示 (2048)</a>
+                    <a href="#services" class="hover:text-line transition-colors">服務項目</a>
+                    <a href="#contact" class="hover:text-line transition-colors">免費諮詢</a>
+                </nav>
+
+                <!-- CTA -->
+                <div class="flex items-center">
+                    <a href="#contact" class="hidden md:inline-block bg-slate-900 hover:bg-line text-white px-5 py-2.5 rounded-full text-sm font-medium transition-all shadow-md hover:shadow-lg">
+                        立即洽詢
+                    </a>
+                    <button class="md:hidden text-slate-600 text-2xl ml-4">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Hero Section -->
+        <section id="hero" class="pt-32 pb-20 md:pt-40 md:pb-28 px-4 text-center">
+            <div class="max-w-4xl mx-auto">
+                <h1 class="text-4xl md:text-6xl font-black tracking-tight mb-6 leading-tight">
+                    化繁為簡的代碼<br class="hidden md:block" />
+                    打造 <span class="text-gradient">極致使用者體驗</span>
+                </h1>
+                <p class="text-lg md:text-xl text-gray-600 mb-10 max-w-2xl mx-auto leading-relaxed">
+                    我們專注於客製化軟體開發、高效能企業內部工具與互動型網頁應用。將複雜的商業邏輯，轉化為如遊戲般順暢的操作體驗。
+                </p>
+                <div class="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-4">
+                    <button @click="scrollTo('demo')" class="w-full sm:w-auto px-8 py-3.5 bg-gray-900 text-white rounded-full font-semibold hover:bg-gray-800 transition shadow-lg">
+                        體驗技術實力 (Play 2048)
+                    </button>
+                    <button @click="scrollTo('contact')" class="w-full sm:w-auto px-8 py-3.5 bg-white text-gray-900 border border-gray-200 rounded-full font-semibold hover:bg-gray-50 transition shadow-sm">
+                        討論您的專案
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Interactive Demo Section (2048 Game) -->
+        <section id="demo" class="py-20 bg-gray-900 text-white">
+            <div class="max-w-6xl mx-auto px-4 lg:flex lg:items-center lg:space-x-12">
+                <!-- 遊戲說明區 -->
+                <div class="lg:w-1/2 mb-12 lg:mb-0">
+                    <div class="inline-block px-3 py-1 bg-brand-500/20 text-brand-300 rounded-full text-sm font-semibold mb-4 border border-brand-500/30">
+                        Live Demo
+                    </div>
+                    <h2 class="text-3xl md:text-4xl font-bold mb-6">邏輯與效能的展示：<br/>2048 經典重現</h2>
+                    <p class="text-gray-400 text-lg mb-6 leading-relaxed">
+                        優質的軟體就像這場 2048 遊戲：需要<b>嚴謹的底層邏輯</b>、<b>精準的狀態管理</b>以及<b>無縫的互動反饋</b>。
+                    </p>
+                    <p class="text-gray-400 text-lg mb-8 leading-relaxed">
+                        我們使用純 Vue.js (無第三方 UI 庫) 建構了這個高度互動的單頁應用。試著使用鍵盤（方向鍵 / WASD）或在面板上滑動，看看您能達成多高的分數？
+                    </p>
+                    
+                    <div class="grid grid-cols-2 gap-6">
+                        <div class="bg-gray-800 p-5 rounded-2xl border border-gray-700">
+                            <div class="text-brand-400 font-bold text-xl mb-1">精確狀態管理</div>
+                            <div class="text-sm text-gray-400">響應式資料流與複雜矩陣運算零延遲。</div>
+                        </div>
+                        <div class="bg-gray-800 p-5 rounded-2xl border border-gray-700">
+                            <div class="text-brand-400 font-bold text-xl mb-1">全裝置適配</div>
+                            <div class="text-sm text-gray-400">支援觸控滑動手勢與實體鍵盤操作。</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2048 遊戲本體 -->
+                <div class="lg:w-1/2 flex justify-center">
+                    <div class="bg-[#bbada0] p-3 sm:p-4 rounded-xl shadow-2xl w-full max-w-[400px]">
+                        <!-- 分數看板 -->
+                        <div class="flex justify-between items-center mb-4">
+                            <div class="text-[#776e65] font-black text-3xl">2048</div>
+                            <div class="flex space-x-2">
+                                <div class="bg-[#8f7a66] rounded-md px-4 py-1.5 text-center min-w-[70px]">
+                                    <div class="text-[#eee4da] text-xs font-bold uppercase tracking-wider">Score</div>
+                                    <div class="text-white font-bold text-lg leading-none">{{ score }}</div>
+                                </div>
+                                <div class="bg-[#8f7a66] rounded-md px-4 py-1.5 text-center min-w-[70px]">
+                                    <div class="text-[#eee4da] text-xs font-bold uppercase tracking-wider">Best</div>
+                                    <div class="text-white font-bold text-lg leading-none">{{ bestScore }}</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex justify-between items-center mb-4">
+                            <button @click="initGame" class="bg-[#8f7a66] hover:bg-[#9f8b77] text-white font-bold py-2 px-4 rounded transition">
+                                重新開始
+                            </button>
+                            <span class="text-[#776e65] text-sm font-semibold hidden sm:inline">使用方向鍵或滑動操作</span>
+                        </div>
+
+                        <!-- 遊戲面板 -->
+                        <div class="relative bg-[#a39485] p-2 sm:p-3 rounded-lg touch-none-area aspect-square"
+                             @touchstart="handleTouchStart"
+                             @touchend="handleTouchEnd">
+                             
+                            <!-- 遊戲結束/勝利 遮罩 -->
+                            <div v-if="gameOver || gameWon" 
+                                 class="absolute inset-0 bg-[#eee4da]/70 z-10 rounded-lg flex flex-col items-center justify-center backdrop-blur-sm transition-all duration-300">
+                                <h3 class="text-4xl font-black text-[#776e65] mb-4 drop-shadow-md">
+                                    {{ gameWon ? 'You Win!' : 'Game Over!' }}
+                                </h3>
+                                <button @click="initGame" class="bg-[#8f7a66] text-white font-bold py-3 px-6 rounded-lg text-lg hover:bg-[#9f8b77] shadow-lg transition transform hover:scale-105">
+                                    再試一次
+                                </button>
+                            </div>
+
+                            <!-- 網格與方塊 -->
+                            <div class="grid grid-cols-4 grid-rows-4 gap-2 sm:gap-3 w-full h-full">
+                                <template v-for="(row, rIndex) in board" :key="rIndex">
+                                    <div v-for="(cell, cIndex) in row" :key="`${rIndex}-${cIndex}`" 
+                                         class="rounded sm:rounded-md flex items-center justify-center font-bold text-2xl sm:text-3xl md:text-4xl transition-all duration-150 relative"
+                                         :class="getTileClass(cell)">
+                                        <span v-if="cell !== 0" :class="{'tile-new': isNewTile(rIndex, cIndex)}">
+                                            {{ cell }}
+                                        </span>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Services Section -->
+        <section id="services" class="py-20 bg-white">
+            <div class="max-w-6xl mx-auto px-4">
+                <div class="text-center mb-16">
+                    <h2 class="text-3xl md:text-4xl font-bold mb-4">我們能為您開發什麼？</h2>
+                    <p class="text-gray-600 max-w-2xl mx-auto text-lg">從構想到上線，我們提供全端技術支援，為您的商業模式打造專屬的數位工具。</p>
+                </div>
+
+                <div class="grid md:grid-cols-3 gap-8">
+                    <!-- Service 1 -->
+                    <div class="bg-gray-50 p-8 rounded-2xl border border-gray-100 hover:shadow-xl transition-shadow duration-300 group">
+                        <div class="w-14 h-14 bg-blue-100 rounded-xl flex items-center justify-center mb-6 text-brand-600 group-hover:scale-110 transition-transform">
+                            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3">客製化系統開發</h3>
+                        <p class="text-gray-600 leading-relaxed">
+                            擺脫套裝軟體的限制。我們為企業量身打造專屬 CRM、ERP 或特定業務流程管理系統，完美貼合您的營運需求。
+                        </p>
+                    </div>
+
+                    <!-- Service 2 -->
+                    <div class="bg-gray-50 p-8 rounded-2xl border border-gray-100 hover:shadow-xl transition-shadow duration-300 group">
+                        <div class="w-14 h-14 bg-green-100 rounded-xl flex items-center justify-center mb-6 text-green-600 group-hover:scale-110 transition-transform">
+                            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3">內部工具與自動化</h3>
+                        <p class="text-gray-600 leading-relaxed">
+                            針對繁瑣、重複性高的工作流程，開發專屬內部自動化工具。減少人為錯誤，大幅提升團隊協作與產出效率。
+                        </p>
+                    </div>
+
+                    <!-- Service 3 -->
+                    <div class="bg-gray-50 p-8 rounded-2xl border border-gray-100 hover:shadow-xl transition-shadow duration-300 group">
+                        <div class="w-14 h-14 bg-purple-100 rounded-xl flex items-center justify-center mb-6 text-purple-600 group-hover:scale-110 transition-transform">
+                            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3">高互動性 Web App</h3>
+                        <p class="text-gray-600 leading-relaxed">
+                            運用 Vue/React 等現代前端框架，建立如原生 APP 般流暢的單頁應用 (SPA)。給您的使用者最絲滑的數位體驗。
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA & Contact Section -->
+        <section id="contact" class="py-24 bg-slate-900 relative overflow-hidden">
+            <!-- 背景圖樣 -->
+            <div class="absolute inset-0 opacity-5" style="background-image: linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px); background-size: 30px 30px;"></div>
+
+            <div class="max-w-4xl mx-auto px-5 lg:px-8 relative z-10">
+                <div class="bg-white rounded-3xl p-8 md:p-12 shadow-2xl">
+                    <div class="grid md:grid-cols-12 gap-8 items-center">
+
+                        <!-- 左側文字 -->
+                        <div class="md:col-span-7">
+                            <span class="inline-flex items-center px-3 py-1.5 rounded-full bg-blue-50 border border-blue-100 text-sm font-medium text-brand-600">
+                                <i class="fa-regular fa-comment-dots mr-2"></i>免費專案諮詢
+                            </span>
+                            <h2 class="mt-5 text-3xl md:text-4xl font-bold text-slate-900 leading-tight">
+                                有想法了？<br class="hidden md:block">
+                                <span class="text-brand-600">直接來聊您的專案需求</span>
+                            </h2>
+                            <p class="mt-4 text-slate-500">
+                                不論是初步構想或已有明確規格，都歡迎透過 LINE 與我們直接討論，我們將快速提供技術評估與報價方向。
+                            </p>
+                            <p class="mt-2 text-sm text-slate-400">
+                                手機用戶可直接一鍵開啟 LINE，桌機或平板可掃描右方 QR Code 加入。
+                            </p>
+                            <div class="mt-6 flex flex-col sm:flex-row gap-3">
+                                <a href="https://lin.ee/6IdgZC4" target="_blank" rel="noopener noreferrer"
+                                   class="inline-flex items-center justify-center gap-2 bg-line hover:bg-line-dark text-white px-8 py-3.5 rounded-full font-medium transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+                                    <i class="fa-brands fa-line text-lg"></i>立即 LINE 諮詢
+                                </a>
+                                <a href="mailto:digitalaaronl@gmail.com"
+                                   class="inline-flex items-center justify-center gap-2 border border-slate-200 hover:border-brand-500 text-slate-700 hover:text-brand-600 px-8 py-3.5 rounded-full font-medium transition-all bg-white hover:bg-blue-50">
+                                    <i class="fa-regular fa-envelope"></i>寄送 Email
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- 右側 QR Code -->
+                        <div class="md:col-span-5 flex justify-center">
+                            <div class="w-full max-w-[240px] rounded-3xl border border-slate-200 bg-white p-5 shadow-xl">
+                                <img
+                                    src="https://api.qrserver.com/v1/create-qr-code/?size=280x280&data=https%3A%2F%2Flin.ee%2F6IdgZC4"
+                                    alt="Digitools Studio LINE 官方帳號 QR Code"
+                                    class="w-full h-auto rounded-2xl border border-slate-100"
+                                    loading="lazy"
+                                />
+                                <p class="mt-3 text-sm text-center text-slate-500">掃描加入 LINE 諮詢</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="bg-slate-900 border-t border-slate-800 text-slate-400">
+            <div class="max-w-6xl mx-auto px-5 lg:px-8 py-12">
+                <div class="grid md:grid-cols-3 gap-10 mb-10 pb-10 border-b border-slate-800">
+                    <!-- 品牌 -->
+                    <div>
+                        <div class="flex items-center space-x-3 mb-4">
+                            <div class="w-8 h-8 bg-slate-700 text-white rounded-lg flex items-center justify-center font-bold text-sm">D</div>
+                            <span class="font-bold text-white text-base">Digitools Studio</span>
+                        </div>
+                        <p class="text-sm leading-relaxed">數位成長夥伴，以客製化軟體開發與互動型 Web App 協助企業打造流暢的數位工具與使用者體驗。</p>
+                    </div>
+                    <!-- 頁面導覽 -->
+                    <div>
+                        <h5 class="text-white font-semibold mb-4 text-sm">頁面導覽</h5>
+                        <ul class="space-y-2 text-sm">
+                            <li><a href="#hero" class="hover:text-white transition-colors">首頁</a></li>
+                            <li><a href="#demo" class="hover:text-white transition-colors">技術展示 (2048)</a></li>
+                            <li><a href="#services" class="hover:text-white transition-colors">服務項目</a></li>
+                            <li><a href="#contact" class="hover:text-white transition-colors">免費諮詢</a></li>
+                        </ul>
+                    </div>
+                    <!-- 聯絡 -->
+                    <div>
+                        <h5 class="text-white font-semibold mb-4 text-sm">聯絡我們</h5>
+                        <ul class="space-y-2 text-sm">
+                            <li>digitalaaronl@gmail.com</li>
+                            <li>新北・個人工作室</li>
+                            <li>週一至週五 09:30 – 21:30</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="flex flex-col md:flex-row justify-between items-center text-xs text-slate-500">
+                    <p>&copy; 2026 Digitools Studio. All rights reserved.</p>
+                </div>
+            </div>
+        </footer>
+
+        <!-- 浮動 LINE 諮詢按鈕 -->
+        <div class="fixed bottom-6 right-6 z-50 group">
+            <a href="https://lin.ee/6IdgZC4" target="_blank" rel="noopener noreferrer"
+               class="flex items-center gap-2.5 bg-line hover:bg-line-dark text-white shadow-2xl rounded-full px-5 py-3.5 transition-all duration-300 hover:scale-105"
+               title="LINE 諮詢">
+                <i class="fa-brands fa-line text-2xl"></i>
+                <span class="text-sm font-semibold hidden md:block">LINE 諮詢</span>
+            </a>
+            <!-- QR Code tooltip (hover, 桌機) -->
+            <div class="absolute bottom-full right-0 mb-3 hidden md:group-hover:block pointer-events-none">
+                <div class="bg-white rounded-2xl p-4 shadow-2xl border border-slate-100 w-48">
+                    <img
+                        src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https%3A%2F%2Flin.ee%2F6IdgZC4"
+                        alt="LINE QR Code" class="w-full rounded-xl" />
+                    <p class="text-xs text-center text-slate-500 mt-2">掃描加入 LINE</p>
+                </div>
+                <!-- 小三角 -->
+                <div class="w-3 h-3 bg-white rotate-45 absolute -bottom-1.5 right-8 border-r border-b border-slate-100"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Vue 應用程式邏輯 -->
+    <script>
+        const { createApp, ref, onMounted, onUnmounted } = Vue;
+
+        createApp({
+            setup() {
+                // === Header Scroll State ===
+                const isScrolled = ref(false);
+                const handleScrollHeader = () => { isScrolled.value = window.scrollY > 50; };
+
+                // === Landing Page 邏輯 ===
+                const formSubmitted = ref(false);
+                const submitForm = () => {
+                    formSubmitted.value = true;
+                    setTimeout(() => { formSubmitted.value = false; }, 5000);
+                };
+
+                const scrollTo = (id) => {
+                    const el = document.getElementById(id);
+                    if (el) {
+                        el.scrollIntoView({ behavior: 'smooth' });
+                    }
+                };
+
+                // === 2048 遊戲邏輯 ===
+                const board = ref(Array.from({ length: 4 }, () => Array(4).fill(0)));
+                const score = ref(0);
+                const bestScore = ref(parseInt(localStorage.getItem('2048-best-score')) || 0);
+                const gameOver = ref(false);
+                const gameWon = ref(false);
+                const hasWonOnce = ref(false); // 確保 2048 只觸發一次勝利畫面
+                const newlyAddedTiles = ref([]); // 用於 CSS 動畫
+
+                // 初始化遊戲
+                const initGame = () => {
+                    board.value = Array.from({ length: 4 }, () => Array(4).fill(0));
+                    score.value = 0;
+                    gameOver.value = false;
+                    gameWon.value = false;
+                    hasWonOnce.value = false;
+                    newlyAddedTiles.value = [];
+                    addNewTile();
+                    addNewTile();
+                };
+
+                // 在隨機空位加入 2 或 4
+                const addNewTile = () => {
+                    let emptyCells = [];
+                    for (let r = 0; r < 4; r++) {
+                        for (let c = 0; c < 4; c++) {
+                            if (board.value[r][c] === 0) emptyCells.push({ r, c });
+                        }
+                    }
+                    if (emptyCells.length > 0) {
+                        let { r, c } = emptyCells[Math.floor(Math.random() * emptyCells.length)];
+                        board.value[r][c] = Math.random() < 0.9 ? 2 : 4;
+                        newlyAddedTiles.value = [{ r, c }]; // 紀錄最新方塊供動畫使用
+                    }
+                };
+
+                // 檢查是否為新方塊（供動畫綁定）
+                const isNewTile = (r, c) => {
+                    return newlyAddedTiles.value.some(tile => tile.r === r && tile.c === c);
+                };
+
+                // 遊戲核心：滑動單一陣列 (過濾 0 並向左補齊)
+                const slide = (row) => {
+                    let arr = row.filter(val => val !== 0);
+                    let missing = 4 - arr.length;
+                    let zeros = Array(missing).fill(0);
+                    return arr.concat(zeros);
+                };
+
+                // 遊戲核心：合併相鄰相同數字
+                const combine = (row) => {
+                    for (let i = 0; i < 3; i++) {
+                        if (row[i] !== 0 && row[i] === row[i + 1]) {
+                            row[i] *= 2;
+                            score.value += row[i];
+                            row[i + 1] = 0;
+                            // 檢查勝利條件
+                            if (row[i] === 2048 && !hasWonOnce.value) {
+                                gameWon.value = true;
+                                hasWonOnce.value = true;
+                            }
+                        }
+                    }
+                    return row;
+                };
+
+                // 遊戲核心：單行操作 (向左滑動 -> 合併 -> 再次向左滑動補齊)
+                const operate = (row) => {
+                    row = slide(row);
+                    row = combine(row);
+                    row = slide(row);
+                    return row;
+                };
+
+                // 矩陣向右旋轉 90 度
+                const rotateRight = (matrix) => {
+                    let result = [];
+                    for (let c = 0; c < 4; c++) {
+                        let newRow = [];
+                        for (let r = 3; r >= 0; r--) {
+                            newRow.push(matrix[r][c]);
+                        }
+                        result.push(newRow);
+                    }
+                    return result;
+                };
+
+                // 矩陣向左旋轉 90 度
+                const rotateLeft = (matrix) => {
+                    let result = [];
+                    for (let c = 3; c >= 0; c--) {
+                        let newRow = [];
+                        for (let r = 0; r < 4; r++) {
+                            newRow.push(matrix[r][c]);
+                        }
+                        result.push(newRow);
+                    }
+                    return result;
+                };
+
+                // 統一處理移動 (0: 上, 1: 右, 2: 下, 3: 左)
+                // 邏輯：將矩陣旋轉，讓操作方向等同於「向左滑動」，處理完再轉回來。
+                const handleMove = (direction) => {
+                    if (gameOver.value || gameWon.value) return;
+                    
+                    let tempBoard = JSON.parse(JSON.stringify(board.value));
+                    
+                    if (direction === 0) { tempBoard = rotateLeft(tempBoard); }
+                    else if (direction === 1) { tempBoard = rotateLeft(tempBoard); tempBoard = rotateLeft(tempBoard); }
+                    else if (direction === 2) { tempBoard = rotateRight(tempBoard); }
+
+                    // 執行基礎向左合併
+                    for (let r = 0; r < 4; r++) {
+                        tempBoard[r] = operate(tempBoard[r]);
+                    }
+
+                    // 轉回原始方向
+                    if (direction === 0) { tempBoard = rotateRight(tempBoard); }
+                    else if (direction === 1) { tempBoard = rotateRight(tempBoard); tempBoard = rotateRight(tempBoard); }
+                    else if (direction === 2) { tempBoard = rotateLeft(tempBoard); }
+
+                    // 檢查盤面是否有改變
+                    if (JSON.stringify(board.value) !== JSON.stringify(tempBoard)) {
+                        board.value = tempBoard;
+                        addNewTile();
+                        checkGameState();
+                        updateBestScore();
+                    }
+                };
+
+                // 檢查遊戲結束 (無空位且相鄰無相同數字)
+                const checkGameState = () => {
+                    for (let r = 0; r < 4; r++) {
+                        for (let c = 0; c < 4; c++) {
+                            if (board.value[r][c] === 0) return; // 還有空位
+                            if (c !== 3 && board.value[r][c] === board.value[r][c + 1]) return; // 水平可合併
+                            if (r !== 3 && board.value[r][c] === board.value[r + 1][c]) return; // 垂直可合併
+                        }
+                    }
+                    gameOver.value = true;
+                };
+
+                const updateBestScore = () => {
+                    if (score.value > bestScore.value) {
+                        bestScore.value = score.value;
+                        localStorage.setItem('2048-best-score', bestScore.value);
+                    }
+                };
+
+                // === UI 與樣式邏輯 ===
+                const getTileClass = (val) => {
+                    if (val === 0) return 'bg-[#cdc1b4] text-transparent'; // 空白格子
+                    
+                    const classes = {
+                        2: 'bg-[#eee4da] text-[#776e65]',
+                        4: 'bg-[#ede0c8] text-[#776e65]',
+                        8: 'bg-[#f2b179] text-white',
+                        16: 'bg-[#f59563] text-white shadow-sm',
+                        32: 'bg-[#f67c5f] text-white shadow-sm',
+                        64: 'bg-[#f65e3b] text-white shadow-md',
+                        128: 'bg-[#edcf72] text-white shadow-md text-xl sm:text-3xl',
+                        256: 'bg-[#edcc61] text-white shadow-lg text-xl sm:text-3xl',
+                        512: 'bg-[#edc850] text-white shadow-lg text-xl sm:text-3xl',
+                        1024: 'bg-[#edc53f] text-white shadow-xl text-lg sm:text-2xl',
+                        2048: 'bg-[#edc22e] text-white shadow-2xl text-lg sm:text-2xl ring-4 ring-yellow-300 ring-opacity-50',
+                    };
+                    return classes[val] || 'bg-[#3c3a32] text-[#f9f6f2] shadow-2xl text-lg sm:text-2xl'; // 超過 2048
+                };
+
+                // === 事件監聽 (鍵盤與觸控) ===
+                const handleKeyDown = (e) => {
+                    // 避免按下方向鍵時螢幕捲動
+                    if(["ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].indexOf(e.code) > -1) {
+                        e.preventDefault();
+                    }
+                    switch (e.key) {
+                        case 'ArrowUp': case 'w': case 'W': handleMove(0); break;
+                        case 'ArrowRight': case 'd': case 'D': handleMove(1); break;
+                        case 'ArrowDown': case 's': case 'S': handleMove(2); break;
+                        case 'ArrowLeft': case 'a': case 'A': handleMove(3); break;
+                    }
+                };
+
+                let touchStartX = 0;
+                let touchStartY = 0;
+                const handleTouchStart = (e) => {
+                    touchStartX = e.touches[0].clientX;
+                    touchStartY = e.touches[0].clientY;
+                };
+
+                const handleTouchEnd = (e) => {
+                    if (!touchStartX || !touchStartY) return;
+                    let touchEndX = e.changedTouches[0].clientX;
+                    let touchEndY = e.changedTouches[0].clientY;
+                    
+                    let dx = touchEndX - touchStartX;
+                    let dy = touchEndY - touchStartY;
+                    
+                    // 設定滑動閾值，避免輕微觸碰誤判
+                    if (Math.abs(dx) > Math.abs(dy)) {
+                        if (Math.abs(dx) > 30) { dx > 0 ? handleMove(1) : handleMove(3); } // 右或左
+                    } else {
+                        if (Math.abs(dy) > 30) { dy > 0 ? handleMove(2) : handleMove(0); } // 下或上
+                    }
+                    touchStartX = 0;
+                    touchStartY = 0;
+                };
+
+                onMounted(() => {
+                    initGame();
+                    window.addEventListener('keydown', handleKeyDown, { passive: false });
+                    window.addEventListener('scroll', handleScrollHeader);
+                    handleScrollHeader();
+                });
+
+                onUnmounted(() => {
+                    window.removeEventListener('keydown', handleKeyDown);
+                    window.removeEventListener('scroll', handleScrollHeader);
+                });
+
+                return {
+                    // Landing Page
+                    submitForm, formSubmitted, scrollTo, isScrolled,
+                    // Game State
+                    board, score, bestScore, gameOver, gameWon,
+                    // Game Methods
+                    initGame, getTileClass, isNewTile,
+                    // Events
+                    handleTouchStart, handleTouchEnd
+                };
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>

@@ -8,8 +8,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Alpine.js for interactions -->
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <script>
@@ -97,8 +97,8 @@
                 <a href="#contact" class="hidden md:inline-block bg-slate-900 hover:bg-line text-white px-5 py-2.5 rounded-full text-sm font-medium transition-all shadow-md hover:shadow-lg">
                     預約流程諮詢
                 </a>
-                <button id="mobile-menu-btn" class="md:hidden text-slate-600 p-2 ml-4">
-                    <i data-lucide="menu" class="w-6 h-6"></i>
+                <button id="mobile-menu-btn" class="md:hidden text-slate-600 text-2xl ml-4">
+                    <i class="fa-solid fa-bars"></i>
                 </button>
             </div>
         </div>
@@ -109,7 +109,7 @@
             <a href="#core-module" class="text-base font-medium text-slate-800 hover:text-line py-2 border-b border-slate-100">預約升級</a>
             <a href="#process" class="text-base font-medium text-slate-800 hover:text-line py-2 border-b border-slate-100">合作流程</a>
             <a href="#pricing" class="text-base font-medium text-slate-800 hover:text-line py-2 border-b border-slate-100">費用方案</a>
-            <a href="#contact" class="mt-4 w-full text-center px-5 py-3 rounded-lg text-white bg-brand-900 font-medium shadow-md">預約流程諮詢</a>
+            <a href="#contact" class="mt-4 w-full text-center px-5 py-3 rounded-lg text-white bg-line font-medium shadow-md">預約流程諮詢</a>
         </div>
     </nav>
 
@@ -1037,9 +1037,9 @@
     <!-- 浮動 LINE 諮詢按鈕 -->
     <div class="fixed bottom-6 right-6 z-50 group">
         <a href="https://lin.ee/6IdgZC4" target="_blank" rel="noopener noreferrer"
-           class="flex items-center gap-2.5 bg-line hover:bg-line-hover text-white shadow-2xl rounded-full px-5 py-3.5 transition-all duration-300 hover:scale-105"
+           class="flex items-center gap-2.5 bg-line hover:bg-line-dark text-white shadow-2xl rounded-full px-5 py-3.5 transition-all duration-300 hover:scale-105"
            title="LINE 諮詢">
-            <i data-lucide="message-circle" class="w-6 h-6"></i>
+            <i class="fa-brands fa-line text-2xl"></i>
             <span class="text-sm font-semibold hidden md:block">LINE 諮詢</span>
         </a>
         <!-- QR Code tooltip (hover, 桌機) -->

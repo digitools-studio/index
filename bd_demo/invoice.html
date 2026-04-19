@@ -1,0 +1,469 @@
+﻿<!DOCTYPE html>
+<html lang="zh-TW" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>客製網頁工具開發 × 電子發票對獎 Demo | Digitools Studio</title>
+  <meta name="description" content="Digitools Studio 以客製網頁工具為核心，展示電子發票對獎工具 Demo，快速、實用、無需 App。" />
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+  <!-- Vue 3 -->
+  <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['"Noto Sans TC"', 'sans-serif'] },
+          colors: {
+            line:  { DEFAULT: '#00B900', dark: '#009900', light: '#e6f8e6' },
+            brand: { 50: '#eff6ff', 100: '#dbeafe', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8', 900: '#1e3a8a' }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { font-family: 'Noto Sans TC', sans-serif; }
+    .glass-header {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    /* Tool-specific styles */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    .tool-label {
+      display: block;
+      font-size: 11px;
+      font-weight: 700;
+      color: #64748b;
+      margin-bottom: 5px;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+    }
+    .tool-select, .tool-input {
+      width: 100%;
+      padding: 11px 13px;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 10px;
+      font-size: 15px;
+      color: #1e293b;
+      background: #fff;
+      outline: none;
+      font-family: inherit;
+      transition: border-color .18s, box-shadow .18s;
+    }
+    .tool-select:focus, .tool-input:focus {
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59,130,246,.12);
+    }
+    .ntag {
+      background: #f1f5f9;
+      border-radius: 7px;
+      padding: 4px 10px;
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+      color: #1e293b;
+      display: inline-block;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased selection:bg-line selection:text-white">
+
+  <!-- Header -->
+  <header id="navbar" class="fixed w-full top-0 z-50 transition-all duration-300 py-5 bg-transparent">
+    <div class="max-w-7xl mx-auto px-5 lg:px-8 flex justify-between items-center">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 bg-slate-900 text-white rounded-xl flex items-center justify-center font-bold text-xl shadow-lg">D</div>
+        <div>
+          <p class="font-bold text-slate-900 leading-tight">Digitools Studio</p>
+          <p class="text-xs text-slate-500 hidden md:block">客製網頁工具開發</p>
+        </div>
+      </div>
+      <nav class="hidden lg:flex items-center space-x-8 text-sm font-medium text-slate-600">
+        <a href="#tool" class="hover:text-line transition-colors">工具 Demo</a>
+        <a href="#features" class="hover:text-line transition-colors">開發特色</a>
+        <a href="#contact" class="hover:text-line transition-colors">委託開發</a>
+      </nav>
+      <div class="flex items-center">
+        <a href="#contact" class="hidden md:inline-block bg-slate-900 hover:bg-line text-white px-5 py-2.5 rounded-full text-sm font-medium transition-all shadow-md hover:shadow-lg">委託工具開發</a>
+        <button id="mobile-menu-btn" class="md:hidden text-slate-600 text-2xl ml-4">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+      </div>
+    </div>
+    <div id="mobile-menu" class="hidden absolute top-full left-0 w-full bg-white/95 backdrop-blur-md shadow-lg border-t border-slate-100 py-4 px-4 flex flex-col space-y-4">
+      <a href="#tool"     class="text-base font-medium text-slate-800 hover:text-line py-2 border-b border-slate-100">工具 Demo</a>
+      <a href="#features" class="text-base font-medium text-slate-800 hover:text-line py-2 border-b border-slate-100">開發特色</a>
+      <a href="#contact"  class="text-base font-medium text-slate-800 hover:text-line py-2 border-b border-slate-100">委託開發</a>
+      <a href="#contact"  class="mt-4 w-full text-center px-5 py-3 rounded-lg text-white bg-line font-medium shadow-md">委託工具開發</a>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="pt-36 pb-20 lg:pt-48 lg:pb-28 relative overflow-hidden">
+    <div class="absolute inset-0 bg-white"></div>
+    <div class="absolute top-0 right-0 -mr-32 -mt-32 w-96 h-96 bg-blue-50 rounded-full blur-3xl opacity-60"></div>
+    <div class="absolute bottom-0 left-0 -ml-20 w-72 h-72 bg-line-light rounded-full blur-3xl opacity-40"></div>
+    <div class="max-w-7xl mx-auto px-5 lg:px-8 relative z-10">
+      <div class="max-w-3xl">
+        <div class="inline-flex items-center gap-2 px-4 py-1.5 bg-white border border-slate-200 rounded-full text-xs font-bold tracking-wide text-brand-600 mb-6 shadow-sm">
+          <i class="fa-solid fa-screwdriver-wrench"></i>客製網頁工具 × 即時對接資料
+        </div>
+        <h1 class="text-4xl lg:text-5xl font-bold text-slate-900 leading-[1.2] mb-6">
+          不需要 App，<br>
+          用網頁工具<span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-600 to-line">解決真實問題</span>
+        </h1>
+        <p class="text-lg text-slate-600 mb-8 leading-relaxed max-w-2xl">
+          這是一個電子發票對獎工具的 Demo，展示我們如何在不依賴 App 的情況下，用輕量網頁工具串接政府 API、即時比對資料，並提供乾淨好用的操作介面。
+        </p>
+        <div class="flex flex-col sm:flex-row gap-3">
+          <a href="#tool" class="inline-flex items-center justify-center gap-2 bg-brand-600 hover:bg-brand-700 text-white px-8 py-3.5 rounded-full font-medium transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+            <i class="fa-solid fa-receipt"></i>立即體驗對獎工具
+          </a>
+          <a href="#contact" class="inline-flex items-center justify-center gap-2 border border-slate-200 hover:border-brand-500 text-slate-700 hover:text-brand-600 px-8 py-3.5 rounded-full font-medium transition-all bg-white hover:bg-blue-50">
+            <i class="fa-regular fa-comment-dots"></i>委託客製開發
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Tool Section (Vue App) -->
+  <section id="tool" class="py-20 bg-slate-100">
+    <div class="max-w-7xl mx-auto px-5 lg:px-8">
+      <div class="text-center mb-12">
+        <span class="inline-flex items-center px-3 py-1.5 rounded-full bg-white border border-slate-200 text-sm font-medium text-brand-600 shadow-sm mb-4">
+          <i class="fa-solid fa-plug mr-2"></i>Live Demo
+        </span>
+        <h2 class="text-3xl md:text-4xl font-bold text-slate-900 mb-4">電子發票對獎工具</h2>
+        <p class="text-slate-500 max-w-xl mx-auto">選擇期別、輸入 8 碼號碼，即時從財政部取得中獎號碼直接比對。資料每期自動更新，不儲存任何個人資料。</p>
+      </div>
+
+      <div id="app" class="max-w-xl mx-auto">
+        <!-- Period & Input -->
+        <div class="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-slate-100 mb-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
+            <div>
+              <label class="tool-label">期別</label>
+              <select class="tool-select" v-model="selectedPeriod">
+                <option v-for="p in periods" :value="p" :key="p">{{ p }}</option>
+              </select>
+            </div>
+            <div>
+              <label class="tool-label">發票號碼（8 碼）</label>
+              <input
+                class="tool-input"
+                type="text"
+                inputmode="numeric"
+                maxlength="8"
+                v-model="invoiceInput"
+                @input="invoiceInput = invoiceInput.replace(/\D/g,'').slice(0,8)"
+                @keyup.enter="check"
+                placeholder="例：12345678"
+              />
+            </div>
+          </div>
+
+          <button
+            @click="check"
+            :disabled="checking"
+            class="w-full py-3.5 px-4 bg-brand-600 hover:bg-brand-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold rounded-xl text-base transition-all shadow-md hover:shadow-lg"
+          >
+            {{ checking ? '查詢中…' : '立即對獎' }}
+          </button>
+
+          <div v-if="result" class="mt-4 p-4 rounded-xl border-l-4"
+               :class="{
+                 'bg-green-50 border-green-500 text-green-800': result.type === 'success',
+                 'bg-yellow-50 border-yellow-500 text-yellow-800': result.type === 'warning',
+                 'bg-red-50 border-red-500 text-red-800': result.type === 'danger'
+               }">
+            <div class="font-black text-xl mb-1">{{ result.rank }}</div>
+            <div class="text-sm leading-relaxed">{{ result.msg }}</div>
+          </div>
+        </div>
+
+        <!-- Prize Numbers -->
+        <div v-if="prizeData" class="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-slate-100 mb-4">
+          <p class="text-sm font-bold text-slate-700 mb-4">{{ prizeData.title }}・開獎號碼</p>
+          <div v-for="(row, idx) in prizeRows" :key="idx" class="flex items-start gap-3 py-3 border-b border-slate-50 last:border-0">
+            <span class="shrink-0 w-16 text-xs font-bold text-slate-400 pt-1">{{ row.label }}</span>
+            <div class="flex flex-wrap gap-2">
+              <span v-if="!row.nums.length" class="text-slate-300 text-sm">—</span>
+              <span v-for="n in row.nums" :key="n" class="ntag">{{ n }}</span>
+            </div>
+          </div>
+        </div>
+
+        <p class="text-center text-xs text-slate-400 leading-relaxed mt-2">
+          資料來源：<a href="https://invoice.etax.nat.gov.tw" target="_blank" rel="noopener" class="underline hover:text-slate-600">財政部電子發票整合服務平台</a>・不儲存任何個人資料
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section id="features" class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-5 lg:px-8">
+      <div class="text-center mb-14">
+        <h2 class="text-3xl md:text-4xl font-bold text-slate-900 mb-4">為什麼選網頁工具？</h2>
+        <p class="text-slate-500 max-w-xl mx-auto">不需要下載、不需要登入，用瀏覽器就能直接使用。這是我們對「好工具」的定義。</p>
+      </div>
+      <div class="grid md:grid-cols-3 gap-8">
+        <div class="bg-slate-50 p-8 rounded-2xl border border-slate-100 hover:shadow-lg transition-shadow group">
+          <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mb-5 text-brand-600 group-hover:scale-110 transition-transform">
+            <i class="fa-solid fa-bolt text-xl"></i>
+          </div>
+          <h3 class="text-lg font-bold mb-2 text-slate-900">即時串接資料</h3>
+          <p class="text-slate-500 text-sm leading-relaxed">直接對接政府 API 或企業內部資料源，不透過多餘中介伺服器，確保資料即時且安全。</p>
+        </div>
+        <div class="bg-slate-50 p-8 rounded-2xl border border-slate-100 hover:shadow-lg transition-shadow group">
+          <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center mb-5 text-line group-hover:scale-110 transition-transform">
+            <i class="fa-solid fa-mobile-screen text-xl"></i>
+          </div>
+          <h3 class="text-lg font-bold mb-2 text-slate-900">跨裝置適配</h3>
+          <p class="text-slate-500 text-sm leading-relaxed">手機、平板、桌機一樣好用。Responsive 設計讓工具在任何螢幕尺寸都能正常操作。</p>
+        </div>
+        <div class="bg-slate-50 p-8 rounded-2xl border border-slate-100 hover:shadow-lg transition-shadow group">
+          <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center mb-5 text-purple-600 group-hover:scale-110 transition-transform">
+            <i class="fa-solid fa-gears text-xl"></i>
+          </div>
+          <h3 class="text-lg font-bold mb-2 text-slate-900">客製化彈性大</h3>
+          <p class="text-slate-500 text-sm leading-relaxed">從簡單的查詢介面到複雜的審核工作流程，皆可依業務邏輯量身打造，不受套裝軟體限制。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Section -->
+  <section id="contact" class="py-24 bg-slate-900 relative overflow-hidden">
+    <div class="absolute inset-0 opacity-5" style="background-image: linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px); background-size: 30px 30px;"></div>
+    <div class="max-w-4xl mx-auto px-5 lg:px-8 relative z-10">
+      <div class="bg-white rounded-3xl p-8 md:p-12 shadow-2xl">
+        <div class="grid md:grid-cols-12 gap-8 items-center">
+          <div class="md:col-span-7">
+            <span class="inline-flex items-center px-3 py-1.5 rounded-full bg-blue-50 border border-blue-100 text-sm font-medium text-brand-600">
+              <i class="fa-regular fa-comment-dots mr-2"></i>委託工具開發
+            </span>
+            <h2 class="mt-5 text-3xl md:text-4xl font-bold text-slate-900 leading-tight">
+              有想要的工具？<br class="hidden md:block">
+              <span class="text-brand-600">和我們聊聊需求</span>
+            </h2>
+            <p class="mt-4 text-slate-500">不論是內部審核工具、客戶查詢系統，或是一個你說不清楚但覺得可以更好的流程，都歡迎透過 LINE 直接討論。</p>
+            <p class="mt-2 text-sm text-slate-400">手機用戶可直接一鍵開啟 LINE，桌機可掃描右方 QR Code。</p>
+            <div class="mt-6 flex flex-col sm:flex-row gap-3">
+              <a href="https://lin.ee/6IdgZC4" target="_blank" rel="noopener noreferrer"
+                 class="inline-flex items-center justify-center gap-2 bg-line hover:bg-line-dark text-white px-8 py-3.5 rounded-full font-medium transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+                <i class="fa-brands fa-line text-lg"></i>立即 LINE 諮詢
+              </a>
+              <a href="mailto:digitalaaronl@gmail.com"
+                 class="inline-flex items-center justify-center gap-2 border border-slate-200 hover:border-brand-500 text-slate-700 hover:text-brand-600 px-8 py-3.5 rounded-full font-medium transition-all bg-white hover:bg-blue-50">
+                <i class="fa-regular fa-envelope"></i>寄送 Email
+              </a>
+            </div>
+          </div>
+          <div class="md:col-span-5 flex justify-center">
+            <div class="w-full max-w-[240px] rounded-3xl border border-slate-200 bg-white p-5 shadow-xl">
+              <img src="https://api.qrserver.com/v1/create-qr-code/?size=280x280&data=https%3A%2F%2Flin.ee%2F6IdgZC4"
+                   alt="Digitools Studio LINE 官方帳號 QR Code"
+                   class="w-full h-auto rounded-2xl border border-slate-100" loading="lazy" />
+              <p class="mt-3 text-sm text-center text-slate-500">掃描加入 LINE 諮詢</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-slate-900 border-t border-slate-800 text-slate-400">
+    <div class="max-w-7xl mx-auto px-5 lg:px-8 py-12">
+      <div class="grid md:grid-cols-3 gap-10 mb-10 pb-10 border-b border-slate-800">
+        <div>
+          <div class="flex items-center space-x-3 mb-4">
+            <div class="w-8 h-8 bg-slate-700 text-white rounded-lg flex items-center justify-center font-bold text-sm">D</div>
+            <span class="font-bold text-white text-base">Digitools Studio</span>
+          </div>
+          <p class="text-sm leading-relaxed">數位成長夥伴，以客製化網頁工具與自動化流程，協助企業將繁瑣作業轉化為高效數位體驗。</p>
+        </div>
+        <div>
+          <h5 class="text-white font-semibold mb-4 text-sm">頁面導覽</h5>
+          <ul class="space-y-2 text-sm">
+            <li><a href="#tool"     class="hover:text-white transition-colors">工具 Demo（對獎）</a></li>
+            <li><a href="#features" class="hover:text-white transition-colors">開發特色</a></li>
+            <li><a href="#contact"  class="hover:text-white transition-colors">委託開發</a></li>
+          </ul>
+        </div>
+        <div>
+          <h5 class="text-white font-semibold mb-4 text-sm">聯絡我們</h5>
+          <ul class="space-y-2 text-sm">
+            <li>digitalaaronl@gmail.com</li>
+            <li>新北・個人工作室</li>
+            <li>週一至週五 09:30 – 21:30</li>
+          </ul>
+        </div>
+      </div>
+      <div class="flex flex-col md:flex-row justify-between items-center text-xs text-slate-500">
+        <p>© 2026 Digitools Studio. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- 浮動 LINE 諮詢按鈕 -->
+  <div class="fixed bottom-6 right-6 z-50 group">
+    <a href="https://lin.ee/6IdgZC4" target="_blank" rel="noopener noreferrer"
+       class="flex items-center gap-2.5 bg-line hover:bg-line-dark text-white shadow-2xl rounded-full px-5 py-3.5 transition-all duration-300 hover:scale-105"
+       title="LINE 諮詢">
+      <i class="fa-brands fa-line text-2xl"></i>
+      <span class="text-sm font-semibold hidden md:block">LINE 諮詢</span>
+    </a>
+    <div class="absolute bottom-full right-0 mb-3 hidden md:group-hover:block pointer-events-none">
+      <div class="bg-white rounded-2xl p-4 shadow-2xl border border-slate-100 w-48">
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https%3A%2F%2Flin.ee%2F6IdgZC4"
+             alt="LINE QR Code" class="w-full rounded-xl" />
+        <p class="text-xs text-center text-slate-500 mt-2">掃描加入 LINE</p>
+      </div>
+      <div class="w-3 h-3 bg-white rotate-45 absolute -bottom-1.5 right-8 border-r border-b border-slate-100"></div>
+    </div>
+  </div>
+
+  <script>
+    // Navbar scroll
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 50) {
+        navbar.classList.add('glass-header', 'py-3');
+        navbar.classList.remove('py-5', 'bg-transparent');
+      } else {
+        navbar.classList.remove('glass-header', 'py-3');
+        navbar.classList.add('py-5', 'bg-transparent');
+      }
+    });
+
+    // Mobile menu
+    const btn = document.getElementById('mobile-menu-btn');
+    const menu = document.getElementById('mobile-menu');
+    btn.addEventListener('click', () => menu.classList.toggle('hidden'));
+    menu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => menu.classList.add('hidden')));
+
+    // ── Vue App (invoice tool) ──
+    const { createApp } = Vue;
+
+    function generatePeriods() {
+      const now = new Date();
+      const roc = now.getFullYear() - 1911;
+      const mon = now.getMonth() + 1;
+      let m = Math.floor((mon - 1) / 2) * 2 + 1;
+      let y = roc;
+      const list = [];
+      for (let i = 0; i < 8; i++) {
+        list.push(`${y}年${String(m).padStart(2,'0')}-${String(m+1).padStart(2,'0')}月`);
+        m -= 2;
+        if (m < 1) { m += 12; y--; }
+      }
+      return list;
+    }
+
+    async function fetchPrizeData() {
+      const resp = await fetch('../prize-data.json?_=' + Date.now());
+      if (!resp.ok) throw new Error('HTTP ' + resp.status);
+      return resp.json();
+    }
+
+    function extractNums(s) {
+      const m = s.match(/(\d+)年\s*(\d+)\s*[\-－~～–—]\s*(\d+)\s*月/);
+      return m ? { y: +m[1], m1: +m[2], m2: +m[3] } : null;
+    }
+
+    createApp({
+      data() {
+        const periods = generatePeriods();
+        return {
+          periods,
+          selectedPeriod: periods[0],
+          invoiceInput: '',
+          checking: false,
+          result: null,
+          prizeData: null,
+        };
+      },
+      computed: {
+        prizeRows() {
+          if (!this.prizeData) return [];
+          const pd = this.prizeData;
+          return [
+            { label: '特別獎', nums: pd.specialPrize ? [pd.specialPrize] : [] },
+            { label: '特獎',   nums: pd.grandPrize   ? [pd.grandPrize]   : [] },
+            { label: '頭獎',   nums: pd.firstPrizes  || [] },
+            ...(pd.sixthExtra && pd.sixthExtra.length ? [{ label: '增開六獎', nums: pd.sixthExtra }] : []),
+          ];
+        }
+      },
+      methods: {
+        headRank(invoice, fp) {
+          if (invoice          === fp)          return '頭獎';
+          if (invoice.slice(1) === fp.slice(1)) return '二獎';
+          if (invoice.slice(2) === fp.slice(2)) return '三獎';
+          if (invoice.slice(3) === fp.slice(3)) return '四獎';
+          if (invoice.slice(4) === fp.slice(4)) return '五獎';
+          if (invoice.slice(5) === fp.slice(5)) return '六獎';
+          return null;
+        },
+        compare(invoice, pd) {
+          if (!pd.specialPrize && !pd.grandPrize && !pd.firstPrizes.length)
+            return { type: 'danger', rank: '⚠️ 解析失敗', msg: '無法從官方資料解析中獎號碼，請確認期別是否已公布或稍後再試。' };
+          if (invoice === pd.specialPrize)
+            return { type: 'success', rank: '🎉 特別獎', msg: '恭喜！本張發票命中特別獎。' };
+          if (invoice === pd.grandPrize)
+            return { type: 'success', rank: '🎉 特獎', msg: '恭喜！本張發票命中特獎。' };
+          for (const fp of pd.firstPrizes) {
+            const r = this.headRank(invoice, fp);
+            if (r) return { type: 'success', rank: `🎉 ${r}`, msg: `恭喜！本張發票符合${r}中獎條件。` };
+          }
+          if (pd.sixthExtra && pd.sixthExtra.includes(invoice.slice(-3)))
+            return { type: 'success', rank: '🎉 增開六獎', msg: '恭喜！本張發票命中增開六獎。' };
+          return { type: 'warning', rank: '未中獎', msg: '很遺憾，本張發票未中獎，繼續加油！' };
+        },
+        async check() {
+          const invoice = this.invoiceInput.replace(/\D/g, '').slice(0, 8);
+          this.invoiceInput = invoice;
+          if (invoice.length !== 8) {
+            this.result = { type: 'danger', rank: '格式錯誤', msg: '請輸入完整 8 碼發票號碼。' };
+            return;
+          }
+          this.checking = true;
+          this.result = null;
+          this.prizeData = null;
+          try {
+            const prizes = await fetchPrizeData();
+            const sel = extractNums(this.selectedPeriod);
+            const matched = prizes.find(item => {
+              const p = extractNums(item.title);
+              return p && sel && p.y === sel.y && p.m1 === sel.m1 && p.m2 === sel.m2;
+            });
+            if (!matched) {
+              this.result = { type: 'danger', rank: '查無資料', msg: `尚未有「${this.selectedPeriod}」的開獎記錄，請選擇其他期別。` };
+              return;
+            }
+            this.prizeData = matched;
+            this.result = this.compare(invoice, matched);
+          } catch (err) {
+            this.result = { type: 'danger', rank: '讀取失敗', msg: `無法載入獎號資料（${err.message}），請重新整理頁面。` };
+          } finally {
+            this.checking = false;
+          }
+        },
+      },
+    }).mount('#app');
+  </script>
+</body>
+</html>
