@@ -1,0 +1,686 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- ── Primary SEO ───────────────────────────────────────── -->
+  <title>免費 PDF 電子簽名工具 | SignFlow PDF — 線上手寫簽名、電子章、印章蓋章</title>
+  <meta name="description" content="SignFlow PDF：免費線上 PDF 電子簽名工具。手寫簽名去背、電子章 / 印章上傳蓋章、文字標記、框線標記，完成後立即匯出 PDF。所有資料在瀏覽器本機處理，安全無外洩。" />
+  <meta name="keywords" content="PDF 電子簽名,PDF 簽署,線上簽名,電子簽名工具,PDF 印章,電子章,手寫簽名 PDF,PDF 蓋章,免費電子簽名,文件簽署,線上 PDF 編輯,PDF 加簽,SignFlow PDF,PDF 簽名軟體,電子文件簽署" />
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+  <meta name="author" content="SignFlow PDF" />
+  <link rel="canonical" href="https://signflow.yourdomain.com/" />
+
+  <!-- ── Open Graph（FB / LINE / Slack 分享）────────────────── -->
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="zh_TW" />
+  <meta property="og:site_name" content="SignFlow PDF" />
+  <meta property="og:title" content="免費 PDF 電子簽名工具 — 手寫簽名、電子章、印章蓋章 | SignFlow PDF" />
+  <meta property="og:description" content="不需安裝軟體，開啟瀏覽器即可完成 PDF 電子簽名、蓋印章、文字標記，並立即匯出完整 PDF 文件。" />
+  <meta property="og:url" content="https://signflow.yourdomain.com/" />
+
+  <!-- ── Twitter Card ────────────────────────────────────────── -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="免費 PDF 電子簽名工具 | SignFlow PDF" />
+  <meta name="twitter:description" content="手寫簽名、電子章、印章蓋章，完成後立即匯出 PDF。免費使用，資料不上傳伺服器。" />
+
+  <!-- ── Structured Data: SoftwareApplication ──────────────── -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "SignFlow PDF",
+    "alternateName": ["PDF 電子簽名工具", "線上 PDF 簽署工具", "PDF 蓋章工具"],
+    "applicationCategory": "BusinessApplication",
+    "applicationSubCategory": "電子簽名軟體",
+    "operatingSystem": "Web Browser（Chrome, Firefox, Edge, Safari）",
+    "url": "https://signflow.yourdomain.com/",
+    "description": "免費線上 PDF 電子簽名工具。支援手寫簽名去背嵌入、電子印章 / 章圖上傳蓋章、文字標記與框線繪製。所有文件處理於瀏覽器本機完成，不上傳伺服器，完成後立即匯出標準 PDF 文件。",
+    "featureList": [
+      "手寫電子簽名（自動去背，透明背景）",
+      "電子印章 / 章圖上傳（支援 PNG、SVG）",
+      "印章蓋章、縮放、旋轉、透明度調整",
+      "PDF 文字標記",
+      "框線 / 矩形標記",
+      "資產庫（收藏常用簽名與印章）",
+      "本機草稿自動保存（IndexedDB）",
+      "Undo / Redo 操作紀錄",
+      "匯出完整標準 PDF"
+    ],
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "TWD",
+      "availability": "https://schema.org/InStock"
+    },
+    "inLanguage": "zh-Hant",
+    "audience": {
+      "@type": "Audience",
+      "audienceType": "中小企業、法務人員、HR 人資、會計、個人用戶"
+    },
+    "screenshot": "https://signflow.yourdomain.com/og-image.png"
+  }
+  </script>
+
+  <!-- ── Structured Data: FAQPage（AI 推薦引用核心）─────────── -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "SignFlow PDF 是什麼工具？",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "SignFlow PDF 是一套免費的線上 PDF 電子簽名工具，支援手寫簽名（自動去背）、電子印章 / 章圖上傳蓋章、PDF 文字標記及框線繪製。所有操作在瀏覽器本機完成，無需安裝任何軟體或 App，完成後可立即匯出標準相容的 PDF 文件。"
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "如何在 PDF 上加入電子簽名？",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "使用 Google 帳號免費登入後，上傳需要簽署的 PDF 文件，點擊「手寫簽名」按鈕，以滑鼠或觸控板手寫簽名，系統自動去背後將簽名嵌入至 PDF 指定位置。支援拖曳移位、縮放與旋轉。完成後點擊「匯出 PDF」即可下載含簽名的完整文件。"
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "PDF 文件和簽名資料會上傳到伺服器嗎？資料安全嗎？",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "不會。SignFlow PDF 採用純前端架構，所有 PDF 文件處理、簽名繪製與印章合成完全在使用者的瀏覽器本機進行，任何文件內容都不會上傳至任何伺服器，保障商業機密與個人隱私安全。工作草稿透過瀏覽器 IndexedDB 保存於本機裝置。"
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "可以在 PDF 上蓋電子章或公司印章嗎？",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "可以。上傳 PNG 或 SVG 格式的公司章、個人章或騎縫章圖後，可拖曳到 PDF 任意位置，支援縮放、旋轉與透明度調整。常用印章可儲存至資產庫，下次開啟時一鍵快速套用，不需重複上傳。"
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "SignFlow PDF 完全免費嗎？有功能限制嗎？",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "是，基本功能完全免費，使用 Google 帳號登入即可使用全部核心簽署功能，包含手寫簽名、印章蓋章、文字標記、Undo/Redo、草稿保存與 PDF 匯出，無頁數限制。另有企業客製化簽署系統開發服務，可提供需求洽詢。"
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "匯出的 PDF 可以用 Adobe Acrobat、macOS Preview 或其他閱讀器開啟嗎？",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "可以。SignFlow PDF 使用標準 PDF 1.4 格式（pdf-lib 函式庫）匯出，簽名與印章以嵌入圖像方式儲存，文字以標準 PDF 字型嵌入，完全相容 Adobe Acrobat Reader、macOS Preview、Windows Edge 內建閱讀器、Chrome、Foxit 等主流 PDF 閱讀環境。"
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "SignFlow PDF 適合哪些使用情境？",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "SignFlow PDF 適合：① 中小企業快速完成合約、採購單、報價單的電子簽署；② 法務、HR、會計人員頻繁處理 PDF 表單蓋章；③ 個人需要在 PDF 上簽名回傳的日常情境；④ 需要在 PDF 指定位置加蓋公司章或個人印鑑的商業文件處理。"
+        }
+      }
+    ]
+  }
+  </script>
+
+  <!-- ── Structured Data: WebSite（搜尋框 sitelinks signal）── -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "SignFlow PDF",
+    "url": "https://signflow.yourdomain.com/",
+    "description": "免費線上 PDF 電子簽名、電子章蓋章、手寫簽名工具",
+    "inLanguage": "zh-Hant",
+    "potentialAction": {
+      "@type": "ViewAction",
+      "target": "https://signflow.yourdomain.com/"
+    }
+  }
+  </script>
+
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+
+<!-- ===== Landing Page ===== -->
+<div id="landingPage" class="landing">
+
+  <nav class="landing-nav">
+    <div class="landing-brand">
+      <svg class="landing-logo" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="40" height="40" rx="10" fill="#2563eb"/>
+        <path d="M11 10h13l7 7v16a1 1 0 01-1 1H11a1 1 0 01-1-1V11a1 1 0 011-1z" fill="white" opacity="0.95"/>
+        <path d="M24 10l7 7h-6a1 1 0 01-1-1V10z" fill="white" opacity="0.6"/>
+        <path d="M14 26 C17 21 19 25 21 22 C23 19 26 23 28 20" stroke="#93c5fd" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span class="landing-brand-name">SignFlow PDF</span>
+    </div>
+    <div class="landing-nav-actions">
+      <button id="landingNavLogin" class="landing-nav-btn">
+        <svg class="google-g google-g-sm" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+          <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+          <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+          <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+          <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.36-8.16 2.36-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+        </svg>
+        登入
+      </button>
+    </div>
+  </nav>
+
+  <!-- Trust badge bar -->
+  <div class="trust-bar">
+    <div class="trust-bar-inner">
+      <span class="trust-item">
+        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+        文件本機處理，不上傳伺服器
+      </span>
+      <span class="trust-sep">·</span>
+      <span class="trust-item">
+        <svg viewBox="0 0 20 20" fill="currentColor"><path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z"/></svg>
+        Google 帳號安全登入
+      </span>
+      <span class="trust-sep">·</span>
+      <span class="trust-item">
+        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+        標準 PDF 匯出，相容所有閱讀器
+      </span>
+      <span class="trust-sep">·</span>
+      <span class="trust-item">
+        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+        免費使用，無頁數限制
+      </span>
+    </div>
+  </div>
+
+  <section class="landing-hero">
+
+    <!-- Left: Content -->
+    <div class="landing-content">
+      <div class="landing-badge">專業電子簽署工具 · 完全免費</div>
+      <h1 class="landing-title">
+        PDF 簽名蓋章，<br>
+        <span class="landing-title-accent">30 秒完成</span>
+      </h1>
+      <p class="landing-subtitle">
+        手寫簽名去背、電子印章精準定位、文字標記一次到位。<br>
+        所有文件在瀏覽器本機處理，<strong>不上傳任何伺服器</strong>。
+      </p>
+
+      <ul class="landing-features">
+        <li class="lf-item">
+          <div class="lf-icon-wrap lf-blue">
+            <svg viewBox="0 0 20 20" fill="currentColor"><path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/></svg>
+          </div>
+          <div class="lf-text">
+            <strong>手寫電子簽名</strong>
+            <span>自動去背，透明背景無縫融合文件，支援旋轉縮放</span>
+          </div>
+        </li>
+        <li class="lf-item">
+          <div class="lf-icon-wrap lf-purple">
+            <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+          </div>
+          <div class="lf-text">
+            <strong>電子章 &amp; 公司印章</strong>
+            <span>上傳 PNG / SVG 章圖，精準定位蓋章，支援騎縫章</span>
+          </div>
+        </li>
+        <li class="lf-item">
+          <div class="lf-icon-wrap lf-green">
+            <svg viewBox="0 0 20 20" fill="currentColor"><path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z"/></svg>
+          </div>
+          <div class="lf-text">
+            <strong>資產庫管理</strong>
+            <span>收藏常用簽名與印章，下次一鍵重複套用，省去重複上傳</span>
+          </div>
+        </li>
+        <li class="lf-item">
+          <div class="lf-icon-wrap lf-amber">
+            <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+          </div>
+          <div class="lf-text">
+            <strong>立即匯出完整 PDF</strong>
+            <span>相容 Adobe Acrobat、macOS Preview、Edge 等所有主流閱讀器</span>
+          </div>
+        </li>
+      </ul>
+
+      <div class="landing-cta">
+        <button id="landingBtnLogin" class="btn-google-login">
+          <svg class="google-g" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+            <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+            <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+            <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+            <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.36-8.16 2.36-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+          </svg>
+          <span id="landingBtnLoginText">使用 Google 帳號免費登入</span>
+        </button>
+      </div>
+      <p class="landing-footnote">
+        <svg viewBox="0 0 16 16" fill="currentColor" style="width:13px;height:13px;vertical-align:-2px;opacity:.6"><path d="M8 1a5 5 0 100 10A5 5 0 008 1zM0 8a8 8 0 1116 0A8 8 0 010 8z"/><path d="M7 11h2V7H7v4zm0-6h2V3H7v2z"/></svg>
+        Google 帳號僅用於識別身份，文件內容從不上傳 &nbsp;·&nbsp; 隨時可登出
+      </p>
+    </div>
+
+    <!-- Right: CSS-only PDF preview mockup -->
+    <div class="landing-preview" aria-hidden="true">
+      <div class="mock-window">
+        <div class="mock-titlebar">
+          <span class="mock-dot red"></span>
+          <span class="mock-dot yellow"></span>
+          <span class="mock-dot green"></span>
+          <span class="mock-filename">合約文件.pdf</span>
+          <span class="mock-badge-saved">● 自動儲存</span>
+        </div>
+        <div class="mock-toolbar-strip">
+          <span class="mock-tb-btn active">✏️ 簽名</span>
+          <span class="mock-tb-btn">🔴 印章</span>
+          <span class="mock-tb-btn">📝 文字</span>
+          <span class="mock-tb-btn mock-tb-export">↓ 匯出 PDF</span>
+        </div>
+        <div class="mock-pdf">
+          <div class="mock-doc-content">
+            <div class="mock-heading"></div>
+            <div class="mock-subheading" style="--w:42%"></div>
+            <div class="mock-line" style="--w:88%"></div>
+            <div class="mock-line" style="--w:72%"></div>
+            <div class="mock-line" style="--w:95%"></div>
+            <div class="mock-line" style="--w:60%"></div>
+            <div class="mock-gap"></div>
+            <div class="mock-line" style="--w:90%"></div>
+            <div class="mock-line" style="--w:68%"></div>
+            <div class="mock-line" style="--w:77%"></div>
+            <div class="mock-line" style="--w:50%"></div>
+          </div>
+          <div class="mock-sign-zone">
+            <div class="mock-sign-label">簽署人</div>
+            <svg class="mock-sig-path" viewBox="0 0 180 52" fill="none">
+              <path d="M8 40 C20 14 32 46 44 30 C56 14 70 38 82 24 C94 10 108 34 122 20 C136 6 152 30 172 22"
+                    stroke="#3b82f6" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <div class="mock-sig-underline"></div>
+            <div class="mock-sig-date">2026/04/19</div>
+          </div>
+          <div class="mock-stamp-badge">
+            <div class="mock-stamp-inner">核<br>准</div>
+          </div>
+          <!-- Selection handle hint -->
+          <div class="mock-select-hint">
+            <div class="mock-select-box">
+              <span class="mock-handle-dot tl"></span>
+              <span class="mock-handle-dot tr"></span>
+              <span class="mock-handle-dot bl"></span>
+              <span class="mock-handle-dot br"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="mock-tools-hint">
+        <span class="mock-tool-chip">✏️ 手寫簽名</span>
+        <span class="mock-tool-chip active">🔴 印章蓋章</span>
+        <span class="mock-tool-chip">📝 文字標記</span>
+        <span class="mock-tool-chip">⬜ 框線</span>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- How it works -->
+  <section class="landing-steps">
+    <div class="steps-inner">
+      <h2 class="steps-title">三個步驟，完成簽署</h2>
+      <div class="steps-grid">
+        <div class="step-item">
+          <div class="step-num">1</div>
+          <div class="step-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
+          </div>
+          <div class="step-title">上傳 PDF</div>
+          <div class="step-desc">直接將 PDF 文件拖曳上傳，或點擊選取檔案，即可在瀏覽器中開啟預覽。</div>
+        </div>
+        <div class="step-arrow">→</div>
+        <div class="step-item">
+          <div class="step-num">2</div>
+          <div class="step-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+          </div>
+          <div class="step-title">簽名 &amp; 蓋章</div>
+          <div class="step-desc">加入手寫簽名、上傳印章圖片，或加入文字標記，拖曳至文件指定位置。</div>
+        </div>
+        <div class="step-arrow">→</div>
+        <div class="step-item">
+          <div class="step-num">3</div>
+          <div class="step-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+          </div>
+          <div class="step-title">匯出下載</div>
+          <div class="step-desc">點擊「匯出 PDF」，立即下載包含簽名與印章的完整文件，直接寄出或歸檔。</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Security trust section -->
+  <section class="landing-security">
+    <div class="security-inner">
+      <div class="security-card">
+        <div class="security-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+        </div>
+        <div class="security-text">
+          <div class="security-title">純瀏覽器端處理</div>
+          <div class="security-desc">PDF 文件與簽名資料從不離開您的裝置，所有處理在本機瀏覽器內完成，商業機密零外洩風險。</div>
+        </div>
+      </div>
+      <div class="security-card">
+        <div class="security-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/></svg>
+        </div>
+        <div class="security-text">
+          <div class="security-title">Google 安全驗證</div>
+          <div class="security-desc">使用 Firebase Authentication 結合 Google OAuth，不儲存密碼，帳號安全由 Google 負責保障。</div>
+        </div>
+      </div>
+      <div class="security-card">
+        <div class="security-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"/></svg>
+        </div>
+        <div class="security-text">
+          <div class="security-title">草稿本機儲存</div>
+          <div class="security-desc">工作草稿透過 IndexedDB 儲存於您的裝置，未完成的文件隨時可繼續編輯，不需重新上傳。</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section – semantic content for SEO & AI crawlers -->
+  <section id="faq" class="landing-faq" aria-label="常見問題">
+    <div class="faq-inner">
+      <h2 class="faq-title">常見問題</h2>
+      <dl class="faq-list">
+        <div class="faq-item">
+          <dt class="faq-q">SignFlow PDF 是什麼工具？</dt>
+          <dd class="faq-a">SignFlow PDF 是免費的線上 PDF 電子簽名工具，支援手寫簽名（自動去背）、電子印章 / 章圖上傳蓋章、文字標記及框線繪製。所有操作在瀏覽器本機完成，無需安裝任何軟體，完成後立即匯出標準 PDF 文件。</dd>
+        </div>
+        <div class="faq-item">
+          <dt class="faq-q">PDF 文件會上傳到伺服器嗎？資料安全嗎？</dt>
+          <dd class="faq-a">不會。所有 PDF 文件處理與簽名合成完全在您的瀏覽器本機進行，文件內容不會上傳至任何伺服器，保障商業機密與個人隱私。草稿透過瀏覽器 IndexedDB 儲存於本機裝置。</dd>
+        </div>
+        <div class="faq-item">
+          <dt class="faq-q">可以在 PDF 上蓋電子章或公司印章嗎？</dt>
+          <dd class="faq-a">可以。上傳 PNG 或 SVG 格式的章圖後，可拖曳到 PDF 任意位置，支援縮放、旋轉與透明度調整。常用印章可儲存至資產庫，下次一鍵套用。</dd>
+        </div>
+        <div class="faq-item">
+          <dt class="faq-q">完全免費嗎？有功能限制嗎？</dt>
+          <dd class="faq-a">基本功能完全免費，Google 登入後即可使用手寫簽名、印章蓋章、文字標記、草稿保存與 PDF 匯出，無頁數限制。另有企業客製開發服務提供洽詢。</dd>
+        </div>
+        <div class="faq-item">
+          <dt class="faq-q">匯出的 PDF 相容 Adobe Acrobat、macOS Preview 嗎？</dt>
+          <dd class="faq-a">完全相容。SignFlow PDF 以標準 PDF 格式匯出，相容 Adobe Acrobat、macOS Preview、Windows Edge、Chrome、Foxit 等主流 PDF 閱讀環境。</dd>
+        </div>
+      </dl>
+    </div>
+  </section>
+
+  <!-- Consulting Strip -->
+  <section class="landing-consulting">
+    <div class="lc-inner">
+      <div class="lc-left">
+        <div class="lc-eyebrow">客製化開發服務</div>
+        <h3 class="lc-title">需要一套屬於公司的簽署系統？</h3>
+        <ul class="lc-points">
+          <li>整合既有 ERP / CRM / 內部系統</li>
+          <li>品牌化介面、自訂簽署流程與審核機制</li>
+          <li>專為中小企業設計，快速交付</li>
+        </ul>
+      </div>
+      <div class="lc-right">
+        <button id="btnConsult" class="btn-consult">免費提交需求 →</button>
+        <p class="lc-caption">1–2 個工作天回覆 &nbsp;·&nbsp; 無任何義務</p>
+      </div>
+    </div>
+  </section>
+
+</div>
+<!-- ===== /Landing Page ===== -->
+
+<!-- ===== App Shell (hidden until authenticated) ===== -->
+<div id="appShell" hidden>
+
+<header class="topbar">
+  <div class="brand">
+    <div class="brand-title">SignFlow PDF</div>
+    <div class="brand-sub">小型簽署工作台</div>
+  </div>
+
+  <div class="toolbar">
+    <label class="btn">
+      上傳PDF
+      <input id="fileInput" type="file" accept="application/pdf" hidden>
+    </label>
+
+    <button id="btnPrev" class="btn">上一頁</button>
+    <button id="btnNext" class="btn">下一頁</button>
+
+    <button id="btnZoomOut" class="btn">-</button>
+    <span id="zoomLabel" class="mono">100%</span>
+    <button id="btnZoomIn" class="btn">+</button>
+
+    <span class="sep"></span>
+
+    <label class="btn">
+      上傳印章/章圖
+      <input id="stampInput" type="file" accept="image/png,image/svg+xml,image/jpeg" hidden>
+    </label>
+    <button id="btnAddBuiltinStamp" class="btn">內建章</button>
+    <button id="btnAddSign" class="btn">手寫簽名</button>
+    <button id="btnAddText" class="btn">加入文字</button>
+    <button id="btnAddRect" class="btn">加入框框</button>
+
+    <span class="sep"></span>
+
+    <button id="btnUndo" class="btn">Undo</button>
+    <button id="btnRedo" class="btn">Redo</button>
+
+    <span class="sep"></span>
+
+    <button id="btnExport" class="btn primary">匯出PDF</button>
+  </div>
+
+  <div class="statusbar">
+    <span id="pageLabel" class="mono">- / -</span>
+    <span id="topbarUserChip" class="topbar-user-chip" hidden></span>
+  </div>
+</header>
+
+<main class="workspace">
+  <div class="leftpanel">
+    <div class="panel-title">SignFlow Workspace</div>
+    <div class="panel-hero">
+      <div class="panel-kicker">輕量產品版</div>
+      <div class="panel-headline">一站式 PDF 簽署</div>
+      <div class="panel-copy">上傳文件、完成簽名、立即匯出，流程保持簡潔。</div>
+    </div>
+    <div class="panel-body">
+      <div class="section">
+        <div class="section-title">工作區</div>
+
+        <div class="auth-panel">
+          <span id="authModeBadge" class="badge warn">本機模式</span>
+          <div id="authStatus" class="mono">登入後可同步切換你的草稿清單</div>
+        </div>
+
+        <div class="row compact-actions">
+          <button id="btnLoginGoogle" class="btn small">Google 登入</button>
+          <button id="btnLogout" class="btn small" disabled>登出</button>
+        </div>
+
+        <div class="row stack">
+          <input id="docNameInput" class="text-input" type="text" placeholder="輸入文件名稱">
+        </div>
+
+        <div class="row compact-actions">
+          <button id="btnSaveDraft" class="btn small">儲存草稿</button>
+          <span id="saveStatus" class="mono">尚未載入</span>
+        </div>
+
+        <div id="docList" class="doc-list"></div>
+        <div id="docEmpty" class="hint">上傳 PDF 後會自動建立工作草稿。</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">我的資產庫</div>
+
+        <div class="row stack">
+          <input id="assetNameInput" class="text-input" type="text" placeholder="替收藏項目命名">
+        </div>
+
+        <div class="row wrap-row compact-actions">
+          <button id="btnSaveSelectedAsset" class="btn small">收藏目前項目</button>
+          <button id="btnSaveCurrentSignAsset" class="btn small">收藏手寫簽名</button>
+        </div>
+
+        <div id="assetList" class="asset-list"></div>
+        <div id="assetEmpty" class="hint">把常用簽名與印章收進這裡。</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">元件設定</div>
+
+        <div class="row">
+          <label>透明度</label>
+          <input id="opacityRange" type="range" min="0" max="1" step="0.05" value="1">
+          <span id="opacityLabel" class="mono">1.00</span>
+        </div>
+
+        <div class="row">
+          <label>旋轉</label>
+          <input id="rotateRange" type="range" min="-180" max="180" step="1" value="0">
+          <span id="rotateLabel" class="mono">0°</span>
+        </div>
+
+        <div class="row">
+          <label>顏色</label>
+          <input id="colorInput" type="color" value="#111111">
+          <span id="colorLabel" class="mono">#111111</span>
+        </div>
+
+        <div class="row">
+          <label>粗細</label>
+          <input id="thicknessRange" type="range" min="1" max="24" step="1" value="4">
+          <span id="thicknessLabel" class="mono">4</span>
+        </div>
+
+        <div class="row">
+          <button id="btnBringFront" class="btn small">置頂</button>
+          <button id="btnSendBack" class="btn small">置底</button>
+        </div>
+
+        <div class="row">
+          <button id="btnLock" class="btn small">鎖定/解鎖</button>
+          <button id="btnDelete" class="btn small danger">刪除</button>
+        </div>
+
+        <div class="hint">
+          提示：拖曳、縮放、旋轉皆可直接操作；雙擊文字可編輯。
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="centerpanel">
+    <div id="stage" class="stage">
+      <canvas id="pdfCanvas"></canvas>
+      <div id="overlay"></div>
+      <div id="guides"></div>
+    </div>
+  </div>
+</main>
+
+<!-- 簽名彈窗 -->
+<dialog id="signDialog" class="dialog">
+  <div class="dialog-head">
+    <div class="title">手寫簽名（透明背景）</div>
+    <button id="btnSignClose" class="btn">關閉</button>
+  </div>
+  <div class="dialog-body">
+    <canvas id="signCanvas" width="900" height="320"></canvas>
+    <div class="dialog-actions">
+      <button id="btnSignClear" class="btn">清除</button>
+      <button id="btnSignSaveAsset" class="btn">收藏簽名</button>
+      <button id="btnSignUse" class="btn primary">套用簽名</button>
+    </div>
+  </div>
+</dialog>
+
+</div><!-- /#appShell -->
+
+<!-- ===== Consulting Dialog (global, works from both landing & app) ===== -->
+<dialog id="consultDialog" class="dialog consult-dialog">
+  <div class="dialog-head">
+    <div class="title">提交客製開發需求</div>
+    <button id="btnConsultClose" class="btn">關閉</button>
+  </div>
+  <div class="dialog-body">
+    <div id="consultForm">
+      <p class="consult-intro">請簡單說明您的使用場景，我們將於 1–2 個工作天內回覆。</p>
+      <div class="form-field">
+        <label class="form-label" for="consultName">姓名 <span class="form-req">*</span></label>
+        <input id="consultName" type="text" class="text-input" placeholder="您的姓名" autocomplete="name">
+      </div>
+      <div class="form-field">
+        <label class="form-label" for="consultEmail">Email <span class="form-req">*</span></label>
+        <input id="consultEmail" type="email" class="text-input" placeholder="聯繫用 Email" autocomplete="email">
+      </div>
+      <div class="form-field">
+        <label class="form-label" for="consultCompany">公司名稱</label>
+        <input id="consultCompany" type="text" class="text-input" placeholder="例：XX 股份有限公司" autocomplete="organization">
+      </div>
+      <div class="form-field">
+        <label class="form-label" for="consultMessage">需求描述 <span class="form-req">*</span></label>
+        <textarea id="consultMessage" class="text-input form-textarea" rows="5"
+          placeholder="請描述您的使用情境、希望整合的系統、預期人數規模或其他需求..."></textarea>
+      </div>
+      <div id="consultError" class="form-error" hidden></div>
+      <div class="dialog-actions">
+        <button id="btnConsultSubmit" class="btn primary">送出需求</button>
+      </div>
+    </div>
+    <div id="consultSuccess" hidden>
+      <div class="consult-success">
+        <div class="cs-icon">✓</div>
+        <div class="cs-title">需求已收到！</div>
+        <div class="cs-body">我們會在 1–2 個工作天內透過 Email 與您聯繫，感謝您的信任。</div>
+        <button id="btnConsultDone" class="btn primary" style="margin-top:20px;">關閉</button>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+<!-- Mode A: no bundler/import. Use CDN scripts. -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.3.122/pdf.min.js"></script>
+<script>
+  const pdfjsLib = window["pdfjs-dist/build/pdf"];
+  pdfjsLib.GlobalWorkerOptions.workerSrc =
+    "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.3.122/pdf.worker.min.js";
+  window.pdfjsLib = pdfjsLib;
+</script>
+
+<script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="./config.js"></script>
+
+<!-- app -->
+<script src="./app.js"></script>
+
+</body>
+</html>

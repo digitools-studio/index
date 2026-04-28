@@ -1,1221 +1,1357 @@
-<!DOCTYPE html>
-<html lang="zh-TW">
+﻿<!DOCTYPE html>
+<html lang="zh-TW" class="scroll-smooth">
 <head>
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-VXKMN286TH"></script>
-    <script src="ga_event.js"></script>
-    <script>
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VXKMN286TH"></script>
+  <script src="ga_event.js"></script>
+  <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
     gtag('config', 'G-VXKMN286TH');
-    </script>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>數轉工作室 智能數位轉型分享</title>
-    <!-- 引入 Tailwind CSS 框架，用於快速構建響應式設計 -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- 引入 Vue.js 3 核心庫 -->
-    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-    <!-- 引入 Ionicons 圖示庫，提供豐富的向量圖示 -->
-    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
-    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
-    <!-- 引入 Google Fonts 相關連結，確保字體載入 -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&family=Roboto:wght@400;700&family=Noto+Serif+TC:wght@400;700&display=swap" rel="stylesheet">
-    <!-- Font Awesome for social icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  </script>
 
-    <style>
-        /* 自訂樣式 */
-        html {
-            scroll-behavior: smooth; /* 平滑滾動效果 */
-        }
-        body {
-            font-family: 'Inter', '微軟正黑體', sans-serif; /* 預設字體設置 */
-        }
-        /* 預覽模式下的字體樣式 */
-        .preview-font-inter { font-family: 'Inter', sans-serif; }
-        .preview-font-roboto { font-family: 'Roboto', sans-serif; }
-        .preview-font-serif { font-family: 'Noto Serif TC', serif; }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Digitools Studio | 數位接案開發工作室 · LINE 整合 · Web 開發 · 資料、流程自動化</title>
+  <meta name="description" content="數轉工作室是以軟體開發為核心的接案團隊，專注 LINE 生態整合、客製 Web 應用與資料自動化，從業務需求出發幫你設計並建立可用的數位解決方案。" />
 
-        /* Vue 過渡動畫：淡入淡出 */
-        .fade-enter-active, .fade-leave-active {
-            transition: opacity 0.5s ease;
-        }
-        .fade-enter-from, .fade-leave-to {
-            opacity: 0;
-        }
-        /* Vue 過渡動畫：從右側滑入 (此處已不使用，但保留樣式) */
-        .slide-in-right-enter-active, .slide-in-right-leave-active {
-            transition: transform 0.5s ease;
-        }
-        .slide-in-right-enter-from, .slide-in-right-leave-to {
-            transform: translateX(100%);
-        }
-        /* 預覽容器的過渡效果與確保滾動觸發動畫 */
-        .preview-container {
-            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-            min-height: 500px; /* 確保有足夠的高度，以便在內容較少時也能產生滾動條來觸發動畫 */
-        }
-        
-        /* 滾動淡入動畫 */
-        .scroll-fade-in {
-            opacity: 0;
-            transform: translateY(30px);
-            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
-        }
-        .scroll-fade-in.is-visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
 
-        /* Quick Reply 按鈕動畫 */
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['"Noto Sans TC"', 'sans-serif'] },
+          colors: {
+            line: { DEFAULT: '#00B900', dark: '#009900', light: '#e6f8e6' }
+          }
         }
-        .animate-fadeIn {
-            animation: fadeIn 0.3s ease-out forwards;
-        }
-        
-        /* Quick Reply 區塊增強樣式 */
-        #lcQuickReplies button::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(74, 222, 128, 0.1), transparent);
-            transition: left 0.5s;
-        }
-        #lcQuickReplies button:hover::before {
-            left: 100%;
-        }
-
-        /* 移除了指引步驟區塊樣式 */
-        /* 移除了 FAQ 區塊樣式 */
-
-        /* Footer 樣式 */
-        .footer {
-            background-color: #2d3748;
-            color: #fff;
-            padding: 3rem 0 1rem;
-            margin-top: 4rem;
-        }
-
-        .footer-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 1rem;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 2rem;
-        }
-
-        .footer-section h4 {
-            color: #fff;
-            margin-bottom: 1rem;
-            font-size: 1.1rem;
-        }
-
-        .footer-section ul {
-            list-style: none;
-            padding: 0;
-        }
-
-        .footer-section ul li {
-            margin-bottom: 0.5rem;
-        }
-
-        .footer-section ul li a {
-            color: #cbd5e0;
-            text-decoration: none;
-            transition: color 0.3s ease;
-        }
-
-        .footer-section ul li a:hover {
-            color: #fff;
-        }
-
-        .social-links {
-            display: flex;
-            gap: 1rem;
-        }
-
-        .social-links a {
-            color: #cbd5e0;
-            font-size: 1.5rem;
-            transition: color 0.3s ease;
-        }
-
-        .social-links a:hover {
-            color: #fff;
-        }
-
-        .footer-bottom {
-            text-align: center;
-            margin-top: 2rem;
-            padding-top: 2rem;
-            border-top: 1px solid #4a5568;
-            color: #cbd5e0;
-            font-size: 0.9rem;
-        }
-
-        @media (max-width: 768px) {
-            .footer {
-                padding: 2rem 0 1rem;
-            }
-
-            .footer-container {
-                grid-template-columns: 1fr;
-                text-align: center;
-            }
-
-            .social-links {
-                justify-content: center;
-            }
-        }
-
-        /* Header 樣式 */
-.header {
-    background-color: #fff;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-}
-
-.header-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 1rem;
-    display: flex;
-    align-items: center;
-}
-
-.logo, .footer-logo {
-    display: inline-block;
-}
-
-.logo-img {
-    height: 50px;
-    width: auto;
-}
-
-.footer-logo .logo-img {
-    height: 60px;
-    margin-bottom: 1rem;
-}
-
-@media (max-width: 768px) {
-    .logo-img {
-        height: 40px;
+      }
     }
-    
-    .footer-logo .logo-img {
-        height: 50px;
+  </script>
+
+  <style>
+    body { font-family: 'Noto Sans TC', sans-serif; }
+    .glass-header {
+      background: rgba(255,255,255,0.93);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.07);
     }
-}
-    </style>
+    .reveal {
+      opacity: 0;
+      transform: translateY(22px);
+      transition: opacity 0.7s cubic-bezier(0.16,1,0.3,1), transform 0.7s cubic-bezier(0.16,1,0.3,1);
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .delay-100 { transition-delay: 100ms; }
+    .delay-200 { transition-delay: 200ms; }
+    .delay-300 { transition-delay: 300ms; }
+    .delay-400 { transition-delay: 400ms; }
+    /* Portfolio filter */
+    .portfolio-card { transition: opacity 0.25s ease, transform 0.25s ease, box-shadow 0.3s ease, border-color 0.3s ease; }
+    .portfolio-card.pf-hidden { display: none; }
+    .active-filter { background: #fff !important; color: #0f172a !important; border-color: #fff !important; }
+    /* Portfolio dark section card borders */
+    #portfolio-grid a.portfolio-card { border: 1px solid rgba(30,41,59,0.9); }
+    #portfolio-grid a.portfolio-card:hover { border-color: rgb(71,85,105); box-shadow: 0 20px 25px -5px rgba(0,0,0,0.4), 0 8px 10px -6px rgba(0,0,0,0.25); }
+    #portfolio-grid div[data-cat="all-always"] { border: 1px solid rgba(37,99,235,0.45); }
+    #portfolio-grid div[data-cat="all-always"]:hover { border-color: rgba(37,99,235,0.75); }
+    /* Email modal */
+    #email-modal { transition: opacity 0.25s ease; }
+    #email-modal.modal-open { opacity: 1 !important; pointer-events: auto !important; }
+    #email-modal-panel { transition: transform 0.25s cubic-bezier(0.16,1,0.3,1), opacity 0.25s ease; }
+    #email-modal.modal-open #email-modal-panel { transform: scale(1) !important; opacity: 1 !important; }
+    /* FAQ accordion icon */
+    details[open] summary .fa-plus { transform: rotate(45deg); }
+  </style>
 </head>
-<body class="bg-gray-50 text-gray-800">
+<body class="bg-white text-slate-800 antialiased">
 
-    <div id="app" class="overflow-x-hidden">
-        <!-- 頂部導覽列 - 增強版 -->
-        <header class="bg-white/95 backdrop-blur-md shadow-md sticky top-0 z-40 border-b border-gray-100">
-            <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
-                <!-- Logo + 品牌宣言 -->
-                <div class="flex items-center gap-3">
-                    <div class="flex-shrink-0">
-                        <a href="#" class="text-2xl font-bold text-gray-900 flex items-center gap-2 hover:opacity-80 transition-opacity">
-                            <ion-icon name="layers" class="inline-block text-blue-600 text-3xl"></ion-icon>
-                            <div class="flex flex-col">
-                                <span class="text-lg font-extrabold">數轉工作室</span>
-                                <span class="text-xs text-gray-500 font-normal">From Traffic To Sales</span>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-
-                <!-- 桌面導覽 + CTA -->
-                <div class="hidden md:flex space-x-6 items-center">
-                    <a v-for="link in navLinks" :key="link.name" :href="link.href" class="text-gray-700 hover:text-blue-600 transition-colors font-medium text-sm">{{ link.name }}</a>
-                </div>
-
-                <!-- 右側動作區 -->
-                <div class="flex items-center gap-4">
-                    <a href="https://lin.ee/6IdgZC4" target="_blank" class="hidden sm:inline-flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-full font-semibold text-sm transition-colors shadow-sm">
-                        <i class="fab fa-line"></i>
-                        <span>LINE 諮詢</span>
-                    </a>
-                    <!-- 行動版選單開關 -->
-                    <button class="md:hidden text-2xl text-gray-700 hover:text-blue-600 transition-colors" @click="isMobileMenuOpen = !isMobileMenuOpen">
-                        <ion-icon name="menu-outline"></ion-icon>
-                    </button>
-                </div>
-            </nav>
-
-            <!-- 行動版選單 -->
-            <transition name="fade">
-                <div v-show="isMobileMenuOpen" class="md:hidden bg-white shadow-xl border-t border-gray-100">
-                    <div class="px-6 py-4 space-y-3">
-                        <a v-for="link in navLinks" :key="link.name" :href="link.href" @click="isMobileMenuOpen = false" class="block py-2 text-gray-700 hover:text-blue-600 transition-colors font-medium">{{ link.name }}</a>
-                        <div class="pt-3 border-t border-gray-100">
-                            <a href="https://lin.ee/6IdgZC4" target="_blank" class="flex items-center justify-center gap-2 bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-full font-semibold transition-colors w-full">
-                                <i class="fab fa-line"></i>
-                                <span>LINE 諮詢</span>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </transition>
-        </header>
-
-        <!-- Add this header section right after <body> tag -->
-
-        <main>
-            <!-- Hero 區塊 - 重新定位為工作室能力展示 -->
-            <section id="home" class="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 text-white flex items-center justify-center relative overflow-hidden">
-                <!-- 背景裝飾 -->
-                <div class="absolute inset-0 z-0 opacity-40"
-                     style="background-image:
-                      radial-gradient(circle at 20% 50%, rgba(59, 130, 246, 0.3), transparent 50%),
-                      radial-gradient(circle at 80% 30%, rgba(139, 92, 246, 0.2), transparent 50%);
-                     ">
-                </div>
-
-                <div class="relative z-10 max-w-5xl mx-auto px-6 py-20 text-center">
-                    <!-- 上方標籤 -->
-                    <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 border border-white/20 backdrop-blur-sm mb-8">
-                        <ion-icon name="star" class="text-yellow-400"></ion-icon>
-                        <span class="text-sm font-semibold">數位行銷完整解決方案</span>
-                    </div>
-
-                    <!-- 主標題 -->
-                    <h1 class="text-4xl md:text-6xl lg:text-7xl font-extrabold mb-6 leading-tight">
-                        <span class="bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
-                            把流量變成生意
-                        </span>
-                    </h1>
-
-                    <!-- 副標題 -->
-                    <p class="text-lg md:text-xl text-blue-100 max-w-2xl mx-auto mb-8 leading-relaxed">
-                        一站式服務：<strong>網站建置</strong> × <strong>數據追蹤</strong> × <strong>轉換優化</strong> × <strong>LINE自動化</strong>
-                        <br/>
-                        <span class="text-blue-300">從需求釐清到成效驗證，我們是您的數位顧問</span>
-                    </p>
-
-                    <!-- 核心價值點 -->
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10 max-w-4xl mx-auto">
-                        <div class="bg-white/5 border border-white/10 rounded-xl p-5 backdrop-blur-sm hover:border-white/30 transition">
-                            <div class="text-3xl mb-2">⚡</div>
-                            <h3 class="font-bold text-white mb-1">極致速度</h3>
-                            <p class="text-sm text-blue-200">靜態網站 + CDN，秒級加載，SEO友善</p>
-                        </div>
-                        <div class="bg-white/5 border border-white/10 rounded-xl p-5 backdrop-blur-sm hover:border-white/30 transition">
-                            <div class="text-3xl mb-2">📊</div>
-                            <h3 class="font-bold text-white mb-1">數據驅動</h3>
-                            <p class="text-sm text-blue-200">GA4追蹤 + 漏斗分析，決策有據可依</p>
-                        </div>
-                        <div class="bg-white/5 border border-white/10 rounded-xl p-5 backdrop-blur-sm hover:border-white/30 transition">
-                            <div class="text-3xl mb-2">💬</div>
-                            <h3 class="font-bold text-white mb-1">自動化營銷</h3>
-                            <p class="text-sm text-blue-200">LINE Rich Menu + 智能分流，自動回應客戶</p>
-                        </div>
-                    </div>
-
-                    <!-- CTA 按鈕 -->
-                    <div class="flex flex-col sm:flex-row justify-center gap-4">
-                        <a href="https://lin.ee/6IdgZC4" target="_blank" class="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold py-4 px-8 rounded-full text-lg transition-all transform hover:scale-105 shadow-xl flex items-center justify-center gap-2">
-                            <i class="fab fa-line text-xl"></i>
-                            立即 LINE 諮詢（免費 30 分）
-                        </a>
-                        <a href="#our-story" class="bg-white/10 hover:bg-white/20 text-white font-bold py-4 px-8 rounded-full text-lg transition-all border border-white/30 backdrop-blur-sm">
-                            了解我們的故事
-                        </a>
-                    </div>
-
-                    <!-- 下滑提示 -->
-                    <div class="mt-16 flex justify-center animate-bounce">
-                        <ion-icon name="chevron-down" class="text-3xl text-blue-300"></ion-icon>
-                    </div>
-                </div>
-            </section>
-
-            <!-- 新增：工作室故事 & 核心能力區塊 -->
-            <section id="our-story" class="py-12 md:py-18 bg-white">
-                <div class="max-w-6xl mx-auto px-6">
-                    <!-- 標題 -->
-                    <div class="text-center mb-16">
-                        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-100 text-blue-700 text-sm font-semibold mb-4">
-                            <ion-icon name="information-circle"></ion-icon>
-                            認識數轉工作室
-                        </div>
-                        <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">我們是誰？</h2>
-                        <p class="text-lg text-gray-600 max-w-3xl mx-auto">
-                            我們是數位轉型落地團隊，專注把「網站、流程、LINE 自動化」整合成可執行的成長系統，從規劃到陪跑，讓成果可被複製。
-                        </p>
-                    </div>
-
-                    <!-- 兩欄佈局：左圖右文 -->
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-16">
-                        <div class="rounded-2xl overflow-hidden shadow-xl h-[400px]">
-                            <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=2070&auto=format&fit=crop" 
-                                 alt="Team working" class="w-full h-full object-cover">
-                        </div>
-                        <div>
-                            <h3 class="text-3xl font-bold text-gray-900 mb-6">流程先行，陪跑落地，讓轉型不只停在提案</h3>
-                            <div class="space-y-4 text-gray-700">
-                                <p class="text-lg leading-relaxed">
-                                    我們以一套可執行流程推進每個專案：<strong>需求盤點 → 方案設計 → 上線驗證 → 數據優化</strong>，確保每個階段都有清楚交付物。
-                                </p>
-                                <p class="text-lg leading-relaxed">
-                                    除了交付網站，我們更提供轉型陪跑節奏與 LINE 自動化試用方案，先小規模驗證，再逐步擴大到完整營運流程。
-                                </p>
-                            </div>
-
-                            <!-- 核心能力點 -->
-                            <div class="mt-8 space-y-3">
-                                <div class="flex items-start gap-3">
-                                    <ion-icon name="checkmark-circle" class="text-2xl text-green-500 flex-shrink-0 mt-1"></ion-icon>
-                                    <div>
-                                        <h4 class="font-bold text-gray-900">流程化交付</h4>
-                                        <p class="text-sm text-gray-600">需求盤點、頁面架構、事件追蹤、上線驗收，一步一步可追蹤</p>
-                                    </div>
-                                </div>
-                                <div class="flex items-start gap-3">
-                                    <ion-icon name="checkmark-circle" class="text-2xl text-green-500 flex-shrink-0 mt-1"></ion-icon>
-                                    <div>
-                                        <h4 class="font-bold text-gray-900">轉型陪跑</h4>
-                                        <p class="text-sm text-gray-600">每週小迭代回顧成效，持續優化流程與轉換節點</p>
-                                    </div>
-                                </div>
-                                <div class="flex items-start gap-3">
-                                    <ion-icon name="checkmark-circle" class="text-2xl text-green-500 flex-shrink-0 mt-1"></ion-icon>
-                                    <div>
-                                        <h4 class="font-bold text-gray-900">LINE 自動化試用方案</h4>
-                                        <p class="text-sm text-gray-600">先試用分流與問答腳本，再依實際成效擴充正式自動化模組</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-                        <!-- --- 轉型案例分享（放在我們是誰下方） --- -->
-                        <section id="cases" class="py-16 md:py-20 bg-gradient-to-b from-slate-50 via-white to-rose-50 relative overflow-hidden">
-                            <div class="absolute -top-24 -left-20 w-72 h-72 bg-sky-200/40 rounded-full blur-3xl pointer-events-none"></div>
-                            <div class="absolute -bottom-24 -right-20 w-80 h-80 bg-rose-200/50 rounded-full blur-3xl pointer-events-none"></div>
-
-                            <div class="max-w-6xl mx-auto px-6 relative z-10">
-                                <div class="text-center mb-10 md:mb-12">
-                                    <span class="inline-flex items-center px-4 py-1.5 rounded-full bg-slate-900 text-white text-xs tracking-wide font-semibold">Transformation Cases</span>
-                                    <h2 class="text-3xl md:text-5xl font-extrabold mt-4 text-slate-900">轉型案例分享</h2>
-                                    <p class="text-slate-600 mt-4 max-w-3xl mx-auto">
-                                        依照不同轉型目標整理案例，從品牌網站升級到 LINE 流程自動化，快速掌握可直接套用的做法。
-                                    </p>
-                                </div>
-
-                                <div class="bg-white/90 backdrop-blur rounded-2xl border border-slate-200 shadow-sm p-4 md:p-5 mb-8">
-                                    <div class="flex flex-wrap gap-3 justify-center md:justify-between items-center">
-                                        <div class="flex flex-wrap gap-2" role="tablist" aria-label="轉型案例分類篩選">
-                                            <button type="button" data-case-filter="all" class="case-filter-btn px-4 py-2 rounded-full border border-slate-900 bg-slate-900 text-white text-sm font-semibold transition">全部案例</button>
-                                            <button type="button" data-case-filter="enterprise" class="case-filter-btn px-4 py-2 rounded-full border border-slate-200 bg-white text-slate-700 text-sm font-semibold hover:bg-slate-100 transition">企業網站</button>
-                                            <button type="button" data-case-filter="personal" class="case-filter-btn px-4 py-2 rounded-full border border-slate-200 bg-white text-slate-700 text-sm font-semibold hover:bg-slate-100 transition">個人品牌</button>
-                                            <button type="button" data-case-filter="wedding" class="case-filter-btn px-4 py-2 rounded-full border border-slate-200 bg-white text-slate-700 text-sm font-semibold hover:bg-slate-100 transition">婚禮客製</button>
-                                            <button type="button" data-case-filter="line" class="case-filter-btn px-4 py-2 rounded-full border border-slate-200 bg-white text-slate-700 text-sm font-semibold hover:bg-slate-100 transition">LINE 自動化</button>
-                                            <button type="button" data-case-filter="event" class="case-filter-btn px-4 py-2 rounded-full border border-slate-200 bg-white text-slate-700 text-sm font-semibold hover:bg-slate-100 transition">活動推廣</button>
-                                        </div>
-                                        <p class="text-sm text-slate-500 font-medium" data-case-count>顯示 6 / 6 個案例</p>
-                                    </div>
-                                </div>
-
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-7" data-case-grid>
-                                    <article data-case-card data-category="enterprise" class="group bg-white rounded-2xl shadow-md hover:shadow-xl overflow-hidden border border-slate-100 transition-transform duration-300 hover:-translate-y-2">
-                                        <div class="relative overflow-hidden">
-                                            <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=900&q=80" alt="品牌形象官網" class="w-full h-52 object-cover group-hover:scale-105 transition duration-500">
-                                            <span class="absolute top-4 left-4 inline-flex bg-blue-100 text-blue-700 text-xs px-3 py-1 rounded-full">企業客戶</span>
-                                        </div>
-                                        <div class="p-6">
-                                            <h3 class="text-xl font-bold mb-2 text-slate-900">正式日商在台招募網頁</h3>
-                                            <p class="text-slate-700 text-sm mb-4">協助日本軟體公司重整品牌信任與招募流程，提升詢問度 30%。</p>
-                                            <a href="https://ctssjpit.com/" target="_blank" class="block p-3.5 rounded-xl bg-orange-100 hover:bg-orange-200 transition text-orange-700 font-semibold text-center shadow-sm">👉 點我看 demo 範例</a>
-                                        </div>
-                                    </article>
-
-                                    <article data-case-card data-category="personal" class="group bg-white rounded-2xl shadow-md hover:shadow-xl overflow-hidden border border-slate-100 transition-transform duration-300 hover:-translate-y-2">
-                                        <div class="relative overflow-hidden">
-                                            <img src="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=900&q=80" alt="個人履歷部落格" class="w-full h-52 object-cover group-hover:scale-105 transition duration-500">
-                                            <span class="absolute top-4 left-4 inline-flex bg-purple-100 text-purple-700 text-xs px-3 py-1 rounded-full">個人品牌</span>
-                                        </div>
-                                        <div class="p-6">
-                                            <h3 class="text-xl font-bold mb-2 text-slate-900">個人履歷與技術部落格</h3>
-                                            <p class="text-slate-700 text-sm mb-4">整合履歷、文章與作品集，建立可持續經營的個人品牌入口。</p>
-                                            <a href="https://kenl-tw.github.io/" target="_blank" class="block p-3.5 rounded-xl bg-orange-100 hover:bg-orange-200 transition text-orange-700 font-semibold text-center shadow-sm">👉 點我看 demo 範例</a>
-                                        </div>
-                                    </article>
-
-                                    <article data-case-card data-category="wedding" class="group bg-white rounded-2xl shadow-md hover:shadow-xl overflow-hidden border border-rose-100 transition-transform duration-300 hover:-translate-y-2">
-                                        <div class="relative overflow-hidden">
-                                            <img src="./Static/Image/wedding/001.jpg" alt="婚禮電子邀請函真人婚攝" class="w-full h-52 object-cover object-center group-hover:scale-105 transition duration-500">
-                                            <span class="absolute top-4 left-4 inline-flex bg-rose-100 text-rose-700 text-xs px-3 py-1 rounded-full">婚禮客製</span>
-                                        </div>
-                                        <div class="p-6">
-                                            <h3 class="text-xl font-bold mb-2 text-slate-900">婚禮電子邀請函（Wedding Invitation）</h3>
-                                            <p class="text-slate-700 text-sm mb-3">6 頁故事動線 + 婚宴資訊集中，讓賓客更快理解流程並提升參與感。</p>
-                                            <p class="text-slate-500 text-xs italic mb-4">新人回饋：「原本以為只是喜帖頁面，現場留言輪播讓全場都參與進來。」</p>
-                                            <a href="./wedding_invitation.html" target="_blank" class="block p-3.5 rounded-xl bg-rose-100 hover:bg-rose-200 transition text-rose-700 font-semibold text-center shadow-sm">👉 點我看 demo 範例</a>
-                                        </div>
-                                    </article>
-
-                                    <article data-case-card data-category="line" class="group bg-white rounded-2xl shadow-md hover:shadow-xl overflow-hidden border border-emerald-100 transition-transform duration-300 hover:-translate-y-2">
-                                        <div class="relative overflow-hidden">
-                                            <img src="https://images.unsplash.com/photo-1611746869696-d09bce200020?auto=format&fit=crop&w=900&q=80" alt="LINE 預約分流自動化案例" class="w-full h-52 object-cover group-hover:scale-105 transition duration-500">
-                                            <span class="absolute top-4 left-4 inline-flex bg-emerald-100 text-emerald-700 text-xs px-3 py-1 rounded-full">LINE 自動化</span>
-                                        </div>
-                                        <div class="p-6">
-                                            <h3 class="text-xl font-bold mb-2 text-slate-900">LINE 預約分流轉型案例</h3>
-                                            <p class="text-slate-700 text-sm mb-4">導入 Rich Menu + Quick Reply，將人工回覆改為分流流程，縮短回覆時間並提升預約率。</p>
-                                            <a href="./line_transformation_demo.html#reservation-flow" target="_blank" class="block p-3.5 rounded-xl bg-emerald-100 hover:bg-emerald-200 transition text-emerald-700 font-semibold text-center shadow-sm">👉 點我看 demo 範例</a>
-                                        </div>
-                                    </article>
-
-                                    <article data-case-card data-category="line" class="group bg-white rounded-2xl shadow-md hover:shadow-xl overflow-hidden border border-teal-100 transition-transform duration-300 hover:-translate-y-2">
-                                        <div class="relative overflow-hidden">
-                                            <img src="https://images.unsplash.com/photo-1520333789090-1afc82db536a?auto=format&fit=crop&w=900&q=80" alt="LINE Q&A 智能客服案例" class="w-full h-52 object-cover group-hover:scale-105 transition duration-500">
-                                            <span class="absolute top-4 left-4 inline-flex bg-teal-100 text-teal-700 text-xs px-3 py-1 rounded-full">LINE 自動化</span>
-                                        </div>
-                                        <div class="p-6">
-                                            <h3 class="text-xl font-bold mb-2 text-slate-900">LINE Q&A 智能客服轉型案例</h3>
-                                            <p class="text-slate-700 text-sm mb-4">將重複問答改成知識化流程，支援 24/7 回應並自動銜接預約與真人接手。</p>
-                                            <a href="./line_qa_demo.html" target="_blank" class="block p-3.5 rounded-xl bg-teal-100 hover:bg-teal-200 transition text-teal-700 font-semibold text-center shadow-sm">👉 點我看 demo 範例</a>
-                                        </div>
-                                    </article>
-
-                                    <article data-case-card data-category="event" class="group bg-white rounded-2xl shadow-md hover:shadow-xl overflow-hidden border border-slate-100 transition-transform duration-300 hover:-translate-y-2">
-                                        <div class="relative overflow-hidden">
-                                            <img src="https://images.unsplash.com/photo-1511379938547-c1f69419868d?auto=format&fit=crop&w=900&q=80" alt="樂團演出宣傳頁" class="w-full h-52 object-cover group-hover:scale-105 transition duration-500">
-                                            <span class="absolute top-4 left-4 inline-flex bg-indigo-100 text-indigo-700 text-xs px-3 py-1 rounded-full">活動推廣</span>
-                                        </div>
-                                        <div class="p-6">
-                                            <h3 class="text-xl font-bold mb-2 text-slate-900">樂團演出宣傳頁（Band Showcase）</h3>
-                                            <p class="text-slate-700 text-sm mb-4">整合影片、巡演行程與售票入口，縮短宣傳鏈路與分享路徑。</p>
-                                            <a href="./demo_music2.html" target="_blank" class="block p-3.5 rounded-xl bg-orange-100 hover:bg-orange-200 transition text-orange-700 font-semibold text-center shadow-sm">👉 點我看 demo 範例</a>
-                                        </div>
-                                    </article>
-                                </div>
-
-                                <div data-case-empty class="hidden mt-8 rounded-2xl border border-dashed border-slate-300 bg-white p-8 text-center text-slate-500">
-                                    目前此分類暫無案例，請切換其他篩選條件。
-                                </div>
-                            </div>
-                        </section>
-
-            <!-- 範本展示區塊 - 改為「我們能做什麼」的展示 -->
-            <section id="templates" class="py-12 md:py-18 bg-gradient-to-b from-gray-50 to-white">
-                <div class="max-w-6xl mx-auto px-6">
-                    <div class="text-center mb-16">
-                        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-100 text-blue-700 text-sm font-semibold mb-4">
-                            <ion-icon name="palette"></ion-icon>
-                            完整設計能力
-                        </div>
-                        <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">五大客製專業範本</h2>
-                        <p class="text-lg text-gray-600 max-w-3xl mx-auto">
-                            每個範本都經過精心設計，滿足不同產業需求。<br/>
-                            點擊「試用預覽」即時客製化顏色、文案、圖片——無需編碼。
-                        </p>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-12">
-                        <div v-for="(template, index) in templates" :key="template.id" class="scroll-fade-in" :style="{'transition-delay': `${index * 100}ms`}">
-                            <div class="bg-white rounded-xl shadow-md hover:shadow-2xl overflow-hidden transform hover:-translate-y-2 transition-all duration-300 h-full flex flex-col cursor-pointer border border-gray-100 hover:border-blue-300" @click="currentTemplate = template">
-                                <div class="w-full h-48 bg-gray-200 relative overflow-hidden group">
-                                    <img :src="template.thumbnail" :alt="template.name" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
-                                    <div class="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
-                                        <ion-icon name="eye-outline" class="text-white text-4xl opacity-0 group-hover:opacity-100 transition-opacity"></ion-icon>
-                                    </div>
-                                </div>
-                                <div class="p-5 flex-grow flex flex-col">
-                                    <h3 class="text-lg font-bold text-gray-900 mb-2">{{ template.name }}</h3>
-                                    <p class="text-gray-600 text-sm mb-4 flex-grow line-clamp-2">{{ template.keywords }}</p>
-                                    <button @click="currentTemplate = template" class="w-full text-center bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold py-2 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 mt-auto">
-                                        <ion-icon name="color-wand-outline"></ion-icon>
-                                        試用預覽
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- 下方補充文案 -->
-                    <div class="bg-blue-50 border border-blue-200 rounded-xl p-6 md:p-8">
-                        <div class="flex items-start gap-3">
-                            <ion-icon name="information-circle" class="text-2xl text-blue-600 flex-shrink-0 mt-1"></ion-icon>
-                            <div>
-                                <h4 class="font-bold text-gray-900 mb-2">立即開始試用</h4>
-                                <p class="text-gray-700">
-                                    點擊上方任一範本，下方即可看到「試用預覽」。預覽支援響應式檢視（手機 / 平板 / 桌機），幫助您直觀理解該範本的設計樣式。
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- 試用預覽區塊 -->
-            <section id="preview" class="py-12 md:py-16 bg-gray-50">
-                <div class="max-w-6xl mx-auto px-6">
-                    <div class="text-center mb-12">
-                        <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-3">{{ currentTemplate.name }} - 即時預覽</h2>
-                        <p class="text-gray-600 max-w-2xl mx-auto">
-                            以下為「{{ currentTemplate.name }}」範本的動態預覽。您可以選擇不同的檢視模式，查看在各裝置上的顯示效果。
-                        </p>
-                    </div>
-
-                    <!-- 響應式切換按鈕 -->
-                    <div class="flex justify-center gap-3 mb-8">
-                        <button @click="previewMode = 'mobile'" :class="{'bg-blue-600 text-white shadow-lg': previewMode === 'mobile', 'bg-white text-gray-700 border border-gray-200': previewMode !== 'mobile'}" class="px-5 py-2.5 rounded-lg font-semibold transition-all flex items-center gap-2">
-                            <ion-icon name="phone-portrait-outline" class="text-xl"></ion-icon>
-                            手機
-                        </button>
-                        <button @click="previewMode = 'tablet'" :class="{'bg-blue-600 text-white shadow-lg': previewMode === 'tablet', 'bg-white text-gray-700 border border-gray-200': previewMode !== 'tablet'}" class="px-5 py-2.5 rounded-lg font-semibold transition-all flex items-center gap-2">
-                            <ion-icon name="tablet-portrait-outline" class="text-xl"></ion-icon>
-                            平板
-                        </button>
-                        <button @click="previewMode = 'desktop'" :class="{'bg-blue-600 text-white shadow-lg': previewMode === 'desktop', 'bg-white text-gray-700 border border-gray-200': previewMode !== 'desktop'}" class="px-5 py-2.5 rounded-lg font-semibold transition-all flex items-center gap-2">
-                            <ion-icon name="desktop-outline" class="text-xl"></ion-icon>
-                            桌機
-                        </button>
-                    </div>
-
-                    <!-- 預覽容器 -->
-                    <div class="flex justify-center">
-                        <div class="bg-gray-800 p-2 rounded-2xl shadow-2xl flex items-center justify-center border border-gray-700">
-                            <div class="preview-container bg-white overflow-y-auto rounded-lg" :class="{ 'w-[375px] h-[720px]': previewMode === 'mobile', 'w-[768px] h-[1024px]': previewMode === 'tablet', 'w-full max-w-5xl min-h-[80vh]': previewMode === 'desktop'}">
-                                <!-- 預覽內容，動態綁定字體和顏色變數 -->
-                                <div :style="templateStyleVariables" class="h-full text-sm md:text-base flex flex-col">
-                                    <div class="flex-grow">
-                                        <!-- 通用 Hero Section (範本共用) -->
-                                        <div v-if="visibleSections.hero" class="h-[45vh] flex items-center justify-center text-center p-4 relative bg-cover bg-center" :style="{ color: 'var(--color-text-light)', backgroundImage: `url(${visibleSections.hero.image})` }">
-                                            <div class="absolute inset-0 bg-black/50"></div>
-                                            <div class="relative z-10"><h2 class="text-3xl md:text-4xl font-bold mb-2" :style="{ color: 'var(--color-text-light)' }">{{ visibleSections.hero.title }}</h2><p class="mb-4 text-base md:text-lg">{{ visibleSections.hero.text }}</p><button :style="{ backgroundColor: 'var(--color-accent)', color: 'var(--color-text-light)' }" class="py-2 px-6 rounded font-bold shadow-md">{{ visibleSections.hero.buttonText }}</button></div>
-                                        </div>
-
-                                        <!-- Corporate 範本特有區塊 -->
-                                        <template v-if="currentTemplate.id === 'corporate'">
-                                            <div v-if="visibleSections.about" class="p-8 md:p-12 grid md:grid-cols-2 gap-8 items-center"><div :class="{'md:order-2': visibleSections.about.imagePosition === 'right'}"><img :src="visibleSections.about.image" class="rounded-lg shadow-xl aspect-video object-cover" alt="About Us image"></div><div><h3 class="text-2xl font-bold mb-3" :style="{ color: 'var(--color-primary)' }">{{ visibleSections.about.title }}</h3><p class="whitespace-pre-wrap text-gray-600">{{ visibleSections.about.text }}</p></div></div>
-                                            <div v-if="visibleSections.services" class="bg-gray-100 p-8 md:p-12 text-center"><h3 class="text-2xl font-bold mb-6" :style="{ color: 'var(--color-primary)' }">{{ visibleSections.services.title }}</h3><div class="grid md:grid-cols-3 gap-6"><div v-for="i in 3" :key="'corp-service-'+i" class="bg-white p-6 rounded-lg shadow-md"><ion-icon name="business-outline" class="text-4xl mb-3" :style="{ color: 'var(--color-accent)' }"></ion-icon><h4 class="font-bold mb-2">服務項目 {{i}}</h4><p class="text-sm text-gray-500">這裡是服務的簡短描述。</p></div></div></div>
-                                            <div v-if="visibleSections.team" class="p-8 md:p-12"><h3 class="text-2xl font-bold text-center mb-6" :style="{ color: 'var(--color-primary)' }">{{ visibleSections.team.title }}</h3><div class="grid md:grid-cols-3 gap-8"><div v-for="i in 3" :key="'corp-team-'+i" class="text-center"><img :src="`https://i.pravatar.cc/150?img=${i+20}`" class="w-24 h-24 rounded-full mx-auto mb-4 shadow-lg" alt="'Team member ' + i"><h4 class="font-bold">團隊成員 {{i}}</h4><p class="text-sm text-gray-500">成員職稱</p></div></div></div>
-                                            <div v-if="visibleSections.testimonials" class="bg-gray-100 p-8 md:p-12"><h3 class="text-2xl font-bold text-center mb-6" :style="{ color: 'var(--color-primary)' }">{{ visibleSections.testimonials.title }}</h3><div class="grid md:grid-cols-2 gap-8"><div v-for="i in 2" :key="'corp-testi-'+i" class="bg-white p-6 rounded-lg shadow-md"><div class="flex items-center mb-4"><img :src="`https://i.pravatar.cc/50?img=${i+1}`" class="w-12 h-12 rounded-full mr-4" alt="'Customer ' + i"><div><p class="font-bold">客戶名稱 {{i}}</p><p class="text-sm text-gray-500">客戶職稱</p></div></div><p class="text-gray-600 italic">"{{ visibleSections.testimonials.text }}"</p></div></div></div>
-                                        </template>
-
-                                        <!-- Portfolio 範本特有區塊 -->
-                                        <template v-if="currentTemplate.id === 'portfolio'">
-                                            <div v-if="visibleSections.gallery" class="p-8 md:p-12"><h3 class="text-2xl font-bold mb-6 text-center" :style="{ color: 'var(--color-primary)' }">{{ visibleSections.gallery.title }}</h3><div class="columns-2 md:columns-3 gap-4"><img v-for="(img, i) in portfolioImages" :key="'port-img-'+i" :src="img" class="w-full h-auto mb-4 rounded-lg shadow-md break-inside-avoid" :alt="'Portfolio image ' + i"></div></div>
-                                            <div v-if="visibleSections.about_me" class="p-8 md:p-12 bg-gray-100 grid md:grid-cols-3 gap-8 items-center"><div class="md:col-span-1"><img :src="visibleSections.about_me.image" class="w-40 h-40 rounded-full shadow-xl mx-auto object-cover" alt="About Me image"></div><div class="md:col-span-2"><h3 class="text-2xl font-bold mb-3" :style="{ color: 'var(--color-primary)' }">{{ visibleSections.about_me.title }}</h3><p class="whitespace-pre-wrap text-gray-600">{{ visibleSections.about_me.text }}</p></div></div>
-                                            <div v-if="visibleSections.skills" class="p-8 md:p-12"><h3 class="text-2xl font-bold text-center mb-6" :style="{ color: 'var(--color-primary)' }">{{ visibleSections.skills.title }}</h3><p class="text-center text-gray-600 max-w-2xl mx-auto mb-8">{{ visibleSections.skills.text }}</p><div class="flex flex-wrap justify-center gap-4"><span v-for="i in 5" :key="'skill-'+i" class="bg-white shadow-md rounded-full px-4 py-2 text-sm font-semibold">技能 {{i}}</span></div></div>
-                                        </template>
-
-                                        <!-- 團購廣告範本特有區塊 -->
-                                        <template v-if="currentTemplate.id === 'group_buy_ad'">
-                                            <div v-if="visibleSections.offer_details" class="p-8 md:p-12"><h3 class="text-2xl font-bold text-center mb-6" :style="{ color: 'var(--color-primary)' }">{{ visibleSections.offer_details.title }}</h3><p class="whitespace-pre-wrap text-gray-600 text-center max-w-2xl mx-auto">{{ visibleSections.offer_details.text }}</p></div>
-                                            <div v-if="visibleSections.how_it_works" class="bg-gray-100 p-8 md:p-12"><h3 class="text-2xl font-bold text-center mb-6" :style="{ color: 'var(--color-primary)' }">{{ visibleSections.how_it_works.title }}</h3><div class="grid md:grid-cols-3 gap-8"><div v-for="i in 3" :key="'how-it-works-'+i" class="text-center"><ion-icon :name="['happy-outline', 'share-social-outline', 'cube-outline'][i-1]" class="text-5xl mb-3" :style="{ color: 'var(--color-accent)' }"></ion-icon><h4 class="font-bold mb-2">步驟 {{i}}</h4><p class="text-sm text-gray-600">{{ ['選擇數量', '邀請好友', '坐等收貨'][i-1] }}</p></div></div></div>
-                                            <div v-if="visibleSections.countdown" class="p-8 md:p-12 text-center bg-blue-600 text-white"><h3 class="text-2xl font-bold mb-4">{{ visibleSections.countdown.title }}</h3><p class="text-5xl font-extrabold mb-4">{{ visibleSections.countdown.text }}</p><p class="text-gray-200">此為靜態示意，實際倒數計時功能需額外開發。</p></div>
-                                            <div v-if="visibleSections.call_to_action" class="bg-gray-50 p-8 md:p-12 text-center"><h3 class="text-2xl font-bold mb-4" :style="{ color: 'var(--color-primary)' }">{{ visibleSections.call_to_action.title }}</h3><p class="text-gray-600 mb-6">{{ visibleSections.call_to_action.text }}</p><button class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-full text-lg transition-all transform hover:scale-105 inline-block shadow-lg">
-                                                        <ion-icon name="arrow-forward-circle-outline" class="mr-2"></ion-icon>{{ visibleSections.call_to_action.buttonText }}</button></div>
-                                        </template>
-
-                                        <!-- Event 範本特有區塊 -->
-                                        <template v-if="currentTemplate.id === 'event'">
-                                            <div v-if="visibleSections.agenda" class="p-8 md:p-12"><h3 class="text-2xl font-bold text-center mb-6" :style="{ color: 'var(--color-primary)' }">{{ visibleSections.agenda.title }}</h3><p class="whitespace-pre-wrap text-gray-600 text-center max-w-md mx-auto">{{ visibleSections.agenda.text }}</p></div>
-                                            <div v-if="visibleSections.speakers" class="bg-gray-100 p-8 md:p-12"><h3 class="text-2xl font-bold text-center mb-6" :style="{ color: 'var(--color-primary)' }">{{ visibleSections.speakers.title }}</h3><div class="grid md:grid-cols-3 gap-8"><div v-for="i in 3" :key="'speaker-'+i" class="text-center"><img :src="`https://i.pravatar.cc/150?img=${i+10}`" class="w-32 h-32 rounded-full mx-auto mb-4 shadow-lg" :alt="'Speaker ' + i"><h4 class="font-bold">講者姓名 {{i}}</h4><p class="text-sm text-gray-500">講者職稱</p></div></div></div>
-                                            <div v-if="visibleSections.sponsors" class="p-8 md:p-12"><h3 class="text-2xl font-bold text-center mb-6" :style="{ color: 'var(--color-primary)' }">{{ visibleSections.sponsors.title }}</h3><div class="flex justify-center items-center gap-8 flex-wrap"><img v-for="i in 4" :key="'sponsor-'+i" :src="`https://via.placeholder.com/150x60/cccccc/888888?text=Sponsor${i}`" class="h-12" :alt="'Sponsor ' + i"></div></div>
-                                            <div v-if="visibleSections.location" class="bg-gray-100 p-8 md:p-12 text-center"><h3 class="text-2xl font-bold mb-4" :style="{ color: 'var(--color-primary)' }">{{ visibleSections.location.title }}</h3><p class="whitespace-pre-wrap text-gray-600">{{ visibleSections.location.text }}</p><div class="w-full h-64 bg-gray-300 mt-4 rounded-lg flex items-center justify-center text-gray-500">地圖預覽區塊</div></div>
-                                        </template>
-
-                                        <!-- Blog 範本特有區塊 -->
-                                        <template v-if="currentTemplate.id === 'blog'">
-                                            <div v-if="visibleSections.featured_post" class="p-8 md:p-12 bg-gray-50"><h3 class="text-2xl font-bold mb-4" :style="{ color: 'var(--color-primary)' }">{{ visibleSections.featured_post.title }}</h3><div class="flex flex-col md:flex-row gap-6 items-center"><img :src="visibleSections.featured_post.image" class="w-full md:w-1/3 h-auto rounded-lg shadow-md" alt="Featured post image"><div class="flex-1"><p class="text-gray-600 leading-relaxed">{{ visibleSections.featured_post.text }}</p><a href="#" class="inline-block mt-4 font-bold" :style="{color: 'var(--color-accent)'}">繼續閱讀 &rarr;</a></div></div></div>
-                                            <div v-if="visibleSections.posts" class="p-8 md:p-12"><h3 class="text-2xl font-bold mb-6" :style="{ color: 'var(--color-primary)' }">{{ visibleSections.posts.title }}</h3><div class="space-y-4"><div v-for="i in 3" :key="'post-'+i" class="border-b pb-4"><h4 class="font-bold text-xl">文章標題 {{ i }}</h4><p class="text-sm text-gray-500">發布日期: 2025-06-1{{5-i}}</p></div></div></div>
-                                            <div v-if="visibleSections.about" class="p-8 md:p-12 bg-gray-100"><h3 class="text-2xl font-bold mb-4" :style="{ color: 'var(--color-primary)' }">{{ visibleSections.about.title }}</h3><p class="whitespace-pre-wrap text-gray-600">{{ visibleSections.about.text }}</p></div>
-                                            <div v-if="visibleSections.subscribe" class="bg-gray-800 text-white p-8 md:p-12 text-center"><h3 class="text-2xl font-bold mb-2">{{ visibleSections.subscribe.title }}</h3><p class="text-gray-300 mb-6">{{ visibleSections.subscribe.text }}</p><div class="flex max-w-md mx-auto"><input type="email" placeholder="請輸入您的 Email" class="w-full p-3 rounded-l-md text-gray-800"><button class="bg-yellow-600 hover:bg-yellow-700 text-white font-bold p-3 rounded-r-md">訂閱</button></div></div>
-                                        </template>
-                                    </div>
-
-                                    <!-- 可編輯的通用 Footer (範本共用) -->
-                                    <footer v-if="visibleSections.footer" class="p-8 text-center text-sm" :style="{ backgroundColor: 'var(--color-primary)', color: 'var(--color-text-light)' }">
-                                        <p>{{ visibleSections.footer.text }}</p>
-                                    </footer>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-
-<!-- =========================
-  Automation Enablement Section
-  Goal: 用精簡內容說明自動化設計與轉型陪跑
-  ========================= -->
-
-<!-- 核心服務三層級區塊 -->
-<section class="py-12 md:py-16 bg-white">
-  <div class="max-w-6xl mx-auto px-6">
-    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl border border-blue-200 p-8 md:p-10">
-        <h3 class="text-2xl font-bold text-gray-900 mb-6 text-center">我們的三層服務</h3>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="bg-white rounded-xl p-6 shadow-sm hover:shadow-lg transition">
-                <div class="inline-flex items-center justify-center w-12 h-12 rounded-lg bg-blue-100 text-blue-600 text-xl font-bold mb-4">1</div>
-                <h4 class="text-xl font-bold text-gray-900 mb-2">快速建站</h4>
-                <p class="text-gray-700 mb-4">選擇既有範本快速上線，適合急需展示的需求</p>
-                <div class="text-2xl font-bold text-blue-600">NT$6,000</div>
-                <p class="text-xs text-gray-500">起</p>
-            </div>
-            <div class="bg-white rounded-xl p-6 shadow-md border-2 border-blue-400">
-                <div class="inline-flex items-center justify-center w-12 h-12 rounded-lg bg-purple-100 text-purple-600 text-xl font-bold mb-4">2</div>
-                <h4 class="text-xl font-bold text-gray-900 mb-2">客製化方案</h4>
-                <p class="text-gray-700 mb-4">根據品牌打造獨特視覺 + 完整功能 + GA 追蹤</p>
-                <div class="text-2xl font-bold text-purple-600">NT$25,000</div>
-                <p class="text-xs text-gray-500">起</p>
-                <div class="mt-4 text-xs bg-purple-50 text-purple-700 px-3 py-1 rounded-full font-semibold text-center">推薦方案</div>
-            </div>
-            <div class="bg-white rounded-xl p-6 shadow-sm hover:shadow-lg transition">
-                <div class="inline-flex items-center justify-center w-12 h-12 rounded-lg bg-orange-100 text-orange-600 text-xl font-bold mb-4">3</div>
-                <h4 class="text-xl font-bold text-gray-900 mb-2">顧問級服務</h4>
-                <p class="text-gray-700 mb-4">系統開發 + 行銷自動化 + 長期陪伴 + 數據優化</p>
-                <div class="text-2xl font-bold text-orange-600">客製報價</div>
-                <p class="text-xs text-gray-500">依需求</p>
-            </div>
+  <!-- ═══════════════════════════════════════
+       HEADER
+  ═══════════════════════════════════════ -->
+  <header id="navbar" class="fixed w-full top-0 z-50 transition-all duration-300 py-5 bg-transparent">
+    <div class="max-w-7xl mx-auto px-5 lg:px-8 flex justify-between items-center">
+      <a href="/" class="flex items-center space-x-3 group">
+        <div class="w-9 h-9 bg-slate-900 text-white rounded-xl flex items-center justify-center font-bold text-base shadow-md group-hover:bg-blue-600 transition-colors duration-300">D</div>
+        <div>
+          <p class="font-bold text-slate-900 leading-tight text-sm">Digitools Studio</p>
+          <p class="text-xs text-slate-400 hidden md:block">數轉工作室</p>
         </div>
-    </div>
-  </div>
-</section>
-
-<section id="automation-support" class="py-12 md:py-16 bg-gradient-to-b from-slate-50 to-white">
-  <div class="max-w-6xl mx-auto px-6">
-    <div class="text-center mb-10">
-      <h2 class="text-3xl md:text-4xl font-extrabold text-slate-900">自動化方案設計 × 轉型陪跑方案</h2>
-      <p class="text-slate-600 mt-3 text-base md:text-lg">
-        不做冗長規劃，直接聚焦「流程效率」與「落地執行」，把可重複的工作交給系統。
-      </p>
-    </div>
-
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <article class="bg-white border border-emerald-100 rounded-2xl p-6 shadow-sm hover:shadow-lg transition">
-        <div class="inline-flex items-center justify-center h-11 w-11 rounded-xl bg-emerald-100 text-emerald-700 mb-4">
-          <ion-icon name="flash-outline" class="text-2xl"></ion-icon>
-        </div>
-        <h3 class="text-xl font-bold text-slate-900 mb-2">自動化方案設計</h3>
-        <p class="text-slate-700 text-sm leading-relaxed mb-4">
-          盤點現有流程後，優先把「詢問分流、表單通知、名單標記、提醒追蹤」自動化，降低人工作業與漏接風險。
-        </p>
-        <ul class="text-sm text-slate-600 space-y-2">
-          <li>適用情境：LINE 諮詢、預約流程、潛在客戶培養</li>
-          <li>交付重點：流程圖、事件定義、上線設定清單</li>
-        </ul>
-      </article>
-
-      <article class="bg-white border border-blue-100 rounded-2xl p-6 shadow-sm hover:shadow-lg transition">
-        <div class="inline-flex items-center justify-center h-11 w-11 rounded-xl bg-blue-100 text-blue-700 mb-4">
-          <ion-icon name="rocket-outline" class="text-2xl"></ion-icon>
-        </div>
-        <h3 class="text-xl font-bold text-slate-900 mb-2">轉型陪跑方案</h3>
-        <p class="text-slate-700 text-sm leading-relaxed mb-4">
-          以短週期陪跑方式，協助團隊從「能用」走到「穩定可複製」，每週聚焦一個可驗證目標並快速迭代。
-        </p>
-        <ul class="text-sm text-slate-600 space-y-2">
-          <li>陪跑節奏：需求拆解 → 實作上線 → 成效回顧</li>
-          <li>成功指標：回覆速度、轉換率、團隊可獨立操作</li>
-        </ul>
-      </article>
-    </div>
-  </div>
-</section>
-
-
-<!-- --- 10. 聯絡表單（顧問級 Contact / CTA） --- -->
-<section id="consultant" class="py-12 md:py-16 bg-gradient-to-br from-purple-900 via-indigo-900 to-slate-900 text-white relative overflow-hidden">
-  <!-- 背景 -->
-  <div class="absolute inset-0 z-0 opacity-50"
-       style="background-image:
-        radial-gradient(900px 500px at 20% 25%, rgba(168, 85, 247, .35), transparent 60%),
-        radial-gradient(700px 400px at 80% 35%, rgba(59, 130, 246, .30), transparent 60%);
-       ">
-  </div>
-
-  <div class="relative z-10 max-w-4xl mx-auto px-6 text-center">
-    <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 border border-white/15 text-sm mb-5">
-      30 分鐘免費顧問諮詢
-    </div>
-
-    <h2 class="text-3xl md:text-5xl font-extrabold leading-tight mb-4">
-      把流量變名單，把名單變成交
-    </h2>
-
-    <p class="text-base md:text-xl opacity-90 max-w-2xl mx-auto mb-8">
-      一頁式網站 × SEO × GA 事件追蹤 × LINE 行銷自動化<br>
-      我們專注在「可追蹤、可導流、可擴充」的解決方案。
-    </p>
-
-    <!-- 你會得到什麼（精簡版） -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10 text-left">
-      <div class="bg-white/10 border border-white/15 rounded-xl p-5">
-        <div class="text-sm opacity-80 mb-1">我們會協助你</div>
-        <div class="font-bold">釐清真正的需求</div>
-        <p class="text-sm opacity-80 mt-1">你要的是曝光、詢問、報名，還是成交。</p>
-      </div>
-      <div class="bg-white/10 border border-white/15 rounded-xl p-5">
-        <div class="text-sm opacity-80 mb-1">並建議</div>
-        <div class="font-bold">合適的實作方式</div>
-        <p class="text-sm opacity-80 mt-1">模板、客製，或需要系統支援。</p>
-      </div>
-      <div class="bg-white/10 border border-white/15 rounded-xl p-5">
-        <div class="text-sm opacity-80 mb-1">同時規劃</div>
-        <div class="font-bold">追蹤與轉換指標</div>
-        <p class="text-sm opacity-80 mt-1">GA / LINE 事件，讓效果可被驗證。</p>
-      </div>
-    </div>
-
-    <!-- CTA -->
-    <div class="flex flex-col sm:flex-row justify-center gap-4">
-      <a href="https://lin.ee/6IdgZC4" target="_blank"
-         data-cta="consult_line" data-section="consultant" data-plan="free_consult_30min"
-         class="bg-green-500 text-white px-8 py-4 rounded-full font-bold shadow-lg hover:bg-green-600 transition flex items-center justify-center">
-        <i class="fab fa-line text-xl mr-2"></i> LINE 一鍵諮詢
       </a>
+      <nav class="hidden lg:flex items-center space-x-6 text-sm font-medium text-slate-600">
+        <a href="#capabilities" class="hover:text-slate-900 transition-colors">服務能力</a>
+        <a href="#scope"        class="hover:text-slate-900 transition-colors">承接案型</a>
+        <a href="#portfolio"    class="hover:text-slate-900 transition-colors">作品集</a>
+        <a href="#solutions"    class="hover:text-slate-900 transition-colors">解決方案</a>
+        <a href="#process"      class="hover:text-slate-900 transition-colors">合作流程</a>
+        <a href="#contact"      class="hover:text-slate-900 transition-colors">聯絡諮詢</a>
+      </nav>
+      <div class="flex items-center gap-3">
+        <a href="#contact" class="hidden md:inline-flex items-center gap-2 bg-slate-900 hover:bg-blue-600 text-white px-5 py-2.5 rounded-full text-sm font-medium transition-all shadow-sm">
+          諮詢案件
+        </a>
+        <button id="mobile-menu-btn" class="lg:hidden text-slate-600 p-2">
+          <i class="fa-solid fa-bars text-lg"></i>
+        </button>
+      </div>
     </div>
+    <!-- Mobile menu -->
+    <div id="mobile-menu" class="hidden absolute top-full left-0 w-full bg-white/97 backdrop-blur-md shadow-lg border-t border-slate-100 py-4 px-5 flex flex-col space-y-1">
+      <a href="#capabilities" class="text-sm font-medium text-slate-700 hover:text-slate-900 py-3 border-b border-slate-100">服務能力</a>
+      <a href="#scope"        class="text-sm font-medium text-slate-700 hover:text-slate-900 py-3 border-b border-slate-100">承接案型</a>
+      <a href="#portfolio"    class="text-sm font-medium text-slate-700 hover:text-slate-900 py-3 border-b border-slate-100">作品集</a>
+      <a href="#solutions"    class="text-sm font-medium text-slate-700 hover:text-slate-900 py-3 border-b border-slate-100">解決方案</a>
+      <a href="#process"      class="text-sm font-medium text-slate-700 hover:text-slate-900 py-3 border-b border-slate-100">合作流程</a>
+      <a href="#contact"      class="text-sm font-medium text-slate-700 hover:text-slate-900 py-3 border-b border-slate-100">聯絡諮詢</a>
+      <a href="#contact"      class="mt-3 w-full text-center px-5 py-3 rounded-lg text-white bg-slate-900 font-medium">諮詢案件</a>
+    </div>
+  </header>
 
-    <p class="mt-4 text-xs text-white/70">
-      本頁案例與流程為 DEMO 展示，用於說明可交付的功能與流程設計。
-    </p>
+  <!-- ═══════════════════════════════════════
+       HERO
+  ═══════════════════════════════════════ -->
+  <section class="relative pt-28 pb-14 lg:pt-40 lg:pb-24 overflow-hidden bg-white">
+    <!-- Subtle dot grid -->
+    <div class="absolute inset-0 opacity-[0.03]"
+         style="background-image: radial-gradient(circle, #000 1px, transparent 1px); background-size: 32px 32px;"></div>
+    <!-- Soft glow -->
+    <div class="absolute top-0 right-0 w-[700px] h-[700px] -mt-64 -mr-64 rounded-full bg-blue-50 blur-3xl opacity-60 pointer-events-none"></div>
+
+    <div class="max-w-7xl mx-auto px-5 lg:px-8 relative z-10">
+      <div class="max-w-4xl">
+        <!-- Badge -->
+        <div class="reveal visible inline-flex items-center gap-2.5 px-4 py-1.5 border border-slate-200 rounded-full text-xs font-semibold text-slate-500 mb-8 bg-white shadow-sm">
+          <span class="w-1.5 h-1.5 rounded-full bg-blue-600 animate-pulse"></span>
+          開放案件洽詢 &nbsp;·&nbsp; 新北市工作室
+        </div>
+        <!-- H1 -->
+        <h1 class="reveal visible text-5xl lg:text-7xl font-black text-slate-900 leading-[1.1] tracking-tight mb-8">
+          把業務需求，<br>轉化成<span class="text-blue-600">可用的數位工具</span>
+        </h1>
+        <!-- Sub -->
+        <p class="reveal visible delay-100 text-xl text-slate-500 leading-relaxed mb-10 max-w-2xl">
+          數轉工作室是以軟體開發為核心的接案團隊。從 LINE 生態整合、客製 Web 應用到資料自動化，我們從你的業務問題出發，設計並建立真正可用的數位解法。
+        </p>
+        <!-- Tech stack pills -->
+        <div class="reveal visible delay-200 flex flex-wrap gap-2 mb-12">
+          <span class="inline-flex items-center px-3.5 py-1.5 bg-white border border-slate-200 text-slate-700 text-xs font-semibold rounded-lg shadow-sm">Vue.js</span>
+          <span class="inline-flex items-center px-3.5 py-1.5 bg-white border border-slate-200 text-slate-700 text-xs font-semibold rounded-lg shadow-sm">Python</span>
+          <span class="inline-flex items-center px-3.5 py-1.5 bg-line-light border border-green-200 text-green-700 text-xs font-semibold rounded-lg shadow-sm">LINE API / LIFF</span>
+          <span class="inline-flex items-center px-3.5 py-1.5 bg-white border border-slate-200 text-slate-700 text-xs font-semibold rounded-lg shadow-sm">Tailwind CSS</span>
+          <span class="inline-flex items-center px-3.5 py-1.5 bg-white border border-slate-200 text-slate-700 text-xs font-semibold rounded-lg shadow-sm">Google Apps Script</span>
+          <span class="inline-flex items-center px-3.5 py-1.5 bg-blue-50 border border-blue-100 text-blue-700 text-xs font-semibold rounded-lg shadow-sm">GA4</span>
+        </div>
+        <!-- CTAs -->
+        <div class="reveal visible delay-300 flex flex-col sm:flex-row gap-4">
+          <a href="#scope"   class="inline-flex items-center justify-center gap-2 bg-slate-900 hover:bg-blue-600 text-white px-8 py-4 rounded-full font-semibold text-base transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+            了解承接案型
+          </a>
+          <a href="#contact" class="inline-flex items-center justify-center gap-2 border border-slate-200 hover:border-slate-400 text-slate-700 hover:text-slate-900 px-8 py-4 rounded-full font-semibold text-base transition-all bg-white hover:bg-slate-50">
+            直接諮詢 <i class="fa-solid fa-arrow-right text-sm"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════
+       VALUE STRIP — 三個核心差異化主張
+  ═══════════════════════════════════════ -->
+  <section class="bg-slate-50 border-y border-slate-100">
+    <div class="max-w-7xl mx-auto px-5 lg:px-8">
+      <div class="grid md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-slate-200">
+        <div class="px-8 py-10 reveal">
+          <p class="text-sm font-bold text-slate-900 mb-2">直接溝通，沒有中間層</p>
+          <p class="text-sm text-slate-500 leading-relaxed">與技術本人對話，需求確認準確，不靠業務轉達，有效避免規格誤差與溝通成本。</p>
+        </div>
+        <div class="px-8 py-10 reveal delay-100">
+          <p class="text-sm font-bold text-slate-900 mb-2">彈性規模，依需求報價</p>
+          <p class="text-sm text-slate-500 leading-relaxed">不預設服務包，依實際功能範疇評估。一個小工具到完整系統都能討論，不強迫一步到位。</p>
+        </div>
+        <div class="px-8 py-10 reveal delay-200">
+          <p class="text-sm font-bold text-slate-900 mb-2">技術導向，不只是執行</p>
+          <p class="text-sm text-slate-500 leading-relaxed">從業務目標倒推技術架構，提供可落地的建議，而不只是完成規格書上的功能清單。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════
+       CAPABILITIES — 服務能力 + 技術棧
+  ═══════════════════════════════════════ -->
+  <section id="capabilities" class="py-16 bg-white">
+    <div class="max-w-7xl mx-auto px-5 lg:px-8">
+      <div class="grid lg:grid-cols-2 gap-20 items-start">
+
+        <!-- Left: three capability descriptions -->
+        <div class="reveal">
+          <span class="inline-block text-xs font-bold text-blue-600 tracking-widest uppercase mb-5">服務能力</span>
+          <h2 class="text-4xl lg:text-5xl font-black text-slate-900 mb-6 leading-tight">三個核心方向，<br>覆蓋大多數數位需求</h2>
+          <p class="text-lg text-slate-500 leading-relaxed mb-10">
+            不是每個問題都需要最複雜的解法。我們的專長在於找到適合你規模與預算的技術路徑，快速驗證、穩定交付。
+          </p>
+          <div class="space-y-8">
+            <div class="pl-5 border-l-2 border-blue-600">
+              <h3 class="font-bold text-slate-900 mb-2">LINE 生態整合</h3>
+              <p class="text-sm text-slate-500 leading-relaxed">官方帳號建置、圖文選單設計、自動回覆流程、Messaging API 串接，以及 LIFF 客製化互動應用開發。協助品牌以 LINE 作為數位服務的核心入口。</p>
+            </div>
+            <div class="pl-5 border-l-2 border-slate-200">
+              <h3 class="font-bold text-slate-900 mb-2">客製 Web 應用開發</h3>
+              <p class="text-sm text-slate-500 leading-relaxed">後台管理系統、查詢工具、互動型單頁應用、活動展示頁。跨裝置響應式設計，不依賴 App 也能提供完整體驗，快速部署到 GitHub Pages 或 Vercel。</p>
+            </div>
+            <div class="pl-5 border-l-2 border-slate-200">
+              <h3 class="font-bold text-slate-900 mb-2">資料自動化與整合</h3>
+              <p class="text-sm text-slate-500 leading-relaxed">Python 爬蟲、排程任務、多來源資料整合、Google Sheets Dashboard 自動更新、GA4 追蹤架構規劃。讓重複性工作交給程式，減少人工介入。</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: tech stack matrix (dark panel, no icons) -->
+        <div class="reveal delay-200">
+          <div class="bg-slate-900 rounded-3xl p-8 lg:p-10">
+            <p class="text-xs font-bold text-slate-400 tracking-widest uppercase mb-8">技術線</p>
+            <div class="space-y-6">
+              <div>
+                <p class="text-xs text-slate-500 mb-3">前端 / 介面</p>
+                <div class="flex flex-wrap gap-2">
+                  <span class="px-3 py-1.5 bg-slate-800 text-slate-300 text-xs rounded-lg">Vue.js</span>
+                  <span class="px-3 py-1.5 bg-slate-800 text-slate-300 text-xs rounded-lg">Tailwind CSS</span>
+                  <span class="px-3 py-1.5 bg-slate-800 text-slate-300 text-xs rounded-lg">Vanilla JS</span>
+                  <span class="px-3 py-1.5 bg-slate-800 text-slate-300 text-xs rounded-lg">HTML / CSS</span>
+                </div>
+              </div>
+              <div class="border-t border-slate-800 pt-6">
+                <p class="text-xs text-slate-500 mb-3">後端 / 自動化</p>
+                <div class="flex flex-wrap gap-2">
+                  <span class="px-3 py-1.5 bg-slate-800 text-slate-300 text-xs rounded-lg">Python</span>
+                  <span class="px-3 py-1.5 bg-slate-800 text-slate-300 text-xs rounded-lg">Google Apps Script</span>
+                  <span class="px-3 py-1.5 bg-slate-800 text-slate-300 text-xs rounded-lg">N8N</span>
+                </div>
+              </div>
+              <div class="border-t border-slate-800 pt-6">
+                <p class="text-xs text-slate-500 mb-3">LINE 生態</p>
+                <div class="flex flex-wrap gap-2">
+                  <span class="px-3 py-1.5 bg-line/15 text-green-400 text-xs rounded-lg border border-line/20">LINE OA</span>
+                  <span class="px-3 py-1.5 bg-line/15 text-green-400 text-xs rounded-lg border border-line/20">Messaging API</span>
+                  <span class="px-3 py-1.5 bg-line/15 text-green-400 text-xs rounded-lg border border-line/20">LIFF</span>
+                </div>
+              </div>
+              <div class="border-t border-slate-800 pt-6">
+                <p class="text-xs text-slate-500 mb-3">資料 / 分析</p>
+                <div class="flex flex-wrap gap-2">
+                  <span class="px-3 py-1.5 bg-slate-800 text-slate-300 text-xs rounded-lg">GA4</span>
+                  <span class="px-3 py-1.5 bg-slate-800 text-slate-300 text-xs rounded-lg">Google Sheets</span>
+                  <span class="px-3 py-1.5 bg-slate-800 text-slate-300 text-xs rounded-lg">爬蟲 / Selenium</span>
+                </div>
+              </div>
+              <div class="border-t border-slate-800 pt-6">
+                <p class="text-xs text-slate-500 mb-3">部署 / 版本控制</p>
+                <div class="flex flex-wrap gap-2">
+                  <span class="px-3 py-1.5 bg-slate-800 text-slate-300 text-xs rounded-lg">GitHub Pages</span>
+                  <span class="px-3 py-1.5 bg-slate-800 text-slate-300 text-xs rounded-lg">Git</span>
+                  <span class="px-3 py-1.5 bg-slate-800 text-slate-300 text-xs rounded-lg">AWS</span>
+                  <span class="px-3 py-1.5 bg-slate-800 text-slate-300 text-xs rounded-lg">Vercel</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════
+       SCOPE — 承接案型（核心區塊）
+  ═══════════════════════════════════════ -->
+  <section id="scope" class="py-16 bg-slate-50 border-t border-slate-100">
+    <div class="max-w-7xl mx-auto px-5 lg:px-8">
+
+      <div class="max-w-2xl mx-auto text-center mb-10 reveal">
+        <span class="inline-block text-xs font-bold text-blue-600 tracking-widest uppercase mb-4">承接案型</span>
+        <h2 class="text-4xl lg:text-5xl font-black text-slate-900 mb-5">你帶著問題來，<br>我們一起找解法</h2>
+        <p class="text-lg text-slate-500 leading-relaxed">以下是數轉工作室常見的承接方向，每種案型都有對應的技術路徑與交付形式。不確定你的需求落在哪裡？直接聊就對了。</p>
+      </div>
+
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+
+        <!-- 01 企業內部工具 -->
+        <div class="reveal bg-white rounded-2xl p-6 border border-slate-100 hover:border-slate-200 hover:shadow-md transition-all duration-300">
+          <div class="text-xs font-bold text-slate-300 mb-4 tracking-widest">01</div>
+          <h3 class="text-base font-bold text-slate-900 mb-2">企業內部工具</h3>
+          <p class="text-sm text-slate-500 leading-relaxed mb-4">訂單管理、員工請假審核、業務追蹤——替換 Excel 與紙本，建立可協作的網頁化管理介面。</p>
+          <span class="inline-block text-xs font-medium text-slate-500 bg-slate-100 px-3 py-1.5 rounded-full">Web App · Google Sheets 整合</span>
+        </div>
+
+        <!-- 02 LINE OA 建置 -->
+        <div class="reveal delay-100 bg-white rounded-2xl p-6 border border-slate-100 hover:border-slate-200 hover:shadow-md transition-all duration-300">
+          <div class="text-xs font-bold text-slate-300 mb-4 tracking-widest">02</div>
+          <h3 class="text-base font-bold text-slate-900 mb-2">LINE 官方帳號建置</h3>
+          <p class="text-sm text-slate-500 leading-relaxed mb-4">從零申請到完整設定，品牌視覺、圖文選單、歡迎流程、標籤分眾與群發策略全部到位。</p>
+          <span class="inline-block text-xs font-medium text-green-700 bg-line-light px-3 py-1.5 rounded-full">LINE OA · 導入顧問</span>
+        </div>
+
+        <!-- 03 LINE LIFF -->
+        <div class="reveal delay-200 bg-white rounded-2xl p-6 border border-slate-100 hover:border-slate-200 hover:shadow-md transition-all duration-300">
+          <div class="text-xs font-bold text-slate-300 mb-4 tracking-widest">03</div>
+          <h3 class="text-base font-bold text-slate-900 mb-2">LINE LIFF 客製應用</h3>
+          <p class="text-sm text-slate-500 leading-relaxed mb-4">在 LINE 內嵌入預約、報名、點數查詢、抽獎等互動功能，無需另外下載 App。</p>
+          <span class="inline-block text-xs font-medium text-green-700 bg-line-light px-3 py-1.5 rounded-full">LIFF · Vue.js</span>
+        </div>
+
+
+        <!-- 04 資料自動化 -->
+        <div class="reveal delay-100 bg-white rounded-2xl p-6 border border-slate-100 hover:border-slate-200 hover:shadow-md transition-all duration-300">
+          <div class="text-xs font-bold text-slate-300 mb-4 tracking-widest">04</div>
+          <h3 class="text-base font-bold text-slate-900 mb-2">資料自動化與爬蟲</h3>
+          <p class="text-sm text-slate-500 leading-relaxed mb-4">競品監控、多平台數據同步、自動報表 + LINE 推播，把重複性工作交給排程腳本。</p>
+          <span class="inline-block text-xs font-medium text-slate-500 bg-slate-100 px-3 py-1.5 rounded-full">Python · 排程自動化</span>
+        </div>
+
+        <!-- 05 活動行銷頁 -->
+        <div class="reveal delay-200 bg-white rounded-2xl p-6 border border-slate-100 hover:border-slate-200 hover:shadow-md transition-all duration-300">
+          <div class="text-xs font-bold text-slate-300 mb-4 tracking-widest">05</div>
+          <h3 class="text-base font-bold text-slate-900 mb-2">活動 · 行銷落地頁</h3>
+          <p class="text-sm text-slate-500 leading-relaxed mb-4">婚禮邀請、新品上架、募資展示——高完成度單頁網站，強調視覺質感與行動呼籲。</p>
+          <span class="inline-block text-xs font-medium text-slate-500 bg-slate-100 px-3 py-1.5 rounded-full">Landing Page · 響應式設計</span>
+        </div>
+
+
+        <!-- 06 數位分析規劃 -->
+        <div class="reveal delay-100 bg-white rounded-2xl p-6 border border-slate-100 hover:border-slate-200 hover:shadow-md transition-all duration-300">
+          <div class="text-xs font-bold text-slate-300 mb-4 tracking-widest">06</div>
+          <h3 class="text-base font-bold text-slate-900 mb-2">數位分析規劃</h3>
+          <p class="text-sm text-slate-500 leading-relaxed mb-4">GA4 事件追蹤架構、LINE 數據解讀、自動化報表整合，讓每個行銷動作都有指標支撐。</p>
+          <span class="inline-block text-xs font-medium text-slate-500 bg-slate-100 px-3 py-1.5 rounded-full">GA4 · 自動報表</span>
+        </div>
+
+        <!-- 07 前後端網站客製開發 -->
+        <div class="reveal delay-200 bg-white rounded-2xl p-6 border border-slate-100 hover:border-slate-200 hover:shadow-md transition-all duration-300">
+          <div class="text-xs font-bold text-slate-300 mb-4 tracking-widest">07</div>
+          <h3 class="text-base font-bold text-slate-900 mb-2">前後端網站客製開發</h3>
+          <p class="text-sm text-slate-500 leading-relaxed mb-4">企業官網到完整 Web 應用，前後端分離架構、資料庫設計，從設計稿到上線一條龍。</p>
+          <span class="inline-block text-xs font-medium text-slate-500 bg-slate-100 px-3 py-1.5 rounded-full">Full-stack · AWS · Git</span>
+        </div>
+
+        <!-- 08 AI/自動化教學顧問 -->
+        <div class="reveal bg-white rounded-2xl p-6 border border-slate-100 hover:border-slate-200 hover:shadow-md transition-all duration-300">
+          <div class="text-xs font-bold text-slate-300 mb-4 tracking-widest">08</div>
+          <h3 class="text-base font-bold text-slate-900 mb-2">AI / 自動化教學顧問</h3>
+          <p class="text-sm text-slate-500 leading-relaxed mb-4">ChatGPT / Gemini 企業工作坊、N8N 實作課、AI 工具導入評估，從概念到可落地方案。</p>
+          <span class="inline-block text-xs font-medium text-blue-600 bg-blue-50 px-3 py-1.5 rounded-full">教育訓練 · AI 顧問</span>
+        </div>
+
+        <!-- 09 Open discussion CTA -->
+        <div class="reveal delay-100 bg-slate-900 rounded-2xl p-6 flex flex-col justify-between hover:bg-slate-800 transition-colors duration-300">
+          <div>
+            <div class="text-xs font-bold text-slate-600 mb-4 tracking-widest">09</div>
+            <h3 class="text-base font-bold text-white mb-2">你的需求不在這裡？</h3>
+            <p class="text-sm text-slate-400 leading-relaxed mb-6">沒關係。只要是數位化相關的問題，都歡迎帶著想法來聊，一起評估技術可行性。</p>
+          </div>
+          <a href="#contact" class="inline-flex items-center gap-2 text-sm font-semibold text-white hover:text-blue-400 transition-colors">
+            直接諮詢 <i class="fa-solid fa-arrow-right text-xs"></i>
+          </a>
+        </div>
+
+      </div>
+      <p class="text-center text-xs text-slate-400 mt-8">* 以上為常見承接方向參考，實際範疇以諮詢後確認為準</p>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════
+       PORTFOLIO — 作品集（含 Filter）
+  ═══════════════════════════════════════ -->
+  <section id="portfolio" class="py-16 bg-slate-950 relative overflow-hidden">
+    <div class="absolute inset-0 opacity-[0.025]" style="background-image: radial-gradient(circle, rgba(255,255,255,0.9) 1px, transparent 1px); background-size: 28px 28px;"></div>
+    <div class="max-w-7xl mx-auto px-5 lg:px-8 relative z-10">
+
+      <!-- Header -->
+      <div class="flex flex-col md:flex-row md:items-end justify-between mb-10 reveal">
+        <div>
+          <span class="inline-block text-xs font-bold text-blue-400 tracking-widest uppercase mb-5">作品集</span>
+          <h2 class="text-4xl lg:text-5xl font-black text-white mb-3">作品參考</h2>
+          <p class="text-lg text-slate-400 max-w-xl">每個作品都是真實可運作的成果，點擊可直接體驗。部分案例因保密協議不公開展示。</p>
+        </div>
+        <p class="text-sm text-slate-600 mt-6 md:mt-0 md:pb-2 md:text-right">持續更新中</p>
+      </div>
+
+      <!-- Filter buttons -->
+      <div class="flex flex-wrap gap-2 mb-8 reveal">
+        <button data-filter="all"      class="portfolio-filter active-filter px-4 py-2 rounded-full text-sm font-medium border border-white bg-white text-slate-900 transition-all">全部</button>
+        <button data-filter="line"     class="portfolio-filter px-4 py-2 rounded-full text-sm font-medium border border-slate-700 text-slate-400 hover:border-slate-400 hover:text-white transition-all">LINE 整合</button>
+        <button data-filter="website"  class="portfolio-filter px-4 py-2 rounded-full text-sm font-medium border border-slate-700 text-slate-400 hover:border-slate-400 hover:text-white transition-all">客製網站</button>
+        <button data-filter="web-tool" class="portfolio-filter px-4 py-2 rounded-full text-sm font-medium border border-slate-700 text-slate-400 hover:border-slate-400 hover:text-white transition-all">Web 工具</button>
+      </div>
+
+      <!-- Card grid -->
+      <div id="portfolio-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+
+        <!-- LINE 官方帳號 — line -->
+        <a href="bd_demo/Line/line.html" data-cat="line" class="portfolio-card reveal delay-100 group bg-slate-900 rounded-2xl p-7 hover:bg-slate-800 transition-colors duration-300 flex flex-col">
+          <div class="flex items-start justify-between mb-5">
+            <span class="text-xs font-bold text-green-400 bg-green-400/10 px-2.5 py-1 rounded-md">LINE 整合</span>
+            <i class="fa-solid fa-arrow-up-right-from-square text-slate-600 group-hover:text-slate-400 transition-colors text-xs mt-0.5"></i>
+          </div>
+          <div class="flex-1">
+            <h3 class="text-base font-bold text-white mb-2">從 0 建立 LINE 官方帳號</h3>
+            <p class="text-slate-400 text-sm leading-relaxed mb-4">完整的導入說明頁面，呈現建帳流程、功能說明與諮詢入口。</p>
+            <ul class="space-y-1.5">
+              <li class="flex items-start gap-2 text-xs text-slate-400"><span class="text-green-400 flex-none mt-0.5">✓</span>從零申請到品牌視覺設定一條龍完成</li>
+              <li class="flex items-start gap-2 text-xs text-slate-400"><span class="text-green-400 flex-none mt-0.5">✓</span>圖文選單、歡迎流程、標籤分眾全部到位</li>
+              <li class="flex items-start gap-2 text-xs text-slate-400"><span class="text-green-400 flex-none mt-0.5">✓</span>客戶可在說明頁即時填表諮詢，降低轉換摩擦</li>
+            </ul>
+          </div>
+          <div class="mt-6 text-xs text-slate-600 border-t border-slate-800 pt-4">LINE OA · 導入規劃</div>
+        </a>
+
+        <!-- LINE 預約 — line -->
+        <a href="bd_demo/Line/line_reservation.html" data-cat="line" class="portfolio-card reveal delay-200 group bg-slate-900 rounded-2xl p-7 hover:bg-slate-800 transition-colors duration-300 flex flex-col">
+          <div class="flex items-start justify-between mb-5">
+            <span class="text-xs font-bold text-green-400 bg-green-400/10 px-2.5 py-1 rounded-md">LINE 整合</span>
+            <i class="fa-solid fa-arrow-up-right-from-square text-slate-600 group-hover:text-slate-400 transition-colors text-xs mt-0.5"></i>
+          </div>
+          <div class="flex-1">
+            <h3 class="text-base font-bold text-white mb-2">LINE 預約流程升級</h3>
+            <p class="text-slate-400 text-sm leading-relaxed mb-4">從人工處理到 LINE 自動化預約的完整流程說明與解決方案展示。</p>
+            <ul class="space-y-1.5">
+              <li class="flex items-start gap-2 text-xs text-slate-400"><span class="text-green-400 flex-none mt-0.5">✓</span>消除人工回訊確認，預約即時自動成立</li>
+              <li class="flex items-start gap-2 text-xs text-slate-400"><span class="text-green-400 flex-none mt-0.5">✓</span>客戶不需下載 App，LINE 內完成所有步驟</li>
+              <li class="flex items-start gap-2 text-xs text-slate-400"><span class="text-green-400 flex-none mt-0.5">✓</span>預約紀錄自動同步試算表，方便店家統一管理</li>
+            </ul>
+          </div>
+          <div class="mt-6 text-xs text-slate-600 border-t border-slate-800 pt-4">LINE OA · 自動化流程</div>
+        </a>
+
+        <!-- 婚禮邀請函 — website -->
+        <a href="bd_demo/Web/wedding_invitation.html" data-cat="website" class="portfolio-card reveal group bg-slate-900 rounded-2xl p-7 hover:bg-slate-800 transition-colors duration-300 flex flex-col">
+          <div class="flex items-start justify-between mb-5">
+            <span class="text-xs font-bold text-rose-400 bg-rose-400/10 px-2.5 py-1 rounded-md">客製網站</span>
+            <i class="fa-solid fa-arrow-up-right-from-square text-slate-600 group-hover:text-slate-400 transition-colors text-xs mt-0.5"></i>
+          </div>
+          <div class="flex-1">
+            <h3 class="text-base font-bold text-white mb-2">婚禮邀請函網站</h3>
+            <p class="text-slate-400 text-sm leading-relaxed mb-4">精緻視覺設計的婚禮邀請頁面，響應式排版，支援出席回覆互動。</p>
+            <ul class="space-y-1.5">
+              <li class="flex items-start gap-2 text-xs text-slate-400"><span class="text-rose-400 flex-none mt-0.5">✓</span>取代紙本邀請卡，賓客手機即可查閱全部資訊</li>
+              <li class="flex items-start gap-2 text-xs text-slate-400"><span class="text-rose-400 flex-none mt-0.5">✓</span>高互動感設計，保存婚禮記憶的數位紀念品</li>
+              <li class="flex items-start gap-2 text-xs text-slate-400"><span class="text-rose-400 flex-none mt-0.5">✓</span>線上出席確認，主辦方即時掌握到場人數</li>
+            </ul>
+          </div>
+          <div class="mt-6 text-xs text-slate-600 border-t border-slate-800 pt-4">Landing Page · 客製設計</div>
+        </a>
+
+        <!-- CTSS — website -->
+        <a href="https://ctssjpit.com/" target="_blank" rel="noopener noreferrer" data-cat="website" class="portfolio-card reveal delay-100 group bg-slate-900 rounded-2xl p-7 hover:bg-slate-800 transition-colors duration-300 flex flex-col">
+          <div class="flex items-start justify-between mb-5">
+            <span class="text-xs font-bold text-rose-400 bg-rose-400/10 px-2.5 py-1 rounded-md">客製網站</span>
+            <i class="fa-solid fa-arrow-up-right-from-square text-slate-600 group-hover:text-slate-400 transition-colors text-xs mt-0.5"></i>
+          </div>
+          <div class="flex-1">
+            <h3 class="text-base font-bold text-white mb-2">CTSS 企業形象網站</h3>
+            <p class="text-slate-400 text-sm leading-relaxed mb-4">專業企業形象網站，清晰的服務結構與視覺呈現，強化品牌可信度。</p>
+            <ul class="space-y-1.5">
+              <li class="flex items-start gap-2 text-xs text-slate-400"><span class="text-rose-400 flex-none mt-0.5">✓</span>完整呈現日台招募服務差異與企業優勢</li>
+              <li class="flex items-start gap-2 text-xs text-slate-400"><span class="text-rose-400 flex-none mt-0.5">✓</span>結構化內容讓候選人快速理解服務範疇</li>
+              <li class="flex items-start gap-2 text-xs text-slate-400"><span class="text-rose-400 flex-none mt-0.5">✓</span>GA4 數據整合，追蹤訪客行為與轉換成效</li>
+            </ul>
+          </div>
+          <div class="mt-6 text-xs text-slate-600 border-t border-slate-800 pt-4">企業官網 · 品牌形象</div>
+        </a>
+
+        <!-- Ken L — website -->
+        <a href="https://kenl-tw.github.io/" target="_blank" rel="noopener noreferrer" data-cat="website" class="portfolio-card reveal delay-200 group bg-slate-900 rounded-2xl p-7 hover:bg-slate-800 transition-colors duration-300 flex flex-col">
+          <div class="flex items-start justify-between mb-5">
+            <span class="text-xs font-bold text-rose-400 bg-rose-400/10 px-2.5 py-1 rounded-md">客製網站</span>
+            <i class="fa-solid fa-arrow-up-right-from-square text-slate-600 group-hover:text-slate-400 transition-colors text-xs mt-0.5"></i>
+          </div>
+          <div class="flex-1">
+            <h3 class="text-base font-bold text-white mb-2">Ken L 個人作品集</h3>
+            <p class="text-slate-400 text-sm leading-relaxed mb-4">個人品牌作品集網站，簡潔佈局搭配流暢的滾動體驗，展示技術背景與代表作。</p>
+            <ul class="space-y-1.5">
+              <li class="flex items-start gap-2 text-xs text-slate-400"><span class="text-rose-400 flex-none mt-0.5">✓</span>個人品牌形象從無到有快速建立</li>
+              <li class="flex items-start gap-2 text-xs text-slate-400"><span class="text-rose-400 flex-none mt-0.5">✓</span>作品與技術背景一頁呈現，降低面試鋪墊成本</li>
+              <li class="flex items-start gap-2 text-xs text-slate-400"><span class="text-rose-400 flex-none mt-0.5">✓</span>SEO 友善結構，可被搜尋引擎索引</li>
+            </ul>
+          </div>
+          <div class="mt-6 text-xs text-slate-600 border-t border-slate-800 pt-4">個人品牌 · Portfolio</div>
+        </a>
+
+
+        <!-- 2048 — web-tool -->
+        <a href="bd_demo/Tools/2048.html" data-cat="web-tool" class="portfolio-card reveal delay-200 group bg-slate-900 rounded-2xl p-7 hover:bg-slate-800 transition-colors duration-300 flex flex-col">
+          <div class="flex items-start justify-between mb-5">
+            <span class="text-xs font-bold text-blue-400 bg-blue-400/10 px-2.5 py-1 rounded-md">Web 工具</span>
+            <i class="fa-solid fa-arrow-up-right-from-square text-slate-600 group-hover:text-slate-400 transition-colors text-xs mt-0.5"></i>
+          </div>
+          <div class="flex-1">
+            <h3 class="text-base font-bold text-white mb-2">2048 技術展示</h3>
+            <p class="text-slate-400 text-sm leading-relaxed">純 Vue.js 實作的高互動單頁應用，展示前端狀態管理與觸控支援能力。</p>
+          </div>
+          <div class="mt-6 text-xs text-slate-600 border-t border-slate-800 pt-4">Vue.js · SPA · 觸控支援</div>
+        </a>
+
+        <!-- 終極密碼教學版 — web-tool -->
+        <a href="bd_demo/Tools/vault.html" data-cat="web-tool" class="portfolio-card reveal group bg-slate-900 rounded-2xl p-7 hover:bg-slate-800 transition-colors duration-300 flex flex-col">
+          <div class="flex items-start justify-between mb-5">
+            <span class="text-xs font-bold text-blue-400 bg-blue-400/10 px-2.5 py-1 rounded-md">Web 工具</span>
+            <i class="fa-solid fa-arrow-up-right-from-square text-slate-600 group-hover:text-slate-400 transition-colors text-xs mt-0.5"></i>
+          </div>
+          <div class="flex-1">
+            <h3 class="text-base font-bold text-white mb-2">終極密碼教學版</h3>
+            <p class="text-slate-400 text-sm leading-relaxed">教學導向的二分搜尋推理訓練工具，顯示候選數與最佳步數提示，內建結算 Summary 與策略說明。</p>
+          </div>
+          <div class="mt-6 text-xs text-slate-600 border-t border-slate-800 pt-4">推理訓練 · 二分搜尋 · 教學工具</div>
+        </a>
+
+        <!-- SignFlow PDF — web-tool -->
+        <a href="bd_demo/Tools/sign-editor/index.html" data-cat="web-tool" class="portfolio-card reveal delay-100 group bg-slate-900 rounded-2xl p-7 hover:bg-slate-800 transition-colors duration-300 flex flex-col">
+          <div class="flex items-start justify-between mb-5">
+            <span class="text-xs font-bold text-blue-400 bg-blue-400/10 px-2.5 py-1 rounded-md">Web 工具</span>
+            <i class="fa-solid fa-arrow-up-right-from-square text-slate-600 group-hover:text-slate-400 transition-colors text-xs mt-0.5"></i>
+          </div>
+          <div class="flex-1">
+            <h3 class="text-base font-bold text-white mb-2">SignFlow PDF 電子簽名工具</h3>
+            <p class="text-slate-400 text-sm leading-relaxed">免安裝的瀏覽器端 PDF 簽署工具，支援手寫簽名去背、電子章蓋印、文字與框線標記，完成後直接匯出 PDF。</p>
+          </div>
+          <div class="mt-6 text-xs text-slate-600 border-t border-slate-800 pt-4">pdf.js · pdf-lib · 本機處理 · 零上傳</div>
+        </a>
+
+        <!-- CTA card -->
+        <div class="portfolio-card reveal delay-200 bg-blue-600 rounded-2xl p-7 flex flex-col justify-between hover:bg-blue-700 transition-colors duration-300" data-cat="all-always">
+          <div>
+            <span class="text-xs font-bold text-blue-200 block mb-5">下一個</span>
+            <h3 class="text-base font-bold text-white mb-2">等待你的需求</h3>
+            <p class="text-blue-200 text-sm leading-relaxed">有想法了嗎？直接帶著問題來，一起討論可行的方向與規模。</p>
+          </div>
+          <a href="#contact" class="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-white hover:text-blue-100 transition-colors border-t border-blue-500 pt-4">
+            開始諮詢 <i class="fa-solid fa-arrow-right text-xs"></i>
+          </a>
+        </div>
+
+      </div>
+      <p class="text-center text-xs text-slate-600 mt-6">* 部分客戶案例因保密協議不公開展示</p>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════
+       SOLUTIONS — 自動化 & AI 應用（Tab）
+  ═══════════════════════════════════════ -->
+  <section id="solutions" class="py-16 bg-slate-50 border-t border-slate-100">
+    <div class="max-w-7xl mx-auto px-5 lg:px-8">
+
+      <!-- Header + Tab switcher -->
+      <div class="flex flex-col md:flex-row md:items-end justify-between mb-10 reveal">
+        <div>
+          <span class="inline-block text-xs font-bold text-blue-600 tracking-widest uppercase mb-4">流程分享 × AI 應用分享</span>
+          <h2 class="text-4xl lg:text-5xl font-black text-slate-900">流程分享 · AI 應用分享</h2>
+        </div>
+        <div class="flex gap-2 mt-6 md:mt-0">
+          <button data-tab="automation" class="sol-tab px-5 py-2.5 rounded-full text-sm font-semibold bg-slate-900 text-white transition-all">流程分享</button>
+          <button data-tab="ai" class="sol-tab px-5 py-2.5 rounded-full text-sm font-semibold border border-slate-200 text-slate-600 hover:border-slate-400 transition-all">AI 應用分享</button>
+        </div>
+      </div>
+
+      <!-- ── Tab: Automation ── -->
+      <div id="sol-automation" class="sol-panel">
+        <p class="text-slate-500 mb-5 max-w-3xl">這裡展示的是「可落地流程分享」範例。正式導入前會先做流程盤點與盲點分析，釐清卡點、重工與風險，再決定自動化優先順序，避免工具上線後反而增加維運負擔。</p>
+        <div class="mb-8 rounded-2xl border border-blue-100 bg-blue-50/70 px-5 py-4 reveal">
+          <p class="text-sm text-slate-700 leading-relaxed"><span class="font-bold text-blue-700">自動化導入先做專業分析：</span>從觸發條件、資料品質、例外情境到輸出責任歸屬逐項檢視，較容易提前找到盲點。<span class="font-bold text-slate-900">初次訪談免費、無收費壓力</span>，先把問題談清楚再決定是否啟動。</p>
+        </div>
+        <div class="space-y-4">
+
+          <!-- ── Flow 01: 競品分析研究報告 ── -->
+          <div class="reveal bg-white border border-slate-200 rounded-2xl overflow-hidden hover:shadow-md transition-shadow duration-300">
+            <div class="px-7 py-5 bg-slate-50 border-b border-slate-100 flex flex-col sm:flex-row sm:items-start gap-4">
+              <div class="flex items-start gap-4 flex-1">
+                <span class="text-2xl font-black text-slate-200 leading-none flex-none mt-0.5">01</span>
+                <div>
+                  <h3 class="font-bold text-slate-900">競品分析研究報告</h3>
+                  <p class="text-xs text-slate-500 mt-1 leading-relaxed">自動監聽競品行銷 Email，AI 解析關鍵要素後製成報告，並多端分發存檔——無需任何人工操作。</p>
+                </div>
+              </div>
+              <div class="flex flex-wrap gap-2 flex-none">
+                <span class="text-xs text-slate-500 bg-slate-100 px-2.5 py-1 rounded-full">Python</span>
+                <span class="text-xs text-slate-500 bg-slate-100 px-2.5 py-1 rounded-full">AI 解析</span>
+                <span class="text-xs text-slate-500 bg-slate-100 px-2.5 py-1 rounded-full">PPT 生成</span>
+                <span class="text-xs text-green-700 bg-line-light px-2.5 py-1 rounded-full">LINE 通知</span>
+              </div>
+            </div>
+            <div class="px-7 py-6 overflow-x-auto">
+              <div class="flex items-start gap-0 min-w-max">
+                <div class="flex flex-col items-center">
+                  <div class="text-[9px] font-bold text-blue-600 mb-2 uppercase tracking-wider">觸發</div>
+                  <div class="bg-blue-50 border border-blue-200 rounded-xl px-4 py-3 text-center w-28">
+                    <p class="text-xs font-bold text-slate-900 leading-snug">訂閱競品<br>行銷 Email</p>
+                  </div>
+                </div>
+                <div class="flex items-center self-center mt-4 px-2 text-slate-300 text-lg flex-none">→</div>
+                <div class="flex flex-col items-center">
+                  <div class="text-[9px] font-bold text-slate-400 mb-2 uppercase tracking-wider">處理</div>
+                  <div class="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-center w-28">
+                    <p class="text-xs font-bold text-slate-900 leading-snug">AI 解析<br>關鍵要素</p>
+                  </div>
+                </div>
+                <div class="flex items-center self-center mt-4 px-2 text-slate-300 text-lg flex-none">→</div>
+                <div class="flex flex-col items-center">
+                  <div class="text-[9px] font-bold text-slate-400 mb-2 uppercase tracking-wider">處理</div>
+                  <div class="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-center w-28">
+                    <p class="text-xs font-bold text-slate-900 leading-snug">自動生成<br>PPT 報告</p>
+                  </div>
+                </div>
+                <div class="flex items-center self-center mt-4 px-2 text-slate-300 text-lg flex-none">→</div>
+                <div class="flex flex-col items-center">
+                  <div class="text-[9px] font-bold text-slate-400 mb-2 uppercase tracking-wider">輸出</div>
+                  <div class="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-center w-28">
+                    <p class="text-xs font-bold text-slate-900 leading-snug">Email 寄送<br>+ 歸檔</p>
+                  </div>
+                </div>
+                <div class="flex items-center self-center mt-4 px-2 text-slate-300 text-lg flex-none">→</div>
+                <div class="flex flex-col items-center">
+                  <div class="text-[9px] font-bold text-green-600 mb-2 uppercase tracking-wider">通知</div>
+                  <div class="bg-line-light border border-green-200 rounded-xl px-4 py-3 text-center w-28">
+                    <p class="text-xs font-bold text-slate-900 leading-snug">LINE<br>推播通知</p>
+                  </div>
+                </div>
+                <div class="flex items-center self-center mt-4 px-2 text-slate-300 text-lg flex-none">→</div>
+                <div class="flex flex-col items-center">
+                  <div class="text-[9px] font-bold text-slate-400 mb-2 uppercase tracking-wider">存檔</div>
+                  <div class="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-center w-28">
+                    <p class="text-xs font-bold text-slate-900 leading-snug">Google Sheet<br>自動存檔</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── Flow 02: RSS 新聞整合推播 ── -->
+          <div class="reveal bg-white border border-slate-200 rounded-2xl overflow-hidden hover:shadow-md transition-shadow duration-300">
+            <div class="px-7 py-5 bg-slate-50 border-b border-slate-100 flex flex-col sm:flex-row sm:items-start gap-4">
+              <div class="flex items-start gap-4 flex-1">
+                <span class="text-2xl font-black text-slate-200 leading-none flex-none mt-0.5">02</span>
+                <div>
+                  <h3 class="font-bold text-slate-900">RSS 新聞情報整合推播</h3>
+                  <p class="text-xs text-slate-500 mt-1 leading-relaxed">訂閱指定媒體 RSS，AI 過濾高相關度新聞並生成摘要，自動組成結構化訊息推送至 LINE Group。</p>
+                </div>
+              </div>
+              <div class="flex flex-wrap gap-2 flex-none">
+                <span class="text-xs text-slate-500 bg-slate-100 px-2.5 py-1 rounded-full">RSS 解析</span>
+                <span class="text-xs text-slate-500 bg-slate-100 px-2.5 py-1 rounded-full">AI 摘要</span>
+                <span class="text-xs text-green-700 bg-line-light px-2.5 py-1 rounded-full">LINE Group</span>
+              </div>
+            </div>
+            <div class="px-7 py-6 overflow-x-auto">
+              <div class="flex items-start gap-0 min-w-max">
+                <div class="flex flex-col items-center">
+                  <div class="text-[9px] font-bold text-blue-600 mb-2 uppercase tracking-wider">觸發</div>
+                  <div class="bg-blue-50 border border-blue-200 rounded-xl px-4 py-3 text-center w-28">
+                    <p class="text-xs font-bold text-slate-900 leading-snug">RSS 訂閱<br>定時抓取</p>
+                  </div>
+                </div>
+                <div class="flex items-center self-center mt-4 px-2 text-slate-300 text-lg flex-none">→</div>
+                <div class="flex flex-col items-center">
+                  <div class="text-[9px] font-bold text-slate-400 mb-2 uppercase tracking-wider">處理</div>
+                  <div class="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-center w-28">
+                    <p class="text-xs font-bold text-slate-900 leading-snug">分析應用<br>相關性</p>
+                  </div>
+                </div>
+                <div class="flex items-center self-center mt-4 px-2 text-slate-300 text-lg flex-none">→</div>
+                <div class="flex flex-col items-center">
+                  <div class="text-[9px] font-bold text-slate-400 mb-2 uppercase tracking-wider">處理</div>
+                  <div class="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-center w-28">
+                    <p class="text-xs font-bold text-slate-900 leading-snug">AI 整合<br>新聞摘要</p>
+                  </div>
+                </div>
+                <div class="flex items-center self-center mt-4 px-2 text-slate-300 text-lg flex-none">→</div>
+                <div class="flex flex-col items-center">
+                  <div class="text-[9px] font-bold text-green-600 mb-2 uppercase tracking-wider">推播</div>
+                  <div class="bg-line-light border border-green-200 rounded-xl px-4 py-3 text-center w-28">
+                    <p class="text-xs font-bold text-slate-900 leading-snug">LINE Group<br>結構化推播</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── Flow 03: SEO / AEO 分析報告 ── -->
+          <div class="reveal bg-white border border-slate-200 rounded-2xl overflow-hidden hover:shadow-md transition-shadow duration-300">
+            <div class="px-7 py-5 bg-slate-50 border-b border-slate-100 flex flex-col sm:flex-row sm:items-start gap-4">
+              <div class="flex items-start gap-4 flex-1">
+                <span class="text-2xl font-black text-slate-200 leading-none flex-none mt-0.5">03</span>
+                <div>
+                  <h3 class="font-bold text-slate-900">網站 SEO／AEO 分析報告</h3>
+                  <p class="text-xs text-slate-500 mt-1 leading-relaxed">輸入目標網址，自動爬取內容並進行 SEO 結構分析、AEO 建議生成，產出 30/60/90 行動計畫後寄送報告。</p>
+                </div>
+              </div>
+              <div class="flex flex-wrap gap-2 flex-none">
+                <span class="text-xs text-slate-500 bg-slate-100 px-2.5 py-1 rounded-full">爬蟲</span>
+                <span class="text-xs text-slate-500 bg-slate-100 px-2.5 py-1 rounded-full">SEO 分析</span>
+                <span class="text-xs text-slate-500 bg-slate-100 px-2.5 py-1 rounded-full">AEO</span>
+                <span class="text-xs text-blue-700 bg-blue-50 px-2.5 py-1 rounded-full">報告輸出</span>
+              </div>
+            </div>
+            <div class="px-7 py-6 overflow-x-auto">
+              <div class="flex items-start gap-0 min-w-max">
+                <div class="flex flex-col items-center">
+                  <div class="text-[9px] font-bold text-blue-600 mb-2 uppercase tracking-wider">輸入</div>
+                  <div class="bg-blue-50 border border-blue-200 rounded-xl px-4 py-3 text-center w-28">
+                    <p class="text-xs font-bold text-slate-900 leading-snug">指定<br>目標網址</p>
+                  </div>
+                </div>
+                <div class="flex items-center self-center mt-4 px-2 text-slate-300 text-lg flex-none">→</div>
+                <div class="flex flex-col items-center">
+                  <div class="text-[9px] font-bold text-slate-400 mb-2 uppercase tracking-wider">爬取</div>
+                  <div class="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-center w-28">
+                    <p class="text-xs font-bold text-slate-900 leading-snug">自動爬取<br>網站內容</p>
+                  </div>
+                </div>
+                <div class="flex items-center self-center mt-4 px-2 text-slate-300 text-lg flex-none">→</div>
+                <div class="flex flex-col items-center">
+                  <div class="text-[9px] font-bold text-slate-400 mb-2 uppercase tracking-wider">分析</div>
+                  <div class="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-center w-28">
+                    <p class="text-xs font-bold text-slate-900 leading-snug">SEO<br>結構分析</p>
+                  </div>
+                </div>
+                <div class="flex items-center self-center mt-4 px-2 text-slate-300 text-lg flex-none">→</div>
+                <div class="flex flex-col items-center">
+                  <div class="text-[9px] font-bold text-slate-400 mb-2 uppercase tracking-wider">建議</div>
+                  <div class="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-center w-28">
+                    <p class="text-xs font-bold text-slate-900 leading-snug">AEO<br>建議內容</p>
+                  </div>
+                </div>
+                <div class="flex items-center self-center mt-4 px-2 text-slate-300 text-lg flex-none">→</div>
+                <div class="flex flex-col items-center">
+                  <div class="text-[9px] font-bold text-slate-400 mb-2 uppercase tracking-wider">規劃</div>
+                  <div class="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-center w-28">
+                    <p class="text-xs font-bold text-slate-900 leading-snug">30/60/90<br>行動計畫</p>
+                  </div>
+                </div>
+                <div class="flex items-center self-center mt-4 px-2 text-slate-300 text-lg flex-none">→</div>
+                <div class="flex flex-col items-center">
+                  <div class="text-[9px] font-bold text-blue-600 mb-2 uppercase tracking-wider">輸出</div>
+                  <div class="bg-blue-50 border border-blue-200 rounded-xl px-4 py-3 text-center w-28">
+                    <p class="text-xs font-bold text-slate-900 leading-snug">報告寄送<br>至指定端</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+        <div class="mt-8 text-center reveal">
+          <p class="text-sm text-slate-400 mb-3">上述流程可依業務情境客製化；我們會先做專業分析再規劃自動化，幫你先抓出盲點。</p>
+          <a href="#contact" class="inline-flex items-center gap-2 text-sm font-semibold text-slate-900 hover:text-blue-600 transition-colors">
+            預約免費初訪（無壓力） <i class="fa-solid fa-arrow-right text-xs"></i>
+          </a>
+        </div>
+      </div>
+
+      <!-- ── Tab: AI ── -->
+      <div id="sol-ai" class="sol-panel hidden">
+        <div class="grid lg:grid-cols-2 gap-14 items-start">
+          <!-- Left: intro -->
+          <div>
+            <h3 class="text-2xl font-bold text-slate-900 mb-4 leading-tight">AI 應用分享<br>從情境到落地</h3>
+            <p class="text-slate-500 leading-relaxed mb-6">這裡整理常見的 AI 應用落地方式，從客服、知識庫到網站助理。會先根據你的資料成熟度與流程現況做可行性評估，再規劃模型、成本與整合方式。初次訪談免費，先聊方向不會有壓力。</p>
+            <div class="space-y-2.5">
+              <div class="flex items-start gap-3">
+                <div class="w-1.5 h-1.5 rounded-full bg-blue-600 flex-none mt-2"></div>
+                <p class="text-sm text-slate-600">OpenAI / Gemini / Claude 等主流模型 API 串接開發</p>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-1.5 h-1.5 rounded-full bg-blue-600 flex-none mt-2"></div>
+                <p class="text-sm text-slate-600">RAG 架構 — 讓 AI 根據你的資料精準回答問題</p>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-1.5 h-1.5 rounded-full bg-blue-600 flex-none mt-2"></div>
+                <p class="text-sm text-slate-600">Prompt Engineering — 高品質系統提示與對話流程設計</p>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-1.5 h-1.5 rounded-full bg-blue-600 flex-none mt-2"></div>
+                <p class="text-sm text-slate-600">LINE / 網站 / Slack 等多平台嵌入整合</p>
+              </div>
+            </div>
+          </div>
+          <!-- Right: 4 use case cards -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5 hover:border-slate-300 hover:shadow-sm transition-all duration-300">
+              <div class="text-xs font-bold text-green-700 bg-line-light px-2.5 py-1 rounded-full inline-block mb-3">LINE 整合</div>
+              <h4 class="font-bold text-slate-900 text-sm mb-2">LINE 智能客服機器人</h4>
+              <p class="text-xs text-slate-500 leading-relaxed">串接 LINE Messaging API，AI 自動回覆、引導流程、處理預約，7×24 無需人工值班。</p>
+            </div>
+            <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5 hover:border-slate-300 hover:shadow-sm transition-all duration-300">
+              <div class="text-xs font-bold text-blue-600 bg-blue-50 px-2.5 py-1 rounded-full inline-block mb-3">網站嵌入</div>
+              <h4 class="font-bold text-slate-900 text-sm mb-2">網站嵌入式 AI 助理</h4>
+              <p class="text-xs text-slate-500 leading-relaxed">嵌入官網或產品頁，讓訪客即時獲得服務說明、報價引導或問題解答。</p>
+            </div>
+            <div class="bg-slate-900 rounded-2xl p-5 hover:bg-slate-800 transition-colors duration-300">
+              <div class="text-xs font-bold text-slate-400 bg-slate-800 px-2.5 py-1 rounded-full inline-block mb-3">企業內部</div>
+              <h4 class="font-bold text-white text-sm mb-2">內部知識庫 Chatbot</h4>
+              <p class="text-xs text-slate-400 leading-relaxed">SOP、規範、產品手冊轉為可搜尋知識庫，員工直接對話查詢。</p>
+            </div>
+            <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5 hover:border-slate-300 hover:shadow-sm transition-all duration-300">
+              <div class="text-xs font-bold text-blue-600 bg-blue-50 px-2.5 py-1 rounded-full inline-block mb-3">RAG 架構</div>
+              <h4 class="font-bold text-slate-900 text-sm mb-2">客製化 RAG 問答系統</h4>
+              <p class="text-xs text-slate-500 leading-relaxed">上傳 PDF、試算表後即可對話查詢，回答精準且具備來源引用能力。</p>
+            </div>
+          </div>
+        </div>
+        <div class="mt-10 bg-slate-100 border border-slate-200 rounded-2xl p-6">
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-5">
+            <div>
+              <p class="text-sm font-bold text-slate-900 mb-1">有想法但不確定能不能做？先聊再決定</p>
+              <p class="text-sm text-slate-500">初次訪談免費、無收費壓力，先釐清需求與盲點，再評估是否進入開發。</p>
+            </div>
+            <a href="#contact" class="inline-flex items-center gap-2 bg-slate-900 hover:bg-blue-600 text-white px-6 py-3 rounded-full text-sm font-medium transition-all flex-none">
+              預約免費初訪 <i class="fa-solid fa-arrow-right text-xs"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════
+       PROCESS — 合作流程
+  ═══════════════════════════════════════ -->
+  <section id="process" class="py-16 bg-white border-t border-slate-100 relative overflow-hidden">
+    <div class="absolute inset-0 opacity-[0.35]" style="background-image: radial-gradient(circle, #e2e8f0 1px, transparent 1px); background-size: 28px 28px;"></div>
+    <div class="max-w-7xl mx-auto px-5 lg:px-8 relative z-10">
+
+      <div class="max-w-xl mx-auto text-center mb-14 reveal">
+        <span class="inline-block text-xs font-bold text-blue-600 tracking-widest uppercase mb-4">合作流程</span>
+        <h2 class="text-4xl lg:text-5xl font-black text-slate-900 mb-4">從想法到上線</h2>
+        <p class="text-slate-500">每個階段都有明確交付物，你在每個節點都清楚知道進展到哪裡。</p>
+      </div>
+
+      <!-- Steps timeline -->
+      <div class="relative">
+        <!-- Desktop connector line -->
+        <div class="hidden lg:block absolute h-px bg-gradient-to-r from-transparent via-slate-300 to-transparent z-0" style="top:44px; left:14%; right:14%;"></div>
+
+        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+
+          <!-- Step 01 -->
+          <div class="reveal flex flex-col items-center text-center relative z-10">
+            <div class="rounded-full bg-slate-900 border-4 border-white ring-1 ring-slate-200 shadow-xl flex items-center justify-center mb-6" style="width:88px;height:88px;">
+              <div>
+                <p class="text-[9px] font-bold text-slate-500 uppercase tracking-wider leading-none mb-0.5">STEP</p>
+                <p class="text-2xl font-black text-white leading-none">01</p>
+              </div>
+            </div>
+            <h3 class="font-bold text-slate-900 text-base mb-2">需求確認</h3>
+            <p class="text-sm text-slate-500 leading-relaxed mb-4">聊清楚你遇到什麼問題、目標是什麼。不需要準備規格書，帶著想法來就好。</p>
+            <span class="text-xs text-slate-600 bg-slate-100 px-3 py-1.5 rounded-full font-medium">交付：需求摘要確認</span>
+          </div>
+
+          <!-- Step 02 -->
+          <div class="reveal delay-100 flex flex-col items-center text-center relative z-10">
+            <div class="rounded-full bg-slate-800 border-4 border-white ring-1 ring-slate-200 shadow-xl flex items-center justify-center mb-6" style="width:88px;height:88px;">
+              <div>
+                <p class="text-[9px] font-bold text-slate-500 uppercase tracking-wider leading-none mb-0.5">STEP</p>
+                <p class="text-2xl font-black text-white leading-none">02</p>
+              </div>
+            </div>
+            <h3 class="font-bold text-slate-900 text-base mb-2">提案規格</h3>
+            <p class="text-sm text-slate-500 leading-relaxed mb-4">提出技術方向、功能範疇與里程碑規劃，附初步報價。確認後以文件存檔為準。</p>
+            <span class="text-xs text-slate-600 bg-slate-100 px-3 py-1.5 rounded-full font-medium">交付：功能規格 + 報價單</span>
+          </div>
+
+          <!-- Step 03 highlighted -->
+          <div class="reveal delay-200 flex flex-col items-center text-center relative z-10">
+            <div class="rounded-full bg-blue-600 border-4 border-white ring-2 ring-blue-200 shadow-xl shadow-blue-100/60 flex items-center justify-center mb-6" style="width:88px;height:88px;">
+              <div>
+                <p class="text-[9px] font-bold text-blue-200 uppercase tracking-wider leading-none mb-0.5">STEP</p>
+                <p class="text-2xl font-black text-white leading-none">03</p>
+              </div>
+            </div>
+            <h3 class="font-bold text-slate-900 text-base mb-2">開發交付</h3>
+            <p class="text-sm text-slate-500 leading-relaxed mb-4">進入開發，每個里程碑同步進度，交付時完整說明操作，確保你能獨立使用。</p>
+            <span class="text-xs text-blue-600 bg-blue-50 border border-blue-100 px-3 py-1.5 rounded-full font-medium">交付：功能上線 + 操作文件</span>
+          </div>
+
+          <!-- Step 04 -->
+          <div class="reveal delay-300 flex flex-col items-center text-center relative z-10">
+            <div class="rounded-full bg-slate-800 border-4 border-white ring-1 ring-slate-200 shadow-xl flex items-center justify-center mb-6" style="width:88px;height:88px;">
+              <div>
+                <p class="text-[9px] font-bold text-slate-500 uppercase tracking-wider leading-none mb-0.5">STEP</p>
+                <p class="text-2xl font-black text-white leading-none">04</p>
+              </div>
+            </div>
+            <h3 class="font-bold text-slate-900 text-base mb-2">上線維護</h3>
+            <p class="text-sm text-slate-500 leading-relaxed mb-4">上線後根據數據與回饋持續迭代。可簽維護合約，也可逐次討論後續工作安排。</p>
+            <span class="text-xs text-slate-600 bg-slate-100 px-3 py-1.5 rounded-full font-medium">持續：問題修正 + 功能迭代</span>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="mt-14 text-center reveal">
+        <p class="text-sm text-slate-400 mb-4">所有流程從一次免費諮詢開始，不需要準備任何資料，帶著問題來就好。</p>
+        <a href="#contact" class="inline-flex items-center gap-2 text-sm font-semibold text-slate-900 hover:text-blue-600 transition-colors">
+          立即開始諮詢 <i class="fa-solid fa-arrow-right text-xs"></i>
+        </a>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════
+       TESTIMONIALS — 客戶見證
+  ═══════════════════════════════════════ -->
+  <section id="testimonials" class="py-16 bg-slate-50 border-t border-slate-100">
+    <div class="max-w-7xl mx-auto px-5 lg:px-8">
+
+      <div class="max-w-xl mb-12 reveal">
+        <span class="inline-block text-xs font-bold text-blue-600 tracking-widest uppercase mb-4">客戶見證</span>
+        <h2 class="text-4xl lg:text-5xl font-black text-slate-900 mb-4">他們怎麼說</h2>
+        <p class="text-slate-500">真實合作後的回饋，不加工。</p>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-6">
+
+        <!-- 婚禮邀請函 -->
+        <div class="reveal bg-white rounded-3xl p-8 border border-slate-100 shadow-sm flex flex-col">
+          <div class="flex items-center gap-1 mb-6">
+            <i class="fa-solid fa-star text-amber-400 text-xs"></i>
+            <i class="fa-solid fa-star text-amber-400 text-xs"></i>
+            <i class="fa-solid fa-star text-amber-400 text-xs"></i>
+            <i class="fa-solid fa-star text-amber-400 text-xs"></i>
+            <i class="fa-solid fa-star text-amber-400 text-xs"></i>
+          </div>
+          <blockquote class="flex-1 text-slate-700 leading-relaxed mb-8 text-[15px]">
+            「網站設計的互動感超出預期，賓客進入電子喜帖後幾乎都會在頁面停留很久，甚至主動截圖分享。婚禮結束後這個網站就像一個隨時可以重溫的數位紀念品，感覺每個細節都被好好保留下來了。留言板互動功能增添了大家的參與及回憶感。」
+          </blockquote>
+          <div class="flex items-center gap-4 pt-6 border-t border-slate-100">
+            <div class="w-10 h-10 rounded-full bg-rose-50 border border-rose-100 flex items-center justify-center flex-none">
+              <i class="fa-solid fa-heart text-rose-400 text-sm"></i>
+            </div>
+            <div>
+              <p class="font-semibold text-slate-900 text-sm">葉 × 李　新人</p>
+              <p class="text-xs text-slate-400 mt-0.5">婚禮邀請函網站 · 2026</p>
+            </div>
+            <a href="bd_demo/Web/wedding_invitation.html" class="ml-auto text-xs text-slate-400 hover:text-blue-600 transition-colors flex items-center gap-1">
+              查看作品 <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+            </a>
+          </div>
+        </div>
+
+        <!-- CTSS -->
+        <div class="reveal delay-100 bg-white rounded-3xl p-8 border border-slate-100 shadow-sm flex flex-col">
+          <div class="flex items-center gap-1 mb-6">
+            <i class="fa-solid fa-star text-amber-400 text-xs"></i>
+            <i class="fa-solid fa-star text-amber-400 text-xs"></i>
+            <i class="fa-solid fa-star text-amber-400 text-xs"></i>
+            <i class="fa-solid fa-star text-amber-400 text-xs"></i>
+            <i class="fa-solid fa-star text-amber-400 text-xs"></i>
+          </div>
+          <blockquote class="flex-1 text-slate-700 leading-relaxed mb-8 text-[15px]">
+            「橫跨日本在台灣深耕的人才招募市場，最大的挑戰是讓客戶一眼看懂兩地的差異與我們的優勢在哪裡。這個網站做到了——結構非常清晰，把人才需求、優勢論述都以良好的視覺層次呈現出來。」
+          </blockquote>
+          <div class="flex items-center gap-4 pt-6 border-t border-slate-100">
+            <div class="w-10 h-10 rounded-full bg-blue-50 border border-blue-100 flex items-center justify-center flex-none">
+              <i class="fa-solid fa-building text-blue-400 text-sm"></i>
+            </div>
+            <div>
+              <p class="font-semibold text-slate-900 text-sm">CTSS　社長 &amp; 開發部長</p>
+              <p class="text-xs text-slate-400 mt-0.5">企業形象網站 + 數據分析 · 2026</p>
+            </div>
+            <a href="https://ctssjpit.com/" target="_blank" rel="noopener noreferrer" class="ml-auto text-xs text-slate-400 hover:text-blue-600 transition-colors flex items-center gap-1">
+              查看作品 <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════
+       FAQ
+  ═══════════════════════════════════════ -->
+  <section id="faq" class="py-16 bg-white border-t border-slate-100">
+    <div class="max-w-3xl mx-auto px-5 lg:px-8">
+
+      <div class="text-center mb-12 reveal">
+        <span class="inline-block text-xs font-bold text-blue-600 tracking-widest uppercase mb-4">常見問題</span>
+        <h2 class="text-4xl lg:text-5xl font-black text-slate-900 mb-4">有疑問嗎</h2>
+        <p class="text-slate-500">最常被問到的幾個問題，先在這裡回答你。</p>
+      </div>
+
+      <div class="space-y-3 reveal">
+
+        <details class="group bg-slate-50 border border-slate-200 rounded-2xl overflow-hidden">
+          <summary class="flex items-center justify-between px-6 py-5 cursor-pointer select-none list-none">
+            <span class="font-semibold text-slate-900 text-sm pr-4">我不懂技術，可以合作嗎？</span>
+            <i class="fa-solid fa-plus text-slate-400 flex-none transition-transform group-open:rotate-45"></i>
+          </summary>
+          <div class="px-6 pb-5 text-sm text-slate-500 leading-relaxed border-t border-slate-200 pt-4">
+            完全可以。這裡沒有技術門檻，你只需要說清楚「現在遇到什麼問題」或「希望達到什麼效果」就夠了。規格書、流程圖這些都不需要事先準備，我們會在訪談中一起整理出來。
+          </div>
+        </details>
+
+        <details class="group bg-slate-50 border border-slate-200 rounded-2xl overflow-hidden">
+          <summary class="flex items-center justify-between px-6 py-5 cursor-pointer select-none list-none">
+            <span class="font-semibold text-slate-900 text-sm pr-4">有想法但還沒確定方向，可以先聊嗎？</span>
+            <i class="fa-solid fa-plus text-slate-400 flex-none transition-transform group-open:rotate-45"></i>
+          </summary>
+          <div class="px-6 pb-5 text-sm text-slate-500 leading-relaxed border-t border-slate-200 pt-4">
+            這正是初次訪談最適合的狀態。很多案子在第一次對話後才發現真正的需求其實跟一開始想的不一樣。帶著模糊的方向來，一起把它釐清，是我們最常做的事。初次訪談免費，沒有收費壓力。
+          </div>
+        </details>
+
+        <details class="group bg-slate-50 border border-slate-200 rounded-2xl overflow-hidden">
+          <summary class="flex items-center justify-between px-6 py-5 cursor-pointer select-none list-none">
+            <span class="font-semibold text-slate-900 text-sm pr-4">案子的規模或預算需要到多少才適合？</span>
+            <i class="fa-solid fa-plus text-slate-400 flex-none transition-transform group-open:rotate-45"></i>
+          </summary>
+          <div class="px-6 pb-5 text-sm text-slate-500 leading-relaxed border-t border-slate-200 pt-4">
+            沒有最低限制。從單一功能頁面到完整系統都有過合作案例。重點是問題本身值不值得解決，預算的合理範圍我們訪談後一起評估。如果規模確實不適合開發，我們也會直接說，不會讓你花冤枉錢。
+          </div>
+        </details>
+
+        <details class="group bg-slate-50 border border-slate-200 rounded-2xl overflow-hidden">
+          <summary class="flex items-center justify-between px-6 py-5 cursor-pointer select-none list-none">
+            <span class="font-semibold text-slate-900 text-sm pr-4">開發完成後，維護和更新怎麼計費？</span>
+            <i class="fa-solid fa-plus text-slate-400 flex-none transition-transform group-open:rotate-45"></i>
+          </summary>
+          <div class="px-6 pb-5 text-sm text-slate-500 leading-relaxed border-t border-slate-200 pt-4">
+            可以選擇簽月維護合約（固定費用），也可以每次有需求再逐次報價。上線後通常會提供一段免費的穩定期，確保你用得順、有問題能快速處理。
+          </div>
+        </details>
+
+        <details class="group bg-slate-50 border border-slate-200 rounded-2xl overflow-hidden">
+          <summary class="flex items-center justify-between px-6 py-5 cursor-pointer select-none list-none">
+            <span class="font-semibold text-slate-900 text-sm pr-4">我只想做某一部分，可以嗎？</span>
+            <i class="fa-solid fa-plus text-slate-400 flex-none transition-transform group-open:rotate-45"></i>
+          </summary>
+          <div class="px-6 pb-5 text-sm text-slate-500 leading-relaxed border-t border-slate-200 pt-4">
+            可以。不需要從頭做到尾，也不需要一次發包全部。很多客戶是先從一個功能或一個頁面開始，覺得合作順了再逐步擴展。拆分需求、分階段執行都沒問題。
+          </div>
+        </details>
+
+        <details class="group bg-slate-50 border border-slate-200 rounded-2xl overflow-hidden">
+          <summary class="flex items-center justify-between px-6 py-5 cursor-pointer select-none list-none">
+            <span class="font-semibold text-slate-900 text-sm pr-4">自動化導入一定要有 IT 基礎嗎？</span>
+            <i class="fa-solid fa-plus text-slate-400 flex-none transition-transform group-open:rotate-45"></i>
+          </summary>
+          <div class="px-6 pb-5 text-sm text-slate-500 leading-relaxed border-t border-slate-200 pt-4">
+            不需要。你只要知道「哪個環節最花時間、最容易出錯」就夠了。我們會做流程盤點，找出適合自動化的部分，並在交付時完整說明操作方式，確保你能獨立使用，不會製造新的依賴。
+          </div>
+        </details>
+
+      </div>
+
+      <div class="mt-10 text-center reveal">
+        <p class="text-sm text-slate-400 mb-4">還有其他問題嗎？直接問就好。</p>
+        <a href="#contact" class="inline-flex items-center gap-2 text-sm font-semibold text-slate-900 hover:text-blue-600 transition-colors">
+          聯絡我 <i class="fa-solid fa-arrow-right text-xs"></i>
+        </a>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════
+       CONTACT — 聯絡諮詢
+  ═══════════════════════════════════════ -->
+  <section id="contact" class="py-16 bg-slate-900 relative overflow-hidden">
+    <div class="absolute inset-0 opacity-[0.04]"
+         style="background-image: linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px); background-size: 40px 40px;"></div>
+    <div class="max-w-4xl mx-auto px-5 lg:px-8 relative z-10">
+
+      <div class="bg-white rounded-3xl p-8 md:p-12 shadow-2xl reveal">
+        <div class="grid md:grid-cols-12 gap-8 items-center">
+          <div class="md:col-span-7">
+            <span class="inline-block text-xs font-bold text-blue-600 tracking-widest uppercase mb-5">聯絡諮詢</span>
+            <h2 class="text-3xl md:text-4xl font-bold text-slate-900 leading-tight mb-4">有想法了嗎？<br>帶著問題來聊</h2>
+            <p class="text-slate-500 leading-relaxed mb-8">無論是剛有想法的初步諮詢，或是已有明確規格的開發需求，都歡迎直接聯繫。</p>
+            <div class="flex flex-col sm:flex-row gap-3">
+              <a href="https://lin.ee/6IdgZC4" target="_blank" rel="noopener noreferrer"
+                 class="inline-flex items-center justify-center gap-2 bg-line hover:bg-line-dark text-white px-7 py-3.5 rounded-full font-medium transition-all shadow-lg hover:shadow-xl">
+                <i class="fa-brands fa-line text-lg"></i>LINE 諮詢
+              </a>
+              <button id="email-modal-btn"
+                 class="inline-flex items-center justify-center gap-2 border border-slate-200 hover:border-slate-400 text-slate-700 hover:text-slate-900 px-7 py-3.5 rounded-full font-medium transition-all bg-white hover:bg-slate-50 cursor-pointer">
+                <i class="fa-regular fa-envelope text-sm"></i>Email 聯繫
+              </button>
+            </div>
+            <p class="mt-5 text-xs text-slate-400">digitalaaronl@gmail.com</p>
+          </div>
+          <div class="md:col-span-5 flex justify-center">
+            <div class="w-full max-w-[200px] rounded-2xl border border-slate-200 bg-white p-4 shadow-lg">
+              <img src="https://api.qrserver.com/v1/create-qr-code/?size=280x280&data=https%3A%2F%2Flin.ee%2F6IdgZC4"
+                   alt="Digitools Studio LINE QR Code"
+                   class="w-full h-auto rounded-xl border border-slate-100" loading="lazy" />
+              <p class="mt-2 text-xs text-center text-slate-400">掃描加入 LINE</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════
+       FOOTER
+  ═══════════════════════════════════════ -->
+  <footer class="bg-slate-900 border-t border-slate-800 text-slate-400">
+    <div class="max-w-7xl mx-auto px-5 lg:px-8 py-14">
+      <div class="grid md:grid-cols-4 gap-10 mb-10 pb-10 border-b border-slate-800">
+        <div class="md:col-span-2">
+          <div class="flex items-center space-x-3 mb-4">
+            <div class="w-8 h-8 bg-slate-700 text-white rounded-xl flex items-center justify-center font-bold text-sm">D</div>
+            <span class="font-bold text-white">Digitools Studio</span>
+          </div>
+          <p class="text-sm leading-relaxed max-w-xs mb-5">數轉工作室 — 以軟體開發為核心的接案團隊。LINE 整合、Web 應用、資料自動化，從業務需求出發，設計可用的數位解法。</p>
+          <div class="flex gap-3">
+            <a href="https://lin.ee/6IdgZC4" target="_blank" rel="noopener noreferrer"
+               class="w-9 h-9 bg-line/20 hover:bg-line text-line hover:text-white rounded-lg flex items-center justify-center transition-all">
+              <i class="fa-brands fa-line text-base"></i>
+            </a>
+            <a href="mailto:digitalaaronl@gmail.com"
+               class="w-9 h-9 bg-slate-800 hover:bg-slate-600 text-slate-400 hover:text-white rounded-lg flex items-center justify-center transition-all">
+              <i class="fa-regular fa-envelope text-sm"></i>
+            </a>
+          </div>
+        </div>
+        <div>
+          <h5 class="text-white font-semibold mb-4 text-sm">承接案型</h5>
+          <ul class="space-y-2.5 text-sm">
+            <li><a href="#scope" class="hover:text-white transition-colors">企業內部工具</a></li>
+            <li><a href="#scope" class="hover:text-white transition-colors">LINE 整合開發</a></li>
+            <li><a href="#scope" class="hover:text-white transition-colors">客製 Web 應用</a></li>
+            <li><a href="#scope" class="hover:text-white transition-colors">資料自動化</a></li>
+            <li><a href="#scope" class="hover:text-white transition-colors">客製網站頁面</a></li>
+          </ul>
+        </div>
+        <div>
+          <h5 class="text-white font-semibold mb-4 text-sm">聯絡資訊</h5>
+          <ul class="space-y-2.5 text-sm">
+            <li>digitalaaronl@gmail.com</li>
+            <li>新北市 · 個人工作室</li>
+          </ul>
+        </div>
+      </div>
+      <div class="flex flex-col md:flex-row justify-between items-center text-xs text-slate-500">
+        <p>© 2026 Digitools Studio. All rights reserved.</p>
+        <p class="mt-2 md:mt-0">LINE 整合 × 客製 Web × 資料自動化</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Floating LINE Button -->
+  <div class="fixed bottom-6 right-6 z-50 group">
+    <a href="https://lin.ee/6IdgZC4" target="_blank" rel="noopener noreferrer"
+       class="flex items-center gap-2.5 bg-line hover:bg-line-dark text-white shadow-2xl rounded-full px-5 py-3.5 transition-all duration-300 hover:scale-105"
+       title="LINE 諮詢">
+      <i class="fa-brands fa-line text-2xl"></i>
+      <span class="text-sm font-semibold hidden md:block">LINE 諮詢</span>
+    </a>
+    <div class="absolute bottom-full right-0 mb-3 hidden md:group-hover:block pointer-events-none">
+      <div class="bg-white rounded-2xl p-4 shadow-2xl border border-slate-100 w-44">
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https%3A%2F%2Flin.ee%2F6IdgZC4" alt="LINE QR Code" class="w-full rounded-xl" />
+        <p class="text-xs text-center text-slate-500 mt-2">掃描加入 LINE</p>
+      </div>
+      <div class="w-3 h-3 bg-white rotate-45 absolute -bottom-1.5 right-8 border-r border-b border-slate-100"></div>
+    </div>
   </div>
-</section>
 
-        </main>
-<br>
-<footer class="bg-gray-800 text-white">
-  <div class="py-4">
-    <p class="text-sm text-gray-300 text-center">
-      © <span id="year"></span> 數轉工作室 Digitools Studio · All rights reserved.
-    </p>
+  <!-- ═══ EMAIL CONTACT MODAL ═══ -->
+  <div id="email-modal" class="fixed inset-0 z-[200] flex items-center justify-center p-4 opacity-0 pointer-events-none" role="dialog" aria-modal="true" aria-labelledby="email-modal-title">
+    <!-- Backdrop -->
+    <div id="email-modal-backdrop" class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"></div>
+    <!-- Panel -->
+    <div id="email-modal-panel" class="relative bg-white rounded-3xl shadow-2xl w-full max-w-lg overflow-y-auto max-h-[90vh] p-8 md:p-10 transform scale-95 opacity-0">
+      <!-- Close button -->
+      <button id="email-modal-close" class="absolute top-5 right-5 w-9 h-9 flex items-center justify-center rounded-full bg-slate-100 hover:bg-slate-200 transition-colors text-slate-500" aria-label="關閉">
+        <i class="fa-solid fa-xmark text-sm"></i>
+      </button>
+      <!-- Header -->
+      <span class="inline-block text-xs font-bold text-blue-600 tracking-widest uppercase mb-4">Email 聯繫</span>
+      <h3 id="email-modal-title" class="text-2xl font-bold text-slate-900 mb-1">帶著問題來聊</h3>
+      <p class="text-sm text-slate-500 mb-7">填寫後送出，通常 1–2 個工作天內回覆。</p>
+      <!-- Form -->
+      <form id="email-form" action="https://formspree.io/f/xblyjogo" method="POST" novalidate>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+          <div>
+            <label class="text-xs font-semibold text-slate-600 block mb-1.5" for="ef-name">姓名 / 公司名稱 <span class="text-red-500">*</span></label>
+            <input id="ef-name" name="name" type="text" required autocomplete="name" placeholder="王小明 / 數轉工作室"
+              class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all placeholder-slate-300">
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-slate-600 block mb-1.5" for="ef-email">Email <span class="text-red-500">*</span></label>
+            <input id="ef-email" name="email" type="email" required autocomplete="email" placeholder="your@email.com"
+              class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all placeholder-slate-300">
+          </div>
+        </div>
+        <div class="mb-4">
+          <label class="text-xs font-semibold text-slate-600 block mb-1.5" for="ef-type">案件類型</label>
+          <select id="ef-type" name="case_type"
+            class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all bg-white">
+            <option value="">— 選擇案件方向（可不填）—</option>
+            <option>LINE OA 建置 / 功能設定</option>
+            <option>LINE LIFF 客製應用</option>
+            <option>企業內部工具開發</option>
+            <option>前後端網站客製開發</option>
+            <option>資料自動化 / N8N 流程</option>
+            <option>AI 應用開發</option>
+            <option>AI / 自動化教學顧問</option>
+            <option>其他 / 初步諮詢</option>
+          </select>
+        </div>
+        <div class="mb-6">
+          <label class="text-xs font-semibold text-slate-600 block mb-1.5" for="ef-desc">需求描述 <span class="text-red-500">*</span></label>
+          <textarea id="ef-desc" name="message" rows="4" required
+            placeholder="簡單描述你的業務情境或想解決的問題…"
+            class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none placeholder-slate-300"></textarea>
+        </div>
+        <p id="ef-error" class="text-xs text-red-500 mb-3 hidden">請填寫必填欄位（姓名、Email、需求描述）</p>
+        <button type="submit" id="ef-submit"
+          class="w-full bg-slate-900 hover:bg-blue-600 text-white py-3.5 rounded-full font-semibold text-sm transition-all shadow-lg hover:shadow-xl">
+          送出諮詢 <i class="fa-solid fa-arrow-right text-xs ml-1"></i>
+        </button>
+      </form>
+      <!-- Success state -->
+      <div id="ef-success" class="hidden text-center py-8">
+        <div class="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-4">
+          <i class="fa-solid fa-check text-2xl text-blue-600"></i>
+        </div>
+        <h4 class="text-lg font-bold text-slate-900 mb-2">訊息已送出！</h4>
+        <p class="text-sm text-slate-500 mb-5">已成功透過 Formspree 發送，<br>我們會在 1–2 個工作天內回覆你。</p>
+        <button id="ef-close-success" class="px-6 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-full text-sm font-medium transition-colors">關閉</button>
+      </div>
+    </div>
   </div>
-</footer>
-<script>
-  // 動態年份
-  (function(){ var el = document.getElementById('year'); if(el){ el.textContent = new Date().getFullYear(); }})();
-</script>
 
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const casesSection = document.getElementById('cases');
-    if (!casesSection) return;
-
-    const filterButtons = casesSection.querySelectorAll('[data-case-filter]');
-    const caseCards = casesSection.querySelectorAll('[data-case-card]');
-    const countElement = casesSection.querySelector('[data-case-count]');
-    const emptyElement = casesSection.querySelector('[data-case-empty]');
-
-    if (!filterButtons.length || !caseCards.length) return;
-
-    const setButtonStyle = (button, isActive) => {
-      if (isActive) {
-        button.classList.remove('border-slate-200', 'bg-white', 'text-slate-700');
-        button.classList.add('border-slate-900', 'bg-slate-900', 'text-white');
+  <script>
+    // Navbar scroll behavior
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 60) {
+        navbar.classList.add('glass-header', 'py-3');
+        navbar.classList.remove('py-5', 'bg-transparent');
       } else {
-        button.classList.remove('border-slate-900', 'bg-slate-900', 'text-white');
-        button.classList.add('border-slate-200', 'bg-white', 'text-slate-700');
+        navbar.classList.remove('glass-header', 'py-3');
+        navbar.classList.add('py-5', 'bg-transparent');
       }
-    };
+    });
 
-    const applyFilter = (category) => {
-      let visibleCount = 0;
+    // Mobile menu toggle
+    const mobileBtn  = document.getElementById('mobile-menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    mobileBtn.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
+    mobileMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => mobileMenu.classList.add('hidden')));
 
-      caseCards.forEach((card) => {
-        const cardCategory = card.getAttribute('data-category');
-        const isVisible = category === 'all' || cardCategory === category;
-        card.classList.toggle('hidden', !isVisible);
-        if (isVisible) visibleCount += 1;
+    // Scroll reveal
+    const revealEls = document.querySelectorAll('.reveal:not(.visible)');
+    const observer  = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }
       });
+    }, { threshold: 0.1 });
+    revealEls.forEach(el => observer.observe(el));
 
-      filterButtons.forEach((button) => {
-        const isActive = button.getAttribute('data-case-filter') === category;
-        setButtonStyle(button, isActive);
-      });
-
-      if (countElement) {
-        countElement.textContent = `顯示 ${visibleCount} / ${caseCards.length} 個案例`;
-      }
-
-      if (emptyElement) {
-        emptyElement.classList.toggle('hidden', visibleCount > 0);
-      }
-    };
-
-    filterButtons.forEach((button) => {
-      button.addEventListener('click', () => {
-        const category = button.getAttribute('data-case-filter') || 'all';
-        applyFilter(category);
+    // Portfolio filter
+    document.querySelectorAll('.portfolio-filter').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.portfolio-filter').forEach(b => b.classList.remove('active-filter'));
+        btn.classList.add('active-filter');
+        const filter = btn.dataset.filter;
+        document.querySelectorAll('#portfolio-grid .portfolio-card').forEach(card => {
+          const cat = card.dataset.cat;
+          if (filter === 'all' || cat === filter || cat === 'all-always') {
+            card.classList.remove('pf-hidden');
+          } else {
+            card.classList.add('pf-hidden');
+          }
+        });
       });
     });
 
-    applyFilter('all');
-  });
-</script>
+    // Solutions Tab
+    document.querySelectorAll('.sol-tab').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.sol-tab').forEach(b => {
+          b.classList.remove('bg-slate-900', 'text-white');
+          b.classList.add('border', 'border-slate-200', 'text-slate-600');
+        });
+        btn.classList.add('bg-slate-900', 'text-white');
+        btn.classList.remove('border', 'border-slate-200', 'text-slate-600');
+        const tab = btn.dataset.tab;
+        document.querySelectorAll('.sol-panel').forEach(p => p.classList.add('hidden'));
+        document.getElementById('sol-' + tab).classList.remove('hidden');
+      });
+    });
 
-<script>
-  // 動態年份
-  (function(){ var el = document.getElementById('year'); if(el){ el.textContent = new Date().getFullYear(); }})();
+    // ── Email contact modal ──────────────────────────────
+    const emailModal    = document.getElementById('email-modal');
+    const emailForm     = document.getElementById('email-form');
+    const efSuccess     = document.getElementById('ef-success');
+    const efError       = document.getElementById('ef-error');
 
+    function openEmailModal() {
+      emailModal.classList.add('modal-open');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeEmailModal() {
+      emailModal.classList.remove('modal-open');
+      document.body.style.overflow = '';
+      setTimeout(() => {
+        emailForm.classList.remove('hidden');
+        efSuccess.classList.add('hidden');
+        efError.classList.add('hidden');
+        emailForm.reset();
+      }, 280);
+    }
 
-    const { createApp, ref, computed, onMounted } = Vue;
+    document.getElementById('email-modal-btn').addEventListener('click', openEmailModal);
+    document.getElementById('email-modal-close').addEventListener('click', closeEmailModal);
+    document.getElementById('email-modal-backdrop').addEventListener('click', closeEmailModal);
+    document.getElementById('ef-close-success').addEventListener('click', closeEmailModal);
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeEmailModal(); });
 
-        createApp({
-            setup() {
-                // 導覽列連結資料
-                const navLinks = ref([
-                    { name: '首頁', href: '#home' },
-                    { name: '我們是誰', href: '#our-story' },
-                    { name: '轉型案例', href: '#cases' },
-                    { name: '範本', href: '#templates' },
-                    { name: '試用預覽', href: '#preview' },
-                    { name: '顧問諮詢', href: '#consultant' },
-                    { name: '聯絡我們', href: '#contact' },
-                    // 移除了「我們的解決方案」、「客製化」區塊的導覽列連結
-                ]);
-
-                // 範本資料，包含預覽圖、名稱、關鍵字以及客製化設定的初始值
-                const templates = ref([
-                    {
-                        id: 'corporate',
-                        name: '企業品牌',
-                        thumbnail: 'https://placehold.co/400x300/e0f2f7/0288d1?text=Corporate',
-                        keywords: '現代企業、專業服務、公司介紹、形象網站',
-                        config: {
-                            colors: {
-                                primary: '#1e3a8a', // Indigo 800
-                                accent: '#2563eb',  // Blue 600
-                                textDark: '#1f2937', // Gray 900
-                                textLight: '#f9fafb' // Gray 50
-                            },
-                            font: 'inter',
-                            sections: {
-                                hero: {
-                                    name: 'Hero Section', active: true,
-                                    title: '領先科技，共創未來',
-                                    text: '我們提供創新的解決方案，助力您的事業達到新高峰。',
-                                    buttonText: '了解更多',
-                                    image: 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?q=80&w=2084&auto=format&fit=crop'
-                                },
-                                about: {
-                                    name: 'About Us', active: true,
-                                    title: '關於我們',
-                                    text: 'PageCraft 致力於提供高品質的網站建置服務，幫助企業打造專業且具吸引力的線上形象。我們相信每個品牌都有其獨特的故事，而我們的使命就是透過精心的設計和創新的技術，將這些故事完美呈現。\n\n我們擁有一支充滿熱情與經驗的團隊，從概念發想到最終實施，每一個環節都力求完美。選擇 PageCraft，您不僅獲得一個網站，更是一個強大的數位品牌資產。',
-                                    image: 'https://images.unsplash.com/photo-1589998059171-ee29c2005a76?q=80&w=2070&auto=format&fit=crop',
-                                    imagePosition: 'left' // 'left' or 'right'
-                                },
-                                services: {
-                                    name: 'Our Services', active: true,
-                                    title: '我們的服務',
-                                    text: '我們提供全方位的數位解決方案。'
-                                },
-                                team: {
-                                    name: 'Our Team', active: true,
-                                    title: '專業團隊',
-                                    text: '認識我們充滿活力的團隊。'
-                                },
-                                testimonials: {
-                                    name: 'Testimonials', active: true,
-                                    title: '客戶證言',
-                                    text: '選擇 PageCraft，讓您的事業在數位時代中脫穎而出！'
-                                },
-                                footer: {
-                                    name: 'Footer', active: true,
-                                    text: '版權所有 &copy; 2025 您的公司名稱. All Rights Reserved.'
-                                }
-                            }
-                        }
-                    },
-                    {
-                        id: 'portfolio',
-                        name: '個人作品集',
-                        thumbnail: 'https://placehold.co/400x300/dcedc8/33691e?text=Portfolio',
-                        keywords: '設計師、攝影師、藝術家、個人品牌、線上履歷',
-                        config: {
-                            colors: {
-                                primary: '#33691e', // Lime 800
-                                accent: '#689f38',  // Light Green 800
-                                textDark: '#212121', // Gray 900
-                                textLight: '#f1f8e9' // Lime 50
-                            },
-                            font: 'roboto',
-                            sections: {
-                                hero: {
-                                    name: 'Hero Section', active: true,
-                                    title: '創意無限，光影交織',
-                                    text: '我是一位充滿熱情的設計師，透過視覺藝術講述故事。',
-                                    buttonText: '我的作品',
-                                    image: 'https://images.unsplash.com/photo-1499750310107-5fcd6cd6f08c?q=80&w=2070&auto=format&fit=crop'
-                                },
-                                gallery: {
-                                    name: 'Gallery', active: true,
-                                    title: '我的作品',
-                                    text: '瀏覽我最新的作品集。'
-                                },
-                                about_me: {
-                                    name: 'About Me', active: true,
-                                    title: '關於我',
-                                    text: '我從小就對視覺藝術充滿熱情。透過多年的學習和實踐，我掌握了多種設計工具和技巧，並將它們應用於各種專案中。我喜歡挑戰不同的設計風格，並相信好的設計能夠傳達強大的訊息。\n\n我的目標是創造出既美觀又實用的作品，幫助客戶實現他們的目標。期待與您合作，共同創造令人驚豔的視覺體驗。',
-                                    image: 'https://i.pravatar.cc/300?img=15'
-                                },
-                                skills: {
-                                    name: 'Skills', active: true,
-                                    title: '我的技能',
-                                    text: '以下是我擅長的領域和技能。'
-                                },
-                                footer: {
-                                    name: 'Footer', active: true,
-                                    text: '© 2025 [您的姓名]. All rights reserved.'
-                                }
-                            }
-                        }
-                    },
-                    {
-                        id: 'group_buy_ad',
-                        name: '團購廣告',
-                        thumbnail: 'https://placehold.co/400x300/ffe0b2/e65100?text=Group+Buy',
-                        keywords: '促銷、限時優惠、電子商務、商品推廣',
-                        config: {
-                            colors: {
-                                primary: '#e65100', // Orange 900
-                                accent: '#ff8f00',  // Amber 800
-                                textDark: '#212121', // Gray 900
-                                textLight: '#fff3e0' // Orange 50
-                            },
-                            font: 'noto-serif-tc',
-                            sections: {
-                                hero: {
-                                    name: 'Hero Section', active: true,
-                                    title: '【限時團購】暢銷商品，手刀搶購！',
-                                    text: '把握最後機會，超值優惠不等人！',
-                                    buttonText: '立即搶購',
-                                    image: 'https://images.unsplash.com/photo-1542831371-d13c03569766?q=80&w=2070&auto=format&fit=crop'
-                                },
-                                offer_details: {
-                                    name: 'Offer Details', active: true,
-                                    title: '商品介紹',
-                                    text: '這是一款您不容錯過的優質商品，採用最新技術打造，品質保證，深受廣大用戶喜愛。無論是送禮自用，都是您的最佳選擇。立即加入團購，享受前所未有的優惠價格！數量有限，售完為止，趕快行動吧！'
-                                },
-                                how_it_works: {
-                                    name: 'How It Works', active: true,
-                                    title: '如何參與團購',
-                                    text: '輕鬆三步驟，超值商品帶回家！'
-                                },
-                                countdown: {
-                                    name: 'Countdown', active: true,
-                                    title: '距優惠結束還有',
-                                    text: '00天00時00分00秒'
-                                },
-                                call_to_action: {
-                                    name: 'Call to Action', active: true,
-                                    title: '心動不如馬上行動！',
-                                    text: '立即點擊下方按鈕，將這份超值好物帶回家！',
-                                    buttonText: '立即購買'
-                                },
-                                footer: {
-                                    name: 'Footer', active: true,
-                                    text: '活動期間：2025/06/01 - 2025/06/30'
-                                }
-                            }
-                        }
-                    },
-                    {
-                        id: 'event',
-                        name: '活動宣傳',
-                        thumbnail: 'https://placehold.co/400x300/e3f2fd/1976d2?text=Event',
-                        keywords: '研討會、講座、演唱會、課程、報名',
-                        config: {
-                            colors: {
-                                primary: '#1976d2', // Blue 700
-                                accent: '#2196f3',  // Blue 500
-                                textDark: '#212121', // Gray 900
-                                textLight: '#e3f2fd' // Blue 50
-                            },
-                            font: 'inter',
-                            sections: {
-                                hero: {
-                                    name: 'Hero Section', active: true,
-                                    title: '2025 創新科技論壇',
-                                    text: '掌握未來趨勢，與業界精英共同探討最新科技發展。',
-                                    buttonText: '立即報名',
-                                    image: 'https://images.unsplash.com/photo-1531051056583-ad53e5e1e79b?q=80&w=2070&auto=format&fit=crop'
-                                },
-                                agenda: {
-                                    name: 'Agenda', active: true,
-                                    title: '活動議程',
-                                    text: '精彩內容不容錯過！'
-                                },
-                                speakers: {
-                                    name: 'Speakers', active: true,
-                                    title: '特邀講者',
-                                    text: '聆聽各領域頂尖專家的洞見。'
-                                },
-                                sponsors: {
-                                    name: 'Sponsors', active: true,
-                                    title: '感謝贊助商',
-                                    text: '感謝以下合作夥伴的大力支持。'
-                                },
-                                location: {
-                                    name: 'Location', active: true,
-                                    title: '活動地點',
-                                    text: '台北國際會議中心'
-                                },
-                                footer: {
-                                    name: 'Footer', active: true,
-                                    text: '聯絡我們：info@event.com | 02-1234-5678'
-                                }
-                            }
-                        }
-                    },
-                    {
-                        id: 'blog',
-                        name: '個人部落格',
-                        thumbnail: 'https://placehold.co/400x300/f3e5f5/880e4f?text=Blog',
-                        keywords: '內容創作、知識分享、個人見解、文章',
-                        config: {
-                            colors: {
-                                primary: '#880e4f', // Pink 900
-                                accent: '#e91e63',  // Pink 500
-                                textDark: '#212121', // Gray 900
-                                textLight: '#fce4ec' // Pink 50
-                            },
-                            font: 'roboto',
-                            sections: {
-                                hero: {
-                                    name: 'Hero Section', active: true,
-                                    title: '探索知識，分享生活',
-                                    text: '在這裡，我將分享我的思考、學習心得和對世界的觀察。',
-                                    buttonText: '閱讀最新文章',
-                                    image: 'https://images.unsplash.com/photo-1456324504439-d88927e57c61?q=80&w=2070&auto=format&fit=crop'
-                                },
-                                featured_post: {
-                                    name: 'Featured Post', active: true,
-                                    title: '最新精選文章',
-                                    text: '本篇文章深入探討了人工智慧在當代社會中的應用與挑戰。從機器學習到深度學習，我們將帶您了解 AI 如何改變我們的生活，以及它可能帶來的潛在風險。透過案例分析和專家觀點，希望能為您提供一個全面的視角。',
-                                    image: 'https://images.unsplash.com/photo-1620712943543-ee2f1c84b16a?q=80&w=2070&auto=format&fit=crop'
-                                },
-                                posts: {
-                                    name: 'All Posts', active: true,
-                                    title: '所有文章',
-                                    text: '瀏覽我所有發表的文章。'
-                                },
-                                about: {
-                                    name: 'About Author', active: true,
-                                    title: '關於作者',
-                                    text: '您好，我是 [您的姓名]，一位熱愛知識分享的創作者。我的部落格主要關注科技、設計和生活哲學。我希望透過文字，激發讀者的思考，並為大家帶來有價值的資訊和啟發。歡迎訂閱我的電子報，獲得第一手更新！'
-                                },
-                                subscribe: {
-                                    name: 'Subscribe', active: true,
-                                    title: '訂閱我的電子報',
-                                    text: '獲取最新文章和獨家內容！'
-                                },
-                                footer: {
-                                    name: 'Footer', active: true,
-                                    text: '聯絡我：your_email@example.com'
-                                }
-                            }
-                        }
-                    }
-                ]);
-
-                // 當前選中的範本
-                const currentTemplate = ref(templates.value[0]); // 預設選取第一個範本
-
-                // 行動版選單開關狀態
-                const isMobileMenuOpen = ref(false);
-
-                // 作品集範本的圖片陣列
-                const portfolioImages = ref([
-                    'https://images.unsplash.com/photo-1549490184-a82f342e616f?q=80&w=1887&auto=format&fit=crop',
-                    'https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=2070&auto=format&fit=crop',
-                    'https://images.unsplash.com/photo-1517694711087-abc7d6560411?q=80&w=2070&auto=format&fit=crop',
-                    'https://images.unsplash.com/photo-1521193089456-e970a00508a8?q=80&w=2070&auto=format&fit=crop',
-                    'https://images.unsplash.com/photo-1488197022204-cf648a74e50d?q=80&w=2070&auto=format&fit=crop',
-                    'https://images.unsplash.com/photo-1485827404704-61c6fe36f457?q=80&w=2070&auto=format&fit=crop'
-                ]);
-
-                // 預覽模式 ('mobile', 'tablet', 'desktop')
-                const previewMode = ref('desktop');
-
-                // 計算屬性：根據當前範本的顏色設定，產生 CSS 變數
-                const templateStyleVariables = computed(() => {
-                    const colors = currentTemplate.value.config.colors;
-                    return {
-                        '--color-primary': colors.primary,
-                        '--color-accent': colors.accent,
-                        '--color-text-dark': colors.textDark,
-                        '--color-text-light': colors.textLight,
-                    };
-                });
-
-                // 計算屬性：根據區塊的 active 狀態，只顯示活躍的區塊
-                const visibleSections = computed(() => {
-                    const sections = {};
-                    if (currentTemplate.value.config && currentTemplate.value.config.sections) {
-                        for (const key in currentTemplate.value.config.sections) {
-                            if (currentTemplate.value.config.sections[key].active) {
-                                sections[key] = currentTemplate.value.config.sections[key];
-                            }
-                        }
-                    }
-                    return sections;
-                });
-
-                // 移除了常見問題資料
-                // 移除了指引步驟資料
-
-                // 在組件掛載後初始化滾動淡入動畫
-                onMounted(() => {
-                    const fadeInElements = document.querySelectorAll('.scroll-fade-in');
-
-                    const observer = new IntersectionObserver((entries) => {
-                        entries.forEach(entry => {
-                            if (entry.isIntersecting) {
-                                entry.target.classList.add('is-visible');
-                                observer.unobserve(entry.target); // 一旦可見，就停止觀察
-                            }
-                        });
-                    }, {
-                        threshold: 0.1 // 當元素 10% 可見時觸發
-                    });
-
-                    fadeInElements.forEach(element => {
-                        observer.observe(element);
-                    });
-                });
-
-                return {
-                    navLinks,
-                    templates,
-                    currentTemplate,
-                    isMobileMenuOpen,
-                    previewMode,
-                    portfolioImages,
-                    templateStyleVariables,
-                    visibleSections,
-                };
-            }
-        }).mount('#app');
-
-</script>
+    emailForm.addEventListener('submit', async e => {
+      e.preventDefault();
+      const name  = document.getElementById('ef-name').value.trim();
+      const email = document.getElementById('ef-email').value.trim();
+      const type  = document.getElementById('ef-type').value;
+      const desc  = document.getElementById('ef-desc').value.trim();
+      if (!name || !email || !desc) {
+        efError.textContent = '請填寫必填欄位（姓名、Email、需求描述）';
+        efError.classList.remove('hidden');
+        return;
+      }
+      efError.classList.add('hidden');
+      const submitBtn = document.getElementById('ef-submit');
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '送出中…';
+      try {
+        const res = await fetch('https://formspree.io/f/xblyjogo', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+          body: JSON.stringify({ name, email, case_type: type || '未指定', message: desc })
+        });
+        if (res.ok) {
+          emailForm.classList.add('hidden');
+          efSuccess.classList.remove('hidden');
+        } else {
+          efError.textContent = '送出失敗，請稍後再試，或直接透過 LINE 聯繫。';
+          efError.classList.remove('hidden');
+        }
+      } catch {
+        efError.textContent = '網路錯誤，請稍後再試。';
+        efError.classList.remove('hidden');
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '送出諮詢 <i class="fa-solid fa-arrow-right text-xs ml-1"></i>';
+      }
+    });
+  </script>
 </body>
 </html>

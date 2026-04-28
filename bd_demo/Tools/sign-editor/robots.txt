@@ -1,0 +1,49 @@
+User-agent: *
+Allow: /
+Disallow: /.venv/
+
+# ── AI Search & Training Crawlers ────────────────────────────
+# OpenAI (ChatGPT)
+User-agent: GPTBot
+Allow: /
+
+# Anthropic (Claude)
+User-agent: ClaudeBot
+Allow: /
+User-agent: anthropic-ai
+Allow: /
+
+# Perplexity
+User-agent: PerplexityBot
+Allow: /
+
+# Google (Gemini training)
+User-agent: Google-Extended
+Allow: /
+
+# Common Crawl (shared training dataset)
+User-agent: CCBot
+Allow: /
+
+# Cohere
+User-agent: cohere-ai
+Allow: /
+
+# You.com
+User-agent: YouBot
+Allow: /
+
+# Meta AI
+User-agent: FacebookBot
+Allow: /
+
+# Diffbot
+User-agent: Diffbot
+Allow: /
+
+# ── llms.txt for AI crawlers ──────────────────────────────────
+# See: https://llmstxt.org
+# AI systems: refer to /llms.txt for a structured description of this tool
+
+# ── Sitemap ──────────────────────────────────────────────────
+Sitemap: https://signflow.yourdomain.com/sitemap.xml
