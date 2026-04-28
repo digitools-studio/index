@@ -69,6 +69,51 @@
     #email-modal.modal-open #email-modal-panel { transform: scale(1) !important; opacity: 1 !important; }
     /* FAQ accordion icon */
     details[open] summary .fa-plus { transform: rotate(45deg); }
+    /* ── Mobile & Touch UX ───────────────────────────── */
+    /* Remove iOS tap highlight flash */
+    * { -webkit-tap-highlight-color: transparent; }
+    /* Eliminate 300 ms tap delay */
+    a, button, summary { touch-action: manipulation; }
+    /* Active-state feedback for touch devices (no :hover on touch) */
+    @media (hover: none) {
+      .portfolio-card:active { filter: brightness(1.12); transform: scale(0.98); }
+      .portfolio-filter:active, .sol-tab:active { opacity: 0.72; transform: scale(0.97); }
+    }
+    /* Prevent iOS Safari auto-zoom on form focus */
+    @media (max-width: 639px) {
+      input, textarea, select { font-size: 16px !important; }
+    }
+    /* Mobile menu slide-down animation */
+    #mobile-menu {
+      transform-origin: top center;
+      transition: opacity 0.22s ease, transform 0.22s cubic-bezier(0.16,1,0.3,1), visibility 0s linear 0.22s;
+      opacity: 0;
+      transform: translateY(-8px) scaleY(0.96);
+      visibility: hidden;
+    }
+    #mobile-menu.menu-open {
+      opacity: 1;
+      transform: translateY(0) scaleY(1);
+      visibility: visible;
+      transition: opacity 0.22s ease, transform 0.22s cubic-bezier(0.16,1,0.3,1);
+    }
+    /* Flow diagram mobile scroll hint */
+    .flow-scroll-hint {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      font-size: 11px;
+      color: #94a3b8;
+      padding: 0 28px 14px;
+    }
+    @media (max-width: 639px) { .flow-scroll-hint { display: flex; } }
+    /* Back-to-top button */
+    #back-to-top {
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+    #back-to-top.btt-hidden  { opacity: 0; transform: translateY(8px); pointer-events: none; }
+    #back-to-top.btt-visible { opacity: 1; transform: translateY(0);   pointer-events: auto; }
   </style>
 </head>
 <body class="bg-white text-slate-800 antialiased">
@@ -103,7 +148,7 @@
       </div>
     </div>
     <!-- Mobile menu -->
-    <div id="mobile-menu" class="hidden absolute top-full left-0 w-full bg-white/97 backdrop-blur-md shadow-lg border-t border-slate-100 py-4 px-5 flex flex-col space-y-1">
+    <div id="mobile-menu" class="absolute top-full left-0 w-full bg-white/97 backdrop-blur-md shadow-lg border-t border-slate-100 py-4 px-5 flex flex-col space-y-1">
       <a href="#capabilities" class="text-sm font-medium text-slate-700 hover:text-slate-900 py-3 border-b border-slate-100">服務能力</a>
       <a href="#scope"        class="text-sm font-medium text-slate-700 hover:text-slate-900 py-3 border-b border-slate-100">承接案型</a>
       <a href="#portfolio"    class="text-sm font-medium text-slate-700 hover:text-slate-900 py-3 border-b border-slate-100">作品集</a>
@@ -132,11 +177,11 @@
           開放案件洽詢 &nbsp;·&nbsp; 新北市工作室
         </div>
         <!-- H1 -->
-        <h1 class="reveal visible text-5xl lg:text-7xl font-black text-slate-900 leading-[1.1] tracking-tight mb-8">
+        <h1 class="reveal visible text-4xl sm:text-5xl lg:text-7xl font-black text-slate-900 leading-[1.1] tracking-tight mb-8">
           把業務需求，<br>轉化成<span class="text-blue-600">可用的數位工具</span>
         </h1>
         <!-- Sub -->
-        <p class="reveal visible delay-100 text-xl text-slate-500 leading-relaxed mb-10 max-w-2xl">
+        <p class="reveal visible delay-100 text-base sm:text-xl text-slate-500 leading-relaxed mb-10 max-w-2xl">
           數轉工作室是以軟體開發為核心的接案團隊。從 LINE 生態整合、客製 Web 應用到資料自動化，我們從你的業務問題出發，設計並建立真正可用的數位解法。
         </p>
         <!-- Tech stack pills -->
@@ -150,10 +195,10 @@
         </div>
         <!-- CTAs -->
         <div class="reveal visible delay-300 flex flex-col sm:flex-row gap-4">
-          <a href="#scope"   class="inline-flex items-center justify-center gap-2 bg-slate-900 hover:bg-blue-600 text-white px-8 py-4 rounded-full font-semibold text-base transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+          <a href="#scope"   class="inline-flex items-center justify-center gap-2 bg-slate-900 hover:bg-blue-600 text-white w-full sm:w-auto px-6 py-3.5 sm:px-8 sm:py-4 rounded-full font-semibold text-base transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
             了解承接案型
           </a>
-          <a href="#contact" class="inline-flex items-center justify-center gap-2 border border-slate-200 hover:border-slate-400 text-slate-700 hover:text-slate-900 px-8 py-4 rounded-full font-semibold text-base transition-all bg-white hover:bg-slate-50">
+          <a href="#contact" class="inline-flex items-center justify-center gap-2 border border-slate-200 hover:border-slate-400 text-slate-700 hover:text-slate-900 w-full sm:w-auto px-6 py-3.5 sm:px-8 sm:py-4 rounded-full font-semibold text-base transition-all bg-white hover:bg-slate-50">
             直接諮詢 <i class="fa-solid fa-arrow-right text-sm"></i>
           </a>
         </div>
@@ -167,15 +212,15 @@
   <section class="bg-slate-50 border-y border-slate-100">
     <div class="max-w-7xl mx-auto px-5 lg:px-8">
       <div class="grid md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-slate-200">
-        <div class="px-8 py-10 reveal">
+        <div class="px-5 py-7 sm:px-8 sm:py-10 reveal">
           <p class="text-sm font-bold text-slate-900 mb-2">直接溝通，沒有中間層</p>
           <p class="text-sm text-slate-500 leading-relaxed">與技術本人對話，需求確認準確，不靠業務轉達，有效避免規格誤差與溝通成本。</p>
         </div>
-        <div class="px-8 py-10 reveal delay-100">
+        <div class="px-5 py-7 sm:px-8 sm:py-10 reveal delay-100">
           <p class="text-sm font-bold text-slate-900 mb-2">彈性規模，依需求報價</p>
           <p class="text-sm text-slate-500 leading-relaxed">不預設服務包，依實際功能範疇評估。一個小工具到完整系統都能討論，不強迫一步到位。</p>
         </div>
-        <div class="px-8 py-10 reveal delay-200">
+        <div class="px-5 py-7 sm:px-8 sm:py-10 reveal delay-200">
           <p class="text-sm font-bold text-slate-900 mb-2">技術導向，不只是執行</p>
           <p class="text-sm text-slate-500 leading-relaxed">從業務目標倒推技術架構，提供可落地的建議，而不只是完成規格書上的功能清單。</p>
         </div>
@@ -188,12 +233,12 @@
   ═══════════════════════════════════════ -->
   <section id="capabilities" class="py-16 bg-white">
     <div class="max-w-7xl mx-auto px-5 lg:px-8">
-      <div class="grid lg:grid-cols-2 gap-20 items-start">
+      <div class="grid lg:grid-cols-2 gap-10 lg:gap-20 items-start">
 
         <!-- Left: three capability descriptions -->
         <div class="reveal">
           <span class="inline-block text-xs font-bold text-blue-600 tracking-widest uppercase mb-5">服務能力</span>
-          <h2 class="text-4xl lg:text-5xl font-black text-slate-900 mb-6 leading-tight">三個核心方向，<br>覆蓋大多數數位需求</h2>
+          <h2 class="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 mb-6 leading-tight">三個核心方向，<br>覆蓋大多數數位需求</h2>
           <p class="text-lg text-slate-500 leading-relaxed mb-10">
             不是每個問題都需要最複雜的解法。我們的專長在於找到適合你規模與預算的技術路徑，快速驗證、穩定交付。
           </p>
@@ -275,7 +320,7 @@
 
       <div class="max-w-2xl mx-auto text-center mb-10 reveal">
         <span class="inline-block text-xs font-bold text-blue-600 tracking-widest uppercase mb-4">承接案型</span>
-        <h2 class="text-4xl lg:text-5xl font-black text-slate-900 mb-5">你帶著問題來，<br>我們一起找解法</h2>
+        <h2 class="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 mb-5">你帶著問題來，<br>我們一起找解法</h2>
         <p class="text-lg text-slate-500 leading-relaxed">以下是數轉工作室常見的承接方向，每種案型都有對應的技術路徑與交付形式。不確定你的需求落在哪裡？直接聊就對了。</p>
       </div>
 
@@ -375,7 +420,7 @@
       <div class="flex flex-col md:flex-row md:items-end justify-between mb-10 reveal">
         <div>
           <span class="inline-block text-xs font-bold text-blue-400 tracking-widest uppercase mb-5">作品集</span>
-          <h2 class="text-4xl lg:text-5xl font-black text-white mb-3">作品參考</h2>
+          <h2 class="text-3xl sm:text-4xl lg:text-5xl font-black text-white mb-3">作品參考</h2>
           <p class="text-lg text-slate-400 max-w-xl">每個作品都是真實可運作的成果，點擊可直接體驗。部分案例因保密協議不公開展示。</p>
         </div>
         <p class="text-sm text-slate-600 mt-6 md:mt-0 md:pb-2 md:text-right">持續更新中</p>
@@ -583,6 +628,7 @@
               </div>
             </div>
             <div class="px-7 py-6 overflow-x-auto">
+              <p class="sm:hidden text-xs text-center text-slate-400 pb-3 opacity-70">← 左右滑動查看完整流程 →</p>
               <div class="flex items-start gap-0 min-w-max">
                 <div class="flex flex-col items-center">
                   <div class="text-[9px] font-bold text-blue-600 mb-2 uppercase tracking-wider">觸發</div>
@@ -646,6 +692,7 @@
               </div>
             </div>
             <div class="px-7 py-6 overflow-x-auto">
+              <p class="sm:hidden text-xs text-center text-slate-400 pb-3 opacity-70">← 左右滑動查看完整流程 →</p>
               <div class="flex items-start gap-0 min-w-max">
                 <div class="flex flex-col items-center">
                   <div class="text-[9px] font-bold text-blue-600 mb-2 uppercase tracking-wider">觸發</div>
@@ -676,6 +723,7 @@
                 </div>
               </div>
             </div>
+            <p class="flow-scroll-hint"><i class="fa-solid fa-left-right text-[10px] opacity-60 mr-1"></i>左右滑動查看完整流程</p>
           </div>
 
           <!-- ── Flow 03: SEO / AEO 分析報告 ── -->
@@ -696,6 +744,7 @@
               </div>
             </div>
             <div class="px-7 py-6 overflow-x-auto">
+              <p class="sm:hidden text-xs text-center text-slate-400 pb-3 opacity-70">← 左右滑動查看完整流程 →</p>
               <div class="flex items-start gap-0 min-w-max">
                 <div class="flex flex-col items-center">
                   <div class="text-[9px] font-bold text-blue-600 mb-2 uppercase tracking-wider">輸入</div>
@@ -740,6 +789,7 @@
                 </div>
               </div>
             </div>
+            <p class="flow-scroll-hint"><i class="fa-solid fa-left-right text-[10px] opacity-60 mr-1"></i>左右滑動查看完整流程</p>
           </div>
 
         </div>
@@ -826,7 +876,7 @@
 
       <div class="max-w-xl mx-auto text-center mb-14 reveal">
         <span class="inline-block text-xs font-bold text-blue-600 tracking-widest uppercase mb-4">合作流程</span>
-        <h2 class="text-4xl lg:text-5xl font-black text-slate-900 mb-4">從想法到上線</h2>
+        <h2 class="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 mb-4">從想法到上線</h2>
         <p class="text-slate-500">每個階段都有明確交付物，你在每個節點都清楚知道進展到哪裡。</p>
       </div>
 
@@ -910,14 +960,14 @@
 
       <div class="max-w-xl mb-12 reveal">
         <span class="inline-block text-xs font-bold text-blue-600 tracking-widest uppercase mb-4">客戶見證</span>
-        <h2 class="text-4xl lg:text-5xl font-black text-slate-900 mb-4">他們怎麼說</h2>
+        <h2 class="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 mb-4">他們怎麼說</h2>
         <p class="text-slate-500">真實合作後的回饋，不加工。</p>
       </div>
 
       <div class="grid md:grid-cols-2 gap-6">
 
         <!-- 婚禮邀請函 -->
-        <div class="reveal bg-white rounded-3xl p-8 border border-slate-100 shadow-sm flex flex-col">
+        <div class="reveal bg-white rounded-3xl p-6 md:p-8 border border-slate-100 shadow-sm flex flex-col">
           <div class="flex items-center gap-1 mb-6">
             <i class="fa-solid fa-star text-amber-400 text-xs"></i>
             <i class="fa-solid fa-star text-amber-400 text-xs"></i>
@@ -943,7 +993,7 @@
         </div>
 
         <!-- CTSS -->
-        <div class="reveal delay-100 bg-white rounded-3xl p-8 border border-slate-100 shadow-sm flex flex-col">
+        <div class="reveal delay-100 bg-white rounded-3xl p-6 md:p-8 border border-slate-100 shadow-sm flex flex-col">
           <div class="flex items-center gap-1 mb-6">
             <i class="fa-solid fa-star text-amber-400 text-xs"></i>
             <i class="fa-solid fa-star text-amber-400 text-xs"></i>
@@ -1084,7 +1134,7 @@
             </div>
             <p class="mt-5 text-xs text-slate-400">digitalaaronl@gmail.com</p>
           </div>
-          <div class="md:col-span-5 flex justify-center">
+          <div class="md:col-span-5 hidden md:flex justify-center">
             <div class="w-full max-w-[200px] rounded-2xl border border-slate-200 bg-white p-4 shadow-lg">
               <img src="https://api.qrserver.com/v1/create-qr-code/?size=280x280&data=https%3A%2F%2Flin.ee%2F6IdgZC4"
                    alt="Digitools Studio LINE QR Code"
@@ -1145,6 +1195,11 @@
     </div>
   </footer>
 
+  <!-- Back to top button -->
+  <button id="back-to-top" aria-label="回到頂端" class="btt-hidden fixed bottom-[5.5rem] right-6 z-40 w-10 h-10 bg-white border border-slate-200 rounded-full shadow-md flex items-center justify-center text-slate-500 hover:text-slate-900 hover:border-slate-400 hover:shadow-lg transition-all">
+    <i class="fa-solid fa-chevron-up text-xs"></i>
+  </button>
+
   <!-- Floating LINE Button -->
   <div class="fixed bottom-6 right-6 z-50 group">
     <a href="https://lin.ee/6IdgZC4" target="_blank" rel="noopener noreferrer"
@@ -1167,7 +1222,7 @@
     <!-- Backdrop -->
     <div id="email-modal-backdrop" class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"></div>
     <!-- Panel -->
-    <div id="email-modal-panel" class="relative bg-white rounded-3xl shadow-2xl w-full max-w-lg overflow-y-auto max-h-[90vh] p-8 md:p-10 transform scale-95 opacity-0">
+    <div id="email-modal-panel" class="relative bg-white rounded-3xl shadow-2xl w-full max-w-lg overflow-y-auto max-h-[90vh] p-5 sm:p-8 md:p-10 transform scale-95 opacity-0">
       <!-- Close button -->
       <button id="email-modal-close" class="absolute top-5 right-5 w-9 h-9 flex items-center justify-center rounded-full bg-slate-100 hover:bg-slate-200 transition-colors text-slate-500" aria-label="關閉">
         <i class="fa-solid fa-xmark text-sm"></i>
@@ -1242,11 +1297,22 @@
       }
     });
 
-    // Mobile menu toggle
+    // Mobile menu toggle (slide animation + icon swap)
     const mobileBtn  = document.getElementById('mobile-menu-btn');
     const mobileMenu = document.getElementById('mobile-menu');
-    mobileBtn.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
-    mobileMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => mobileMenu.classList.add('hidden')));
+    function closeMobileMenu() {
+      mobileMenu.classList.remove('menu-open');
+      mobileBtn.querySelector('i').className = 'fa-solid fa-bars text-lg';
+    }
+    mobileBtn.addEventListener('click', () => {
+      if (mobileMenu.classList.contains('menu-open')) {
+        closeMobileMenu();
+      } else {
+        mobileMenu.classList.add('menu-open');
+        mobileBtn.querySelector('i').className = 'fa-solid fa-xmark text-lg';
+      }
+    });
+    mobileMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', closeMobileMenu));
 
     // Scroll reveal
     const revealEls = document.querySelectorAll('.reveal:not(.visible)');
@@ -1351,6 +1417,21 @@
         submitBtn.disabled = false;
         submitBtn.innerHTML = '送出諮詢 <i class="fa-solid fa-arrow-right text-xs ml-1"></i>';
       }
+    });
+
+    // Back to top
+    var bttBtn = document.getElementById('back-to-top');
+    window.addEventListener('scroll', function() {
+      if (window.scrollY > 500) {
+        bttBtn.classList.remove('btt-hidden');
+        bttBtn.classList.add('btt-visible');
+      } else {
+        bttBtn.classList.add('btt-hidden');
+        bttBtn.classList.remove('btt-visible');
+      }
+    }, { passive: true });
+    bttBtn.addEventListener('click', function() {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     });
   </script>
 </body>
