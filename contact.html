@@ -226,7 +226,8 @@
             <h2 class="text-2xl font-bold text-slate-900 mb-2">快速諮詢表單</h2>
             <p class="text-slate-500 mb-8">填寫以下資訊，我們會在 24 小時內回覆你。</p>
 
-            <form action="https://formspree.io/f/xblyjogo" method="POST" class="space-y-5">
+            <form id="contact-form" action="https://formspree.io/f/xblyjogo" method="POST" class="space-y-5">
+              <input type="hidden" name="_next" value="https://digitools-studio.github.io/contact.html?submitted=1" />
               <!-- Name & Company -->
               <div class="grid md:grid-cols-2 gap-5">
                 <div>

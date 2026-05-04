@@ -287,195 +287,50 @@
   </section>
 
   <!-- ═══════════════════════════════════════
-       SERVICES — 三大服務方向 + 9 張服務卡
+       SERVICES — 首頁摘要（避免與服務頁重複）
   ═══════════════════════════════════════ -->
   <section id="services" class="py-20 bg-slate-50 border-t border-slate-100">
     <div class="max-w-7xl mx-auto px-5 lg:px-8">
-
-      <div class="text-center mb-16 reveal">
-        <span class="inline-block text-xs font-bold text-blue-600 tracking-widest uppercase mb-4">服務內容</span>
-        <h2 class="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 mb-4">三大核心服務，<br>覆蓋大多數數位需求</h2>
-        <p class="text-lg text-slate-500 max-w-2xl mx-auto">不是每個問題都需要最複雜的解法。我們的專長在於找到適合你規模與預算的技術路徑，快速驗證、穩定交付。</p>
+      <div class="text-center mb-14 reveal">
+        <span class="inline-block text-xs font-bold text-blue-600 tracking-widest uppercase mb-4">服務摘要</span>
+        <h2 class="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 mb-4">先看方向，再進一步談方案</h2>
+        <p class="text-lg text-slate-500 max-w-3xl mx-auto">首頁只放重點摘要；完整交付範圍、合作方式、收費結構與方案比較，都集中在服務頁。</p>
       </div>
 
-      <!-- ── LINE 生態整合 ── -->
-      <div class="mb-14">
-        <div class="flex items-center gap-3 mb-6 reveal">
-          <div class="w-10 h-10 bg-line-light border border-green-200 rounded-xl flex items-center justify-center flex-none">
-            <i class="fa-brands fa-line text-line text-lg"></i>
+      <div class="grid md:grid-cols-3 gap-6">
+        <a href="services.html#line" class="reveal bg-white rounded-2xl p-7 border border-slate-200 hover:border-green-300 hover:shadow-md transition-all duration-300 group">
+          <div class="w-12 h-12 bg-line-light border border-green-200 rounded-xl flex items-center justify-center mb-4">
+            <i class="fa-brands fa-line text-line text-xl"></i>
           </div>
-          <div>
-            <h3 class="text-xl font-bold text-slate-900">LINE 生態整合</h3>
-            <p class="text-sm text-slate-400">以 LINE 作為數位服務核心入口，全面升級你的會員與服務體驗</p>
-          </div>
-          <a href="services.html#line" class="ml-auto text-xs font-semibold text-green-700 hover:text-green-800 flex items-center gap-1 flex-none hidden md:flex">
-            查看詳情 <i class="fa-solid fa-arrow-right text-[10px]"></i>
-          </a>
-        </div>
-        <div class="grid md:grid-cols-3 gap-5">
-          <div class="reveal bg-white rounded-2xl p-6 border border-slate-100 hover:border-green-200 hover:shadow-md transition-all duration-300">
-            <div class="w-11 h-11 bg-line-light rounded-xl flex items-center justify-center mb-4">
-              <i class="fa-solid fa-comments text-line text-lg"></i>
-            </div>
-            <h4 class="font-bold text-slate-900 mb-2">LINE OA 建置</h4>
-            <p class="text-sm text-slate-500 leading-relaxed mb-4">從零申請到品牌視覺設定，圖文選單、歡迎流程、標籤分眾、群發策略，完整 LINE 官方帳號一條龍。</p>
-            <ul class="space-y-1.5 mb-4">
-              <li class="flex items-start gap-2 text-xs text-slate-400"><span class="text-green-500 flex-none mt-0.5">✓</span>品牌圖文選單設計</li>
-              <li class="flex items-start gap-2 text-xs text-slate-400"><span class="text-green-500 flex-none mt-0.5">✓</span>自動回覆 & 歡迎流程設定</li>
-              <li class="flex items-start gap-2 text-xs text-slate-400"><span class="text-green-500 flex-none mt-0.5">✓</span>標籤分眾策略規劃</li>
-            </ul>
-            <span class="inline-block text-xs font-medium text-green-700 bg-line-light px-3 py-1 rounded-full">LINE OA · 導入顧問</span>
-          </div>
-          <div class="reveal delay-100 bg-white rounded-2xl p-6 border border-slate-100 hover:border-green-200 hover:shadow-md transition-all duration-300">
-            <div class="w-11 h-11 bg-line-light rounded-xl flex items-center justify-center mb-4">
-              <i class="fa-solid fa-robot text-line text-lg"></i>
-            </div>
-            <h4 class="font-bold text-slate-900 mb-2">Messaging API 串接</h4>
-            <p class="text-sm text-slate-500 leading-relaxed mb-4">進階 Bot 開發，Webhook 事件處理，推播訊息自動化，讓 LINE 成為業務流程的自動化執行端。</p>
-            <ul class="space-y-1.5 mb-4">
-              <li class="flex items-start gap-2 text-xs text-slate-400"><span class="text-green-500 flex-none mt-0.5">✓</span>智能自動回覆機器人</li>
-              <li class="flex items-start gap-2 text-xs text-slate-400"><span class="text-green-500 flex-none mt-0.5">✓</span>條件式推播與群組通知</li>
-              <li class="flex items-start gap-2 text-xs text-slate-400"><span class="text-green-500 flex-none mt-0.5">✓</span>系統整合 Webhook</li>
-            </ul>
-            <span class="inline-block text-xs font-medium text-green-700 bg-line-light px-3 py-1 rounded-full">Messaging API · Bot 開發</span>
-          </div>
-          <div class="reveal delay-200 bg-white rounded-2xl p-6 border border-slate-100 hover:border-green-200 hover:shadow-md transition-all duration-300">
-            <div class="w-11 h-11 bg-line-light rounded-xl flex items-center justify-center mb-4">
-              <i class="fa-solid fa-mobile-screen text-line text-lg"></i>
-            </div>
-            <h4 class="font-bold text-slate-900 mb-2">LIFF 客製應用</h4>
-            <p class="text-sm text-slate-500 leading-relaxed mb-4">在 LINE 內嵌入預約、報名、點數查詢、抽獎等互動功能，無需另外下載 App，體驗流暢。</p>
-            <ul class="space-y-1.5 mb-4">
-              <li class="flex items-start gap-2 text-xs text-slate-400"><span class="text-green-500 flex-none mt-0.5">✓</span>預約 / 報名 / 抽獎等互動功能</li>
-              <li class="flex items-start gap-2 text-xs text-slate-400"><span class="text-green-500 flex-none mt-0.5">✓</span>LINE Login 用戶識別</li>
-              <li class="flex items-start gap-2 text-xs text-slate-400"><span class="text-green-500 flex-none mt-0.5">✓</span>後台資料串接整合</li>
-            </ul>
-            <span class="inline-block text-xs font-medium text-green-700 bg-line-light px-3 py-1 rounded-full">LIFF · Vue.js</span>
-          </div>
-        </div>
-      </div>
+          <h3 class="font-bold text-slate-900 text-lg mb-3 group-hover:text-green-700 transition-colors">LINE 生態整合</h3>
+          <p class="text-sm text-slate-500 leading-relaxed mb-4">LINE OA、Messaging API、LIFF 客製應用，打造可運營、可追蹤的 LINE 服務流程。</p>
+          <span class="inline-flex items-center gap-1.5 text-xs font-semibold text-green-700">查看完整內容 <i class="fa-solid fa-arrow-right text-[10px]"></i></span>
+        </a>
 
-      <!-- ── 客製 Web 應用開發 ── -->
-      <div class="mb-14">
-        <div class="flex items-center gap-3 mb-6 reveal">
-          <div class="w-10 h-10 bg-blue-50 border border-blue-200 rounded-xl flex items-center justify-center flex-none">
-            <i class="fa-solid fa-globe text-blue-600 text-lg"></i>
+        <a href="services.html#web" class="reveal delay-100 bg-white rounded-2xl p-7 border border-slate-200 hover:border-blue-300 hover:shadow-md transition-all duration-300 group">
+          <div class="w-12 h-12 bg-blue-50 border border-blue-200 rounded-xl flex items-center justify-center mb-4">
+            <i class="fa-solid fa-globe text-blue-600 text-xl"></i>
           </div>
-          <div>
-            <h3 class="text-xl font-bold text-slate-900">客製 Web 應用開發</h3>
-            <p class="text-sm text-slate-400">後台系統、互動工具、企業官網，跨裝置響應式設計，快速部署上線</p>
-          </div>
-          <a href="services.html#web" class="ml-auto text-xs font-semibold text-blue-600 hover:text-blue-700 flex items-center gap-1 flex-none hidden md:flex">
-            查看詳情 <i class="fa-solid fa-arrow-right text-[10px]"></i>
-          </a>
-        </div>
-        <div class="grid md:grid-cols-3 gap-5">
-          <div class="reveal bg-white rounded-2xl p-6 border border-slate-100 hover:border-blue-200 hover:shadow-md transition-all duration-300">
-            <div class="w-11 h-11 bg-blue-50 rounded-xl flex items-center justify-center mb-4">
-              <i class="fa-solid fa-table-columns text-blue-600 text-lg"></i>
-            </div>
-            <h4 class="font-bold text-slate-900 mb-2">企業內部工具</h4>
-            <p class="text-sm text-slate-500 leading-relaxed mb-4">訂單管理、員工流程審核、業務追蹤——替換 Excel 與紙本，建立可協作的網頁化管理介面。</p>
-            <ul class="space-y-1.5 mb-4">
-              <li class="flex items-start gap-2 text-xs text-slate-400"><span class="text-blue-500 flex-none mt-0.5">✓</span>後台管理介面開發</li>
-              <li class="flex items-start gap-2 text-xs text-slate-400"><span class="text-blue-500 flex-none mt-0.5">✓</span>Google Sheets 資料串接</li>
-              <li class="flex items-start gap-2 text-xs text-slate-400"><span class="text-blue-500 flex-none mt-0.5">✓</span>多人協作與權限設計</li>
-            </ul>
-            <span class="inline-block text-xs font-medium text-blue-700 bg-blue-50 px-3 py-1 rounded-full">Web App · GAS 整合</span>
-          </div>
-          <div class="reveal delay-100 bg-white rounded-2xl p-6 border border-slate-100 hover:border-blue-200 hover:shadow-md transition-all duration-300">
-            <div class="w-11 h-11 bg-blue-50 rounded-xl flex items-center justify-center mb-4">
-              <i class="fa-solid fa-chart-bar text-blue-600 text-lg"></i>
-            </div>
-            <h4 class="font-bold text-slate-900 mb-2">數據儀表板</h4>
-            <p class="text-sm text-slate-500 leading-relaxed mb-4">整合多來源數據，自動更新的視覺化報表儀表板，讓決策依據一目瞭然，不再手動整理。</p>
-            <ul class="space-y-1.5 mb-4">
-              <li class="flex items-start gap-2 text-xs text-slate-400"><span class="text-blue-500 flex-none mt-0.5">✓</span>多來源資料自動整合</li>
-              <li class="flex items-start gap-2 text-xs text-slate-400"><span class="text-blue-500 flex-none mt-0.5">✓</span>視覺化圖表呈現</li>
-              <li class="flex items-start gap-2 text-xs text-slate-400"><span class="text-blue-500 flex-none mt-0.5">✓</span>定時自動更新</li>
-            </ul>
-            <span class="inline-block text-xs font-medium text-blue-700 bg-blue-50 px-3 py-1 rounded-full">Dashboard · GA4 · Sheets</span>
-          </div>
-          <div class="reveal delay-200 bg-white rounded-2xl p-6 border border-slate-100 hover:border-blue-200 hover:shadow-md transition-all duration-300">
-            <div class="w-11 h-11 bg-blue-50 rounded-xl flex items-center justify-center mb-4">
-              <i class="fa-solid fa-display text-blue-600 text-lg"></i>
-            </div>
-            <h4 class="font-bold text-slate-900 mb-2">響應式網站</h4>
-            <p class="text-sm text-slate-500 leading-relaxed mb-4">企業官網、活動行銷頁、個人品牌網站——高完成度視覺設計，強調行動呼籲與用戶體驗。</p>
-            <ul class="space-y-1.5 mb-4">
-              <li class="flex items-start gap-2 text-xs text-slate-400"><span class="text-blue-500 flex-none mt-0.5">✓</span>全裝置響應式設計</li>
-              <li class="flex items-start gap-2 text-xs text-slate-400"><span class="text-blue-500 flex-none mt-0.5">✓</span>SEO 友善架構</li>
-              <li class="flex items-start gap-2 text-xs text-slate-400"><span class="text-blue-500 flex-none mt-0.5">✓</span>快速部署 GitHub Pages / Vercel</li>
-            </ul>
-            <span class="inline-block text-xs font-medium text-blue-700 bg-blue-50 px-3 py-1 rounded-full">Landing Page · 品牌網站</span>
-          </div>
-        </div>
-      </div>
+          <h3 class="font-bold text-slate-900 text-lg mb-3 group-hover:text-blue-700 transition-colors">客製 Web 開發</h3>
+          <p class="text-sm text-slate-500 leading-relaxed mb-4">企業內部工具、品牌官網、數據儀表板，聚焦業務效率與轉換設計。</p>
+          <span class="inline-flex items-center gap-1.5 text-xs font-semibold text-blue-700">查看完整內容 <i class="fa-solid fa-arrow-right text-[10px]"></i></span>
+        </a>
 
-      <!-- ── 資料與流程自動化 ── -->
-      <div class="mb-10">
-        <div class="flex items-center gap-3 mb-6 reveal">
-          <div class="w-10 h-10 bg-purple-50 border border-purple-200 rounded-xl flex items-center justify-center flex-none">
-            <i class="fa-solid fa-gears text-purple-600 text-lg"></i>
+        <a href="services.html#automation" class="reveal delay-200 bg-white rounded-2xl p-7 border border-slate-200 hover:border-purple-300 hover:shadow-md transition-all duration-300 group">
+          <div class="w-12 h-12 bg-purple-50 border border-purple-200 rounded-xl flex items-center justify-center mb-4">
+            <i class="fa-solid fa-gears text-purple-600 text-xl"></i>
           </div>
-          <div>
-            <h3 class="text-xl font-bold text-slate-900">資料與流程自動化</h3>
-            <p class="text-sm text-slate-400">從流程盤點到自動化導入，讓重複性工作交給程式處理，人力專注高價值任務</p>
-          </div>
-          <a href="services.html#automation" class="ml-auto text-xs font-semibold text-purple-600 hover:text-purple-700 flex items-center gap-1 flex-none hidden md:flex">
-            查看詳情 <i class="fa-solid fa-arrow-right text-[10px]"></i>
-          </a>
-        </div>
-        <div class="grid md:grid-cols-3 gap-5">
-          <div class="reveal bg-white rounded-2xl p-6 border border-slate-100 hover:border-purple-200 hover:shadow-md transition-all duration-300">
-            <div class="w-11 h-11 bg-purple-50 rounded-xl flex items-center justify-center mb-4">
-              <i class="fa-solid fa-spider text-purple-600 text-lg"></i>
-            </div>
-            <h4 class="font-bold text-slate-900 mb-2">爬蟲整合</h4>
-            <p class="text-sm text-slate-500 leading-relaxed mb-4">競品監控、多平台數據同步、自動報表生成——把重複性資料蒐集工作交給排程腳本自動執行。</p>
-            <ul class="space-y-1.5 mb-4">
-              <li class="flex items-start gap-2 text-xs text-slate-400"><span class="text-purple-500 flex-none mt-0.5">✓</span>定時競品價格監控</li>
-              <li class="flex items-start gap-2 text-xs text-slate-400"><span class="text-purple-500 flex-none mt-0.5">✓</span>多平台資料聚合</li>
-              <li class="flex items-start gap-2 text-xs text-slate-400"><span class="text-purple-500 flex-none mt-0.5">✓</span>LINE 異常推播通知</li>
-            </ul>
-            <span class="inline-block text-xs font-medium text-purple-700 bg-purple-50 px-3 py-1 rounded-full">Python · Selenium · 排程</span>
-          </div>
-          <div class="reveal delay-100 bg-white rounded-2xl p-6 border border-slate-100 hover:border-purple-200 hover:shadow-md transition-all duration-300">
-            <div class="w-11 h-11 bg-purple-50 rounded-xl flex items-center justify-center mb-4">
-              <i class="fa-solid fa-diagram-project text-purple-600 text-lg"></i>
-            </div>
-            <h4 class="font-bold text-slate-900 mb-2">N8N 流程編排</h4>
-            <p class="text-sm text-slate-500 leading-relaxed mb-4">以視覺化節點設計多步驟自動化流程，串接各大服務 API，彈性高、維護容易。</p>
-            <ul class="space-y-1.5 mb-4">
-              <li class="flex items-start gap-2 text-xs text-slate-400"><span class="text-purple-500 flex-none mt-0.5">✓</span>多服務 API 無縫串接</li>
-              <li class="flex items-start gap-2 text-xs text-slate-400"><span class="text-purple-500 flex-none mt-0.5">✓</span>觸發式自動執行流程</li>
-              <li class="flex items-start gap-2 text-xs text-slate-400"><span class="text-purple-500 flex-none mt-0.5">✓</span>條件分支與錯誤處理</li>
-            </ul>
-            <span class="inline-block text-xs font-medium text-purple-700 bg-purple-50 px-3 py-1 rounded-full">N8N · AI 整合</span>
-          </div>
-          <div class="reveal delay-200 bg-white rounded-2xl p-6 border border-slate-100 hover:border-purple-200 hover:shadow-md transition-all duration-300">
-            <div class="w-11 h-11 bg-purple-50 rounded-xl flex items-center justify-center mb-4">
-              <i class="fa-solid fa-file-invoice text-purple-600 text-lg"></i>
-            </div>
-            <h4 class="font-bold text-slate-900 mb-2">自動報表系統</h4>
-            <p class="text-sm text-slate-500 leading-relaxed mb-4">Google Sheets Dashboard 自動更新、GA4 事件追蹤架構、定時報表生成並推播給指定對象。</p>
-            <ul class="space-y-1.5 mb-4">
-              <li class="flex items-start gap-2 text-xs text-slate-400"><span class="text-purple-500 flex-none mt-0.5">✓</span>GA4 事件追蹤規劃</li>
-              <li class="flex items-start gap-2 text-xs text-slate-400"><span class="text-purple-500 flex-none mt-0.5">✓</span>Sheets 自動更新儀表板</li>
-              <li class="flex items-start gap-2 text-xs text-slate-400"><span class="text-purple-500 flex-none mt-0.5">✓</span>定時報表 EMAIL / LINE 推播</li>
-            </ul>
-            <span class="inline-block text-xs font-medium text-purple-700 bg-purple-50 px-3 py-1 rounded-full">GA4 · GAS · 自動報表</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- CTA -->
-      <div class="reveal text-center mt-6">
-        <a href="services.html" class="inline-flex items-center gap-2 border border-slate-300 hover:border-slate-500 text-slate-700 hover:text-slate-900 px-7 py-3 rounded-full text-sm font-semibold transition-all bg-white hover:bg-slate-50">
-          查看完整服務說明 <i class="fa-solid fa-arrow-right text-xs"></i>
+          <h3 class="font-bold text-slate-900 text-lg mb-3 group-hover:text-purple-700 transition-colors">資料與流程自動化</h3>
+          <p class="text-sm text-slate-500 leading-relaxed mb-4">爬蟲整合、N8N 編排、自動報表，減少人工作業並建立可持續的營運節奏。</p>
+          <span class="inline-flex items-center gap-1.5 text-xs font-semibold text-purple-700">查看完整內容 <i class="fa-solid fa-arrow-right text-[10px]"></i></span>
         </a>
       </div>
 
+      <div class="reveal text-center mt-10">
+        <a href="services.html" class="inline-flex items-center gap-2 border border-slate-300 hover:border-slate-500 text-slate-700 hover:text-slate-900 px-7 py-3 rounded-full text-sm font-semibold transition-all bg-white hover:bg-slate-50">
+          查看合作方式與收費結構 <i class="fa-solid fa-arrow-right text-xs"></i>
+        </a>
+      </div>
     </div>
   </section>
 

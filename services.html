@@ -230,7 +230,7 @@
     <div class="max-w-7xl mx-auto px-5 lg:px-8">
 
       <!-- LINE 生態整合 -->
-      <div class="mb-20">
+      <div id="line" class="mb-20 scroll-mt-28">
         <div class="reveal mb-12">
           <span class="inline-block text-xs font-bold text-green-600 tracking-widest uppercase mb-4">服務一</span>
           <h2 class="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 mb-4 leading-tight">LINE 生態整合</h2>
@@ -282,7 +282,7 @@
       </div>
 
       <!-- 客製 Web 應用 -->
-      <div class="mb-20">
+      <div id="web" class="mb-20 scroll-mt-28">
         <div class="reveal mb-12">
           <span class="inline-block text-xs font-bold text-blue-600 tracking-widest uppercase mb-4">服務二</span>
           <h2 class="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 mb-4 leading-tight">客製 Web 應用開發</h2>
@@ -326,7 +326,7 @@
             <p class="text-sm text-slate-500 leading-relaxed">桌面、平板、手機完美適配，提供一致的使用體驗。</p>
             <ul class="mt-4 space-y-1.5 text-xs text-slate-500">
               <li><span class="text-blue-600">✓</span> 行動優先設計</li>
-              <li><span class="text-blue-606">✓</span> SEO 友善結構</li>
+              <li><span class="text-blue-600">✓</span> SEO 友善結構</li>
               <li><span class="text-blue-600">✓</span> 快速載入效能</li>
             </ul>
           </div>
@@ -334,7 +334,7 @@
       </div>
 
       <!-- 資料與流程自動化 -->
-      <div>
+      <div id="automation" class="scroll-mt-28">
         <div class="reveal mb-12">
           <span class="inline-block text-xs font-bold text-purple-600 tracking-widest uppercase mb-4">服務三</span>
           <h2 class="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 mb-4 leading-tight">資料與流程自動化</h2>
@@ -366,7 +366,7 @@
             <ul class="mt-4 space-y-1.5 text-xs text-slate-500">
               <li><span class="text-purple-600">✓</span> 應用連接與整合</li>
               <li><span class="text-purple-600">✓</span> 複雜流程設計</li>
-              <li><span class="text-purple-600">✓</span> 錯誤処理與通知</li>
+              <li><span class="text-purple-600">✓</span> 錯誤處理與通知</li>
             </ul>
           </div>
 
@@ -379,12 +379,139 @@
             <ul class="mt-4 space-y-1.5 text-xs text-slate-500">
               <li><span class="text-purple-600">✓</span> 定時自動生成</li>
               <li><span class="text-purple-600">✓</span> 多格式匯出</li>
-              <li><span class="text-purple-606">✓</span> EMAIL/LINE 自動分發</li>
+              <li><span class="text-purple-600">✓</span> EMAIL/LINE 自動分發</li>
             </ul>
           </div>
         </div>
       </div>
 
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════
+       COOPERATION & PRICING
+  ═══════════════════════════════════════ -->
+  <section id="cooperation-pricing" class="py-16 bg-white border-b border-slate-100 scroll-mt-28">
+    <div class="max-w-7xl mx-auto px-5 lg:px-8">
+      <div class="reveal text-center mb-12">
+        <span class="inline-block text-xs font-bold text-blue-600 tracking-widest uppercase mb-4">合作方式與收費結構</span>
+        <h2 class="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 mb-4">你會怎麼合作、怎麼付費，一次說清楚</h2>
+        <p class="text-lg text-slate-500 max-w-3xl mx-auto">我們用可預期、可拆分的方式合作。你可以先從小範圍試作，再逐步擴充，不必一次承擔全部成本。</p>
+      </div>
+
+      <div class="grid lg:grid-cols-2 gap-8 mb-10">
+        <div class="reveal bg-slate-50 rounded-2xl border border-slate-200 p-7">
+          <h3 class="text-xl font-bold text-slate-900 mb-5">合作流程</h3>
+          <ol class="space-y-4 text-sm text-slate-600">
+            <li><strong class="text-slate-900">1. 需求釐清（免費）</strong><br>30-45 分鐘訪談，確認目標、範圍、關鍵限制。</li>
+            <li><strong class="text-slate-900">2. 方案與估價</strong><br>提供技術路徑、時程、交付物與報價區間。</li>
+            <li><strong class="text-slate-900">3. 分階段開發</strong><br>每個里程碑可驗收，避免一次性風險。</li>
+            <li><strong class="text-slate-900">4. 上線與維運</strong><br>交付文件、操作說明與後續維護選項。</li>
+          </ol>
+        </div>
+
+        <div class="reveal delay-100 bg-slate-50 rounded-2xl border border-slate-200 p-7">
+          <h3 class="text-xl font-bold text-slate-900 mb-5">收費結構</h3>
+          <div class="space-y-4 text-sm text-slate-600">
+            <div class="rounded-xl bg-white border border-slate-200 p-4">
+              <p class="font-semibold text-slate-900 mb-1">專案型（固定範圍）</p>
+              <p>適合需求明確的功能開發。以里程碑分期付款，通常為 40% / 40% / 20%。</p>
+            </div>
+            <div class="rounded-xl bg-white border border-slate-200 p-4">
+              <p class="font-semibold text-slate-900 mb-1">顧問型（按月）</p>
+              <p>適合持續優化與多專案協作。每月固定時數，超出時數依約加購。</p>
+            </div>
+            <div class="rounded-xl bg-white border border-slate-200 p-4">
+              <p class="font-semibold text-slate-900 mb-1">維運型（上線後）</p>
+              <p>依系統規模提供月維護或次數計費，含監控、修復、版本調整。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="reveal bg-blue-50 border border-blue-200 rounded-2xl p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <p class="text-sm text-blue-900 leading-relaxed">報價透明原則：先定義交付物，再定價格。若需求變更，先評估影響再執行，避免隱性成本。</p>
+        <a href="contact.html" class="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full text-sm font-semibold bg-slate-900 text-white hover:bg-blue-600 transition-all flex-none">預約需求訪談</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════
+       PLAN COMPARISON & FAQ
+  ═══════════════════════════════════════ -->
+  <section id="plans-faq" class="py-16 bg-slate-50 border-b border-slate-100 scroll-mt-28">
+    <div class="max-w-7xl mx-auto px-5 lg:px-8">
+      <div class="reveal text-center mb-12">
+        <span class="inline-block text-xs font-bold text-purple-600 tracking-widest uppercase mb-4">方案比較</span>
+        <h2 class="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 mb-4">你現在最適合哪種合作型態？</h2>
+        <p class="text-lg text-slate-500 max-w-3xl mx-auto">以下為常見合作級距，實際內容可依你的目標調整。</p>
+      </div>
+
+      <div class="reveal overflow-x-auto rounded-2xl border border-slate-200 bg-white mb-10">
+        <table class="w-full min-w-[760px] text-sm">
+          <thead class="bg-slate-50 border-b border-slate-200">
+            <tr>
+              <th class="text-left text-slate-900 font-bold px-6 py-4">方案</th>
+              <th class="text-left text-slate-900 font-bold px-6 py-4">適合對象</th>
+              <th class="text-left text-slate-900 font-bold px-6 py-4">交付內容</th>
+              <th class="text-left text-slate-900 font-bold px-6 py-4">時程</th>
+              <th class="text-left text-slate-900 font-bold px-6 py-4">價格區間</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100 text-slate-600">
+            <tr>
+              <td class="px-6 py-4 font-semibold text-slate-900">Lite</td>
+              <td class="px-6 py-4">先驗證可行性的中小需求</td>
+              <td class="px-6 py-4">單一核心功能、基本串接、上線指引</td>
+              <td class="px-6 py-4">2-4 週</td>
+              <td class="px-6 py-4">NT$ 35,000 起</td>
+            </tr>
+            <tr>
+              <td class="px-6 py-4 font-semibold text-slate-900">Standard</td>
+              <td class="px-6 py-4">要完整可用、可維運系統</td>
+              <td class="px-6 py-4">多模組開發、流程自動化、報表追蹤</td>
+              <td class="px-6 py-4">4-8 週</td>
+              <td class="px-6 py-4">NT$ 80,000 起</td>
+            </tr>
+            <tr>
+              <td class="px-6 py-4 font-semibold text-slate-900">Pro</td>
+              <td class="px-6 py-4">跨部門、長期擴充型專案</td>
+              <td class="px-6 py-4">客製架構、權限設計、維運與顧問</td>
+              <td class="px-6 py-4">8 週以上</td>
+              <td class="px-6 py-4">NT$ 180,000 起</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="grid lg:grid-cols-2 gap-8 items-start">
+        <div class="reveal bg-white rounded-2xl border border-slate-200 p-7">
+          <h3 class="text-xl font-bold text-slate-900 mb-5">常見疑慮 FAQ</h3>
+          <div class="space-y-3 text-sm">
+            <details class="group border border-slate-200 rounded-xl px-4 py-3">
+              <summary class="font-semibold text-slate-800 cursor-pointer">可以先做一小段試行嗎？</summary>
+              <p class="text-slate-600 mt-2">可以。多數客戶先從 Lite 或 MVP 功能開始，再按成果擴充。</p>
+            </details>
+            <details class="group border border-slate-200 rounded-xl px-4 py-3">
+              <summary class="font-semibold text-slate-800 cursor-pointer">報價後還能調整範圍嗎？</summary>
+              <p class="text-slate-600 mt-2">可以。會先做變更影響評估，再確認新的時程與費用。</p>
+            </details>
+            <details class="group border border-slate-200 rounded-xl px-4 py-3">
+              <summary class="font-semibold text-slate-800 cursor-pointer">上線後的維護怎麼算？</summary>
+              <p class="text-slate-600 mt-2">可選月維護合約或次數制，會依系統複雜度提供建議。</p>
+            </details>
+          </div>
+        </div>
+
+        <div class="reveal delay-100 bg-white rounded-2xl border border-slate-200 p-7">
+          <h3 class="text-xl font-bold text-slate-900 mb-4">想先拿到精準估價？</h3>
+          <p class="text-sm text-slate-600 leading-relaxed mb-6">提供你的目標、目前流程與預算區間，我們會回覆可執行方案與估時估價。初次訪談免費。</p>
+          <div class="space-y-3">
+            <a href="contact.html" class="inline-flex w-full items-center justify-center gap-2 bg-slate-900 hover:bg-blue-600 text-white px-6 py-3.5 rounded-full text-sm font-semibold transition-all">填寫需求表單</a>
+            <a href="https://lin.ee/6IdgZC4" target="_blank" rel="noopener noreferrer" class="inline-flex w-full items-center justify-center gap-2 border border-green-300 text-green-700 hover:bg-green-50 px-6 py-3.5 rounded-full text-sm font-semibold transition-all">LINE 立即討論</a>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 

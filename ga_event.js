@@ -1,7 +1,7 @@
 // =============================================================
 // ga_event.js — Digitools Studio (site-wide)
 // 自訂事件識別前綴：ds_  (Digitools Studio)
-// 版本：3.0  |  2026-05
+// 版本：3.1  |  2026-05
 //
 // 目標：
 // 1) 保留既有事件名稱，確保 GA4 歷史報表可延續
@@ -23,6 +23,9 @@
 
   onReady(function () {
     var DS_HOST_ALLOWLIST = ['digitools-studio.github.io', 'localhost', '127.0.0.1'];
+    var PATHNAME = (window.location.pathname || '').toLowerCase();
+    var IS_SERVICES_PAGE = PATHNAME.indexOf('services.html') !== -1;
+    var IS_CONTACT_PAGE = PATHNAME.indexOf('contact.html') !== -1;
     var SCROLL_DEPTHS = [25, 50, 75, 90];
     var scrollTracked = {};
     var maxScrollDepth = 0;
@@ -371,6 +374,53 @@
       });
     });
 
+    // KPI-A: 服務頁 -> 聯絡頁 CTR
+    if (IS_SERVICES_PAGE) {
+      delegate('click', 'a[href="contact.html"], a[href="./contact.html"], a[href="/contact.html"], a[href*="/contact.html"]', function (event, link) {
+        var sourceEl = link.closest('[id]');
+        track('ds_services_to_contact_click', {
+          source_section: sourceEl ? sourceEl.id : 'services_page',
+          link_text: safeText(link.textContent, 80),
+          link_href: link.getAttribute('href') || ''
+        });
+      });
+    }
+
+    // KPI-B: 聯絡表單完成率（start -> submit -> success）
+    if (IS_CONTACT_PAGE) {
+      var contactForm = document.getElementById('contact-form');
+      var contactFormStarted = false;
+
+      if (contactForm) {
+        contactForm.addEventListener('input', function () {
+          if (contactFormStarted) return;
+          contactFormStarted = true;
+          track('ds_contact_form_start', {
+            form_id: 'contact-form'
+          });
+        }, { passive: true });
+
+        contactForm.addEventListener('submit', function () {
+          var serviceEl = document.getElementById('service');
+          track('ds_contact_form_submit', {
+            form_id: 'contact-form',
+            service_type: serviceEl ? (serviceEl.value || '未指定') : '未指定'
+          });
+        });
+      }
+
+      var params = new URLSearchParams(window.location.search);
+      if (params.get('submitted') === '1') {
+        track('ds_contact_form_success', {
+          form_id: 'contact-form'
+        });
+
+        params.delete('submitted');
+        var next = window.location.pathname + (params.toString() ? ('?' + params.toString()) : '') + window.location.hash;
+        window.history.replaceState({}, document.title, next);
+      }
+    }
+
     // 20 頁面離開：停留時間 + 最深滾動深度
     function trackPageExit() {
       if (exitTracked) return;
@@ -393,6 +443,14 @@
         duration_seconds: durationSec,
         max_scroll_depth_pct: depth
       });
+
+      // KPI-C: 服務頁平均停留時間
+      if (IS_SERVICES_PAGE) {
+        track('ds_services_page_exit', {
+          duration_seconds: durationSec,
+          max_scroll_depth_pct: depth
+        });
+      }
     }
 
     document.addEventListener('visibilitychange', function () {
@@ -427,7 +485,7 @@
 
     window.DSAnalytics = {
       track: track,
-      version: '3.0'
+      version: '3.1'
     };
   });
 })();
