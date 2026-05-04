@@ -3,7 +3,7 @@ window.APP_CONFIG = {
 
   // 填入你的 email，表單送出後會透過 mailto: 開啟郵件用戶端以收到諮詢需求
   // 若留空則僅保存至本機 localStorage（可在瀏覽器開發者工具 > Application > Local Storage 查閱）
-  inquiryEmail: "",
+  inquiryEmail: "digitalaaronl@gmail.com",
 
   firebase: {
     // 完成 Firebase 設定後，改成 true 即可啟用 Google 登入
