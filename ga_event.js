@@ -1,395 +1,433 @@
 // =============================================================
-// ga_event.js — Digitools Studio (index.html)
+// ga_event.js — Digitools Studio (site-wide)
 // 自訂事件識別前綴：ds_  (Digitools Studio)
-// 版本：2.0  |  2026-04
+// 版本：3.0  |  2026-05
 //
-// 涵蓋追蹤點：
-//  01  Section 進入視口
-//  02  滾動深度（25 / 50 / 75 / 90 %）
-//  03  Nav 連結點擊
-//  04  Header「諮詢案件」CTA
-//  05  Hero CTA 點擊
-//  06  Mobile Menu 開關
-//  07  作品集 Filter 切換
-//  08  作品集 Card 點擊
-//  09  Solutions Tab 切換
-//  10  各區塊「諮詢/預約」CTA 點擊
-//  11  FAQ Accordion 展開
-//  12  LINE CTA 點擊
-//  13  Email Modal 開啟／關閉
-//  14  Email Form 提交嘗試
-//  15  Email Form 驗證錯誤 / 伺服器錯誤（MutationObserver）
-//  16  Email Form 成功送出（MutationObserver）
-//  17  客戶見證「查看作品」連結點擊
-//  18  外部連結點擊（outbound）
-//  19  Footer 社群連結點擊
-//  20  頁面離開時停留時間
+// 目標：
+// 1) 保留既有事件名稱，確保 GA4 歷史報表可延續
+// 2) 改用事件委派，降低監聽器數量
+// 3) 全站通用（首頁、服務、部落格、聯絡頁、文章頁）
+// 4) 增加可擴充 data-ga-event 宣告式追蹤
 // =============================================================
 
-window.addEventListener('DOMContentLoaded', function () {
+(function () {
+  'use strict';
 
-  // ── 0. 安全 gtag 包裝（確保 gtag 已定義才呼叫）─────────────
-  function track(eventName, params) {
-    if (typeof gtag === 'function') {
-      gtag('event', eventName, params || {});
+  function onReady(fn) {
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', fn);
+      return;
     }
+    fn();
   }
 
+  onReady(function () {
+    var DS_HOST_ALLOWLIST = ['digitools-studio.github.io', 'localhost', '127.0.0.1'];
+    var SCROLL_DEPTHS = [25, 50, 75, 90];
+    var scrollTracked = {};
+    var maxScrollDepth = 0;
+    var exitTracked = false;
+    var pageStartTime = Date.now();
 
-  // ────────────────────────────────────────────────────────────
-  // 01  Section 進入視口追蹤
-  // ────────────────────────────────────────────────────────────
-  var sectionMap = {
-    'capabilities': '服務能力',
-    'scope':        '承接案型',
-    'portfolio':    '作品集',
-    'solutions':    '解決方案',
-    'process':      '合作流程',
-    'testimonials': '客戶見證',
-    'faq':          '常見問題',
-    'contact':      '聯絡諮詢'
-  };
+    function safeText(value, maxLen) {
+      var text = (value || '').toString().trim();
+      if (!maxLen || text.length <= maxLen) return text;
+      return text.substring(0, maxLen);
+    }
 
-  var sectionObserver = new IntersectionObserver(function (entries) {
-    entries.forEach(function (entry) {
-      if (entry.isIntersecting) {
-        var id = entry.target.id;
-        track('ds_section_view', {
-          section_id:   id,
-          section_name: sectionMap[id] || id
+    function parseUrl(rawUrl) {
+      try {
+        return new URL(rawUrl, window.location.href);
+      } catch (e) {
+        return null;
+      }
+    }
+
+    function isInternalUrl(rawUrl) {
+      var parsed = parseUrl(rawUrl);
+      if (!parsed) return true;
+      if (parsed.protocol === 'mailto:' || parsed.protocol === 'tel:') return true;
+      if (DS_HOST_ALLOWLIST.indexOf(parsed.hostname) !== -1) return true;
+      return parsed.hostname === window.location.hostname;
+    }
+
+    function track(eventName, params) {
+      if (!eventName) return;
+      if (typeof window.gtag !== 'function') return;
+
+      var payload = Object.assign({}, params || {}, {
+        page_path: window.location.pathname,
+        page_title: document.title
+      });
+
+      window.gtag('event', eventName, payload);
+    }
+
+    function delegate(eventType, selector, handler, options) {
+      document.addEventListener(eventType, function (event) {
+        var target = event.target.closest(selector);
+        if (!target) return;
+        handler(event, target);
+      }, options || false);
+    }
+
+    function getLinkMeta(linkEl) {
+      var href = linkEl.getAttribute('href') || '';
+      var parsed = parseUrl(href);
+      return {
+        href: href,
+        text: safeText(linkEl.textContent || linkEl.title || '', 100),
+        domain: parsed ? parsed.hostname : '',
+        isExternal: parsed ? !isInternalUrl(href) : false
+      };
+    }
+
+    // 01 Section 進入視口追蹤
+    var sectionMap = {
+      capabilities: '服務能力',
+      scope: '承接案型',
+      portfolio: '作品集',
+      solutions: '解決方案',
+      process: '合作流程',
+      testimonials: '客戶見證',
+      faq: '常見問題',
+      contact: '聯絡諮詢'
+    };
+
+    if (typeof window.IntersectionObserver === 'function') {
+      var sectionObserver = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (!entry.isIntersecting) return;
+          var id = entry.target.id;
+          track('ds_section_view', {
+            section_id: id,
+            section_name: sectionMap[id] || id
+          });
+          sectionObserver.unobserve(entry.target);
         });
-        sectionObserver.unobserve(entry.target);
-      }
-    });
-  }, { threshold: 0.2 });
+      }, { threshold: 0.2 });
 
-  Object.keys(sectionMap).forEach(function (id) {
-    var el = document.getElementById(id);
-    if (el) sectionObserver.observe(el);
-  });
+      Object.keys(sectionMap).forEach(function (id) {
+        var el = document.getElementById(id);
+        if (el) sectionObserver.observe(el);
+      });
+    }
 
+    // 02 滾動深度追蹤（效能優化：rAF + passive）
+    var scrollRafId = null;
+    function handleScrollDepth() {
+      scrollRafId = null;
+      var scrollable = document.documentElement.scrollHeight - window.innerHeight;
+      if (scrollable <= 0) return;
+      var pct = Math.round((window.scrollY / scrollable) * 100);
+      if (pct > maxScrollDepth) maxScrollDepth = pct;
 
-  // ────────────────────────────────────────────────────────────
-  // 02  滾動深度追蹤（25 / 50 / 75 / 90 %）
-  // ────────────────────────────────────────────────────────────
-  var scrollDepths  = [25, 50, 75, 90];
-  var scrollTracked = {};
+      SCROLL_DEPTHS.forEach(function (depth) {
+        if (!scrollTracked[depth] && pct >= depth) {
+          scrollTracked[depth] = true;
+          track('ds_scroll_depth', { depth_percent: depth });
+        }
+      });
+    }
 
-  window.addEventListener('scroll', function () {
-    var scrollable = document.documentElement.scrollHeight - window.innerHeight;
-    if (scrollable <= 0) return;
-    var pct = Math.round((window.scrollY / scrollable) * 100);
-    scrollDepths.forEach(function (depth) {
-      if (!scrollTracked[depth] && pct >= depth) {
-        track('ds_scroll_depth', { depth_percent: depth });
-        scrollTracked[depth] = true;
-      }
-    });
-  }, { passive: true });
+    window.addEventListener('scroll', function () {
+      if (scrollRafId !== null) return;
+      scrollRafId = window.requestAnimationFrame(handleScrollDepth);
+    }, { passive: true });
 
-
-  // ────────────────────────────────────────────────────────────
-  // 03  Nav 連結點擊
-  // ────────────────────────────────────────────────────────────
-  document.querySelectorAll('header nav a, #mobile-menu a').forEach(function (link) {
-    link.addEventListener('click', function () {
+    // 03 Nav 連結點擊
+    delegate('click', 'header nav a, #mobile-menu a', function (event, link) {
+      var linkMeta = getLinkMeta(link);
       track('ds_nav_click', {
-        link_text: link.textContent.trim(),
-        link_href: link.getAttribute('href') || ''
+        link_text: linkMeta.text,
+        link_href: linkMeta.href
       });
     });
-  });
 
-
-  // ────────────────────────────────────────────────────────────
-  // 04  Header「諮詢案件」CTA
-  // ────────────────────────────────────────────────────────────
-  document.querySelectorAll('header a[href="#contact"]').forEach(function (btn) {
-    btn.addEventListener('click', function () {
+    // 04 Header「諮詢案件」CTA
+    delegate('click', 'header a[href="#contact"], header a[href="contact.html"], header a[href="../contact.html"]', function (event, btn) {
       track('ds_cta_click', {
-        cta_label:    btn.textContent.trim(),
+        cta_label: safeText(btn.textContent, 80),
         cta_location: 'header'
       });
     });
-  });
 
-
-  // ────────────────────────────────────────────────────────────
-  // 05  Hero CTA 點擊
-  // ────────────────────────────────────────────────────────────
-  var heroSection = document.querySelector('section.pt-28');
-  if (heroSection) {
-    heroSection.querySelectorAll('a').forEach(function (btn) {
-      btn.addEventListener('click', function () {
+    // 05 Hero CTA 點擊
+    var heroSection = document.querySelector('section.pt-28, section[data-hero], main section:first-of-type');
+    if (heroSection) {
+      heroSection.addEventListener('click', function (event) {
+        var btn = event.target.closest('a');
+        if (!btn) return;
         track('ds_hero_cta_click', {
-          cta_label: btn.textContent.trim(),
-          cta_href:  btn.getAttribute('href') || ''
+          cta_label: safeText(btn.textContent, 80),
+          cta_href: btn.getAttribute('href') || ''
         });
       });
-    });
-  }
+    }
 
+    // 06 Mobile Menu 開關
+    var mobileMenuBtn = document.getElementById('mobile-menu-btn');
+    var mobileMenu = document.getElementById('mobile-menu');
+    if (mobileMenuBtn && mobileMenu) {
+      mobileMenuBtn.addEventListener('click', function () {
+        var expanded = mobileMenuBtn.getAttribute('aria-expanded');
+        var isOpen;
 
-  // ────────────────────────────────────────────────────────────
-  // 06  Mobile Menu 開關
-  // ────────────────────────────────────────────────────────────
-  var mobileMenuBtn = document.getElementById('mobile-menu-btn');
-  var mobileMenu    = document.getElementById('mobile-menu');
-  if (mobileMenuBtn && mobileMenu) {
-    mobileMenuBtn.addEventListener('click', function () {
-      var isCurrentlyHidden = mobileMenu.classList.contains('hidden');
-      track('ds_mobile_menu_toggle', {
-        action: isCurrentlyHidden ? 'open' : 'close'
+        if (expanded === 'true' || expanded === 'false') {
+          isOpen = expanded === 'true';
+        } else if (mobileMenu.classList.contains('menu-open')) {
+          isOpen = true;
+        } else {
+          isOpen = !mobileMenu.classList.contains('hidden');
+        }
+
+        track('ds_mobile_menu_toggle', {
+          action: isOpen ? 'close' : 'open'
+        });
       });
-    });
-  }
+    }
 
-
-  // ────────────────────────────────────────────────────────────
-  // 07  作品集 Filter 按鈕點擊
-  // ────────────────────────────────────────────────────────────
-  document.querySelectorAll('.portfolio-filter').forEach(function (btn) {
-    btn.addEventListener('click', function () {
+    // 07 作品集 Filter 按鈕點擊
+    delegate('click', '.portfolio-filter', function (event, btn) {
       track('ds_portfolio_filter_click', {
-        filter_value: btn.dataset.filter,
-        filter_label: btn.textContent.trim()
+        filter_value: btn.dataset.filter || '',
+        filter_label: safeText(btn.textContent, 80)
       });
     });
-  });
 
+    // 08 作品集 Card 點擊
+    delegate('click', '.portfolio-card', function (event, card) {
+      var titleEl = card.querySelector('h3');
+      var href = card.tagName === 'A' ? (card.getAttribute('href') || '') : '';
 
-  // ────────────────────────────────────────────────────────────
-  // 08  作品集 Card 點擊
-  // ────────────────────────────────────────────────────────────
-  document.querySelectorAll('.portfolio-card').forEach(function (card) {
-    card.addEventListener('click', function () {
-      var titleEl    = card.querySelector('h3');
-      var title      = titleEl ? titleEl.textContent.trim() : '';
-      var category   = card.dataset.cat || '';
-      var href       = card.tagName === 'A' ? (card.getAttribute('href') || '') : '';
-      var isExternal = href.indexOf('http') === 0;
       track('ds_portfolio_card_click', {
-        card_title:    title,
-        card_category: category,
-        card_url:      href,
-        is_external:   isExternal
+        card_title: titleEl ? safeText(titleEl.textContent, 120) : '',
+        card_category: card.dataset.cat || '',
+        card_url: href,
+        is_external: href ? !isInternalUrl(href) : false
       });
     });
-  });
 
-
-  // ────────────────────────────────────────────────────────────
-  // 09  Solutions Tab 切換
-  // ────────────────────────────────────────────────────────────
-  document.querySelectorAll('.sol-tab').forEach(function (btn) {
-    btn.addEventListener('click', function () {
+    // 09 Solutions Tab 切換
+    delegate('click', '.sol-tab', function (event, btn) {
       track('ds_solutions_tab_switch', {
-        tab_value: btn.dataset.tab,
-        tab_label: btn.textContent.trim()
+        tab_value: btn.dataset.tab || '',
+        tab_label: safeText(btn.textContent, 80)
       });
     });
-  });
 
+    // 10 各區塊「諮詢 / 預約」CTA 點擊
+    ['scope', 'solutions', 'process', 'faq'].forEach(function (sectionId) {
+      var section = document.getElementById(sectionId);
+      if (!section) return;
 
-  // ────────────────────────────────────────────────────────────
-  // 10  各區塊「諮詢 / 預約」CTA 點擊
-  // ────────────────────────────────────────────────────────────
-  ['scope', 'solutions', 'process', 'faq'].forEach(function (sectionId) {
-    var section = document.getElementById(sectionId);
-    if (!section) return;
-    section.querySelectorAll('a[href="#contact"]').forEach(function (btn) {
-      btn.addEventListener('click', function () {
+      section.addEventListener('click', function (event) {
+        var btn = event.target.closest('a[href="#contact"], a[href="contact.html"], a[href="../contact.html"]');
+        if (!btn) return;
         track('ds_consult_cta_click', {
-          cta_label:    btn.textContent.trim(),
+          cta_label: safeText(btn.textContent, 80),
           cta_location: sectionId
         });
       });
     });
-  });
 
-
-  // ────────────────────────────────────────────────────────────
-  // 11  FAQ Accordion 展開
-  // ────────────────────────────────────────────────────────────
-  document.querySelectorAll('#faq details').forEach(function (detail) {
-    detail.addEventListener('toggle', function () {
-      if (detail.open) {
-        var spanEl = detail.querySelector('summary span');
+    // 11 FAQ Accordion 展開
+    document.querySelectorAll('#faq details').forEach(function (detail) {
+      detail.addEventListener('toggle', function () {
+        if (!detail.open) return;
+        var spanEl = detail.querySelector('summary span') || detail.querySelector('summary');
         track('ds_faq_expand', {
-          question_text: spanEl ? spanEl.textContent.trim() : ''
+          question_text: spanEl ? safeText(spanEl.textContent, 140) : ''
         });
-      }
-    });
-  });
-
-
-  // ────────────────────────────────────────────────────────────
-  // 12  LINE CTA 點擊
-  // ────────────────────────────────────────────────────────────
-  document.querySelectorAll('a[href*="lin.ee"]').forEach(function (link) {
-    link.addEventListener('click', function () {
-      var location = 'unknown';
-      if (link.closest('#contact'))    location = 'contact_section';
-      else if (link.closest('footer')) location = 'footer';
-      else if (link.closest('.fixed')) location = 'floating_button';
-      track('ds_line_cta_click', {
-        cta_location: location,
-        cta_label:    link.textContent.trim() || 'LINE'
       });
     });
-  });
 
+    // 12 LINE CTA 點擊
+    delegate('click', 'a[href*="lin.ee"], a[href*="line.me"]', function (event, link) {
+      var location = 'unknown';
+      if (link.closest('#contact')) location = 'contact_section';
+      else if (link.closest('footer')) location = 'footer';
+      else if (link.closest('.fixed')) location = 'floating_button';
 
-  // ────────────────────────────────────────────────────────────
-  // 13  Email Modal 開啟 / 關閉
-  // ────────────────────────────────────────────────────────────
-  var emailModalBtn      = document.getElementById('email-modal-btn');
-  var emailModalClose    = document.getElementById('email-modal-close');
-  var emailModalBackdrop = document.getElementById('email-modal-backdrop');
+      track('ds_line_cta_click', {
+        cta_location: location,
+        cta_label: safeText(link.textContent, 80) || 'LINE'
+      });
+    });
 
-  if (emailModalBtn) {
-    emailModalBtn.addEventListener('click', function () {
-      track('ds_email_modal_open', { trigger: 'button' });
-    });
-  }
-  if (emailModalClose) {
-    emailModalClose.addEventListener('click', function () {
-      track('ds_email_modal_close', { trigger: 'close_button' });
-    });
-  }
-  if (emailModalBackdrop) {
-    emailModalBackdrop.addEventListener('click', function () {
-      track('ds_email_modal_close', { trigger: 'backdrop' });
-    });
-  }
-  document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape') {
+    // 13 Email Modal 開啟 / 關閉
+    var emailModalBtn = document.getElementById('email-modal-btn');
+    var emailModalClose = document.getElementById('email-modal-close');
+    var emailModalBackdrop = document.getElementById('email-modal-backdrop');
+
+    if (emailModalBtn) {
+      emailModalBtn.addEventListener('click', function () {
+        track('ds_email_modal_open', { trigger: 'button' });
+      });
+    }
+    if (emailModalClose) {
+      emailModalClose.addEventListener('click', function () {
+        track('ds_email_modal_close', { trigger: 'close_button' });
+      });
+    }
+    if (emailModalBackdrop) {
+      emailModalBackdrop.addEventListener('click', function () {
+        track('ds_email_modal_close', { trigger: 'backdrop' });
+      });
+    }
+
+    document.addEventListener('keydown', function (event) {
+      if (event.key !== 'Escape') return;
       var modal = document.getElementById('email-modal');
       if (modal && modal.classList.contains('modal-open')) {
         track('ds_email_modal_close', { trigger: 'keyboard_esc' });
       }
-    }
-  });
-
-
-  // ────────────────────────────────────────────────────────────
-  // 14  Email Form 提交嘗試
-  // ────────────────────────────────────────────────────────────
-  var emailForm = document.getElementById('email-form');
-  if (emailForm) {
-    emailForm.addEventListener('submit', function () {
-      var typeEl   = document.getElementById('ef-type');
-      var caseType = typeEl ? (typeEl.value || '未指定') : '未指定';
-      track('ds_email_form_submit', { case_type: caseType });
     });
-  }
 
+    // 14 Email Form 提交嘗試
+    var emailForm = document.getElementById('email-form');
+    if (emailForm) {
+      emailForm.addEventListener('submit', function () {
+        var typeEl = document.getElementById('ef-type');
+        var caseType = typeEl ? (typeEl.value || '未指定') : '未指定';
+        track('ds_email_form_submit', { case_type: caseType });
+      });
+    }
 
-  // ────────────────────────────────────────────────────────────
-  // 15  Email Form 驗證 / 伺服器錯誤（MutationObserver）
-  // ────────────────────────────────────────────────────────────
-  var efError = document.getElementById('ef-error');
-  if (efError) {
-    new MutationObserver(function () {
-      if (!efError.classList.contains('hidden')) {
-        var msg       = efError.textContent.trim();
-        var errorType = msg.indexOf('必填') !== -1 ? 'validation' : 'server_error';
+    // 15 Email Form 驗證 / 伺服器錯誤（MutationObserver）
+    var efError = document.getElementById('ef-error');
+    if (efError && typeof window.MutationObserver === 'function') {
+      var lastError = '';
+      new MutationObserver(function () {
+        if (efError.classList.contains('hidden')) return;
+        var msg = safeText(efError.textContent, 160);
+        if (!msg || msg === lastError) return;
+        lastError = msg;
+
         track('ds_email_form_error', {
-          error_type:    errorType,
+          error_type: msg.indexOf('必填') !== -1 ? 'validation' : 'server_error',
           error_message: msg
         });
-      }
-    }).observe(efError, { attributes: true, attributeFilter: ['class'] });
-  }
+      }).observe(efError, { attributes: true, attributeFilter: ['class'] });
+    }
 
+    // 16 Email Form 成功送出（MutationObserver）
+    var efSuccess = document.getElementById('ef-success');
+    if (efSuccess && typeof window.MutationObserver === 'function') {
+      var successTracked = false;
+      new MutationObserver(function () {
+        if (efSuccess.classList.contains('hidden')) {
+          successTracked = false;
+          return;
+        }
+        if (successTracked) return;
+        successTracked = true;
 
-  // ────────────────────────────────────────────────────────────
-  // 16  Email Form 成功送出（MutationObserver）
-  // ────────────────────────────────────────────────────────────
-  var efSuccess = document.getElementById('ef-success');
-  if (efSuccess) {
-    new MutationObserver(function () {
-      if (!efSuccess.classList.contains('hidden')) {
-        var typeEl   = document.getElementById('ef-type');
+        var typeEl = document.getElementById('ef-type');
         var caseType = typeEl ? (typeEl.value || '未指定') : '未指定';
         track('ds_email_form_success', { case_type: caseType });
-      }
-    }).observe(efSuccess, { attributes: true, attributeFilter: ['class'] });
-  }
+      }).observe(efSuccess, { attributes: true, attributeFilter: ['class'] });
+    }
 
+    // 17 客戶見證「查看作品」連結點擊
+    delegate('click', '#testimonials a', function (event, link) {
+      var card = link.closest('[class*="rounded"]');
+      var nameEl = card ? card.querySelector('p.font-semibold') : null;
 
-  // ────────────────────────────────────────────────────────────
-  // 17  客戶見證「查看作品」連結點擊
-  // ────────────────────────────────────────────────────────────
-  document.querySelectorAll('#testimonials a').forEach(function (link) {
-    link.addEventListener('click', function () {
-      var card       = link.closest('[class*="rounded"]');
-      var nameEl     = card ? card.querySelector('p.font-semibold') : null;
-      var clientName = nameEl ? nameEl.textContent.trim() : '';
       track('ds_testimonial_view_work', {
-        client_name: clientName,
-        link_href:   link.getAttribute('href') || ''
+        client_name: nameEl ? safeText(nameEl.textContent, 80) : '',
+        link_href: link.getAttribute('href') || ''
       });
     });
-  });
 
+    // 18 外部連結點擊（outbound）
+    delegate('click', 'a[href]', function (event, link) {
+      var href = link.getAttribute('href') || '';
+      if (!href || href.indexOf('#') === 0) return;
+      if (!/^https?:\/\//i.test(href)) return;
+      if (href.indexOf('qrserver.com') !== -1) return;
+      if (isInternalUrl(href)) return;
 
-  // ────────────────────────────────────────────────────────────
-  // 18  外部連結點擊（outbound）
-  // ────────────────────────────────────────────────────────────
-  document.querySelectorAll('a[href^="http"]').forEach(function (link) {
-    var href = link.getAttribute('href') || '';
-    if (href.indexOf('digitools') !== -1 || href.indexOf('qrserver.com') !== -1) return;
-    link.addEventListener('click', function () {
-      var domain = href;
-      try { domain = new URL(href).hostname; } catch (e) {}
+      var linkMeta = getLinkMeta(link);
       track('ds_outbound_click', {
-        link_url:    href,
-        link_text:   (link.textContent.trim() || link.title || '').substring(0, 100),
-        link_domain: domain
+        link_url: linkMeta.href,
+        link_text: linkMeta.text,
+        link_domain: linkMeta.domain
       });
     });
-  });
 
-
-  // ────────────────────────────────────────────────────────────
-  // 19  Footer 社群連結點擊
-  // ────────────────────────────────────────────────────────────
-  document.querySelectorAll('footer a').forEach(function (link) {
-    link.addEventListener('click', function () {
-      var href     = link.getAttribute('href') || '';
+    // 19 Footer 社群連結點擊
+    delegate('click', 'footer a', function (event, link) {
+      var href = link.getAttribute('href') || '';
       var platform = 'unknown';
       if (href.indexOf('lin.ee') !== -1 || href.indexOf('line.me') !== -1) platform = 'line';
-      else if (href.indexOf('mailto:') === 0)                              platform = 'email';
+      else if (href.indexOf('mailto:') === 0) platform = 'email';
+      else if (href.indexOf('facebook.com') !== -1) platform = 'facebook';
+      else if (href.indexOf('instagram.com') !== -1) platform = 'instagram';
+
       track('ds_footer_link_click', {
-        platform:  platform,
+        platform: platform,
         link_href: href
       });
     });
-  });
 
+    // 20 頁面離開：停留時間 + 最深滾動深度
+    function trackPageExit() {
+      if (exitTracked) return;
+      exitTracked = true;
 
-  // ────────────────────────────────────────────────────────────
-  // 20  頁面離開：停留時間 + 最深滾動深度
-  // ────────────────────────────────────────────────────────────
-  var pageStartTime = Date.now();
-  window.addEventListener('beforeunload', function () {
-    var durationSec = Math.round((Date.now() - pageStartTime) / 1000);
-    if (durationSec < 3) return;
-    var maxDepth = 0;
-    scrollDepths.forEach(function (d) { if (scrollTracked[d] && d > maxDepth) maxDepth = d; });
-    track('ds_page_exit', {
-      duration_seconds:     durationSec,
-      max_scroll_depth_pct: maxDepth
+      var durationSec = Math.round((Date.now() - pageStartTime) / 1000);
+      if (durationSec < 3) return;
+
+      var depth = 0;
+      SCROLL_DEPTHS.forEach(function (d) {
+        if (scrollTracked[d] && d > depth) depth = d;
+      });
+
+      // 若使用者尚未觸發門檻事件，仍記錄實際最大百分比（取整到 5 的倍數）
+      if (depth === 0 && maxScrollDepth > 0) {
+        depth = Math.min(100, Math.floor(maxScrollDepth / 5) * 5);
+      }
+
+      track('ds_page_exit', {
+        duration_seconds: durationSec,
+        max_scroll_depth_pct: depth
+      });
+    }
+
+    document.addEventListener('visibilitychange', function () {
+      if (document.visibilityState === 'hidden') trackPageExit();
     });
+    window.addEventListener('beforeunload', trackPageExit);
+    window.addEventListener('pagehide', trackPageExit);
+
+    // 21 宣告式自訂追蹤：data-ga-event / data-ga-param-*
+    delegate('click', '[data-ga-event]', function (event, el) {
+      var eventName = el.getAttribute('data-ga-event');
+      if (!eventName) return;
+
+      var params = {};
+      Array.prototype.slice.call(el.attributes).forEach(function (attr) {
+        if (attr.name.indexOf('data-ga-param-') !== 0) return;
+        var key = attr.name.replace('data-ga-param-', '').replace(/-/g, '_');
+        params[key] = attr.value;
+      });
+
+      if (!params.label) {
+        params.label = safeText(el.textContent || el.getAttribute('aria-label') || '', 100);
+      }
+
+      track(eventName, params);
+    });
+
+    // 全局工具函數（供外部手動呼叫）
+    window.trackEvent = function (eventName, params) {
+      track(eventName, params);
+    };
+
+    window.DSAnalytics = {
+      track: track,
+      version: '3.0'
+    };
   });
-
-
-  // ────────────────────────────────────────────────────────────
-  // 全局工具函數（供外部呼叫）
-  // ────────────────────────────────────────────────────────────
-  window.trackEvent = function (eventName, params) {
-    track(eventName, params);
-  };
-
-}); // end DOMContentLoaded
+})();

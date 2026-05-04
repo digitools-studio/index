@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="scroll-smooth">
+<head>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VXKMN286TH"></script>
+  <script src="../ga_event.js"></script>
+  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-VXKMN286TH');</script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SEO 最佳實踐：如何讓你的網站被搜尋引擎看見 | Digitools Studio Blog</title>
+  <meta name="description" content="從語意化 HTML、Meta 標籤、JSON-LD 結構化資料到 Core Web Vitals，完整的 SEO 優化清單，Web 開發接案工作室的實戰心得。" />
+  <meta name="keywords" content="SEO優化, 語意化HTML, Meta標籤, JSON-LD, Core Web Vitals, 結構化資料, 技術SEO, 搜尋引擎優化" />
+  <meta name="robots" content="index, follow" />
+  <meta name="author" content="Digitools Studio" />
+  <link rel="canonical" href="https://digitools-studio.github.io/posts/seo-best-practices.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://digitools-studio.github.io/posts/seo-best-practices.html" />
+  <meta property="og:title" content="SEO 最佳實踐：如何讓你的網站被搜尋引擎看見" />
+  <meta property="og:description" content="完整 SEO 優化清單：語意化 HTML、Meta 標籤、JSON-LD、Core Web Vitals 實戰指南。" />
+  <meta property="og:image" content="https://digitools-studio.github.io/Static/Image/og-cover.png" />
+  <meta property="article:published_time" content="2026-04-28" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="SEO 最佳實踐：如何讓你的網站被搜尋引擎看見" />
+  <meta name="twitter:image" content="https://digitools-studio.github.io/Static/Image/og-cover.png" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+  <script>tailwind.config={theme:{extend:{fontFamily:{sans:['"Noto Sans TC"','sans-serif']},colors:{line:{DEFAULT:'#00B900',dark:'#009900'}}}}}</script>
+  <style>
+    body{font-family:'Noto Sans TC',sans-serif;}
+    .glass-header{background:rgba(255,255,255,0.93);backdrop-filter:blur(14px);box-shadow:0 1px 3px rgba(0,0,0,0.07);}
+    #reading-progress{position:fixed;top:0;left:0;height:3px;z-index:9999;background:linear-gradient(90deg,#3B82F6,#00B900);transition:width 0.1s linear;}
+    #mobile-menu{transform-origin:top center;transition:opacity .22s ease,transform .22s cubic-bezier(.16,1,.3,1),visibility 0s linear .22s;opacity:0;transform:translateY(-8px) scaleY(.96);visibility:hidden;}
+    #mobile-menu.menu-open{opacity:1;transform:translateY(0) scaleY(1);visibility:visible;transition:opacity .22s ease,transform .22s cubic-bezier(.16,1,.3,1);}
+    .prose h2{font-size:1.5rem;font-weight:700;color:#0f172a;margin:2.5rem 0 1rem;padding-bottom:.5rem;border-bottom:2px solid #e2e8f0;}
+    .prose h3{font-size:1.125rem;font-weight:600;color:#1e293b;margin:2rem 0 .75rem;}
+    .prose p{color:#374151;line-height:1.85;margin-bottom:1.25rem;}
+    .prose ul{list-style:none;margin:0 0 1.25rem;padding:0;}
+    .prose ul li{padding-left:1.5rem;position:relative;color:#374151;line-height:1.75;margin-bottom:.4rem;}
+    .prose ul li::before{content:"▸";position:absolute;left:0;color:#3B82F6;font-size:.75rem;top:.35rem;}
+    .prose ol{counter-reset:list;margin:0 0 1.25rem;padding:0;}
+    .prose ol li{counter-increment:list;padding-left:2rem;position:relative;color:#374151;line-height:1.75;margin-bottom:.5rem;}
+    .prose ol li::before{content:counter(list);position:absolute;left:0;width:1.4rem;height:1.4rem;background:#3B82F6;color:white;font-size:.7rem;font-weight:700;border-radius:50%;display:flex;align-items:center;justify-content:center;top:.2rem;}
+    .prose code{background:#f1f5f9;color:#0f172a;padding:.15em .45em;border-radius:4px;font-size:.875em;font-family:'Courier New',monospace;}
+    .prose pre{background:#0f172a;border-radius:12px;padding:1.5rem;overflow-x:auto;margin:1.5rem 0;}
+    .prose pre code{background:none;color:#e2e8f0;padding:0;font-size:.85rem;line-height:1.7;}
+    .prose .callout{background:#eff6ff;border-left:4px solid #3B82F6;padding:1rem 1.25rem;border-radius:0 8px 8px 0;margin:1.5rem 0;}
+    .prose .callout p{margin:0;color:#1e40af;}
+    .prose .callout.green{background:#f0fdf4;border-color:#22c55e;}.prose .callout.green p{color:#166534;}
+    .prose strong{color:#0f172a;font-weight:600;}
+    #back-to-top{transition:opacity .3s ease,transform .3s ease;}
+    #back-to-top.btt-hidden{opacity:0;transform:translateY(8px);pointer-events:none;}
+    #back-to-top.btt-visible{opacity:1;transform:translateY(0);pointer-events:auto;}
+  </style>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"SEO 最佳實踐：如何讓你的網站被搜尋引擎看見","datePublished":"2026-04-28","author":{"@type":"Organization","name":"Digitools Studio","url":"https://digitools-studio.github.io/"},"url":"https://digitools-studio.github.io/posts/seo-best-practices.html","keywords":["SEO","技術SEO","Meta標籤","JSON-LD","Core Web Vitals"],"inLanguage":"zh-TW"}</script>
+</head>
+<body class="bg-white text-slate-800 antialiased">
+  <div id="reading-progress" style="width:0%"></div>
+
+  <header id="navbar" class="fixed w-full top-0 z-50 transition-all duration-300 py-5 bg-transparent">
+    <div class="max-w-7xl mx-auto px-5 lg:px-8 flex justify-between items-center">
+      <a href="../index.html" class="flex items-center space-x-3 group">
+        <div class="w-9 h-9 bg-slate-900 text-white rounded-xl flex items-center justify-center font-bold text-base shadow-md group-hover:bg-blue-600 transition-colors duration-300">D</div>
+        <div><p class="font-bold text-slate-900 leading-tight text-sm">Digitools Studio</p><p class="text-xs text-slate-400 hidden md:block">數轉工作室</p></div>
+      </a>
+      <nav class="hidden lg:flex items-center space-x-6 text-sm font-medium text-slate-600">
+        <a href="../index.html" class="hover:text-slate-900 transition-colors">首頁</a>
+        <a href="../services.html" class="hover:text-slate-900 transition-colors">服務內容</a>
+        <a href="../blog.html" class="text-blue-600 font-semibold">Blog</a>
+        <a href="../portfolio.html" class="hover:text-slate-900 transition-colors">作品集</a>
+        <a href="../contact.html" class="hover:text-slate-900 transition-colors">聯絡我們</a>
+      </nav>
+      <div class="flex items-center gap-3">
+        <a href="../contact.html" class="hidden lg:inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-semibold text-white bg-slate-900 hover:bg-blue-600 transition-all shadow-sm">諮詢案件</a>
+        <button id="mobile-menu-btn" class="lg:hidden w-10 h-10 flex items-center justify-center rounded-xl text-slate-700 hover:bg-slate-100 transition-colors"><i class="fa-solid fa-bars text-lg"></i></button>
+      </div>
+    </div>
+    <div id="mobile-menu" class="lg:hidden absolute top-full left-0 w-full bg-white border-b border-slate-100 shadow-lg px-5 py-4 flex flex-col gap-1">
+      <a href="../index.html" class="text-sm font-medium text-slate-700 hover:text-slate-900 py-3 border-b border-slate-100">首頁</a>
+      <a href="../services.html" class="text-sm font-medium text-slate-700 hover:text-slate-900 py-3 border-b border-slate-100">服務內容</a>
+      <a href="../blog.html" class="text-sm font-semibold text-blue-600 py-3 border-b border-slate-100">Blog</a>
+      <a href="../portfolio.html" class="text-sm font-medium text-slate-700 hover:text-slate-900 py-3 border-b border-slate-100">作品集</a>
+      <a href="../contact.html" class="text-sm font-medium text-slate-700 hover:text-slate-900 py-3 border-b border-slate-100">聯絡我們</a>
+      <a href="../contact.html" class="mt-3 w-full text-center px-5 py-3 rounded-lg text-white bg-slate-900 font-medium">諮詢案件</a>
+    </div>
+  </header>
+
+  <section class="pt-32 pb-12 lg:pt-40 lg:pb-16 bg-white border-b border-slate-100">
+    <div class="max-w-3xl mx-auto px-5 lg:px-8">
+      <nav class="flex items-center gap-2 text-xs text-slate-400 mb-8">
+        <a href="../index.html" class="hover:text-slate-600 transition-colors">首頁</a>
+        <i class="fa-solid fa-chevron-right text-[10px]"></i>
+        <a href="../blog.html" class="hover:text-slate-600 transition-colors">Blog</a>
+        <i class="fa-solid fa-chevron-right text-[10px]"></i>
+        <span class="text-slate-600">SEO 最佳實踐</span>
+      </nav>
+      <div class="flex flex-wrap gap-2 mb-6">
+        <span class="inline-block px-3 py-1 bg-green-50 border border-green-200 text-green-700 text-xs rounded-full font-medium">SEO</span>
+        <span class="inline-block px-3 py-1 bg-blue-50 border border-blue-200 text-blue-700 text-xs rounded-full font-medium">Web 開發</span>
+        <span class="inline-block px-3 py-1 bg-purple-50 border border-purple-200 text-purple-700 text-xs rounded-full font-medium">最佳實踐</span>
+      </div>
+      <h1 class="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 leading-tight mb-6">SEO 最佳實踐：如何讓你的網站被搜尋引擎看見</h1>
+      <div class="flex flex-wrap items-center gap-4 text-sm text-slate-400">
+        <span class="flex items-center gap-1.5"><i class="fa-regular fa-calendar"></i>2026年4月28日</span>
+        <span class="flex items-center gap-1.5"><i class="fa-regular fa-clock"></i>約 12 分鐘閱讀</span>
+        <span class="flex items-center gap-1.5"><i class="fa-regular fa-building"></i>Digitools Studio</span>
+      </div>
+    </div>
+  </section>
+
+  <article class="py-14">
+    <div class="max-w-3xl mx-auto px-5 lg:px-8 prose">
+
+      <p>每次接到新網站開發案，我們都會做完整的 SEO 基礎建置。這些工作佔不到總開發時間的 10%，卻能讓網站被搜尋引擎正確索引的機率大幅提升。以下是我們在每個案子中必做的 SEO 清單。</p>
+
+      <div class="callout green">
+        <p>✅ 這份清單適用於任何 HTML/靜態網站，包括 GitHub Pages、Vercel 部署的單頁應用。</p>
+      </div>
+
+      <h2>1. 語意化 HTML 結構</h2>
+      <p>搜尋引擎透過 HTML 標籤理解頁面結構。使用正確的語意化標籤，比「一堆 div」更容易被理解：</p>
+      <ul>
+        <li><code>&lt;header&gt;</code>、<code>&lt;nav&gt;</code>、<code>&lt;main&gt;</code>、<code>&lt;article&gt;</code>、<code>&lt;footer&gt;</code></li>
+        <li>每頁只有<strong>一個 <code>&lt;h1&gt;</code></strong>，且包含主要關鍵字</li>
+        <li>標題層級順序正確：h1 → h2 → h3，不跳級</li>
+        <li>圖片必須有描述性的 <code>alt</code> 屬性</li>
+        <li>連結文字要有意義，避免「點擊這裡」</li>
+      </ul>
+
+      <h2>2. Meta 標籤三件套</h2>
+      <p>每個頁面最基本要有以下三個 meta：</p>
+      <pre><code>&lt;!-- 精確描述頁面內容，含主要關鍵字，55-65 字元 --&gt;
+&lt;title&gt;PAGE TITLE | 品牌名稱&lt;/title&gt;
+
+&lt;!-- 搜尋結果的說明文字，120-160 字元，含行動呼籲 --&gt;
+&lt;meta name="description" content="..." /&gt;
+
+&lt;!-- 正規化 URL，避免重複內容問題 --&gt;
+&lt;link rel="canonical" href="https://你的域名/此頁完整路徑" /&gt;</code></pre>
+
+      <div class="callout">
+        <p>💡 <code>canonical</code> 標籤尤其重要：當同一個頁面有多個 URL（有無 trailing slash、有無 query string）時，告訴 Google 哪個才是「正版」。</p>
+      </div>
+
+      <h2>3. Open Graph 社群分享</h2>
+      <p>OG 標籤控制在 LINE、Facebook、Twitter 分享時顯示的標題、說明和圖片：</p>
+      <pre><code>&lt;meta property="og:type" content="website" /&gt;
+&lt;meta property="og:url" content="完整頁面 URL" /&gt;
+&lt;meta property="og:title" content="分享標題（可與 title 不同）" /&gt;
+&lt;meta property="og:description" content="分享說明文字" /&gt;
+&lt;meta property="og:image" content="https://域名/image.png" /&gt;
+&lt;!-- 圖片建議尺寸：1200×630px --&gt;</code></pre>
+
+      <h2>4. JSON-LD 結構化資料</h2>
+      <p>結構化資料是告訴搜尋引擎（以及 AI 爬蟲）「這個頁面在說什麼」的機器可讀格式。它不會直接影響排名，但有機會讓 Google 在搜尋結果中顯示 <strong>Rich Snippets</strong>（FAQ 展開、評星等），也有助於 AI SEO（Generative Engine Optimization）。</p>
+      <pre><code>&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "你的品牌名",
+  "url": "https://你的網站",
+  "description": "品牌說明",
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "contactType": "customer service",
+    "email": "your@email.com"
+  }
+}
+&lt;/script&gt;</code></pre>
+      <p>對於部落格文章，可以加入 <code>BlogPosting</code> schema，讓 Google 知道文章的發佈日期與作者。對於服務頁，可以加入 <code>Service</code> schema。</p>
+
+      <h2>5. sitemap.xml 與 robots.txt</h2>
+      <p>這兩個檔案放在網站根目錄，幫助 Google 爬蟲有效率地探索你的網站：</p>
+      <pre><code># robots.txt — 指引爬蟲，並告知 sitemap 位置
+User-agent: *
+Allow: /
+Sitemap: https://你的域名/sitemap.xml</code></pre>
+      <pre><code>&lt;!-- sitemap.xml — 列出所有重要頁面 --&gt;
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"&gt;
+  &lt;url&gt;
+    &lt;loc&gt;https://你的域名/&lt;/loc&gt;
+    &lt;changefreq&gt;weekly&lt;/changefreq&gt;
+    &lt;priority&gt;1.0&lt;/priority&gt;
+  &lt;/url&gt;
+&lt;/urlset&gt;</code></pre>
+      <p>完成後，到 <strong>Google Search Console</strong> 提交 sitemap URL，讓 Google 立即知道你的網站。</p>
+
+      <h2>6. Core Web Vitals</h2>
+      <p>Google 把頁面體驗納入排名因素，三個核心指標：</p>
+      <ul>
+        <li><strong>LCP（Largest Contentful Paint）</strong>：最大內容渲染，目標 &lt; 2.5s。優化方向：壓縮圖片、使用 WebP 格式、加 CDN</li>
+        <li><strong>CLS（Cumulative Layout Shift）</strong>：版面位移分數，目標 &lt; 0.1。優化方向：為圖片指定 width/height，避免動態插入內容</li>
+        <li><strong>INP（Interaction to Next Paint）</strong>：互動延遲，目標 &lt; 200ms。優化方向：減少 JS 主執行緒阻塞</li>
+      </ul>
+      <p>用 Chrome DevTools 的 Lighthouse 或 PageSpeed Insights 就能快速診斷。</p>
+
+      <h2>7. 圖片 SEO</h2>
+      <ul>
+        <li>檔名使用描述性英文（<code>line-liff-demo.webp</code>，不是 <code>IMG_0012.jpg</code>）</li>
+        <li><code>alt</code> 屬性描述圖片內容，含關鍵字但不要堆砌</li>
+        <li>使用 WebP 格式，比 JPEG 小 25-35%</li>
+        <li>超過 100KB 的圖片考慮使用 <code>loading="lazy"</code></li>
+      </ul>
+
+      <h2>AI SEO / GEO 補充</h2>
+      <p>隨著 ChatGPT、Gemini、Perplexity 等 AI 搜尋工具普及，讓 AI 爬蟲正確理解你的網站變得同樣重要。關鍵做法：</p>
+      <ul>
+        <li>在根目錄放 <code>llms.txt</code>（類似 robots.txt，專為 LLM 說明你的網站定位與服務）</li>
+        <li>JSON-LD 中的 <code>knowsAbout</code>、<code>description</code> 寫清楚，方便 AI 引用</li>
+        <li>FAQ 內容用 <code>FAQPage</code> schema 標記，AI 搜尋最喜歡引用問答格式</li>
+        <li>內文中自然地出現你的品牌名稱與服務關鍵字，方便 AI 建立關聯</li>
+      </ul>
+
+    </div>
+  </article>
+
+  <div class="bg-slate-50 border-t border-slate-200">
+    <div class="max-w-3xl mx-auto px-5 lg:px-8 py-12">
+      <div class="flex items-start gap-4 bg-white rounded-2xl p-6 border border-slate-200">
+        <div class="w-12 h-12 bg-slate-900 text-white rounded-xl flex items-center justify-center font-bold text-lg flex-none">D</div>
+        <div>
+          <p class="font-semibold text-slate-900 mb-1">Digitools Studio</p>
+          <p class="text-sm text-slate-500 leading-relaxed">我們在每個 Web 開發案子中都包含完整的 SEO 基礎建置。如果你的現有網站需要 SEO 健診或改善，歡迎諮詢。</p>
+          <div class="flex gap-3 mt-4">
+            <a href="https://lin.ee/6IdgZC4" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-4 py-2 bg-line text-white text-sm rounded-full font-medium hover:bg-line-dark transition-colors"><i class="fa-brands fa-line"></i>LINE 諮詢</a>
+            <a href="../contact.html" class="inline-flex items-center gap-2 px-4 py-2 border border-slate-300 text-slate-700 text-sm rounded-full font-medium hover:bg-slate-100 transition-colors">Email 聯繫</a>
+          </div>
+        </div>
+      </div>
+      <div class="flex justify-between items-center mt-8">
+        <a href="python-crawler-price-monitor.html" class="inline-flex items-center gap-2 text-sm text-slate-500 hover:text-slate-900 transition-colors"><i class="fa-solid fa-arrow-left text-xs"></i>上一篇：Python 爬蟲實戰</a>
+        <a href="n8n-workflow-automation.html" class="inline-flex items-center gap-2 text-sm text-slate-500 hover:text-slate-900 transition-colors">下一篇：N8N 自動化工作流<i class="fa-solid fa-arrow-right text-xs"></i></a>
+      </div>
+    </div>
+  </div>
+
+  <footer class="bg-slate-900 border-t border-slate-800 text-slate-400">
+    <div class="max-w-7xl mx-auto px-5 lg:px-8 py-10">
+      <div class="flex flex-col md:flex-row justify-between items-center gap-4 text-sm">
+        <div class="flex items-center gap-3"><div class="w-8 h-8 bg-slate-700 text-white rounded-xl flex items-center justify-center font-bold text-sm">D</div><span class="font-bold text-white">Digitools Studio</span></div>
+        <div class="flex gap-6"><a href="../index.html" class="hover:text-white transition-colors">首頁</a><a href="../services.html" class="hover:text-white transition-colors">服務</a><a href="../blog.html" class="hover:text-white transition-colors">Blog</a><a href="../contact.html" class="hover:text-white transition-colors">聯絡</a></div>
+        <p class="text-xs text-slate-500">© 2026 Digitools Studio. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <button id="back-to-top" aria-label="回到頂端" class="btt-hidden fixed bottom-[5.5rem] right-6 z-40 w-10 h-10 bg-white border border-slate-200 rounded-full shadow-md flex items-center justify-center text-slate-500 hover:text-slate-900 hover:border-slate-400 hover:shadow-lg transition-all"><i class="fa-solid fa-chevron-up text-xs"></i></button>
+  <div class="fixed bottom-6 right-6 z-50"><a href="https://lin.ee/6IdgZC4" target="_blank" rel="noopener noreferrer" class="flex items-center gap-2.5 bg-line hover:bg-line-dark text-white shadow-2xl rounded-full px-5 py-3.5 transition-all duration-300 hover:scale-105"><i class="fa-brands fa-line text-2xl"></i><span class="text-sm font-semibold hidden md:block">LINE 諮詢</span></a></div>
+
+  <script>
+    const navbar=document.getElementById('navbar');
+    window.addEventListener('scroll',()=>{if(window.scrollY>60){navbar.classList.add('glass-header','py-3');navbar.classList.remove('py-5','bg-transparent');}else{navbar.classList.remove('glass-header','py-3');navbar.classList.add('py-5','bg-transparent');}});
+    const mobileBtn=document.getElementById('mobile-menu-btn'),mobileMenu=document.getElementById('mobile-menu');
+    mobileBtn.addEventListener('click',()=>{const o=mobileMenu.classList.toggle('menu-open');mobileBtn.querySelector('i').className=o?'fa-solid fa-xmark text-lg':'fa-solid fa-bars text-lg';});
+    mobileMenu.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{mobileMenu.classList.remove('menu-open');mobileBtn.querySelector('i').className='fa-solid fa-bars text-lg';}));
+    const progress=document.getElementById('reading-progress');
+    window.addEventListener('scroll',()=>{const art=document.querySelector('article'),d=art.offsetTop+art.offsetHeight-window.innerHeight;progress.style.width=Math.min(100,Math.max(0,(window.scrollY/d)*100))+'%';},{passive:true});
+    const bttBtn=document.getElementById('back-to-top');
+    window.addEventListener('scroll',()=>{if(window.scrollY>500){bttBtn.classList.remove('btt-hidden');bttBtn.classList.add('btt-visible');}else{bttBtn.classList.add('btt-hidden');bttBtn.classList.remove('btt-visible');}},{passive:true});
+    bttBtn.addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'}));
+  </script>
+</body>
+</html>

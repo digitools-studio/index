@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="scroll-smooth">
+<head>
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VXKMN286TH"></script>
+  <script src="ga_event.js"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-VXKMN286TH');
+  </script>
+
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>作品集 | Digitools Studio | LINE 整合・Web 應用案例展示</title>
+  <meta name="description" content="Digitools Studio 作品集 — LINE 官方帳號導入、LIFF 預約系統、婚禮邀請函網站、CTSS 企業官網、SignFlow PDF 工具等真實可體驗的成果展示。" />
+  <meta name="keywords" content="作品集, LINE整合案例, LIFF應用, 婚禮邀請網站, 企業官網, PDF工具, Web應用案例, 接案成果" />
+  <meta name="robots" content="index, follow" />
+  <meta name="author" content="Digitools Studio" />
+  <meta name="theme-color" content="#3B82F6" />
+  <link rel="canonical" href="https://digitools-studio.github.io/portfolio.html" />
+  <!-- Open Graph / Social Share -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://digitools-studio.github.io/portfolio.html" />
+  <meta property="og:site_name" content="Digitools Studio" />
+  <meta property="og:locale" content="zh_TW" />
+  <meta property="og:title" content="作品集 | Digitools Studio | LINE 整合・Web 應用案例展示" />
+  <meta property="og:description" content="LINE 整合、LIFF 系統、企業官網、婚禮邀請函、PDF 工具等真實可體驗的作品案例。" />
+  <meta property="og:image" content="https://digitools-studio.github.io/Static/Image/og-cover.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Digitools Studio 作品集" />
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="作品集 | Digitools Studio" />
+  <meta name="twitter:description" content="LINE 整合、Web 應用、LIFF 系統等真實案例展示。" />
+  <meta name="twitter:image" content="https://digitools-studio.github.io/Static/Image/og-cover.png" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['"Noto Sans TC"', 'sans-serif'] },
+          colors: {
+            line: { DEFAULT: '#00B900', dark: '#009900', light: '#e6f8e6' }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body { font-family: 'Noto Sans TC', sans-serif; }
+    .glass-header {
+      background: rgba(255,255,255,0.93);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.07);
+    }
+    .reveal {
+      opacity: 0;
+      transform: translateY(22px);
+      transition: opacity 0.7s cubic-bezier(0.16,1,0.3,1), transform 0.7s cubic-bezier(0.16,1,0.3,1);
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .delay-100 { transition-delay: 100ms; }
+    .delay-200 { transition-delay: 200ms; }
+    .delay-300 { transition-delay: 300ms; }
+    .filter-btn {
+      transition: all 0.3s ease;
+    }
+    .filter-btn.active {
+      @apply bg-blue-600 text-white border-blue-600;
+    }
+    * { -webkit-tap-highlight-color: transparent; }
+    a, button, summary { touch-action: manipulation; }
+    #mobile-menu {
+      transform-origin: top center;
+      transition: opacity 0.22s ease, transform 0.22s cubic-bezier(0.16,1,0.3,1), visibility 0s linear 0.22s;
+      opacity: 0;
+      transform: translateY(-8px) scaleY(0.96);
+      visibility: hidden;
+    }
+    #mobile-menu.menu-open {
+      opacity: 1;
+      transform: translateY(0) scaleY(1);
+      visibility: visible;
+      transition: opacity 0.22s ease, transform 0.22s cubic-bezier(0.16,1,0.3,1);
+    }
+    #back-to-top {
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+    #back-to-top.btt-hidden  { opacity: 0; transform: translateY(8px); pointer-events: none; }
+    #back-to-top.btt-visible { opacity: 1; transform: translateY(0);   pointer-events: auto; }
+    .project-card {
+      transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+    .project-card.hidden {
+      opacity: 0;
+      transform: scale(0.95);
+      pointer-events: none;
+      position: absolute;
+      visibility: hidden;
+    }
+  </style>
+
+  <!-- JSON-LD Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {"@type": "ListItem", "position": 1, "name": "首頁", "item": "https://digitools-studio.github.io/"},
+          {"@type": "ListItem", "position": 2, "name": "作品集", "item": "https://digitools-studio.github.io/portfolio.html"}
+        ]
+      },
+      {
+        "@type": "CollectionPage",
+        "@id": "https://digitools-studio.github.io/portfolio.html#webpage",
+        "url": "https://digitools-studio.github.io/portfolio.html",
+        "name": "作品集 | Digitools Studio",
+        "description": "LINE 整合、Web 應用、LIFF 系統等真實可體驗的成果展示",
+        "isPartOf": {"@id": "https://digitools-studio.github.io/#website"},
+        "inLanguage": "zh-TW"
+      },
+      {
+        "@type": "ItemList",
+        "name": "Digitools Studio 作品案例",
+        "itemListElement": [
+          {"@type": "ListItem", "position": 1, "item": {"@type": "CreativeWork", "name": "從 0 建立 LINE 官方帳號", "description": "LINE OA 導入規劃頁面，含建帳流程、功能說明與諮詢入口"}},
+          {"@type": "ListItem", "position": 2, "item": {"@type": "CreativeWork", "name": "LINE 預約流程升級", "description": "LINE 自動化預約系統，消除人工回訊，預約記錄同步試算表"}},
+          {"@type": "ListItem", "position": 3, "item": {"@type": "CreativeWork", "name": "婚禮邀請函網站", "description": "精緣視覺的婚禮邀請頁面，響應式排版，支援出席回覆互動"}},
+          {"@type": "ListItem", "position": 4, "item": {"@type": "CreativeWork", "name": "CTSS 企業形象網站", "url": "https://ctssjpit.com/", "description": "日台人才招募企業形象網站，GA4 整合追蹤"}},
+          {"@type": "ListItem", "position": 5, "item": {"@type": "CreativeWork", "name": "SignFlow PDF 電子簽名工具", "description": "瀏覽器端 PDF 簽署工具，零上傳，支援手寫簽名去背"}}
+        ]
+      }
+    ]
+  }
+  </script>
+</head>
+<body class="bg-white text-slate-800 antialiased">
+
+  <!-- ═══════════════════════════════════════
+       HEADER
+  ═══════════════════════════════════════ -->
+  <header id="navbar" class="fixed w-full top-0 z-50 transition-all duration-300 py-5 bg-transparent">
+    <div class="max-w-7xl mx-auto px-5 lg:px-8 flex justify-between items-center">
+      <a href="index.html" class="flex items-center space-x-3 group">
+        <div class="w-9 h-9 bg-slate-900 text-white rounded-xl flex items-center justify-center font-bold text-base shadow-md group-hover:bg-blue-600 transition-colors duration-300">D</div>
+        <div>
+          <p class="font-bold text-slate-900 leading-tight text-sm">Digitools Studio</p>
+          <p class="text-xs text-slate-400 hidden md:block">數轉工作室</p>
+        </div>
+      </a>
+      <nav class="hidden lg:flex items-center space-x-6 text-sm font-medium text-slate-600">
+        <a href="index.html" class="hover:text-slate-900 transition-colors">首頁</a>
+        <a href="services.html" class="hover:text-slate-900 transition-colors">服務內容</a>
+        <a href="blog.html" class="hover:text-slate-900 transition-colors">Blog</a>
+        <a href="portfolio.html" class="text-blue-600 font-semibold">作品集</a>
+        <a href="contact.html" class="hover:text-slate-900 transition-colors">聯絡我們</a>
+      </nav>
+      <div class="flex items-center gap-3">
+        <a href="contact.html" class="hidden md:inline-flex items-center gap-2 bg-slate-900 hover:bg-blue-600 text-white px-5 py-2.5 rounded-full text-sm font-medium transition-all shadow-sm">
+          諮詢案件
+        </a>
+        <button id="mobile-menu-btn" class="lg:hidden text-slate-600 p-2">
+          <i class="fa-solid fa-bars text-lg"></i>
+        </button>
+      </div>
+    </div>
+    <!-- Mobile menu -->
+    <div id="mobile-menu" class="absolute top-full left-0 w-full bg-white/97 backdrop-blur-md shadow-lg border-t border-slate-100 py-4 px-5 flex flex-col space-y-1">
+      <a href="index.html" class="text-sm font-medium text-slate-700 hover:text-slate-900 py-3 border-b border-slate-100">首頁</a>
+      <a href="services.html" class="text-sm font-medium text-slate-700 hover:text-slate-900 py-3 border-b border-slate-100">服務內容</a>
+      <a href="blog.html" class="text-sm font-medium text-slate-700 hover:text-slate-900 py-3 border-b border-slate-100">Blog</a>
+      <a href="portfolio.html" class="text-sm font-medium text-blue-600 font-semibold py-3 border-b border-slate-100">作品集</a>
+      <a href="contact.html" class="text-sm font-medium text-slate-700 hover:text-slate-900 py-3 border-b border-slate-100">聯絡我們</a>
+      <a href="contact.html" class="mt-3 w-full text-center px-5 py-3 rounded-lg text-white bg-slate-900 font-medium">諮詢案件</a>
+    </div>
+  </header>
+
+  <!-- ═══════════════════════════════════════
+       HERO — 作品集標題
+  ═══════════════════════════════════════ -->
+  <section class="relative pt-28 pb-14 lg:pt-40 lg:pb-24 overflow-hidden bg-white border-b border-slate-100">
+    <div class="absolute inset-0 opacity-[0.03]" style="background-image: radial-gradient(circle, #000 1px, transparent 1px); background-size: 32px 32px;"></div>
+    <div class="absolute top-0 right-0 w-[700px] h-[700px] -mt-64 -mr-64 rounded-full bg-blue-50 blur-3xl opacity-60 pointer-events-none"></div>
+
+    <div class="max-w-7xl mx-auto px-5 lg:px-8 relative z-10">
+      <div class="max-w-3xl">
+        <div class="reveal visible inline-flex items-center gap-2.5 px-4 py-1.5 border border-slate-200 rounded-full text-xs font-semibold text-slate-500 mb-8 bg-white shadow-sm">
+          <span class="w-1.5 h-1.5 rounded-full bg-blue-600 animate-pulse"></span>
+          實際案例展示
+        </div>
+        <h1 class="reveal visible text-4xl sm:text-5xl lg:text-6xl font-black text-slate-900 leading-[1.1] tracking-tight mb-8">
+          我們的完成<br><span class="text-blue-600">專案集錦</span>
+        </h1>
+        <p class="reveal visible delay-100 text-base sm:text-xl text-slate-500 leading-relaxed mb-6 max-w-2xl">
+          從 LINE 官方帳號、客製 Web 應用到資料自動化系統，展示實際交付的案例與成果。
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════
+       FILTER & PORTFOLIO
+  ═══════════════════════════════════════ -->
+  <section class="py-16 bg-slate-50">
+    <div class="max-w-7xl mx-auto px-5 lg:px-8">
+
+      <!-- Filter buttons -->
+      <div class="reveal mb-12 flex flex-wrap gap-3 justify-center">
+        <button class="filter-btn active px-5 py-2.5 rounded-full text-sm font-medium border border-blue-600 bg-blue-600 text-white" data-filter="all">
+          全部作品
+        </button>
+        <button class="filter-btn px-5 py-2.5 rounded-full text-sm font-medium border border-slate-300 hover:border-slate-400 text-slate-700 hover:text-slate-900 bg-white hover:bg-slate-100 transition-all" data-filter="line">
+          LINE 整合
+        </button>
+        <button class="filter-btn px-5 py-2.5 rounded-full text-sm font-medium border border-slate-300 hover:border-slate-400 text-slate-700 hover:text-slate-900 bg-white hover:bg-slate-100 transition-all" data-filter="web">
+          客製網站
+        </button>
+        <button class="filter-btn px-5 py-2.5 rounded-full text-sm font-medium border border-slate-300 hover:border-slate-400 text-slate-700 hover:text-slate-900 bg-white hover:bg-slate-100 transition-all" data-filter="tool">
+          Web 工具
+        </button>
+      </div>
+
+      <!-- Portfolio grid -->
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 relative">
+
+        <!-- Project: LINE Reservation -->
+        <div class="project-card reveal delay-100 bg-white rounded-2xl overflow-hidden border border-slate-200 hover:border-blue-300 hover:shadow-lg transition-all" data-category="line">
+          <div class="h-48 bg-gradient-to-br from-green-100 to-green-50 flex items-center justify-center overflow-hidden">
+            <i class="fa-brands fa-line text-7xl text-green-600 opacity-30"></i>
+          </div>
+          <div class="p-6">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="inline-block px-2.5 py-1 bg-green-50 border border-green-200 text-green-700 text-xs rounded-full font-medium">LINE 預約</span>
+            </div>
+            <h3 class="text-lg font-bold text-slate-900 mb-2">LINE LIFF 預約系統</h3>
+            <p class="text-sm text-slate-500 leading-relaxed mb-4">線上預約系統整合 LINE，客戶直接透過 LINE 操作。支援日期選擇、時段預約、自動確認通知。</p>
+            <div class="flex items-center gap-2 text-xs text-slate-400 mb-4">
+              <i class="fa-solid fa-star text-yellow-500"></i> 完成於 2025年10月
+            </div>
+            <a href="bd_demo/Line/line_reservation.html" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 text-sm font-semibold text-blue-600 hover:text-blue-700 transition-colors">
+              查看示範 <i class="fa-solid fa-arrow-up-right text-xs"></i>
+            </a>
+          </div>
+        </div>
+
+        <!-- Project: LINE Bot -->
+        <div class="project-card reveal delay-200 bg-white rounded-2xl overflow-hidden border border-slate-200 hover:border-blue-300 hover:shadow-lg transition-all" data-category="line">
+          <div class="h-48 bg-gradient-to-br from-green-100 to-green-50 flex items-center justify-center overflow-hidden">
+            <i class="fa-solid fa-robot text-7xl text-green-600 opacity-30"></i>
+          </div>
+          <div class="p-6">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="inline-block px-2.5 py-1 bg-green-50 border border-green-200 text-green-700 text-xs rounded-full font-medium">LINE 應用</span>
+            </div>
+            <h3 class="text-lg font-bold text-slate-900 mb-2">LINE 官方帳號整合</h3>
+            <p class="text-sm text-slate-500 leading-relaxed mb-4">完整的 LINE OA 建置與 Messaging API 串接。支援自動回覆、訂單推播、客服導流、會員管理。</p>
+            <div class="flex items-center gap-2 text-xs text-slate-400 mb-4">
+              <i class="fa-solid fa-star text-yellow-500"></i> 完成於 2025年09月
+            </div>
+            <a href="bd_demo/Line/line.html" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 text-sm font-semibold text-blue-600 hover:text-blue-700 transition-colors">
+              查看示範 <i class="fa-solid fa-arrow-up-right text-xs"></i>
+            </a>
+          </div>
+        </div>
+
+        <!-- Project: Wedding Invitation -->
+        <div class="project-card reveal delay-300 bg-white rounded-2xl overflow-hidden border border-slate-200 hover:border-blue-300 hover:shadow-lg transition-all" data-category="web">
+          <div class="h-48 bg-gradient-to-br from-pink-100 to-pink-50 flex items-center justify-center overflow-hidden">
+            <i class="fa-solid fa-ring text-7xl text-pink-600 opacity-30"></i>
+          </div>
+          <div class="p-6">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="inline-block px-2.5 py-1 bg-pink-50 border border-pink-200 text-pink-700 text-xs rounded-full font-medium">婚禮邀請</span>
+            </div>
+            <h3 class="text-lg font-bold text-slate-900 mb-2">線上婚禮邀請函</h3>
+            <p class="text-sm text-slate-500 leading-relaxed mb-4">優雅的響應式婚禮邀請頁面。支援線上 RSVP、座位選擇、客人名單管理、行程規劃展示。</p>
+            <div class="flex items-center gap-2 text-xs text-slate-400 mb-4">
+              <i class="fa-solid fa-star text-yellow-500"></i> 完成於 2025年08月
+            </div>
+            <a href="bd_demo/Web/wedding_invitation.html" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 text-sm font-semibold text-blue-600 hover:text-blue-700 transition-colors">
+              查看示範 <i class="fa-solid fa-arrow-up-right text-xs"></i>
+            </a>
+          </div>
+        </div>
+
+        <!-- Project: Wedding Partner Program -->
+        <div class="project-card reveal delay-100 bg-white rounded-2xl overflow-hidden border border-slate-200 hover:border-blue-300 hover:shadow-lg transition-all" data-category="web">
+          <div class="h-48 bg-gradient-to-br from-red-100 to-red-50 flex items-center justify-center overflow-hidden">
+            <i class="fa-solid fa-heart text-7xl text-red-600 opacity-30"></i>
+          </div>
+          <div class="p-6">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="inline-block px-2.5 py-1 bg-red-50 border border-red-200 text-red-700 text-xs rounded-full font-medium">B2B 平台</span>
+            </div>
+            <h3 class="text-lg font-bold text-slate-900 mb-2">婚禮夥伴計畫平台</h3>
+            <p class="text-sm text-slate-500 leading-relaxed mb-4">供應商入駐平台。支援業者註冊、服務展示、預約管理、評價系統、收益統計。</p>
+            <div class="flex items-center gap-2 text-xs text-slate-400 mb-4">
+              <i class="fa-solid fa-star text-yellow-500"></i> 完成於 2025年07月
+            </div>
+            <a href="bd_demo/BD/wedding_partner_program.html" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 text-sm font-semibold text-blue-600 hover:text-blue-700 transition-colors">
+              查看示範 <i class="fa-solid fa-arrow-up-right text-xs"></i>
+            </a>
+          </div>
+        </div>
+
+        <!-- Project: 2048 Game -->
+        <div class="project-card reveal delay-200 bg-white rounded-2xl overflow-hidden border border-slate-200 hover:border-blue-300 hover:shadow-lg transition-all" data-category="tool">
+          <div class="h-48 bg-gradient-to-br from-orange-100 to-orange-50 flex items-center justify-center overflow-hidden">
+            <i class="fa-solid fa-gamepad text-7xl text-orange-600 opacity-30"></i>
+          </div>
+          <div class="p-6">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="inline-block px-2.5 py-1 bg-orange-50 border border-orange-200 text-orange-700 text-xs rounded-full font-medium">網頁遊戲</span>
+            </div>
+            <h3 class="text-lg font-bold text-slate-900 mb-2">2048 益智遊戲</h3>
+            <p class="text-sm text-slate-500 leading-relaxed mb-4">響應式 2048 遊戲實作。支援鍵盤與觸控操作、本地分數儲存、排行榜記錄。</p>
+            <div class="flex items-center gap-2 text-xs text-slate-400 mb-4">
+              <i class="fa-solid fa-star text-yellow-500"></i> 完成於 2025年06月
+            </div>
+            <a href="bd_demo/Tools/2048.html" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 text-sm font-semibold text-blue-600 hover:text-blue-700 transition-colors">
+              查看示範 <i class="fa-solid fa-arrow-up-right text-xs"></i>
+            </a>
+          </div>
+        </div>
+
+        <!-- Project: Vault -->
+        <div class="project-card reveal delay-300 bg-white rounded-2xl overflow-hidden border border-slate-200 hover:border-blue-300 hover:shadow-lg transition-all" data-category="tool">
+          <div class="h-48 bg-gradient-to-br from-slate-100 to-slate-50 flex items-center justify-center overflow-hidden">
+            <i class="fa-solid fa-vault text-7xl text-slate-600 opacity-30"></i>
+          </div>
+          <div class="p-6">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="inline-block px-2.5 py-1 bg-slate-100 border border-slate-200 text-slate-700 text-xs rounded-full font-medium">加密工具</span>
+            </div>
+            <h3 class="text-lg font-bold text-slate-900 mb-2">線上保險庫工具</h3>
+            <p class="text-sm text-slate-500 leading-relaxed mb-4">本地加密的密碼管理工具。完全在瀏覽器中運行，支援密碼生成、複製、導入導出。</p>
+            <div class="flex items-center gap-2 text-xs text-slate-400 mb-4">
+              <i class="fa-solid fa-star text-yellow-500"></i> 完成於 2025年05月
+            </div>
+            <a href="bd_demo/Tools/vault.html" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 text-sm font-semibold text-blue-600 hover:text-blue-700 transition-colors">
+              查看示範 <i class="fa-solid fa-arrow-up-right text-xs"></i>
+            </a>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════
+       CTA
+  ═══════════════════════════════════════ -->
+  <section class="py-16 bg-white border-t border-slate-100">
+    <div class="max-w-4xl mx-auto px-5 lg:px-8 text-center reveal">
+      <h2 class="text-3xl sm:text-4xl font-black text-slate-900 mb-4">有類似的需求嗎？</h2>
+      <p class="text-lg text-slate-500 leading-relaxed mb-8">
+        這些案例只是我們服務的一小部分。無論你需要 LINE 整合、Web 開發還是資料自動化，我們都準備好幫助你。
+      </p>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <a href="contact.html" class="inline-flex items-center justify-center gap-2 bg-slate-900 hover:bg-blue-600 text-white px-7 py-3.5 rounded-full font-medium transition-all">
+          免費諮詢
+        </a>
+        <a href="services.html" class="inline-flex items-center justify-center gap-2 border border-slate-300 hover:border-slate-400 text-slate-700 hover:text-slate-900 px-7 py-3.5 rounded-full font-medium transition-all bg-white hover:bg-slate-100">
+          查看服務 <i class="fa-solid fa-arrow-right text-sm"></i>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════
+       FOOTER
+  ═══════════════════════════════════════ -->
+  <footer class="bg-slate-900 border-t border-slate-800 text-slate-400">
+    <div class="max-w-7xl mx-auto px-5 lg:px-8 py-14">
+      <div class="grid md:grid-cols-4 gap-10 mb-10 pb-10 border-b border-slate-800">
+        <div class="md:col-span-2">
+          <div class="flex items-center space-x-3 mb-4">
+            <div class="w-8 h-8 bg-slate-700 text-white rounded-xl flex items-center justify-center font-bold text-sm">D</div>
+            <span class="font-bold text-white">Digitools Studio</span>
+          </div>
+          <p class="text-sm leading-relaxed max-w-xs mb-5">數轉工作室 — 以軟體開發為核心的接案團隊。LINE 整合、Web 應用、資料自動化，從業務需求出發，設計可用的數位解法。</p>
+          <div class="flex gap-3">
+            <a href="https://lin.ee/6IdgZC4" target="_blank" rel="noopener noreferrer" class="w-9 h-9 bg-line/20 hover:bg-line text-line hover:text-white rounded-lg flex items-center justify-center transition-all">
+              <i class="fa-brands fa-line text-base"></i>
+            </a>
+            <a href="mailto:digitalaaronl@gmail.com" class="w-9 h-9 bg-slate-800 hover:bg-slate-600 text-slate-400 hover:text-white rounded-lg flex items-center justify-center transition-all">
+              <i class="fa-regular fa-envelope text-sm"></i>
+            </a>
+          </div>
+        </div>
+        <div>
+          <h5 class="text-white font-semibold mb-4 text-sm">頁面</h5>
+          <ul class="space-y-2.5 text-sm">
+            <li><a href="index.html" class="hover:text-white transition-colors">首頁</a></li>
+            <li><a href="services.html" class="hover:text-white transition-colors">服務內容</a></li>
+            <li><a href="blog.html" class="hover:text-white transition-colors">Blog</a></li>
+            <li><a href="portfolio.html" class="hover:text-white transition-colors">作品集</a></li>
+            <li><a href="contact.html" class="hover:text-white transition-colors">聯絡我們</a></li>
+          </ul>
+        </div>
+        <div>
+          <h5 class="text-white font-semibold mb-4 text-sm">聯絡資訊</h5>
+          <ul class="space-y-2.5 text-sm">
+            <li>digitalaaronl@gmail.com</li>
+            <li>新北市 · 個人工作室</li>
+          </ul>
+        </div>
+      </div>
+      <div class="flex flex-col md:flex-row justify-between items-center text-xs text-slate-500">
+        <p>© 2026 Digitools Studio. All rights reserved.</p>
+        <p class="mt-2 md:mt-0">LINE 整合 × 客製 Web × 資料自動化</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Back to top button -->
+  <button id="back-to-top" aria-label="回到頂端" class="btt-hidden fixed bottom-[5.5rem] right-6 z-40 w-10 h-10 bg-white border border-slate-200 rounded-full shadow-md flex items-center justify-center text-slate-500 hover:text-slate-900 hover:border-slate-400 hover:shadow-lg transition-all">
+    <i class="fa-solid fa-chevron-up text-xs"></i>
+  </button>
+
+  <!-- Floating LINE Button -->
+  <div class="fixed bottom-6 right-6 z-50 group">
+    <a href="https://lin.ee/6IdgZC4" target="_blank" rel="noopener noreferrer" class="flex items-center gap-2.5 bg-line hover:bg-line-dark text-white shadow-2xl rounded-full px-5 py-3.5 transition-all duration-300 hover:scale-105" title="LINE 諮詢">
+      <i class="fa-brands fa-line text-2xl"></i>
+      <span class="text-sm font-semibold hidden md:block">LINE 諮詢</span>
+    </a>
+  </div>
+
+  <script>
+    // Navbar scroll behavior
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 60) {
+        navbar.classList.add('glass-header', 'py-3');
+        navbar.classList.remove('py-5', 'bg-transparent');
+      } else {
+        navbar.classList.remove('glass-header', 'py-3');
+        navbar.classList.add('py-5', 'bg-transparent');
+      }
+    });
+
+    // Mobile menu toggle
+    const mobileBtn  = document.getElementById('mobile-menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    function closeMobileMenu() {
+      mobileMenu.classList.remove('menu-open');
+      mobileBtn.querySelector('i').className = 'fa-solid fa-bars text-lg';
+    }
+    mobileBtn.addEventListener('click', () => {
+      if (mobileMenu.classList.contains('menu-open')) {
+        closeMobileMenu();
+      } else {
+        mobileMenu.classList.add('menu-open');
+        mobileBtn.querySelector('i').className = 'fa-solid fa-xmark text-lg';
+      }
+    });
+    mobileMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', closeMobileMenu));
+
+    // Portfolio filter
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const filter = btn.getAttribute('data-filter');
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        
+        document.querySelectorAll('.project-card').forEach(card => {
+          const category = card.getAttribute('data-category');
+          if (filter === 'all' || category === filter) {
+            card.classList.remove('hidden');
+          } else {
+            card.classList.add('hidden');
+          }
+        });
+      });
+    });
+
+    // Scroll reveal
+    const revealEls = document.querySelectorAll('.reveal:not(.visible)');
+    const observer  = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }
+      });
+    }, { threshold: 0.1 });
+    revealEls.forEach(el => observer.observe(el));
+
+    // Back to top
+    var bttBtn = document.getElementById('back-to-top');
+    window.addEventListener('scroll', function() {
+      if (window.scrollY > 500) {
+        bttBtn.classList.remove('btt-hidden');
+        bttBtn.classList.add('btt-visible');
+      } else {
+        bttBtn.classList.add('btt-hidden');
+        bttBtn.classList.remove('btt-visible');
+      }
+    }, { passive: true });
+    bttBtn.addEventListener('click', function() {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  </script>
+</body>
+</html>

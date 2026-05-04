@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="scroll-smooth">
+<head>
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VXKMN286TH"></script>
+  <script src="../ga_event.js"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-VXKMN286TH');
+  </script>
+
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LINE LIFF 開發指南：從零到一的完整流程 | Digitools Studio Blog</title>
+  <meta name="description" content="完整的 LINE LIFF 開發教學：從申請 Channel、設定 LIFF ID、SDK 初始化、取得用戶資料到測試上線，手把手帶你完成第一個 LIFF 應用。" />
+  <meta name="keywords" content="LINE LIFF, LIFF開發, LINE Front-end Framework, LIFF教學, LINE Channel, LIFF SDK, LINE用戶資料" />
+  <meta name="robots" content="index, follow" />
+  <meta name="author" content="Digitools Studio" />
+  <meta name="theme-color" content="#3B82F6" />
+  <link rel="canonical" href="https://digitools-studio.github.io/posts/line-liff-guide.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://digitools-studio.github.io/posts/line-liff-guide.html" />
+  <meta property="og:site_name" content="Digitools Studio" />
+  <meta property="og:locale" content="zh_TW" />
+  <meta property="og:title" content="LINE LIFF 開發指南：從零到一的完整流程" />
+  <meta property="og:description" content="完整的 LINE LIFF 開發教學，手把手帶你從申請到上線完成第一個 LIFF 應用。" />
+  <meta property="og:image" content="https://digitools-studio.github.io/Static/Image/og-cover.png" />
+  <meta property="article:published_time" content="2026-05-03" />
+  <meta property="article:tag" content="LINE LIFF" />
+  <meta property="article:tag" content="教程" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="LINE LIFF 開發指南：從零到一的完整流程" />
+  <meta name="twitter:description" content="完整的 LINE LIFF 開發教學，手把手帶你從申請到上線。" />
+  <meta name="twitter:image" content="https://digitools-studio.github.io/Static/Image/og-cover.png" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['"Noto Sans TC"', 'sans-serif'] },
+          colors: { line: { DEFAULT: '#00B900', dark: '#009900', light: '#e6f8e6' } }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body { font-family: 'Noto Sans TC', sans-serif; }
+    .glass-header {
+      background: rgba(255,255,255,0.93);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.07);
+    }
+    /* Reading progress bar */
+    #reading-progress {
+      position: fixed; top: 0; left: 0; height: 3px; z-index: 9999;
+      background: linear-gradient(90deg, #3B82F6, #00B900);
+      transition: width 0.1s linear;
+    }
+    /* Mobile menu */
+    #mobile-menu {
+      transform-origin: top center;
+      transition: opacity 0.22s ease, transform 0.22s cubic-bezier(0.16,1,0.3,1), visibility 0s linear 0.22s;
+      opacity: 0; transform: translateY(-8px) scaleY(0.96); visibility: hidden;
+    }
+    #mobile-menu.menu-open {
+      opacity: 1; transform: translateY(0) scaleY(1); visibility: visible;
+      transition: opacity 0.22s ease, transform 0.22s cubic-bezier(0.16,1,0.3,1);
+    }
+    /* Article prose styles */
+    .prose h2 { font-size: 1.5rem; font-weight: 700; color: #0f172a; margin: 2.5rem 0 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid #e2e8f0; }
+    .prose h3 { font-size: 1.125rem; font-weight: 600; color: #1e293b; margin: 2rem 0 0.75rem; }
+    .prose p { color: #374151; line-height: 1.85; margin-bottom: 1.25rem; }
+    .prose ul { list-style: none; margin: 0 0 1.25rem; padding: 0; }
+    .prose ul li { padding-left: 1.5rem; position: relative; color: #374151; line-height: 1.75; margin-bottom: 0.4rem; }
+    .prose ul li::before { content: "▸"; position: absolute; left: 0; color: #3B82F6; font-size: 0.75rem; top: 0.35rem; }
+    .prose ol { counter-reset: list; margin: 0 0 1.25rem; padding: 0; }
+    .prose ol li { counter-increment: list; padding-left: 2rem; position: relative; color: #374151; line-height: 1.75; margin-bottom: 0.5rem; }
+    .prose ol li::before { content: counter(list); position: absolute; left: 0; width: 1.4rem; height: 1.4rem; background: #3B82F6; color: white; font-size: 0.7rem; font-weight: 700; border-radius: 50%; display: flex; align-items: center; justify-content: center; top: 0.2rem; }
+    .prose code { background: #f1f5f9; color: #0f172a; padding: 0.15em 0.45em; border-radius: 4px; font-size: 0.875em; font-family: 'Courier New', monospace; }
+    .prose pre { background: #0f172a; border-radius: 12px; padding: 1.5rem; overflow-x: auto; margin: 1.5rem 0; }
+    .prose pre code { background: none; color: #e2e8f0; padding: 0; font-size: 0.85rem; line-height: 1.7; }
+    .prose .callout { background: #eff6ff; border-left: 4px solid #3B82F6; padding: 1rem 1.25rem; border-radius: 0 8px 8px 0; margin: 1.5rem 0; }
+    .prose .callout p { margin: 0; color: #1e40af; }
+    .prose strong { color: #0f172a; font-weight: 600; }
+    #back-to-top { transition: opacity 0.3s ease, transform 0.3s ease; }
+    #back-to-top.btt-hidden  { opacity: 0; transform: translateY(8px); pointer-events: none; }
+    #back-to-top.btt-visible { opacity: 1; transform: translateY(0);   pointer-events: auto; }
+  </style>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": "LINE LIFF 開發指南：從零到一的完整流程",
+    "description": "完整的 LINE LIFF 開發教學：從申請 Channel、SDK 初始化、取得用戶資料到測試上線。",
+    "datePublished": "2026-05-03",
+    "author": { "@type": "Organization", "name": "Digitools Studio", "url": "https://digitools-studio.github.io/" },
+    "publisher": { "@type": "Organization", "name": "Digitools Studio" },
+    "url": "https://digitools-studio.github.io/posts/line-liff-guide.html",
+    "keywords": ["LINE LIFF", "LIFF開發", "LINE Front-end Framework", "教程"],
+    "inLanguage": "zh-TW",
+    "isPartOf": { "@type": "Blog", "url": "https://digitools-studio.github.io/blog.html" }
+  }
+  </script>
+</head>
+<body class="bg-white text-slate-800 antialiased">
+
+  <!-- Reading progress bar -->
+  <div id="reading-progress" style="width:0%"></div>
+
+  <!-- HEADER -->
+  <header id="navbar" class="fixed w-full top-0 z-50 transition-all duration-300 py-5 bg-transparent">
+    <div class="max-w-7xl mx-auto px-5 lg:px-8 flex justify-between items-center">
+      <a href="../index.html" class="flex items-center space-x-3 group">
+        <div class="w-9 h-9 bg-slate-900 text-white rounded-xl flex items-center justify-center font-bold text-base shadow-md group-hover:bg-blue-600 transition-colors duration-300">D</div>
+        <div>
+          <p class="font-bold text-slate-900 leading-tight text-sm">Digitools Studio</p>
+          <p class="text-xs text-slate-400 hidden md:block">數轉工作室</p>
+        </div>
+      </a>
+      <nav class="hidden lg:flex items-center space-x-6 text-sm font-medium text-slate-600">
+        <a href="../index.html" class="hover:text-slate-900 transition-colors">首頁</a>
+        <a href="../services.html" class="hover:text-slate-900 transition-colors">服務內容</a>
+        <a href="../blog.html" class="text-blue-600 font-semibold">Blog</a>
+        <a href="../portfolio.html" class="hover:text-slate-900 transition-colors">作品集</a>
+        <a href="../contact.html" class="hover:text-slate-900 transition-colors">聯絡我們</a>
+      </nav>
+      <div class="flex items-center gap-3">
+        <a href="../contact.html" class="hidden lg:inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-semibold text-white bg-slate-900 hover:bg-blue-600 transition-all shadow-sm">諮詢案件</a>
+        <button id="mobile-menu-btn" class="lg:hidden w-10 h-10 flex items-center justify-center rounded-xl text-slate-700 hover:bg-slate-100 transition-colors">
+          <i class="fa-solid fa-bars text-lg"></i>
+        </button>
+      </div>
+    </div>
+    <div id="mobile-menu" class="lg:hidden absolute top-full left-0 w-full bg-white border-b border-slate-100 shadow-lg px-5 py-4 flex flex-col gap-1">
+      <a href="../index.html" class="text-sm font-medium text-slate-700 hover:text-slate-900 py-3 border-b border-slate-100">首頁</a>
+      <a href="../services.html" class="text-sm font-medium text-slate-700 hover:text-slate-900 py-3 border-b border-slate-100">服務內容</a>
+      <a href="../blog.html" class="text-sm font-semibold text-blue-600 py-3 border-b border-slate-100">Blog</a>
+      <a href="../portfolio.html" class="text-sm font-medium text-slate-700 hover:text-slate-900 py-3 border-b border-slate-100">作品集</a>
+      <a href="../contact.html" class="text-sm font-medium text-slate-700 hover:text-slate-900 py-3 border-b border-slate-100">聯絡我們</a>
+      <a href="../contact.html" class="mt-3 w-full text-center px-5 py-3 rounded-lg text-white bg-slate-900 font-medium">諮詢案件</a>
+    </div>
+  </header>
+
+  <!-- ARTICLE HEADER -->
+  <section class="pt-32 pb-12 lg:pt-40 lg:pb-16 bg-white border-b border-slate-100">
+    <div class="max-w-3xl mx-auto px-5 lg:px-8">
+      <!-- Breadcrumb -->
+      <nav class="flex items-center gap-2 text-xs text-slate-400 mb-8">
+        <a href="../index.html" class="hover:text-slate-600 transition-colors">首頁</a>
+        <i class="fa-solid fa-chevron-right text-[10px]"></i>
+        <a href="../blog.html" class="hover:text-slate-600 transition-colors">Blog</a>
+        <i class="fa-solid fa-chevron-right text-[10px]"></i>
+        <span class="text-slate-600">LINE LIFF 開發指南</span>
+      </nav>
+
+      <!-- Tags -->
+      <div class="flex flex-wrap gap-2 mb-6">
+        <span class="inline-block px-3 py-1 bg-green-50 border border-green-200 text-green-700 text-xs rounded-full font-medium">LINE 開發</span>
+        <span class="inline-block px-3 py-1 bg-blue-50 border border-blue-200 text-blue-700 text-xs rounded-full font-medium">LIFF</span>
+        <span class="inline-block px-3 py-1 bg-purple-50 border border-purple-200 text-purple-700 text-xs rounded-full font-medium">教程</span>
+      </div>
+
+      <!-- Title -->
+      <h1 class="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 leading-tight mb-6">
+        LINE LIFF 開發指南：從零到一的完整流程
+      </h1>
+
+      <!-- Meta -->
+      <div class="flex flex-wrap items-center gap-4 text-sm text-slate-400">
+        <span class="flex items-center gap-1.5"><i class="fa-regular fa-calendar"></i>2026年5月3日</span>
+        <span class="flex items-center gap-1.5"><i class="fa-regular fa-clock"></i>約 8 分鐘閱讀</span>
+        <span class="flex items-center gap-1.5"><i class="fa-regular fa-building"></i>Digitools Studio</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ARTICLE BODY -->
+  <article class="py-14">
+    <div class="max-w-3xl mx-auto px-5 lg:px-8 prose">
+
+      <p>LINE LIFF（LINE Front-end Framework）讓開發者能在 LINE 應用內嵌入客製化的網頁應用，讓用戶無需離開 LINE 就能完成互動。相比傳統 App 開發，LIFF 只需要前端技術（HTML / JavaScript），開發成本低、部署快速，是許多企業導入 LINE 服務的第一步。</p>
+
+      <div class="callout">
+        <p>✅ <strong>適合對象</strong>：想在 LINE 官方帳號加入互動功能的開發者或企業，例如預約系統、表單填寫、點數查詢等。</p>
+      </div>
+
+      <h2>什麼是 LIFF？</h2>
+      <p>LIFF 是一個讓你在 LINE 內開啟自訂網頁的機制。當用戶點擊 LIFF URL（格式為 <code>https://liff.line.me/[LIFF-ID]</code>），LINE 會在內建瀏覽器中開啟你的應用，並自動帶入用戶的 LINE Token，讓你可以取得用戶基本資料（ID、暱稱、頭像）。</p>
+
+      <p>LIFF 主要應用場景：</p>
+      <ul>
+        <li>線上預約/報名系統（預填 LINE 資訊，省去輸入步驟）</li>
+        <li>會員點數查詢 / 優惠券領取</li>
+        <li>問卷調查（自動帶入用戶身份）</li>
+        <li>訂單確認 / 出貨追蹤頁面</li>
+      </ul>
+
+      <h2>Step 1：建立 LINE Login Channel</h2>
+      <p>LIFF 需要依附在一個 <strong>LINE Login Channel</strong> 下。前往 <code>developers.line.biz</code> 登入後：</p>
+      <ol>
+        <li>選擇或建立一個 Provider</li>
+        <li>點擊「Create a new channel」→ 選擇「LINE Login」</li>
+        <li>填寫 Channel 名稱、描述，選擇 App Type 為「Web app」</li>
+        <li>完成建立後進入 Channel 設定頁面</li>
+      </ol>
+
+      <h2>Step 2：新增 LIFF App</h2>
+      <p>在 Channel 頁面找到「LIFF」分頁，點擊「Add」：</p>
+      <ul>
+        <li><strong>LIFF app name</strong>：你的應用名稱</li>
+        <li><strong>Size</strong>：Full / Tall / Compact（推薦 Full，佔滿整個螢幕）</li>
+        <li><strong>Endpoint URL</strong>：你的 HTTPS 網址（本地測試可用 ngrok）</li>
+        <li><strong>Scopes</strong>：勾選 <code>profile</code>（取得用戶暱稱/頭像）、<code>openid</code>（取得 userId）</li>
+      </ul>
+      <p>建立後會拿到一組 <strong>LIFF ID</strong>，格式為 <code>1234567890-xxxxxxxx</code>，請妥善保存。</p>
+
+      <h2>Step 3：前端整合 LIFF SDK</h2>
+      <p>在你的 HTML 頁面加入 LIFF SDK，並初始化：</p>
+      <pre><code>&lt;!-- 引入 LIFF SDK --&gt;
+&lt;script src="https://static.line-scdn.net/liff/edge/versions/2.22.3/sdk.js"&gt;&lt;/script&gt;
+
+&lt;script&gt;
+  const LIFF_ID = '你的-LIFF-ID';
+
+  async function initLiff() {
+    try {
+      await liff.init({ liffId: LIFF_ID });
+
+      if (!liff.isLoggedIn()) {
+        liff.login(); // 自動導向 LINE 登入
+        return;
+      }
+
+      // 取得用戶資料
+      const profile = await liff.getProfile();
+      console.log('userId:', profile.userId);
+      console.log('displayName:', profile.displayName);
+      console.log('pictureUrl:', profile.pictureUrl);
+
+    } catch (err) {
+      console.error('LIFF init failed:', err);
+    }
+  }
+
+  initLiff();
+&lt;/script&gt;</code></pre>
+
+      <h2>Step 4：傳送訊息給自己</h2>
+      <p>LIFF 允許直接以用戶身份傳送訊息到聊天室（需在 LINE 開啟才有效）：</p>
+      <pre><code>// 傳送文字訊息到目前的聊天室
+if (liff.isInClient()) {
+  await liff.sendMessages([
+    { type: 'text', text: '預約成功！我們將於 24 小時內確認。' }
+  ]);
+}
+
+// 關閉 LIFF 視窗
+liff.closeWindow();</code></pre>
+
+      <div class="callout">
+        <p>⚠️ <strong>注意</strong>：<code>liff.sendMessages()</code> 只有在 LINE 內建瀏覽器中開啟時才有效，外部瀏覽器會報錯。建議加上 <code>liff.isInClient()</code> 判斷。</p>
+      </div>
+
+      <h2>Step 5：本機開發測試</h2>
+      <p>LIFF Endpoint 必須是 HTTPS，本機測試推薦使用 <strong>ngrok</strong>：</p>
+      <pre><code># 安裝 ngrok 後啟動 (假設本機 port 3000)
+ngrok http 3000
+
+# 取得 https://xxxx.ngrok.io，填入 LIFF Endpoint URL</code></pre>
+      <p>填入後在 LINE 中直接開啟 <code>https://liff.line.me/[LIFF-ID]</code> 即可測試。</p>
+
+      <h2>Step 6：上線注意事項</h2>
+      <ul>
+        <li>部署到正式環境（Vercel / GitHub Pages / 你的主機），確保 HTTPS</li>
+        <li>更新 LIFF Endpoint URL 為正式域名</li>
+        <li>LINE Login Channel 的「Callback URL」需加入你的域名</li>
+        <li>若有用到 <code>profile</code> scope，Channel 需在 LINE Developers 完成審核（通常立即生效）</li>
+      </ul>
+
+      <h2>常見問題</h2>
+      <ul>
+        <li><strong>liff.init() 一直 pending</strong>：確認 LIFF ID 正確，且頁面是 HTTPS</li>
+        <li><strong>取得 userId 但無法對應用戶</strong>：需在後端建立 userId ↔ 會員資料的對應表</li>
+        <li><strong>在電腦瀏覽器測試登入失敗</strong>：正常現象，LIFF 在電腦版需先登入 LINE Web，或改用手機</li>
+      </ul>
+
+      <p>以上流程走完，你就有一個完整可運行的 LIFF 應用。實際案例中，我們通常會搭配 Messaging API 的 Webhook 在後端記錄預約資料，並自動回傳確認訊息給用戶，形成完整的自動化流程。</p>
+
+    </div>
+  </article>
+
+  <!-- AUTHOR + CTA -->
+  <div class="bg-slate-50 border-t border-slate-200">
+    <div class="max-w-3xl mx-auto px-5 lg:px-8 py-12">
+      <div class="flex items-start gap-4 bg-white rounded-2xl p-6 border border-slate-200">
+        <div class="w-12 h-12 bg-slate-900 text-white rounded-xl flex items-center justify-center font-bold text-lg flex-none">D</div>
+        <div>
+          <p class="font-semibold text-slate-900 mb-1">Digitools Studio</p>
+          <p class="text-sm text-slate-500 leading-relaxed">以軟體開發為核心的接案工作室，專注 LINE 生態整合、客製 Web 應用與資料流程自動化。有任何 LIFF 開發問題，歡迎直接聯繫。</p>
+          <div class="flex gap-3 mt-4">
+            <a href="https://lin.ee/6IdgZC4" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-4 py-2 bg-line text-white text-sm rounded-full font-medium hover:bg-line-dark transition-colors">
+              <i class="fa-brands fa-line"></i>LINE 諮詢
+            </a>
+            <a href="../contact.html" class="inline-flex items-center gap-2 px-4 py-2 border border-slate-300 text-slate-700 text-sm rounded-full font-medium hover:bg-slate-100 transition-colors">
+              Email 聯繫
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Navigation -->
+      <div class="flex justify-between items-center mt-8">
+        <a href="../blog.html" class="inline-flex items-center gap-2 text-sm text-slate-500 hover:text-slate-900 transition-colors">
+          <i class="fa-solid fa-arrow-left text-xs"></i>返回 Blog
+        </a>
+        <a href="python-crawler-price-monitor.html" class="inline-flex items-center gap-2 text-sm text-slate-500 hover:text-slate-900 transition-colors">
+          下一篇：Python 爬蟲實戰<i class="fa-solid fa-arrow-right text-xs"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="bg-slate-900 border-t border-slate-800 text-slate-400">
+    <div class="max-w-7xl mx-auto px-5 lg:px-8 py-10">
+      <div class="flex flex-col md:flex-row justify-between items-center gap-4 text-sm">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 bg-slate-700 text-white rounded-xl flex items-center justify-center font-bold text-sm">D</div>
+          <span class="font-bold text-white">Digitools Studio</span>
+        </div>
+        <div class="flex gap-6 text-slate-400">
+          <a href="../index.html" class="hover:text-white transition-colors">首頁</a>
+          <a href="../services.html" class="hover:text-white transition-colors">服務</a>
+          <a href="../blog.html" class="hover:text-white transition-colors">Blog</a>
+          <a href="../contact.html" class="hover:text-white transition-colors">聯絡</a>
+        </div>
+        <p class="text-xs text-slate-500">© 2026 Digitools Studio. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Back to top -->
+  <button id="back-to-top" aria-label="回到頂端" class="btt-hidden fixed bottom-[5.5rem] right-6 z-40 w-10 h-10 bg-white border border-slate-200 rounded-full shadow-md flex items-center justify-center text-slate-500 hover:text-slate-900 hover:border-slate-400 hover:shadow-lg transition-all">
+    <i class="fa-solid fa-chevron-up text-xs"></i>
+  </button>
+
+  <!-- Floating LINE Button -->
+  <div class="fixed bottom-6 right-6 z-50 group">
+    <a href="https://lin.ee/6IdgZC4" target="_blank" rel="noopener noreferrer" class="flex items-center gap-2.5 bg-line hover:bg-line-dark text-white shadow-2xl rounded-full px-5 py-3.5 transition-all duration-300 hover:scale-105" title="LINE 諮詢">
+      <i class="fa-brands fa-line text-2xl"></i>
+      <span class="text-sm font-semibold hidden md:block">LINE 諮詢</span>
+    </a>
+  </div>
+
+  <script>
+    // Navbar
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 60) { navbar.classList.add('glass-header','py-3'); navbar.classList.remove('py-5','bg-transparent'); }
+      else { navbar.classList.remove('glass-header','py-3'); navbar.classList.add('py-5','bg-transparent'); }
+    });
+    // Mobile menu
+    const mobileBtn = document.getElementById('mobile-menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    mobileBtn.addEventListener('click', () => {
+      const open = mobileMenu.classList.toggle('menu-open');
+      mobileBtn.querySelector('i').className = open ? 'fa-solid fa-xmark text-lg' : 'fa-solid fa-bars text-lg';
+    });
+    mobileMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+      mobileMenu.classList.remove('menu-open');
+      mobileBtn.querySelector('i').className = 'fa-solid fa-bars text-lg';
+    }));
+    // Reading progress
+    const progress = document.getElementById('reading-progress');
+    window.addEventListener('scroll', () => {
+      const article = document.querySelector('article');
+      const scrollTop = window.scrollY;
+      const docHeight = article.offsetTop + article.offsetHeight - window.innerHeight;
+      const pct = Math.min(100, Math.max(0, (scrollTop / docHeight) * 100));
+      progress.style.width = pct + '%';
+    }, { passive: true });
+    // Back to top
+    const bttBtn = document.getElementById('back-to-top');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 500) { bttBtn.classList.remove('btt-hidden'); bttBtn.classList.add('btt-visible'); }
+      else { bttBtn.classList.add('btt-hidden'); bttBtn.classList.remove('btt-visible'); }
+    }, { passive: true });
+    bttBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+  </script>
+</body>
+</html>

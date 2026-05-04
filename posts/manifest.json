@@ -1,0 +1,74 @@
+[
+  {
+    "slug": "line-liff-guide",
+    "title": "LINE LIFF 開發指南：從零到一的完整流程",
+    "description": "在 LINE 內嵌入客製應用已成為常見需求。本文分享如何從申請、開發、測試到上線的完整流程。",
+    "excerpt": "LINE LIFF（LINE Front-end Framework）讓開發者能在 LINE 應用內提供客製化互動體驗。相比傳統 App 開發，LIFF 只需要前端知識即可快速上線，並直接取得用戶的 LINE ID 與基本資料...",
+    "date": "2026-05-03",
+    "dateDisplay": "2026年5月3日",
+    "readingTime": 8,
+    "featured": true,
+    "gradient": "green",
+    "icon": "fa-brands fa-line",
+    "category": "LINE開發",
+    "tags": [
+      { "label": "LINE 開發", "color": "green" },
+      { "label": "LIFF", "color": "blue" },
+      { "label": "教程", "color": "purple" }
+    ]
+  },
+  {
+    "slug": "python-crawler-price-monitor",
+    "title": "Python 爬蟲實戰：自動監控競品價格與動向",
+    "description": "競品分析不需要人工手動查看。透過 Python 爬蟲與排程，自動監控市場變化並生成報告。",
+    "excerpt": "做競品分析最花時間的部分就是資料蒐集。我們曾為客戶建立自動化系統，每天自動抓取競品網站資訊、解析關鍵數據，並透過 LINE 推播通知相關人員，讓業務團隊隨時掌握市場動態...",
+    "date": "2026-05-01",
+    "dateDisplay": "2026年5月1日",
+    "readingTime": 10,
+    "featured": true,
+    "gradient": "orange",
+    "icon": "fa-brands fa-python",
+    "category": "自動化",
+    "tags": [
+      { "label": "自動化", "color": "orange" },
+      { "label": "Python", "color": "blue" },
+      { "label": "案例分析", "color": "purple" }
+    ]
+  },
+  {
+    "slug": "seo-best-practices",
+    "title": "SEO 最佳實踐：如何讓你的網站被搜尋引擎看見",
+    "description": "好的 SEO 策略能帶來源源不絕的有機流量。分享我們在 Web 開發中應用的 SEO 技巧。",
+    "excerpt": "我們接過多個網站開發案件，發現很多企業忽略了 SEO 優化。實際上，透過正確的語意化 HTML、Meta 標籤設定、JSON-LD 結構化資料和內部連結策略，網站的可見度可以大幅提升...",
+    "date": "2026-04-28",
+    "dateDisplay": "2026年4月28日",
+    "readingTime": 12,
+    "featured": true,
+    "gradient": "blue",
+    "icon": "fa-solid fa-magnifying-glass",
+    "category": "SEO",
+    "tags": [
+      { "label": "SEO", "color": "green" },
+      { "label": "Web 開發", "color": "blue" },
+      { "label": "最佳實踐", "color": "purple" }
+    ]
+  },
+  {
+    "slug": "n8n-workflow-automation",
+    "title": "AI 時代的自動化工作流：如何用 N8N 整合多個應用",
+    "description": "無代碼工具讓非技術人員也能建立複雜流程。分享如何用 N8N 打造企業級自動化系統。",
+    "excerpt": "N8N 是一個功能強大的無代碼自動化平台，能整合 Slack、Google Sheets 等數百個應用。相比 Zapier 的按次計費，N8N 支援自託管，讓中小企業也能以低成本建立可靠的自動化流程...",
+    "date": "2026-04-25",
+    "dateDisplay": "2026年4月25日",
+    "readingTime": 9,
+    "featured": false,
+    "gradient": "purple",
+    "icon": "fa-solid fa-diagram-project",
+    "category": "自動化",
+    "tags": [
+      { "label": "自動化", "color": "orange" },
+      { "label": "AI", "color": "indigo" },
+      { "label": "工具教學", "color": "purple" }
+    ]
+  }
+]

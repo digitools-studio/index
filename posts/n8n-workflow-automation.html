@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="scroll-smooth">
+<head>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VXKMN286TH"></script>
+  <script src="../ga_event.js"></script>
+  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-VXKMN286TH');</script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI 時代的自動化工作流：N8N 完整入門指南 | Digitools Studio Blog</title>
+  <meta name="description" content="N8N 開源工作流自動化工具完整入門：從安裝部署、基本概念、實戰範例（LINE 訂單通知），到與 Zapier 的成本比較。" />
+  <meta name="keywords" content="N8N, 工作流自動化, 低代碼, Zapier替代, Docker部署, LINE通知, AI自動化, workflow" />
+  <meta name="robots" content="index, follow" />
+  <meta name="author" content="Digitools Studio" />
+  <link rel="canonical" href="https://digitools-studio.github.io/posts/n8n-workflow-automation.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://digitools-studio.github.io/posts/n8n-workflow-automation.html" />
+  <meta property="og:title" content="AI 時代的自動化工作流：N8N 完整入門指南" />
+  <meta property="og:description" content="N8N 完整入門：安裝、核心概念、LINE 訂單通知實戰，及與 Zapier 的成本比較。" />
+  <meta property="og:image" content="https://digitools-studio.github.io/Static/Image/og-cover.png" />
+  <meta property="article:published_time" content="2026-04-25" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="AI 時代的自動化工作流：N8N 完整入門指南" />
+  <meta name="twitter:image" content="https://digitools-studio.github.io/Static/Image/og-cover.png" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+  <script>tailwind.config={theme:{extend:{fontFamily:{sans:['"Noto Sans TC"','sans-serif']},colors:{line:{DEFAULT:'#00B900',dark:'#009900'}}}}}</script>
+  <style>
+    body{font-family:'Noto Sans TC',sans-serif;}
+    .glass-header{background:rgba(255,255,255,0.93);backdrop-filter:blur(14px);box-shadow:0 1px 3px rgba(0,0,0,0.07);}
+    #reading-progress{position:fixed;top:0;left:0;height:3px;z-index:9999;background:linear-gradient(90deg,#f97316,#6366f1);transition:width 0.1s linear;}
+    #mobile-menu{transform-origin:top center;transition:opacity .22s ease,transform .22s cubic-bezier(.16,1,.3,1),visibility 0s linear .22s;opacity:0;transform:translateY(-8px) scaleY(.96);visibility:hidden;}
+    #mobile-menu.menu-open{opacity:1;transform:translateY(0) scaleY(1);visibility:visible;transition:opacity .22s ease,transform .22s cubic-bezier(.16,1,.3,1);}
+    .prose h2{font-size:1.5rem;font-weight:700;color:#0f172a;margin:2.5rem 0 1rem;padding-bottom:.5rem;border-bottom:2px solid #e2e8f0;}
+    .prose h3{font-size:1.125rem;font-weight:600;color:#1e293b;margin:2rem 0 .75rem;}
+    .prose p{color:#374151;line-height:1.85;margin-bottom:1.25rem;}
+    .prose ul{list-style:none;margin:0 0 1.25rem;padding:0;}
+    .prose ul li{padding-left:1.5rem;position:relative;color:#374151;line-height:1.75;margin-bottom:.4rem;}
+    .prose ul li::before{content:"▸";position:absolute;left:0;color:#f97316;font-size:.75rem;top:.35rem;}
+    .prose ol{counter-reset:list;margin:0 0 1.25rem;padding:0;}
+    .prose ol li{counter-increment:list;padding-left:2rem;position:relative;color:#374151;line-height:1.75;margin-bottom:.5rem;}
+    .prose ol li::before{content:counter(list);position:absolute;left:0;width:1.4rem;height:1.4rem;background:#f97316;color:white;font-size:.7rem;font-weight:700;border-radius:50%;display:flex;align-items:center;justify-content:center;top:.2rem;}
+    .prose code{background:#f1f5f9;color:#0f172a;padding:.15em .45em;border-radius:4px;font-size:.875em;font-family:'Courier New',monospace;}
+    .prose pre{background:#0f172a;border-radius:12px;padding:1.5rem;overflow-x:auto;margin:1.5rem 0;}
+    .prose pre code{background:none;color:#e2e8f0;padding:0;font-size:.85rem;line-height:1.7;}
+    .prose .callout{background:#fff7ed;border-left:4px solid #f97316;padding:1rem 1.25rem;border-radius:0 8px 8px 0;margin:1.5rem 0;}
+    .prose .callout p{margin:0;color:#9a3412;}
+    .prose .callout.indigo{background:#eef2ff;border-color:#6366f1;}.prose .callout.indigo p{color:#3730a3;}
+    .prose table{width:100%;border-collapse:collapse;margin:1.5rem 0;font-size:.9rem;}
+    .prose table th{background:#f8fafc;font-weight:600;color:#0f172a;text-align:left;padding:.75rem 1rem;border-bottom:2px solid #e2e8f0;}
+    .prose table td{padding:.75rem 1rem;border-bottom:1px solid #f1f5f9;color:#374151;}
+    .prose table tr:hover td{background:#f8fafc;}
+    .prose strong{color:#0f172a;font-weight:600;}
+    #back-to-top{transition:opacity .3s ease,transform .3s ease;}
+    #back-to-top.btt-hidden{opacity:0;transform:translateY(8px);pointer-events:none;}
+    #back-to-top.btt-visible{opacity:1;transform:translateY(0);pointer-events:auto;}
+  </style>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"AI 時代的自動化工作流：N8N 完整入門指南","datePublished":"2026-04-25","author":{"@type":"Organization","name":"Digitools Studio","url":"https://digitools-studio.github.io/"},"url":"https://digitools-studio.github.io/posts/n8n-workflow-automation.html","keywords":["N8N","工作流自動化","自動化工具","Zapier"],"inLanguage":"zh-TW"}</script>
+</head>
+<body class="bg-white text-slate-800 antialiased">
+  <div id="reading-progress" style="width:0%"></div>
+
+  <header id="navbar" class="fixed w-full top-0 z-50 transition-all duration-300 py-5 bg-transparent">
+    <div class="max-w-7xl mx-auto px-5 lg:px-8 flex justify-between items-center">
+      <a href="../index.html" class="flex items-center space-x-3 group">
+        <div class="w-9 h-9 bg-slate-900 text-white rounded-xl flex items-center justify-center font-bold text-base shadow-md group-hover:bg-blue-600 transition-colors duration-300">D</div>
+        <div><p class="font-bold text-slate-900 leading-tight text-sm">Digitools Studio</p><p class="text-xs text-slate-400 hidden md:block">數轉工作室</p></div>
+      </a>
+      <nav class="hidden lg:flex items-center space-x-6 text-sm font-medium text-slate-600">
+        <a href="../index.html" class="hover:text-slate-900 transition-colors">首頁</a>
+        <a href="../services.html" class="hover:text-slate-900 transition-colors">服務內容</a>
+        <a href="../blog.html" class="text-blue-600 font-semibold">Blog</a>
+        <a href="../portfolio.html" class="hover:text-slate-900 transition-colors">作品集</a>
+        <a href="../contact.html" class="hover:text-slate-900 transition-colors">聯絡我們</a>
+      </nav>
+      <div class="flex items-center gap-3">
+        <a href="../contact.html" class="hidden lg:inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-semibold text-white bg-slate-900 hover:bg-blue-600 transition-all shadow-sm">諮詢案件</a>
+        <button id="mobile-menu-btn" class="lg:hidden w-10 h-10 flex items-center justify-center rounded-xl text-slate-700 hover:bg-slate-100 transition-colors"><i class="fa-solid fa-bars text-lg"></i></button>
+      </div>
+    </div>
+    <div id="mobile-menu" class="lg:hidden absolute top-full left-0 w-full bg-white border-b border-slate-100 shadow-lg px-5 py-4 flex flex-col gap-1">
+      <a href="../index.html" class="text-sm font-medium text-slate-700 hover:text-slate-900 py-3 border-b border-slate-100">首頁</a>
+      <a href="../services.html" class="text-sm font-medium text-slate-700 hover:text-slate-900 py-3 border-b border-slate-100">服務內容</a>
+      <a href="../blog.html" class="text-sm font-semibold text-blue-600 py-3 border-b border-slate-100">Blog</a>
+      <a href="../portfolio.html" class="text-sm font-medium text-slate-700 hover:text-slate-900 py-3 border-b border-slate-100">作品集</a>
+      <a href="../contact.html" class="text-sm font-medium text-slate-700 hover:text-slate-900 py-3 border-b border-slate-100">聯絡我們</a>
+      <a href="../contact.html" class="mt-3 w-full text-center px-5 py-3 rounded-lg text-white bg-slate-900 font-medium">諮詢案件</a>
+    </div>
+  </header>
+
+  <section class="pt-32 pb-12 lg:pt-40 lg:pb-16 bg-white border-b border-slate-100">
+    <div class="max-w-3xl mx-auto px-5 lg:px-8">
+      <nav class="flex items-center gap-2 text-xs text-slate-400 mb-8">
+        <a href="../index.html" class="hover:text-slate-600 transition-colors">首頁</a>
+        <i class="fa-solid fa-chevron-right text-[10px]"></i>
+        <a href="../blog.html" class="hover:text-slate-600 transition-colors">Blog</a>
+        <i class="fa-solid fa-chevron-right text-[10px]"></i>
+        <span class="text-slate-600">AI 時代的自動化工作流</span>
+      </nav>
+      <div class="flex flex-wrap gap-2 mb-6">
+        <span class="inline-block px-3 py-1 bg-orange-50 border border-orange-200 text-orange-700 text-xs rounded-full font-medium">自動化</span>
+        <span class="inline-block px-3 py-1 bg-indigo-50 border border-indigo-200 text-indigo-700 text-xs rounded-full font-medium">AI</span>
+        <span class="inline-block px-3 py-1 bg-purple-50 border border-purple-200 text-purple-700 text-xs rounded-full font-medium">工具教學</span>
+      </div>
+      <h1 class="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 leading-tight mb-6">AI 時代的自動化工作流：N8N 完整入門指南</h1>
+      <div class="flex flex-wrap items-center gap-4 text-sm text-slate-400">
+        <span class="flex items-center gap-1.5"><i class="fa-regular fa-calendar"></i>2026年4月25日</span>
+        <span class="flex items-center gap-1.5"><i class="fa-regular fa-clock"></i>約 9 分鐘閱讀</span>
+        <span class="flex items-center gap-1.5"><i class="fa-regular fa-building"></i>Digitools Studio</span>
+      </div>
+    </div>
+  </section>
+
+  <article class="py-14">
+    <div class="max-w-3xl mx-auto px-5 lg:px-8 prose">
+
+      <p>如果你用過 Zapier 或 Make（原 Integromat），一定知道當工作流一複雜，費用就會讓人心疼。N8N 是一個開源的工作流自動化工具，可以自架、免費使用，甚至可以跑 AI Agent 邏輯。這篇文章帶你從零開始建立第一個 N8N 工作流。</p>
+
+      <div class="callout indigo">
+        <p>🤖 <strong>N8N 的核心優勢</strong>：開源免費、可自架、支援 400+ 服務整合、內建 AI Agent 節點（OpenAI / Anthropic）。</p>
+      </div>
+
+      <h2>什麼是 N8N？</h2>
+      <p>N8N（念作「n-eight-n」或「nodemation」）是一個視覺化的工作流自動化平台。你可以把它想像成一個「積木式」的程式設計工具：將觸發器（Trigger）和動作（Action）連接起來，形成自動化流程。</p>
+      <p>它和 Zapier 最大的差異是：N8N 可以完全自架在你自己的伺服器，資料不會過第三方，而且沒有執行次數限制。</p>
+
+      <h2>安裝方式</h2>
+      <h3>方法一：Docker（推薦）</h3>
+      <p>最快速的自架方式，只需要有 Docker 環境：</p>
+      <pre><code>docker run -d \
+  --name n8n \
+  -p 5678:5678 \
+  -v n8n_data:/home/node/.n8n \
+  n8nio/n8n</code></pre>
+      <p>啟動後開啟 <code>http://localhost:5678</code> 就能看到 N8N 介面。</p>
+
+      <h3>方法二：N8N Cloud（免安裝）</h3>
+      <p>不想自架也可以直接用 <a href="https://n8n.io" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">n8n.io</a> 的雲端版本，有免費試用。適合評估或輕量使用。</p>
+
+      <h2>核心概念</h2>
+      <p>N8N 的工作流由以下元素組成：</p>
+      <ul>
+        <li><strong>Workflow（工作流）</strong>：整個自動化流程的容器</li>
+        <li><strong>Node（節點）</strong>：每個步驟，可以是觸發器、API 呼叫、資料轉換、條件判斷等</li>
+        <li><strong>Trigger Node（觸發節點）</strong>：啟動工作流的事件，例如 Webhook、排程、Email 收到</li>
+        <li><strong>Connection（連線）</strong>：節點之間的資料流向</li>
+        <li><strong>Expression（表達式）</strong>：用 <code>{{ }}</code> 語法存取上一個節點的資料</li>
+      </ul>
+
+      <h2>實戰範例：電商訂單 LINE 通知</h2>
+      <p>這是一個常見的客戶需求：Google 表單收到訂單 → 自動用 LINE 通知業務人員。</p>
+
+      <h3>Step 1：建立 Webhook 觸發器</h3>
+      <p>在 N8N 新增工作流，加入 <strong>Webhook</strong> 節點。N8N 會生成一個 URL，例如：</p>
+      <pre><code>https://your-n8n.com/webhook/order-notify</code></pre>
+      <p>把這個 URL 填入 Google 表單的「Apps Script」回應觸發器，每次有新回應就會呼叫此 webhook。</p>
+
+      <h3>Step 2：解析表單資料</h3>
+      <p>加入 <strong>Set</strong> 節點，整理 webhook 收到的 JSON 資料：</p>
+      <pre><code>// 用 Expression 語法取出欄位值
+客戶名稱：{{ $json.body["客戶名稱"] }}
+訂購商品：{{ $json.body["訂購商品"] }}
+數量：{{ $json.body["數量"] }}</code></pre>
+
+      <h3>Step 3：呼叫 LINE Messaging API</h3>
+      <p>加入 <strong>HTTP Request</strong> 節點：</p>
+      <ul>
+        <li>Method：POST</li>
+        <li>URL：<code>https://api.line.me/v2/bot/message/push</code></li>
+        <li>Headers：<code>Authorization: Bearer YOUR_TOKEN</code></li>
+        <li>Body（JSON）：</li>
+      </ul>
+      <pre><code>{
+  "to": "{{ $env.LINE_USER_ID }}",
+  "messages": [{
+    "type": "text",
+    "text": "📦 新訂單通知\n客戶：{{ $node['Set'].json.客戶名稱 }}\n商品：{{ $node['Set'].json.訂購商品 }} × {{ $node['Set'].json.數量 }}"
+  }]
+}</code></pre>
+
+      <div class="callout">
+        <p>💡 N8N 支援 <strong>Credentials</strong> 功能，可以把 API Token 安全儲存，不需要直接寫在節點設定裡。</p>
+      </div>
+
+      <h2>進階：加入 AI Agent</h2>
+      <p>N8N 內建 AI 節點，可以在工作流中呼叫 GPT 或 Claude 做智慧處理。例如：</p>
+      <ul>
+        <li>客服信件 → AI 分類（投訴 / 詢問 / 退款）→ 分別路由到不同流程</li>
+        <li>Google 評論 → AI 摘要成一句話 → 定期週報</li>
+        <li>LINE 訊息 → AI 擷取訂單意圖 → 自動回覆確認</li>
+      </ul>
+
+      <h2>N8N vs Zapier：成本比較</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>項目</th>
+            <th>N8N 自架</th>
+            <th>N8N Cloud</th>
+            <th>Zapier</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>月費</td><td>主機費（約 $5-15 USD）</td><td>$20 USD 起</td><td>$19.99 USD 起</td></tr>
+          <tr><td>執行次數上限</td><td>無限制</td><td>依方案</td><td>750 次（免費）</td></tr>
+          <tr><td>資料落地</td><td>完全自有</td><td>N8N 伺服器</td><td>Zapier 伺服器</td></tr>
+          <tr><td>AI 整合</td><td>原生支援</td><td>原生支援</td><td>需額外設定</td></tr>
+          <tr><td>技術門檻</td><td>中（需懂 Docker）</td><td>低</td><td>低</td></tr>
+        </tbody>
+      </table>
+      <p>對於有一定技術能力、且工作流量較大的團隊，N8N 自架在成本上幾乎沒有競爭對手。如果你需要協助建立 N8N 自動化工作流，歡迎聯絡我們。</p>
+
+    </div>
+  </article>
+
+  <div class="bg-slate-50 border-t border-slate-200">
+    <div class="max-w-3xl mx-auto px-5 lg:px-8 py-12">
+      <div class="flex items-start gap-4 bg-white rounded-2xl p-6 border border-slate-200">
+        <div class="w-12 h-12 bg-slate-900 text-white rounded-xl flex items-center justify-center font-bold text-lg flex-none">D</div>
+        <div>
+          <p class="font-semibold text-slate-900 mb-1">Digitools Studio</p>
+          <p class="text-sm text-slate-500 leading-relaxed">我們提供 N8N 工作流設計與自架部署服務，幫助你把重複性工作完全自動化。從 Google 表單、LINE Bot 到 AI Agent，一站式規劃。</p>
+          <div class="flex gap-3 mt-4">
+            <a href="https://lin.ee/6IdgZC4" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-4 py-2 bg-line text-white text-sm rounded-full font-medium hover:bg-line-dark transition-colors"><i class="fa-brands fa-line"></i>LINE 諮詢</a>
+            <a href="../contact.html" class="inline-flex items-center gap-2 px-4 py-2 border border-slate-300 text-slate-700 text-sm rounded-full font-medium hover:bg-slate-100 transition-colors">Email 聯繫</a>
+          </div>
+        </div>
+      </div>
+      <div class="flex justify-between items-center mt-8">
+        <a href="seo-best-practices.html" class="inline-flex items-center gap-2 text-sm text-slate-500 hover:text-slate-900 transition-colors"><i class="fa-solid fa-arrow-left text-xs"></i>上一篇：SEO 最佳實踐</a>
+        <a href="../blog.html" class="inline-flex items-center gap-2 text-sm text-slate-500 hover:text-slate-900 transition-colors">返回 Blog<i class="fa-solid fa-arrow-right text-xs"></i></a>
+      </div>
+    </div>
+  </div>
+
+  <footer class="bg-slate-900 border-t border-slate-800 text-slate-400">
+    <div class="max-w-7xl mx-auto px-5 lg:px-8 py-10">
+      <div class="flex flex-col md:flex-row justify-between items-center gap-4 text-sm">
+        <div class="flex items-center gap-3"><div class="w-8 h-8 bg-slate-700 text-white rounded-xl flex items-center justify-center font-bold text-sm">D</div><span class="font-bold text-white">Digitools Studio</span></div>
+        <div class="flex gap-6"><a href="../index.html" class="hover:text-white transition-colors">首頁</a><a href="../services.html" class="hover:text-white transition-colors">服務</a><a href="../blog.html" class="hover:text-white transition-colors">Blog</a><a href="../contact.html" class="hover:text-white transition-colors">聯絡</a></div>
+        <p class="text-xs text-slate-500">© 2026 Digitools Studio. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <button id="back-to-top" aria-label="回到頂端" class="btt-hidden fixed bottom-[5.5rem] right-6 z-40 w-10 h-10 bg-white border border-slate-200 rounded-full shadow-md flex items-center justify-center text-slate-500 hover:text-slate-900 hover:border-slate-400 hover:shadow-lg transition-all"><i class="fa-solid fa-chevron-up text-xs"></i></button>
+  <div class="fixed bottom-6 right-6 z-50"><a href="https://lin.ee/6IdgZC4" target="_blank" rel="noopener noreferrer" class="flex items-center gap-2.5 bg-line hover:bg-line-dark text-white shadow-2xl rounded-full px-5 py-3.5 transition-all duration-300 hover:scale-105"><i class="fa-brands fa-line text-2xl"></i><span class="text-sm font-semibold hidden md:block">LINE 諮詢</span></a></div>
+
+  <script>
+    const navbar=document.getElementById('navbar');
+    window.addEventListener('scroll',()=>{if(window.scrollY>60){navbar.classList.add('glass-header','py-3');navbar.classList.remove('py-5','bg-transparent');}else{navbar.classList.remove('glass-header','py-3');navbar.classList.add('py-5','bg-transparent');}});
+    const mobileBtn=document.getElementById('mobile-menu-btn'),mobileMenu=document.getElementById('mobile-menu');
+    mobileBtn.addEventListener('click',()=>{const o=mobileMenu.classList.toggle('menu-open');mobileBtn.querySelector('i').className=o?'fa-solid fa-xmark text-lg':'fa-solid fa-bars text-lg';});
+    mobileMenu.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{mobileMenu.classList.remove('menu-open');mobileBtn.querySelector('i').className='fa-solid fa-bars text-lg';}));
+    const progress=document.getElementById('reading-progress');
+    window.addEventListener('scroll',()=>{const art=document.querySelector('article'),d=art.offsetTop+art.offsetHeight-window.innerHeight;progress.style.width=Math.min(100,Math.max(0,(window.scrollY/d)*100))+'%';},{passive:true});
+    const bttBtn=document.getElementById('back-to-top');
+    window.addEventListener('scroll',()=>{if(window.scrollY>500){bttBtn.classList.remove('btt-hidden');bttBtn.classList.add('btt-visible');}else{bttBtn.classList.add('btt-hidden');bttBtn.classList.remove('btt-visible');}},{passive:true});
+    bttBtn.addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'}));
+  </script>
+</body>
+</html>

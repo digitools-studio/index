@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="scroll-smooth">
+<head>
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VXKMN286TH"></script>
+  <script src="ga_event.js"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-VXKMN286TH');
+  </script>
+
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>聯絡我們 | Digitools Studio | 免費諮詢 LINE 整合・Web 開發・自動化</title>
+  <meta name="description" content="Digitools Studio 聯絡諮詢 — LINE 整合、Web 開發、資料自動化需求都可諮詢。初次諮詢完全免費。可透過 LINE 或 Email 聯繫，新北市工作室，承接全台案件。" />
+  <meta name="keywords" content="聯絡諮詢, 免費諮詢, LINE整合諮詢, Web開發報價, 自動化服務, 接案合作, 數轉工作室" />
+  <meta name="robots" content="index, follow" />
+  <meta name="author" content="Digitools Studio" />
+  <meta name="theme-color" content="#3B82F6" />
+  <link rel="canonical" href="https://digitools-studio.github.io/contact.html" />
+  <!-- Open Graph / Social Share -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://digitools-studio.github.io/contact.html" />
+  <meta property="og:site_name" content="Digitools Studio" />
+  <meta property="og:locale" content="zh_TW" />
+  <meta property="og:title" content="聯絡我們 | Digitools Studio | 免費諮詢" />
+  <meta property="og:description" content="LINE 整合、Web 開發、資料自動化需求諮詢。初次諮詢完全免費，新北市工作室，承接全台。" />
+  <meta property="og:image" content="https://digitools-studio.github.io/Static/Image/og-cover.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Digitools Studio 聯絡諮詢" />
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="聯絡我們 | Digitools Studio" />
+  <meta name="twitter:description" content="LINE 整合、Web 開發、資料自動化。初次諮詢完全免費。" />
+  <meta name="twitter:image" content="https://digitools-studio.github.io/Static/Image/og-cover.png" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['"Noto Sans TC"', 'sans-serif'] },
+          colors: {
+            line: { DEFAULT: '#00B900', dark: '#009900', light: '#e6f8e6' }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body { font-family: 'Noto Sans TC', sans-serif; }
+    .glass-header {
+      background: rgba(255,255,255,0.93);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.07);
+    }
+    .reveal {
+      opacity: 0;
+      transform: translateY(22px);
+      transition: opacity 0.7s cubic-bezier(0.16,1,0.3,1), transform 0.7s cubic-bezier(0.16,1,0.3,1);
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .delay-100 { transition-delay: 100ms; }
+    .delay-200 { transition-delay: 200ms; }
+    .delay-300 { transition-delay: 300ms; }
+    * { -webkit-tap-highlight-color: transparent; }
+    a, button, summary { touch-action: manipulation; }
+    #mobile-menu {
+      transform-origin: top center;
+      transition: opacity 0.22s ease, transform 0.22s cubic-bezier(0.16,1,0.3,1), visibility 0s linear 0.22s;
+      opacity: 0;
+      transform: translateY(-8px) scaleY(0.96);
+      visibility: hidden;
+    }
+    #mobile-menu.menu-open {
+      opacity: 1;
+      transform: translateY(0) scaleY(1);
+      visibility: visible;
+      transition: opacity 0.22s ease, transform 0.22s cubic-bezier(0.16,1,0.3,1);
+    }
+    #back-to-top {
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+    #back-to-top.btt-hidden  { opacity: 0; transform: translateY(8px); pointer-events: none; }
+    #back-to-top.btt-visible { opacity: 1; transform: translateY(0);   pointer-events: auto; }
+    input, textarea, select {
+      font-family: 'Noto Sans TC', sans-serif;
+    }
+    input::placeholder, textarea::placeholder {
+      color: #cbd5e1;
+    }
+  </style>
+
+  <!-- JSON-LD Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {"@type": "ListItem", "position": 1, "name": "首頁", "item": "https://digitools-studio.github.io/"},
+          {"@type": "ListItem", "position": 2, "name": "聯絡我們", "item": "https://digitools-studio.github.io/contact.html"}
+        ]
+      },
+      {
+        "@type": "ContactPage",
+        "@id": "https://digitools-studio.github.io/contact.html#webpage",
+        "url": "https://digitools-studio.github.io/contact.html",
+        "name": "聯絡我們 | Digitools Studio",
+        "description": "LINE 整合、Web 開發、資料自動化需求諮詢，初次諮詢完全免費",
+        "isPartOf": {"@id": "https://digitools-studio.github.io/#website"},
+        "inLanguage": "zh-TW"
+      },
+      {
+        "@type": "LocalBusiness",
+        "@id": "https://digitools-studio.github.io/#localbusiness",
+        "name": "Digitools Studio",
+        "alternateName": "數轉工作室",
+        "url": "https://digitools-studio.github.io/",
+        "description": "專注 LINE 生態整合、客製 Web 應用、資料流程自動化的接案工作室，初次諮詢免費",
+        "email": "digitalaaronl@gmail.com",
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "新北市",
+          "addressCountry": "TW"
+        },
+        "areaServed": [{"@type": "Country", "name": "Taiwan"}],
+        "priceRange": "$$",
+        "openingHours": "Mo-Fr 09:00-18:00",
+        "contactPoint": {
+          "@type": "ContactPoint",
+          "contactType": "customer service",
+          "email": "digitalaaronl@gmail.com",
+          "availableLanguage": ["zh-TW"]
+        }
+      }
+    ]
+  }
+  </script>
+</head>
+<body class="bg-white text-slate-800 antialiased">
+
+  <!-- ═══════════════════════════════════════
+       HEADER
+  ═══════════════════════════════════════ -->
+  <header id="navbar" class="fixed w-full top-0 z-50 transition-all duration-300 py-5 bg-transparent">
+    <div class="max-w-7xl mx-auto px-5 lg:px-8 flex justify-between items-center">
+      <a href="index.html" class="flex items-center space-x-3 group">
+        <div class="w-9 h-9 bg-slate-900 text-white rounded-xl flex items-center justify-center font-bold text-base shadow-md group-hover:bg-blue-600 transition-colors duration-300">D</div>
+        <div>
+          <p class="font-bold text-slate-900 leading-tight text-sm">Digitools Studio</p>
+          <p class="text-xs text-slate-400 hidden md:block">數轉工作室</p>
+        </div>
+      </a>
+      <nav class="hidden lg:flex items-center space-x-6 text-sm font-medium text-slate-600">
+        <a href="index.html" class="hover:text-slate-900 transition-colors">首頁</a>
+        <a href="services.html" class="hover:text-slate-900 transition-colors">服務內容</a>
+        <a href="blog.html" class="hover:text-slate-900 transition-colors">Blog</a>
+        <a href="portfolio.html" class="hover:text-slate-900 transition-colors">作品集</a>
+        <a href="contact.html" class="text-blue-600 font-semibold">聯絡我們</a>
+      </nav>
+      <div class="flex items-center gap-3">
+        <a href="contact.html" class="hidden md:inline-flex items-center gap-2 bg-slate-900 hover:bg-blue-600 text-white px-5 py-2.5 rounded-full text-sm font-medium transition-all shadow-sm">
+          諮詢案件
+        </a>
+        <button id="mobile-menu-btn" class="lg:hidden text-slate-600 p-2">
+          <i class="fa-solid fa-bars text-lg"></i>
+        </button>
+      </div>
+    </div>
+    <!-- Mobile menu -->
+    <div id="mobile-menu" class="absolute top-full left-0 w-full bg-white/97 backdrop-blur-md shadow-lg border-t border-slate-100 py-4 px-5 flex flex-col space-y-1">
+      <a href="index.html" class="text-sm font-medium text-slate-700 hover:text-slate-900 py-3 border-b border-slate-100">首頁</a>
+      <a href="services.html" class="text-sm font-medium text-slate-700 hover:text-slate-900 py-3 border-b border-slate-100">服務內容</a>
+      <a href="blog.html" class="text-sm font-medium text-slate-700 hover:text-slate-900 py-3 border-b border-slate-100">Blog</a>
+      <a href="portfolio.html" class="text-sm font-medium text-slate-700 hover:text-slate-900 py-3 border-b border-slate-100">作品集</a>
+      <a href="contact.html" class="text-sm font-medium text-blue-600 font-semibold py-3 border-b border-slate-100">聯絡我們</a>
+      <a href="contact.html" class="mt-3 w-full text-center px-5 py-3 rounded-lg text-white bg-slate-900 font-medium">諮詢案件</a>
+    </div>
+  </header>
+
+  <!-- ═══════════════════════════════════════
+       HERO — 聯絡頁面標題
+  ═══════════════════════════════════════ -->
+  <section class="relative pt-28 pb-14 lg:pt-40 lg:pb-24 overflow-hidden bg-white border-b border-slate-100">
+    <div class="absolute inset-0 opacity-[0.03]" style="background-image: radial-gradient(circle, #000 1px, transparent 1px); background-size: 32px 32px;"></div>
+    <div class="absolute top-0 right-0 w-[700px] h-[700px] -mt-64 -mr-64 rounded-full bg-blue-50 blur-3xl opacity-60 pointer-events-none"></div>
+
+    <div class="max-w-7xl mx-auto px-5 lg:px-8 relative z-10">
+      <div class="max-w-3xl">
+        <div class="reveal visible inline-flex items-center gap-2.5 px-4 py-1.5 border border-slate-200 rounded-full text-xs font-semibold text-slate-500 mb-8 bg-white shadow-sm">
+          <span class="w-1.5 h-1.5 rounded-full bg-blue-600 animate-pulse"></span>
+          我們很樂意聽到你的故事
+        </div>
+        <h1 class="reveal visible text-4xl sm:text-5xl lg:text-6xl font-black text-slate-900 leading-[1.1] tracking-tight mb-8">
+          有想討論的<br><span class="text-blue-600">專案或想法？</span>
+        </h1>
+        <p class="reveal visible delay-100 text-base sm:text-xl text-slate-500 leading-relaxed mb-6 max-w-2xl">
+          無論你的案件規模或需求複雜度，我們都期待了解你的想法。初次諮詢完全免費，我們會用心評估最適合的解決方案。
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════
+       CONTACT FORM & INFO
+  ═══════════════════════════════════════ -->
+  <section class="py-16 bg-slate-50">
+    <div class="max-w-7xl mx-auto px-5 lg:px-8">
+      <div class="grid lg:grid-cols-5 gap-12 items-start">
+
+        <!-- Contact Form -->
+        <div class="lg:col-span-3 reveal">
+          <div class="bg-white rounded-2xl p-8 border border-slate-200">
+            <h2 class="text-2xl font-bold text-slate-900 mb-2">快速諮詢表單</h2>
+            <p class="text-slate-500 mb-8">填寫以下資訊，我們會在 24 小時內回覆你。</p>
+
+            <form action="https://formspree.io/f/xblyjogo" method="POST" class="space-y-5">
+              <!-- Name & Company -->
+              <div class="grid md:grid-cols-2 gap-5">
+                <div>
+                  <label for="name" class="block text-sm font-semibold text-slate-700 mb-2">您的名稱 *</label>
+                  <input 
+                    type="text" 
+                    id="name"
+                    name="name" 
+                    placeholder="請輸入姓名" 
+                    required
+                    class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 transition-all"
+                  />
+                </div>
+                <div>
+                  <label for="company" class="block text-sm font-semibold text-slate-700 mb-2">公司名稱</label>
+                  <input 
+                    type="text" 
+                    id="company"
+                    name="company" 
+                    placeholder="例：ABC 科技有限公司" 
+                    class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 transition-all"
+                  />
+                </div>
+              </div>
+
+              <!-- Email & Phone -->
+              <div class="grid md:grid-cols-2 gap-5">
+                <div>
+                  <label for="email" class="block text-sm font-semibold text-slate-700 mb-2">Email 地址 *</label>
+                  <input 
+                    type="email" 
+                    id="email"
+                    name="email" 
+                    placeholder="your@email.com" 
+                    required
+                    class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 transition-all"
+                  />
+                </div>
+                <div>
+                  <label for="phone" class="block text-sm font-semibold text-slate-700 mb-2">聯絡電話</label>
+                  <input 
+                    type="tel" 
+                    id="phone"
+                    name="phone" 
+                    placeholder="0912-345-678" 
+                    class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 transition-all"
+                  />
+                </div>
+              </div>
+
+              <!-- Service Type -->
+              <div>
+                <label for="service" class="block text-sm font-semibold text-slate-700 mb-2">需求類型 *</label>
+                <select 
+                  id="service"
+                  name="service" 
+                  required
+                  class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 transition-all"
+                >
+                  <option value="">-- 請選擇 --</option>
+                  <option value="LINE 整合">LINE 整合 (OA、Messaging API、LIFF)</option>
+                  <option value="Web 應用">客製 Web 應用開發</option>
+                  <option value="資料自動化">資料與流程自動化</option>
+                  <option value="其他">其他 / 不確定</option>
+                </select>
+              </div>
+
+              <!-- Message -->
+              <div>
+                <label for="message" class="block text-sm font-semibold text-slate-700 mb-2">專案說明 *</label>
+                <textarea 
+                  id="message"
+                  name="message" 
+                  placeholder="請簡要說明你的需求、背景，以及希望達成的目標..." 
+                  rows="6"
+                  required
+                  class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 transition-all resize-none"
+                ></textarea>
+              </div>
+
+              <!-- Checkbox -->
+              <div class="flex items-start gap-3 p-4 bg-blue-50 rounded-lg">
+                <input 
+                  type="checkbox" 
+                  id="terms"
+                  name="terms"
+                  required
+                  class="w-4 h-4 border border-slate-300 rounded mt-1 focus:outline-none"
+                />
+                <label for="terms" class="text-sm text-slate-600">
+                  我同意 Digitools Studio 根據隱私政策使用我提供的資訊來回覆我的詢問。
+                </label>
+              </div>
+
+              <!-- Submit Button -->
+              <button 
+                type="submit"
+                class="w-full px-6 py-3.5 bg-slate-900 hover:bg-blue-600 text-white rounded-lg font-semibold transition-all shadow-sm hover:shadow-md active:scale-95"
+              >
+                <i class="fa-solid fa-paper-plane mr-2"></i>送出諮詢
+              </button>
+
+              <p class="text-xs text-slate-400 text-center">
+                通常我們會在 24 小時內回覆你。如有緊急需求，也可透過下方 LINE 或 Email 直接聯繫。
+              </p>
+            </form>
+          </div>
+        </div>
+
+        <!-- Contact Info -->
+        <div class="lg:col-span-2 space-y-6">
+
+          <!-- Quick Contact -->
+          <div class="reveal delay-100 bg-white rounded-2xl p-6 border border-slate-200">
+            <h3 class="text-lg font-bold text-slate-900 mb-4">快速聯繫</h3>
+            <div class="space-y-4">
+              <a href="https://lin.ee/6IdgZC4" target="_blank" rel="noopener noreferrer" class="flex items-center gap-3 p-3.5 rounded-lg bg-line/10 border border-line/30 hover:bg-line hover:text-white text-slate-700 font-medium transition-all group">
+                <div class="w-10 h-10 bg-line/20 group-hover:bg-white/20 rounded-lg flex items-center justify-center">
+                  <i class="fa-brands fa-line text-xl"></i>
+                </div>
+                <div>
+                  <p class="text-xs opacity-75">立即 LINE</p>
+                  <p class="font-semibold">點擊聯繫</p>
+                </div>
+              </a>
+
+              <a href="mailto:digitalaaronl@gmail.com" class="flex items-center gap-3 p-3.5 rounded-lg bg-blue-50 border border-blue-200 hover:bg-blue-600 hover:text-white text-slate-700 font-medium transition-all group">
+                <div class="w-10 h-10 bg-blue-200 group-hover:bg-white/20 rounded-lg flex items-center justify-center">
+                  <i class="fa-solid fa-envelope text-xl text-blue-600 group-hover:text-white"></i>
+                </div>
+                <div>
+                  <p class="text-xs opacity-75">寄送 Email</p>
+                  <p class="font-semibold text-sm truncate">digitalaaronl@gmail.com</p>
+                </div>
+              </a>
+            </div>
+          </div>
+
+          <!-- Info Cards -->
+          <div class="reveal delay-200 bg-white rounded-2xl p-6 border border-slate-200">
+            <h3 class="text-lg font-bold text-slate-900 mb-4">基本資訊</h3>
+            <div class="space-y-4 text-sm">
+              <div>
+                <p class="text-slate-500 mb-1">📍 位置</p>
+                <p class="font-medium text-slate-900">新北市 · 台灣</p>
+              </div>
+              <div>
+                <p class="text-slate-500 mb-1">⏰ 服務時間</p>
+                <p class="font-medium text-slate-900">周一 - 周五 10:00 - 18:00</p>
+              </div>
+              <div>
+                <p class="text-slate-500 mb-1">💬 回覆時間</p>
+                <p class="font-medium text-slate-900">通常 24 小時內回覆</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- FAQ -->
+          <div class="reveal delay-300 bg-white rounded-2xl p-6 border border-slate-200">
+            <h3 class="text-lg font-bold text-slate-900 mb-4">常見問題</h3>
+            <div class="space-y-3 text-sm">
+              <details class="group cursor-pointer">
+                <summary class="font-semibold text-slate-700 hover:text-slate-900 transition-colors flex items-center gap-2">
+                  <i class="fa-solid fa-chevron-right text-xs group-open:rotate-90 transition-transform"></i>
+                  初次諮詢需要費用嗎？
+                </summary>
+                <p class="text-slate-600 mt-2 ml-5 text-xs">不需要，初次諮詢完全免費。我們會用心評估你的需求。</p>
+              </details>
+
+              <details class="group cursor-pointer">
+                <summary class="font-semibold text-slate-700 hover:text-slate-900 transition-colors flex items-center gap-2">
+                  <i class="fa-solid fa-chevron-right text-xs group-open:rotate-90 transition-transform"></i>
+                  費用如何計算？
+                </summary>
+                <p class="text-slate-600 mt-2 ml-5 text-xs">根據專案複雜度、時間成本和資源評估。我們會提供詳細報價單。</p>
+              </details>
+
+              <details class="group cursor-pointer">
+                <summary class="font-semibold text-slate-700 hover:text-slate-900 transition-colors flex items-center gap-2">
+                  <i class="fa-solid fa-chevron-right text-xs group-open:rotate-90 transition-transform"></i>
+                  技術支援和維護？
+                </summary>
+                <p class="text-slate-600 mt-2 ml-5 text-xs">上線後提供一個月的技術支援。後續維護可簽約年度合作。</p>
+              </details>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════
+       PROCESS
+  ═══════════════════════════════════════ -->
+  <section class="py-16 bg-white border-t border-slate-100">
+    <div class="max-w-7xl mx-auto px-5 lg:px-8">
+      <div class="reveal text-center mb-12">
+        <h2 class="text-3xl sm:text-4xl font-black text-slate-900 mb-4">我們的合作流程</h2>
+        <p class="text-lg text-slate-500 max-w-2xl mx-auto">簡單透明的合作步驟，確保專案順利推進。</p>
+      </div>
+
+      <div class="grid md:grid-cols-4 gap-6">
+        <div class="reveal delay-100 relative">
+          <div class="bg-white rounded-2xl p-6 border border-blue-200 text-center">
+            <div class="inline-flex items-center justify-center w-12 h-12 bg-blue-100 rounded-full text-blue-600 font-bold mb-4">1</div>
+            <h3 class="font-bold text-slate-900 mb-2">需求討論</h3>
+            <p class="text-sm text-slate-500">深入了解你的想法、目標和預算，確認合作方向。</p>
+          </div>
+          <div class="hidden md:block absolute -right-3 top-1/2 -translate-y-1/2 text-slate-300">
+            <i class="fa-solid fa-arrow-right text-2xl"></i>
+          </div>
+        </div>
+
+        <div class="reveal delay-200 relative">
+          <div class="bg-white rounded-2xl p-6 border border-blue-200 text-center">
+            <div class="inline-flex items-center justify-center w-12 h-12 bg-blue-100 rounded-full text-blue-600 font-bold mb-4">2</div>
+            <h3 class="font-bold text-slate-900 mb-2">方案規劃</h3>
+            <p class="text-sm text-slate-500">提供技術方案、時程估算和詳細報價。</p>
+          </div>
+          <div class="hidden md:block absolute -right-3 top-1/2 -translate-y-1/2 text-slate-300">
+            <i class="fa-solid fa-arrow-right text-2xl"></i>
+          </div>
+        </div>
+
+        <div class="reveal delay-300 relative">
+          <div class="bg-white rounded-2xl p-6 border border-blue-200 text-center">
+            <div class="inline-flex items-center justify-center w-12 h-12 bg-blue-100 rounded-full text-blue-600 font-bold mb-4">3</div>
+            <h3 class="font-bold text-slate-900 mb-2">開發交付</h3>
+            <p class="text-sm text-slate-500">按進度開發，定期同步進展和測試反饋。</p>
+          </div>
+          <div class="hidden md:block absolute -right-3 top-1/2 -translate-y-1/2 text-slate-300">
+            <i class="fa-solid fa-arrow-right text-2xl"></i>
+          </div>
+        </div>
+
+        <div class="reveal delay-100">
+          <div class="bg-white rounded-2xl p-6 border border-blue-200 text-center">
+            <div class="inline-flex items-center justify-center w-12 h-12 bg-blue-100 rounded-full text-blue-600 font-bold mb-4">4</div>
+            <h3 class="font-bold text-slate-900 mb-2">上線支援</h3>
+            <p class="text-sm text-slate-500">上線部署、培訓使用、一個月技術支援。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════
+       FOOTER
+  ═══════════════════════════════════════ -->
+  <footer class="bg-slate-900 border-t border-slate-800 text-slate-400">
+    <div class="max-w-7xl mx-auto px-5 lg:px-8 py-14">
+      <div class="grid md:grid-cols-4 gap-10 mb-10 pb-10 border-b border-slate-800">
+        <div class="md:col-span-2">
+          <div class="flex items-center space-x-3 mb-4">
+            <div class="w-8 h-8 bg-slate-700 text-white rounded-xl flex items-center justify-center font-bold text-sm">D</div>
+            <span class="font-bold text-white">Digitools Studio</span>
+          </div>
+          <p class="text-sm leading-relaxed max-w-xs mb-5">數轉工作室 — 以軟體開發為核心的接案團隊。LINE 整合、Web 應用、資料自動化，從業務需求出發，設計可用的數位解法。</p>
+          <div class="flex gap-3">
+            <a href="https://lin.ee/6IdgZC4" target="_blank" rel="noopener noreferrer" class="w-9 h-9 bg-line/20 hover:bg-line text-line hover:text-white rounded-lg flex items-center justify-center transition-all">
+              <i class="fa-brands fa-line text-base"></i>
+            </a>
+            <a href="mailto:digitalaaronl@gmail.com" class="w-9 h-9 bg-slate-800 hover:bg-slate-600 text-slate-400 hover:text-white rounded-lg flex items-center justify-center transition-all">
+              <i class="fa-regular fa-envelope text-sm"></i>
+            </a>
+          </div>
+        </div>
+        <div>
+          <h5 class="text-white font-semibold mb-4 text-sm">頁面</h5>
+          <ul class="space-y-2.5 text-sm">
+            <li><a href="index.html" class="hover:text-white transition-colors">首頁</a></li>
+            <li><a href="services.html" class="hover:text-white transition-colors">服務內容</a></li>
+            <li><a href="blog.html" class="hover:text-white transition-colors">Blog</a></li>
+            <li><a href="portfolio.html" class="hover:text-white transition-colors">作品集</a></li>
+            <li><a href="contact.html" class="hover:text-white transition-colors">聯絡我們</a></li>
+          </ul>
+        </div>
+        <div>
+          <h5 class="text-white font-semibold mb-4 text-sm">聯絡資訊</h5>
+          <ul class="space-y-2.5 text-sm">
+            <li>digitalaaronl@gmail.com</li>
+            <li>新北市 · 個人工作室</li>
+          </ul>
+        </div>
+      </div>
+      <div class="flex flex-col md:flex-row justify-between items-center text-xs text-slate-500">
+        <p>© 2026 Digitools Studio. All rights reserved.</p>
+        <p class="mt-2 md:mt-0">LINE 整合 × 客製 Web × 資料自動化</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Back to top button -->
+  <button id="back-to-top" aria-label="回到頂端" class="btt-hidden fixed bottom-[5.5rem] right-6 z-40 w-10 h-10 bg-white border border-slate-200 rounded-full shadow-md flex items-center justify-center text-slate-500 hover:text-slate-900 hover:border-slate-400 hover:shadow-lg transition-all">
+    <i class="fa-solid fa-chevron-up text-xs"></i>
+  </button>
+
+  <!-- Floating LINE Button -->
+  <div class="fixed bottom-6 right-6 z-50 group">
+    <a href="https://lin.ee/6IdgZC4" target="_blank" rel="noopener noreferrer" class="flex items-center gap-2.5 bg-line hover:bg-line-dark text-white shadow-2xl rounded-full px-5 py-3.5 transition-all duration-300 hover:scale-105" title="LINE 諮詢">
+      <i class="fa-brands fa-line text-2xl"></i>
+      <span class="text-sm font-semibold hidden md:block">LINE 諮詢</span>
+    </a>
+  </div>
+
+  <script>
+    // Navbar scroll behavior
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 60) {
+        navbar.classList.add('glass-header', 'py-3');
+        navbar.classList.remove('py-5', 'bg-transparent');
+      } else {
+        navbar.classList.remove('glass-header', 'py-3');
+        navbar.classList.add('py-5', 'bg-transparent');
+      }
+    });
+
+    // Mobile menu toggle
+    const mobileBtn  = document.getElementById('mobile-menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    function closeMobileMenu() {
+      mobileMenu.classList.remove('menu-open');
+      mobileBtn.querySelector('i').className = 'fa-solid fa-bars text-lg';
+    }
+    mobileBtn.addEventListener('click', () => {
+      if (mobileMenu.classList.contains('menu-open')) {
+        closeMobileMenu();
+      } else {
+        mobileMenu.classList.add('menu-open');
+        mobileBtn.querySelector('i').className = 'fa-solid fa-xmark text-lg';
+      }
+    });
+    mobileMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', closeMobileMenu));
+
+    // Scroll reveal
+    const revealEls = document.querySelectorAll('.reveal:not(.visible)');
+    const observer  = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }
+      });
+    }, { threshold: 0.1 });
+    revealEls.forEach(el => observer.observe(el));
+
+    // Back to top
+    var bttBtn = document.getElementById('back-to-top');
+    window.addEventListener('scroll', function() {
+      if (window.scrollY > 500) {
+        bttBtn.classList.remove('btt-hidden');
+        bttBtn.classList.add('btt-visible');
+      } else {
+        bttBtn.classList.add('btt-hidden');
+        bttBtn.classList.remove('btt-visible');
+      }
+    }, { passive: true });
+    bttBtn.addEventListener('click', function() {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  </script>
+</body>
+</html>
