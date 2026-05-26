@@ -146,6 +146,12 @@
   </script>
 
   <link rel="stylesheet" href="./styles.css" />
+  <!-- Flash prevention: 登入狀態早期偵測，避免 landing page 閃爍 -->
+  <script>try{if(JSON.parse(localStorage.getItem("google_user")||"null")&&JSON.parse(localStorage.getItem("google_user")||"null").sub)document.documentElement.classList.add("sf-authed")}catch(e){}</script>
+  <style>
+    html.sf-authed #landingPage{display:none!important}
+    html.sf-authed #appShell{display:grid!important}
+  </style>
 </head>
 <body>
 
@@ -386,7 +392,7 @@
         </div>
         <div class="security-text">
           <div class="security-title">Google 安全驗證</div>
-          <div class="security-desc">使用 Firebase Authentication 結合 Google OAuth，不儲存密碼，帳號安全由 Google 負責保障。</div>
+          <div class="security-desc">使用 Google Identity Services OAuth，不儲存密碼，帳號安全由 Google 負責保障。</div>
         </div>
       </div>
       <div class="security-card">
@@ -477,10 +483,9 @@
     <span class="sep"></span>
 
     <label class="btn">
-      上傳印章/章圖
+      上傳印章
       <input id="stampInput" type="file" accept="image/png,image/svg+xml,image/jpeg" hidden>
     </label>
-    <button id="btnAddBuiltinStamp" class="btn">內建章</button>
     <button id="btnAddSign" class="btn">手寫簽名</button>
     <button id="btnAddText" class="btn">加入文字</button>
     <button id="btnAddRect" class="btn">加入框框</button>
@@ -497,30 +502,48 @@
 
   <div class="statusbar">
     <span id="pageLabel" class="mono">- / -</span>
-    <span id="topbarUserChip" class="topbar-user-chip" hidden></span>
+    <div id="topbarAuthGroup" class="topbar-auth-group" hidden>
+      <span id="topbarUserChip" class="topbar-user-chip"></span>
+      <button id="btnTopbarLogout" class="btn-topbar-logout" title="登出帳號">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" style="width:13px;height:13px;flex-shrink:0"><path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+        登出
+      </button>
+    </div>
   </div>
 </header>
 
 <main class="workspace">
   <div class="leftpanel">
     <div class="panel-title">SignFlow Workspace</div>
-    <div class="panel-hero">
+    <div id="panelHero" class="panel-hero">
       <div class="panel-kicker">輕量產品版</div>
       <div class="panel-headline">一站式 PDF 簽署</div>
       <div class="panel-copy">上傳文件、完成簽名、立即匯出，流程保持簡潔。</div>
+    </div>
+    <div id="panelUserCard" class="panel-user-card" hidden>
+      <img id="panelUserAvatar" class="puc-avatar" src="" alt="" referrerpolicy="no-referrer">
+      <div class="puc-info">
+        <div id="panelUserName" class="puc-name"></div>
+        <div id="panelUserEmail" class="puc-email"></div>
+      </div>
     </div>
     <div class="panel-body">
       <div class="section">
         <div class="section-title">工作區</div>
 
-        <div class="auth-panel">
+        <div id="authPanel" class="auth-panel">
           <span id="authModeBadge" class="badge warn">本機模式</span>
           <div id="authStatus" class="mono">登入後可同步切換你的草稿清單</div>
         </div>
 
-        <div class="row compact-actions">
-          <button id="btnLoginGoogle" class="btn small">Google 登入</button>
-          <button id="btnLogout" class="btn small" disabled>登出</button>
+        <div id="authLoginWrap">
+          <button id="btnLoginGoogle" class="btn-auth-google">Google 登入</button>
+        </div>
+        <div id="authLogoutWrap" hidden>
+          <button id="btnLogout" class="btn-logout-full">
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" style="width:14px;height:14px;flex-shrink:0;"><path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+            登出帳號
+          </button>
         </div>
 
         <div class="row stack">
@@ -534,22 +557,6 @@
 
         <div id="docList" class="doc-list"></div>
         <div id="docEmpty" class="hint">上傳 PDF 後會自動建立工作草稿。</div>
-      </div>
-
-      <div class="section">
-        <div class="section-title">我的資產庫</div>
-
-        <div class="row stack">
-          <input id="assetNameInput" class="text-input" type="text" placeholder="替收藏項目命名">
-        </div>
-
-        <div class="row wrap-row compact-actions">
-          <button id="btnSaveSelectedAsset" class="btn small">收藏目前項目</button>
-          <button id="btnSaveCurrentSignAsset" class="btn small">收藏手寫簽名</button>
-        </div>
-
-        <div id="assetList" class="asset-list"></div>
-        <div id="assetEmpty" class="hint">把常用簽名與印章收進這裡。</div>
       </div>
 
       <div class="section">
@@ -615,7 +622,6 @@
     <canvas id="signCanvas" width="900" height="320"></canvas>
     <div class="dialog-actions">
       <button id="btnSignClear" class="btn">清除</button>
-      <button id="btnSignSaveAsset" class="btn">收藏簽名</button>
       <button id="btnSignUse" class="btn primary">套用簽名</button>
     </div>
   </div>
@@ -665,7 +671,25 @@
   </div>
 </dialog>
 
-<!-- Mode A: no bundler/import. Use CDN scripts. -->
+<!-- 登入成功 Toast 通知 -->
+<div id="loginToast">
+  <img id="loginToastAvatar" src="" alt="" referrerpolicy="no-referrer">
+  <div class="toast-body">
+    <div class="toast-title" id="loginToastTitle">登入成功</div>
+    <div class="toast-sub" id="loginToastSub"></div>
+  </div>
+</div>
+
+<!-- GIS 登入 Overlay（One Tap 被抑制時的備援彈窗） -->
+<div id="gisSigninOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9999;align-items:center;justify-content:center;">
+  <div style="background:#fff;border-radius:16px;padding:36px 28px 28px;text-align:center;box-shadow:0 24px 64px rgba(0,0,0,.35);min-width:300px;">
+    <p style="margin:0 0 6px;font-size:16px;color:#111827;font-weight:600;">SignFlow PDF</p>
+    <p style="margin:0 0 24px;font-size:13px;color:#6b7280;">請選擇 Google 帳號登入</p>
+    <div id="gisSigninBtn" style="display:flex;justify-content:center;"></div>
+    <button id="gisOverlayClose"
+      style="margin-top:20px;color:#9ca3af;background:none;border:none;cursor:pointer;font-size:13px;padding:4px 12px;">取消</button>
+  </div>
+</div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.3.122/pdf.min.js"></script>
 <script>
   const pdfjsLib = window["pdfjs-dist/build/pdf"];
@@ -675,9 +699,259 @@
 </script>
 
 <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+
+<!-- Google Identity Services -->
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+
 <script src="./config.js"></script>
+
+<!-- Google Auth 全域函式 -->
+<script>
+(function () {
+  var GOOGLE_CLIENT_ID = "657874500694-hp8j0j76ajgenuqihdlkjmc7d1lhmqoj.apps.googleusercontent.com";
+  var STORAGE_KEY = "google_user";
+
+  function parseJwt(token) {
+    var base64Url = token.split(".")[1];
+    var base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+    var jsonPayload = decodeURIComponent(
+      atob(base64).split("").map(function (c) {
+        return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
+      }).join("")
+    );
+    return JSON.parse(jsonPayload);
+  }
+
+  function showLoginToast(user) {
+    var toast = document.getElementById("loginToast");
+    var avatarEl = document.getElementById("loginToastAvatar");
+    var titleEl = document.getElementById("loginToastTitle");
+    var subEl = document.getElementById("loginToastSub");
+    if (!toast) return;
+    if (avatarEl) {
+      avatarEl.src = user.picture || "";
+      avatarEl.style.display = user.picture ? "" : "none";
+    }
+    if (titleEl) titleEl.textContent = "歡迎，" + (user.name || user.email || "已登入") + "！";
+    if (subEl) subEl.textContent = user.email || "Google 帳號已驗證";
+    toast.classList.add("show");
+    clearTimeout(toast._hideTimer);
+    toast._hideTimer = setTimeout(function () {
+      toast.classList.remove("show");
+    }, 4000);
+  }
+
+  function handleGoogleLogin(response) {
+    try {
+      var payload = parseJwt(response.credential);
+      var user = {
+        name: payload.name || "",
+        email: payload.email || "",
+        picture: payload.picture || "",
+        sub: payload.sub || ""
+      };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(user));
+      // 關閉 overlay，顯示登入成功 toast
+      closeGisOverlay();
+      showLoginToast(user);
+      if (typeof window._signflowOnLogin === "function") {
+        window._signflowOnLogin(user);
+      } else {
+        renderAuthState(true);
+      }
+    } catch (e) {
+      console.error("Google login parse failed:", e);
+      alert("Google 登入解析失敗，請重試。");
+    }
+  }
+
+  function logoutGoogleUser() {
+    localStorage.removeItem(STORAGE_KEY);
+    if (window.google && window.google.accounts && window.google.accounts.id) {
+      window.google.accounts.id.disableAutoSelect();
+    }
+    if (typeof window._signflowOnLogout === "function") {
+      window._signflowOnLogout();
+    } else {
+      renderAuthState(true);
+    }
+  }
+
+  function renderAuthState(animate) {
+    var raw = localStorage.getItem(STORAGE_KEY);
+    var user = null;
+    if (raw) {
+      try { user = JSON.parse(raw); } catch (e) { localStorage.removeItem(STORAGE_KEY); }
+    }
+
+    // 與 head 的防閃 class 保持同步，避免登入/登出後 display 規則殘留
+    document.documentElement.classList.toggle("sf-authed", !!user);
+
+    var landing = document.getElementById("landingPage");
+    var shell   = document.getElementById("appShell");
+
+    // ── Page switch (with optional animation) ────────────
+    if (animate && landing && shell) {
+      if (user && !landing.hidden) {
+        // 登入：landing 淡出 → shell 滑入
+        landing.classList.add("sf-page-exit");
+        setTimeout(function () {
+          landing.hidden = true;
+          landing.classList.remove("sf-page-exit");
+          shell.hidden = false;
+          // 某些瀏覽器不接受 behavior:"instant"，會丟例外導致流程中斷
+          window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+          requestAnimationFrame(function () {
+            requestAnimationFrame(function () { shell.classList.add("sf-page-enter"); });
+          });
+        }, 300);
+      } else if (!user && !shell.hidden) {
+        // 登出：shell 淡出 → landing 淡入
+        shell.classList.add("sf-shell-exit");
+        setTimeout(function () {
+          shell.classList.remove("sf-shell-exit");
+          shell.classList.remove("sf-page-enter");
+          shell.hidden = true;
+          landing.hidden = false;
+          landing.classList.add("sf-landing-enter");
+          setTimeout(function () { landing.classList.remove("sf-landing-enter"); }, 500);
+        }, 280);
+      }
+    } else {
+      // 頁面載入 / 重整：直接顯示正確頁面，不觸發進場動畫
+      if (landing) landing.hidden = !!user;
+      if (shell) {
+        shell.hidden = !user;
+        shell.classList.remove("sf-page-enter"); // 只有實際登入時才需要動畫
+      }
+    }
+
+    // ── Landing page login button ─────────────────────────
+    var btnText = document.getElementById("landingBtnLoginText");
+    if (btnText) btnText.textContent = "使用 Google 帳號免費登入";
+
+    // ── Topbar auth group (user chip + logout button) ───────
+    var authGroup = document.getElementById("topbarAuthGroup");
+    if (authGroup) authGroup.hidden = !user;
+    var chip = document.getElementById("topbarUserChip");
+    if (chip && user) {
+      chip.innerHTML = "";
+      if (user.picture) {
+        var av = document.createElement("img");
+        av.className = "auth-avatar";
+        av.referrerPolicy = "no-referrer";
+        av.src = user.picture;
+        chip.appendChild(av);
+      }
+      var nm = document.createElement("span");
+      nm.textContent = user.name || user.email || "已登入";
+      chip.appendChild(nm);
+    }
+
+    // ── Panel hero ↔ user card ────────────────────────────
+    var panelHero = document.getElementById("panelHero");
+    var panelCard = document.getElementById("panelUserCard");
+    if (panelHero) panelHero.hidden = !!user;
+    if (panelCard) {
+      panelCard.hidden = !user;
+      if (user) {
+        var ava     = document.getElementById("panelUserAvatar");
+        var nameEl  = document.getElementById("panelUserName");
+        var emailEl = document.getElementById("panelUserEmail");
+        if (ava)     { ava.src = user.picture || ""; ava.style.display = user.picture ? "" : "none"; }
+        if (nameEl)  nameEl.textContent  = user.name  || "使用者";
+        if (emailEl) emailEl.textContent = user.email || "";
+      }
+    }
+
+    // ── Sidebar login ↔ logout ────────────────────────────
+    var loginWrap  = document.getElementById("authLoginWrap");
+    var logoutWrap = document.getElementById("authLogoutWrap");
+    if (loginWrap)  loginWrap.hidden  = !!user;
+    if (logoutWrap) logoutWrap.hidden = !user;
+
+    // ── Auth panel (badge 登入前顯示，登入後隱藏，user card 已代替) ──
+    var authPanel = document.getElementById("authPanel");
+    if (authPanel) authPanel.hidden = !!user;
+
+    // ── Auth badge & status ───────────────────────────────
+    var badge  = document.getElementById("authModeBadge");
+    var status = document.getElementById("authStatus");
+    if (badge) {
+      badge.textContent = user ? "Google 已登入" : "本機草稿模式";
+      badge.className   = user ? "badge ready"   : "badge warn";
+    }
+    if (status) {
+      status.hidden = !!user;
+      if (!user) status.textContent = "點擊下方按鈕以登入帳號";
+    }
+
+    var btnLogin  = document.getElementById("btnLoginGoogle");
+    var btnLogout = document.getElementById("btnLogout");
+    if (btnLogin)  btnLogin.disabled  = false;
+    if (btnLogout) btnLogout.disabled = !user;
+  }
+
+  // ── overlay 開關 ──────────────────────────────────────────
+  function closeGisOverlay() {
+    var el = document.getElementById("gisSigninOverlay");
+    if (el) el.style.display = "none";
+  }
+
+  // ── 主要觸發函式：先試 One Tap，被抑制則開 overlay ──────
+  function triggerGoogleLogin() {
+    if (!window.google || !window.google.accounts || !window.google.accounts.id) {
+      alert("Google 登入 SDK 尚未載入，請確認網路後重新整理頁面。");
+      return;
+    }
+    google.accounts.id.prompt(function (notification) {
+      if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+        var el = document.getElementById("gisSigninOverlay");
+        if (el) el.style.display = "flex";
+      }
+    });
+  }
+
+  // ── 掛到全域 ──────────────────────────────────────────────
+  window.parseJwt         = parseJwt;
+  window.handleGoogleLogin = handleGoogleLogin;
+  window.logoutGoogleUser  = logoutGoogleUser;
+  window.renderAuthState   = renderAuthState;
+  window.showLoginToast    = showLoginToast;
+  window.triggerGoogleLogin = triggerGoogleLogin;
+  window.closeGisOverlay   = closeGisOverlay;
+  window._GOOGLE_CLIENT_ID   = GOOGLE_CLIENT_ID;
+  window._GOOGLE_STORAGE_KEY = STORAGE_KEY;
+
+  // ── GIS SDK 載入完成後初始化 + 渲染 overlay 備援按鈕 ──────
+  window.onGoogleLibraryLoad = function () {
+    google.accounts.id.initialize({
+      client_id: GOOGLE_CLIENT_ID,
+      callback: handleGoogleLogin,
+      auto_select: false,
+      cancel_on_tap_outside: true
+    });
+    var btnContainer = document.getElementById("gisSigninBtn");
+    if (btnContainer) {
+      google.accounts.id.renderButton(btnContainer, {
+        theme: "outline",
+        size:  "large",
+        width: 240,
+        locale: "zh-TW"
+      });
+    }
+  };
+
+  // ── 頁面載入：恢復登入狀態 + 綁定 overlay 關閉按鈕 ────────
+  document.addEventListener("DOMContentLoaded", function () {
+    renderAuthState();
+    var closeBtn = document.getElementById("gisOverlayClose");
+    if (closeBtn) closeBtn.addEventListener("click", closeGisOverlay);
+    var topbarLogoutBtn = document.getElementById("btnTopbarLogout");
+    if (topbarLogoutBtn) topbarLogoutBtn.addEventListener("click", logoutGoogleUser);
+  });
+}());
+</script>
 
 <!-- app -->
 <script src="./app.js"></script>

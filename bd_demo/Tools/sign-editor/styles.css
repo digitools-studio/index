@@ -62,13 +62,20 @@ body{
 .badge.ready{ background:rgba(5,150,105,.12); color:#a7f3d0; border-color:rgba(5,150,105,.35); }
 .badge.warn{ background:rgba(217,119,6,.12); color:#fde68a; border-color:rgba(217,119,6,.35); }
 
-.workspace{ display:grid; grid-template-columns:320px 1fr; gap:14px; padding:14px; }
+.workspace{ display:grid; grid-template-columns:280px minmax(0, 1fr); gap:10px; padding:10px; }
 .leftpanel{
   background:linear-gradient(180deg, rgba(15,23,42,.98) 0%, rgba(15,23,42,.94) 100%);
   border:1px solid var(--border);
   border-radius:18px;
   overflow:hidden;
   box-shadow:0 18px 55px rgba(0,0,0,.26);
+  /* Sticky + 内部可滾動 */
+  display:flex;
+  flex-direction:column;
+  max-height:calc(100vh - 28px);
+  position:sticky;
+  top:14px;
+  align-self:flex-start;
 }
 .panel-title{
   padding:10px 12px 0;
@@ -104,7 +111,17 @@ body{
   font-size:13px;
   line-height:1.5;
 }
-.panel-body{ padding:0 10px 10px; display:flex; flex-direction:column; gap:10px; }
+.panel-body{
+  padding:0 10px 10px;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  overflow-y:auto;
+  flex:1;
+  min-height:0;
+  scrollbar-width:thin;
+  scrollbar-color:rgba(255,255,255,.12) transparent;
+}
 .section{
   border:1px solid rgba(255,255,255,.05);
   border-radius:14px;
@@ -176,14 +193,25 @@ body{
 .asset-actions{ display:flex; gap:6px; flex-wrap:wrap; margin-top:6px; }
 .hint{ margin-top:6px; color:var(--muted); font-size:12px; line-height:1.6; }
 
-.centerpanel{ display:flex; justify-content:center; align-items:flex-start; min-height:calc(100vh - 90px); }
+.centerpanel{
+  display:flex;
+  justify-content:center;
+  align-items:flex-start;
+  min-height:calc(100vh - 84px);
+  overflow:auto;
+  padding:0;
+  min-width:0;
+}
 .stage{
   position:relative;
+  flex:0 0 auto;
   background:#111;
   border:1px solid var(--border);
   border-radius:16px;
   overflow:hidden;
   box-shadow:0 18px 60px rgba(0,0,0,.35);
+  margin:0 auto;
+  min-height:calc(100vh - 120px);
 }
 .stage.placing{ cursor:crosshair; }
 #pdfCanvas{ display:block; }
@@ -249,6 +277,12 @@ body{
   .topbar{ grid-template-columns:1fr; }
   .statusbar{ justify-self:start; }
   .workspace{ grid-template-columns:1fr; }
+  .leftpanel{
+    position:static;
+    top:auto;
+    max-height:none;
+  }
+  .stage{ min-height:62vh; }
 }
 
 /* ============================================================
@@ -561,20 +595,89 @@ body{
   .security-inner{ grid-template-columns:1fr; }
   .landing-security{ padding:40px 28px; }
 }
+.topbar-auth-group{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+}
 .topbar-user-chip{
   display:inline-flex;
   align-items:center;
+  gap:6px;
   background:rgba(37,99,235,.14);
   color:#93c5fd;
   border:1px solid rgba(37,99,235,.28);
   border-radius:999px;
-  padding:4px 13px;
+  padding:4px 10px 4px 5px;
   font-size:12px;
-  max-width:190px;
+  max-width:180px;
   overflow:hidden;
   text-overflow:ellipsis;
   white-space:nowrap;
 }
+.topbar-user-chip img.auth-avatar{
+  width:22px;
+  height:22px;
+  border-radius:50%;
+  flex-shrink:0;
+  border:1px solid rgba(96,165,250,.4);
+}
+.btn-topbar-logout{
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+  padding:4px 10px;
+  background:rgba(220,38,38,.1);
+  color:#fca5a5;
+  border:1px solid rgba(220,38,38,.28);
+  border-radius:999px;
+  font-size:12px;
+  font-weight:500;
+  cursor:pointer;
+  white-space:nowrap;
+  transition:background .15s,border-color .15s;
+}
+.btn-topbar-logout:hover{
+  background:rgba(220,38,38,.22);
+  border-color:rgba(220,38,38,.5);
+}
+
+/* --- Login success toast --- */
+#loginToast{
+  position:fixed;
+  bottom:28px;
+  right:28px;
+  z-index:9999;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  background:rgba(15,23,42,.97);
+  border:1px solid rgba(5,150,105,.45);
+  border-radius:14px;
+  padding:14px 18px;
+  box-shadow:0 8px 32px rgba(0,0,0,.55);
+  min-width:240px;
+  max-width:320px;
+  transform:translateY(80px);
+  opacity:0;
+  transition:transform .35s cubic-bezier(.22,1,.36,1), opacity .3s ease;
+  pointer-events:none;
+}
+#loginToast.show{
+  transform:translateY(0);
+  opacity:1;
+  pointer-events:auto;
+}
+#loginToast img{
+  width:38px;
+  height:38px;
+  border-radius:50%;
+  border:2px solid rgba(5,150,105,.5);
+  flex-shrink:0;
+}
+#loginToast .toast-body{ display:flex; flex-direction:column; gap:2px; }
+#loginToast .toast-title{ font-size:13px; font-weight:600; color:#a7f3d0; }
+#loginToast .toast-sub{ font-size:11px; color:var(--muted); }
 
 /* --- Mock PDF preview --- */
 .landing-preview{
@@ -994,5 +1097,141 @@ body{
   color:#94a3b8;
   line-height:1.6;
   max-width:360px;
+}
+
+/* ============================================================
+   Page Transitions – Landing ↔ App Shell
+   ============================================================ */
+/* GPU acceleration for animated elements */
+#landingPage { will-change: transform, opacity; }
+#appShell    { will-change: transform, opacity; }
+
+@keyframes sfPageOut {
+  from { opacity:1; transform:translateY(0) scale(1); }
+  to   { opacity:0; transform:translateY(-24px) scale(.98); }
+}
+@keyframes sfPageIn {
+  from { opacity:0; transform:translateY(32px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+@keyframes sfShellOut {
+  from { opacity:1; transform:translateY(0) scale(1); }
+  to   { opacity:0; transform:translateY(-20px) scale(.98); }
+}
+@keyframes sfLandingFadeIn {
+  from { opacity:0; transform:translateY(16px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+.sf-page-exit {
+  animation: sfPageOut .28s ease forwards;
+  pointer-events: none;
+}
+#appShell.sf-page-enter {
+  animation: sfPageIn .48s cubic-bezier(.22,1,.36,1) forwards;
+}
+#appShell.sf-shell-exit {
+  animation: sfShellOut .28s ease forwards;
+  pointer-events: none;
+}
+#landingPage.sf-landing-enter {
+  animation: sfLandingFadeIn .45s cubic-bezier(.22,1,.36,1) forwards;
+}
+
+/* ============================================================
+   Panel User Card (left panel, shown when logged in)
+   ============================================================ */
+@keyframes pucSlideIn {
+  from { opacity:0; transform:translateY(-8px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+.panel-user-card {
+  margin: 10px 10px 0;
+  padding: 12px 14px;
+  background: linear-gradient(135deg,rgba(37,99,235,.14),rgba(5,150,105,.07));
+  border: 1px solid rgba(96,165,250,.22);
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  animation: pucSlideIn .38s cubic-bezier(.22,1,.36,1) both;
+}
+.panel-user-card .puc-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid rgba(96,165,250,.5);
+  flex-shrink: 0;
+  object-fit: cover;
+}
+.panel-user-card .puc-info {
+  flex: 1;
+  min-width: 0;
+}
+.panel-user-card .puc-name {
+  font-weight: 700;
+  font-size: 14px;
+  color: #e2e8f0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.panel-user-card .puc-email {
+  font-size: 11px;
+  color: #64748b;
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ============================================================
+   Sidebar Auth Button improvements
+   ============================================================ */
+.btn-auth-google {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 9px 14px;
+  background: rgba(37,99,235,.14);
+  color: #93c5fd;
+  border: 1px solid rgba(37,99,235,.35);
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background .15s, border-color .15s;
+}
+.btn-auth-google:hover {
+  background: rgba(37,99,235,.24);
+  border-color: rgba(37,99,235,.55);
+}
+.btn-auth-google:disabled { opacity:.45; cursor:not-allowed; }
+
+/* 登出按鈕：全寬、帶圖示、柔和紅色 */
+.btn-logout-full {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  padding: 8px 14px;
+  background: rgba(220,38,38,.08);
+  color: #fca5a5;
+  border: 1px solid rgba(220,38,38,.28);
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background .15s, border-color .15s;
+}
+.btn-logout-full:hover {
+  background: rgba(220,38,38,.18);
+  border-color: rgba(220,38,38,.5);
+}
+.btn-logout-full:disabled { opacity:.45; cursor:not-allowed; }
+
+#authLogoutWrap {
+  padding-top: 2px;
 }
 

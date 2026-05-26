@@ -7,26 +7,10 @@
     return;
   }
 
-  const DEFAULT_CONFIG = {
-    appName: "SignFlow PDF",
-    firebase: {
-      enableGoogleAuth: false,
-      apiKey: "PASTE_FIREBASE_API_KEY_HERE",
-      authDomain: "PASTE_FIREBASE_AUTH_DOMAIN_HERE",
-      projectId: "PASTE_FIREBASE_PROJECT_ID_HERE",
-      storageBucket: "PASTE_FIREBASE_STORAGE_BUCKET_HERE",
-      messagingSenderId: "PASTE_FIREBASE_MESSAGING_SENDER_ID_HERE",
-      appId: "PASTE_FIREBASE_APP_ID_HERE"
-    }
-  };
-
   const USER_CONFIG = window.APP_CONFIG || {};
   const APP_CONFIG = {
-    appName: USER_CONFIG.appName || DEFAULT_CONFIG.appName,
-    firebase: {
-      ...DEFAULT_CONFIG.firebase,
-      ...(USER_CONFIG.firebase || {})
-    }
+    appName: USER_CONFIG.appName || "SignFlow PDF",
+    inquiryEmail: USER_CONFIG.inquiryEmail || ""
   };
 
   const state = {
@@ -45,9 +29,6 @@
     storageReady: false,
     auth: {
       user: null,
-      firebaseReady: false,
-      authInstance: null,
-      provider: null,
       busy: false,
     },
   };
@@ -56,6 +37,7 @@
     fileInput: document.getElementById("fileInput"),
     stampInput: document.getElementById("stampInput"),
     pdfCanvas: document.getElementById("pdfCanvas"),
+    centerpanel: document.querySelector(".centerpanel"),
     overlay: document.getElementById("overlay"),
     guides: document.getElementById("guides"),
     stage: document.getElementById("stage"),
@@ -63,7 +45,6 @@
     btnNext: document.getElementById("btnNext"),
     btnZoomIn: document.getElementById("btnZoomIn"),
     btnZoomOut: document.getElementById("btnZoomOut"),
-    btnAddBuiltinStamp: document.getElementById("btnAddBuiltinStamp"),
     btnAddSign: document.getElementById("btnAddSign"),
     btnAddText: document.getElementById("btnAddText"),
     btnAddRect: document.getElementById("btnAddRect"),
@@ -88,7 +69,6 @@
     signCanvas: document.getElementById("signCanvas"),
     btnSignClose: document.getElementById("btnSignClose"),
     btnSignClear: document.getElementById("btnSignClear"),
-    btnSignSaveAsset: document.getElementById("btnSignSaveAsset"),
     btnSignUse: document.getElementById("btnSignUse"),
     authModeBadge: document.getElementById("authModeBadge"),
     authStatus: document.getElementById("authStatus"),
@@ -99,11 +79,6 @@
     saveStatus: document.getElementById("saveStatus"),
     docList: document.getElementById("docList"),
     docEmpty: document.getElementById("docEmpty"),
-    assetNameInput: document.getElementById("assetNameInput"),
-    btnSaveSelectedAsset: document.getElementById("btnSaveSelectedAsset"),
-    btnSaveCurrentSignAsset: document.getElementById("btnSaveCurrentSignAsset"),
-    assetList: document.getElementById("assetList"),
-    assetEmpty: document.getElementById("assetEmpty"),
   };
 
   const uid = () => "a_" + Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
@@ -148,24 +123,7 @@
     if (Array.isArray(stored)) return new Uint8Array(stored);
     return null;
   }
-  function hasFirebaseConfig() {
-    const f = APP_CONFIG.firebase || {};
-    return !!(
-      f.enableGoogleAuth &&
-      f.apiKey && !/PASTE_/i.test(f.apiKey) &&
-      f.authDomain && !/PASTE_/i.test(f.authDomain) &&
-      f.projectId && !/PASTE_/i.test(f.projectId) &&
-      f.appId && !/PASTE_/i.test(f.appId)
-    );
-  }
-  function getAuthErrorMessage(err) {
-    const code = String(err?.code || "");
-    if (code.includes("popup-blocked")) return "瀏覽器封鎖了登入彈窗，系統將改用跳轉登入。";
-    if (code.includes("popup-closed-by-user")) return "你已關閉登入視窗，尚未完成 Google 登入。";
-    if (code.includes("unauthorized-domain")) return "目前網域尚未加入 Firebase 授權清單，請到 Firebase Console 加入 localhost。";
-    if (code.includes("operation-not-allowed")) return "Firebase 尚未啟用 Google Provider，請先到 Authentication 設定開啟。";
-    return err?.message || String(err);
-  }
+
 
   const DataStore = {
     db: null,
@@ -431,8 +389,7 @@
       if (!ok) return;
       await DataStore.deleteDoc(id);
       if (state.currentDocId === id) {
-        state.currentDocId = null;
-        UI.setSaveStatus("目前文件已自草稿庫移除");
+        PDFEngine.resetWorkspace("文件已刪除，請上傳或開啟其他草稿");
       }
       await this.refreshList();
     }
@@ -627,10 +584,17 @@
         name: safeDocName(file.name),
         annotations: [],
         pageIndex: 0,
-        zoom: 1,
+        autoFit: true,
         saveStatus: "文件已載入"
       });
       await Docs.saveCurrent({ silent: false });
+    },
+    calcFitZoom(baseWidthPx) {
+      const host = dom.centerpanel;
+      if (!host || !Number.isFinite(baseWidthPx) || baseWidthPx <= 0) return 1;
+      // 預留左右 padding / 邊框，讓畫布在 centerpanel 內穩定置中
+      const availableWidth = Math.max(280, host.clientWidth - 40);
+      return clamp(availableWidth / baseWidthPx, 0.5, 2.5);
     },
     async loadFromStoredDoc(doc) {
       const rawBytes = bytesFromStorage(doc?.pdfBytes);
@@ -674,6 +638,10 @@
         });
       }
 
+      if (options.autoFit && state.pagesMeta[0]) {
+        state.zoom = this.calcFitZoom(state.pagesMeta[0].baseWidthPx);
+      }
+
       await this.renderCurrentPage();
       UI.updateLabels();
       UI.updateButtons();
@@ -702,6 +670,49 @@
       OverlayEngine.render();
       UI.updateLabels();
       UI.syncInspector();
+      this.centerStageViewport();
+    },
+    resetWorkspace(reasonText = "尚未載入") {
+      state.pdfDoc = null;
+      state.pdfBytes = null;
+      state.pageCount = 0;
+      state.pageIndex = 0;
+      state.zoom = 1.0;
+      state.pagesMeta = [];
+      state.annotations = [];
+      state.selectedId = null;
+      state.history.undo.length = 0;
+      state.history.redo.length = 0;
+      state.currentDocId = null;
+      state.docName = "";
+      state.isDirty = false;
+
+      if (dom.docNameInput) dom.docNameInput.value = "";
+      if (dom.pdfCanvas) {
+        dom.pdfCanvas.width = 1;
+        dom.pdfCanvas.height = 1;
+      }
+      if (dom.stage) {
+        dom.stage.style.width = "100%";
+        dom.stage.style.maxWidth = "100%";
+        dom.stage.style.height = "calc(100vh - 120px)";
+      }
+      if (dom.overlay) dom.overlay.innerHTML = "";
+      if (dom.guides) dom.guides.innerHTML = "";
+
+      UI.updateLabels();
+      UI.updateButtons();
+      UI.syncInspector();
+      UI.setSaveStatus(reasonText);
+    },
+    centerStageViewport() {
+      // 讓 PDF 顯示區在 centerpanel 內水平置中，避免寬頁面出現偏移
+      requestAnimationFrame(() => {
+        const host = dom.centerpanel;
+        if (!host || !dom.stage || dom.stage.hidden) return;
+        const maxLeft = Math.max(0, host.scrollWidth - host.clientWidth);
+        host.scrollLeft = maxLeft > 0 ? Math.round(maxLeft / 2) : 0;
+      });
     }
   };
 
@@ -1112,11 +1123,18 @@
         this.ctx.stroke();
         this.last = p;
       });
-      c.addEventListener("pointerup", () => { this.drawing = false; });
+      c.addEventListener("pointerup",     () => { this.drawing = false; });
+      c.addEventListener("pointercancel", () => { this.drawing = false; });
     },
     pos(ev) {
       const r = dom.signCanvas.getBoundingClientRect();
-      return { x: ev.clientX - r.left, y: ev.clientY - r.top };
+      // 修正：將瀏覽器顯示座標縮放至畫布邏輯座標（解決 HiDPI / 縮放後繪線偏移）
+      const scaleX = dom.signCanvas.width / r.width;
+      const scaleY = dom.signCanvas.height / r.height;
+      return {
+        x: (ev.clientX - r.left) * scaleX,
+        y: (ev.clientY - r.top) * scaleY,
+      };
     },
     clear() {
       this.ctx.clearRect(0, 0, dom.signCanvas.width, dom.signCanvas.height);
@@ -1476,90 +1494,46 @@
   }
 
   const Auth = {
-    async init() {
-      state.auth.firebaseReady = hasFirebaseConfig();
-      UI.updateAuthState();
-      if (!state.auth.firebaseReady) {
-        return;
-      }
-      try {
-        if (!window.firebase?.auth) throw new Error("Firebase Auth SDK 未載入");
-        if (!window.firebase.apps.length) {
-          window.firebase.initializeApp(APP_CONFIG.firebase);
-        }
-        state.auth.authInstance = window.firebase.auth();
-        state.auth.provider = new window.firebase.auth.GoogleAuthProvider();
-        state.auth.provider.setCustomParameters({ prompt: "select_account" });
-
-        await state.auth.authInstance.setPersistence(window.firebase.auth.Auth.Persistence.LOCAL);
-
-        try {
-          await state.auth.authInstance.getRedirectResult();
-        } catch (redirectErr) {
-          console.error("Redirect sign-in failed:", redirectErr);
-        }
-
-        state.auth.authInstance.onAuthStateChanged(async (user) => {
-          state.auth.user = user || null;
-          state.auth.busy = false;
-          UI.updateAuthState();
-          await Docs.refreshList();
-          await Assets.refreshList();
-        });
-      } catch (err) {
-        console.error("Firebase init failed:", err);
-        state.auth.firebaseReady = false;
+    init() {
+      // 註冊全域 callback，讓 index.html 的 handleGoogleLogin / logoutGoogleUser 能通知 app.js
+      window._signflowOnLogin = (user) => {
+        state.auth.user = user;
         state.auth.busy = false;
-        UI.updateAuthState();
+        // 使用 index.html 的 renderAuthState(true) 觸發帶動畫的頁面切換
+        if (typeof window.renderAuthState === "function") window.renderAuthState(true);
+        Docs.refreshList().catch(() => {});
+      };
+      window._signflowOnLogout = () => {
+        state.auth.user = null;
+        state.auth.busy = false;
+        if (typeof window.renderAuthState === "function") window.renderAuthState(true);
+        Docs.refreshList().catch(() => {});
+      };
+
+      // 從 localStorage 恢復登入狀態
+      const raw = localStorage.getItem(window._GOOGLE_STORAGE_KEY || "google_user");
+      if (raw) {
+        try { state.auth.user = JSON.parse(raw); } catch (e) { localStorage.removeItem("google_user"); }
+      }
+      // 頁面載入：無動畫，直接同步 UI
+      if (typeof window.renderAuthState === "function") window.renderAuthState(false);
+      if (state.auth.user) {
+        Docs.refreshList().catch(() => {});
       }
     },
-    async signIn() {
-      if (!state.auth.firebaseReady || !state.auth.authInstance || !state.auth.provider) {
-        alert("Google 登入功能已建置完成。請先在 config.js 填入 Firebase Web App 設定，啟用 Google Provider，並把 enableGoogleAuth 改成 true。");
-        return;
-      }
+    signIn() {
       if (state.auth.busy) return;
-
-      state.auth.busy = true;
-      UI.updateAuthState();
-      try {
-        await state.auth.authInstance.signInWithPopup(state.auth.provider);
-      } catch (err) {
-        console.error("Google sign-in failed:", err);
-        const code = String(err?.code || "");
-        if (code.includes("popup-blocked") || code.includes("popup-closed-by-user")) {
-          try {
-            await state.auth.authInstance.signInWithRedirect(state.auth.provider);
-            return;
-          } catch (redirectErr) {
-            console.error("Google redirect sign-in failed:", redirectErr);
-            alert(`Google 登入失敗：${getAuthErrorMessage(redirectErr)}`);
-          }
-        } else {
-          alert(`Google 登入失敗：${getAuthErrorMessage(err)}`);
-        }
-      } finally {
-        state.auth.busy = false;
-        UI.updateAuthState();
+      if (typeof window.triggerGoogleLogin === "function") {
+        window.triggerGoogleLogin();
+      } else if (window.google?.accounts?.id) {
+        window.google.accounts.id.prompt();
+      } else {
+        alert("Google 登入 SDK 尚未載入，請稍候再試或重新整理頁面。");
       }
     },
-    async signOut() {
-      if (!state.auth.firebaseReady || !state.auth.authInstance) {
-        alert("目前仍在本機模式，尚未啟用 Google 登入。");
-        return;
-      }
-      if (state.auth.busy) return;
-
-      state.auth.busy = true;
-      UI.updateAuthState();
-      try {
-        await state.auth.authInstance.signOut();
-      } catch (err) {
-        console.error("Google sign-out failed:", err);
-        alert(`Google 登出失敗：${getAuthErrorMessage(err)}`);
-      } finally {
-        state.auth.busy = false;
-        UI.updateAuthState();
+    signOut() {
+      if (typeof window.logoutGoogleUser === "function") {
+        window.logoutGoogleUser();
       }
     }
   };
@@ -1569,21 +1543,32 @@
       dom.fileInput.addEventListener("change", async () => {
         const f = dom.fileInput.files?.[0];
         if (!f) return;
-        await PDFEngine.loadFromFile(f);
+        dom.fileInput.disabled = true;
+        UI.setSaveStatus("PDF 載入中，請稍候...");
+        try {
+          await PDFEngine.loadFromFile(f);
+        } catch (err) {
+          UI.setSaveStatus("PDF 載入失敗");
+          alert(`PDF 載入失敗：${err?.message || String(err)}`);
+          console.error("PDF load error:", err);
+        } finally {
+          dom.fileInput.disabled = false;
+          dom.fileInput.value = ""; // 允許再次上傳相同檔名
+        }
       });
       dom.btnPrev.addEventListener("click", async () => {
-        if (!state.pdfDoc) return;
-        state.pageIndex = Math.max(0, state.pageIndex - 1);
-        state.selectedId = null;
-        await PDFEngine.renderCurrentPage();
-        Docs.markDirty();
+        await this.goToPage(state.pageIndex - 1);
       });
       dom.btnNext.addEventListener("click", async () => {
+        await this.goToPage(state.pageIndex + 1);
+      });
+      dom.pageLabel?.addEventListener("click", async () => {
         if (!state.pdfDoc) return;
-        state.pageIndex = Math.min(state.pageCount - 1, state.pageIndex + 1);
-        state.selectedId = null;
-        await PDFEngine.renderCurrentPage();
-        Docs.markDirty();
+        const input = prompt(`目前頁碼 ${state.pageIndex + 1}/${state.pageCount}，請輸入要前往的頁碼：`, String(state.pageIndex + 1));
+        if (input === null) return;
+        const target = parseInt(String(input).trim(), 10);
+        if (!Number.isFinite(target)) return;
+        await this.goToPage(target - 1);
       });
       dom.btnZoomIn.addEventListener("click", async () => {
         if (!state.pdfDoc) return;
@@ -1597,7 +1582,7 @@
         await PDFEngine.renderCurrentPage();
         Docs.markDirty();
       });
-      dom.stampInput.addEventListener("change", async () => {
+      dom.stampInput?.addEventListener("change", async () => {
         if (!state.pdfDoc) {
           dom.stampInput.value = "";
           return;
@@ -1607,12 +1592,9 @@
         const dataUrl = await fileToDataUrl(f);
         let png = dataUrl;
         if (f.type === "image/svg+xml") png = await svgDataUrlToPngDataUrl(dataUrl, 768);
-        await addImageAnno("stamp", png, 240, 240);
+        // 不走 local storage，只做當前文件蓋章
+        await addImageAnno("stamp", png, 240, 240, false);
         dom.stampInput.value = "";
-      });
-      dom.btnAddBuiltinStamp.addEventListener("click", async () => {
-        if (!state.pdfDoc) return;
-        await addImageAnno("stamp", await builtinStampDataUrl(), 240, 240);
       });
       dom.btnAddSign.addEventListener("click", () => {
         if (!state.pdfDoc) return;
@@ -1620,7 +1602,9 @@
       });
       dom.btnAddText.addEventListener("click", () => {
         if (!state.pdfDoc) return;
-        addTextAnno("簽名：");
+        const t = prompt("請輸入文字內容：", "");
+        if (t === null) return;
+        addTextAnno((t || "文字").trim() || "文字");
       });
       dom.btnAddRect.addEventListener("click", () => {
         if (!state.pdfDoc) return;
@@ -1645,12 +1629,10 @@
       });
       dom.btnSignClose.addEventListener("click", () => SignaturePad.close());
       dom.btnSignClear.addEventListener("click", () => SignaturePad.clear());
-      dom.btnSignSaveAsset?.addEventListener("click", async () => {
-        await Assets.saveSignatureDataUrl(SignaturePad.getPngDataUrl());
-      });
       dom.btnSignUse.addEventListener("click", async () => {
         if (!state.pdfDoc) return;
-        await addImageAnno("signature", SignaturePad.getPngDataUrl(), 320, 140, true);
+        // 套用後先完成放置，避免維持 place mode 造成後續文字輸入/互動卡住
+        await addImageAnno("signature", SignaturePad.getPngDataUrl(), 320, 140, false);
         SignaturePad.close();
       });
       dom.opacityRange.addEventListener("input", () => this.applyOpacity());
@@ -1682,16 +1664,26 @@
       dom.btnSaveDraft?.addEventListener("click", async () => {
         await Docs.saveCurrent({ silent: false });
       });
-      dom.btnSaveSelectedAsset?.addEventListener("click", async () => {
-        await Assets.saveFromSelected();
-      });
-      dom.btnSaveCurrentSignAsset?.addEventListener("click", async () => {
-        await Assets.saveSignatureDataUrl(SignaturePad.getPngDataUrl());
-      });
       dom.docNameInput?.addEventListener("input", () => {
         state.docName = dom.docNameInput.value || "未命名文件";
         Docs.markDirty();
       });
+    },
+    async goToPage(nextIndex) {
+      if (!state.pdfDoc) return;
+      const clamped = clamp(nextIndex, 0, Math.max(0, state.pageCount - 1));
+      if (clamped === state.pageIndex) {
+        this.updateButtons();
+        return;
+      }
+      state.pageIndex = clamped;
+      state.selectedId = null;
+      try {
+        await PDFEngine.renderCurrentPage();
+        Docs.markDirty();
+      } finally {
+        this.updateButtons();
+      }
     },
     updateLabels() {
       dom.pageLabel.textContent = state.pdfDoc ? `${state.pageIndex + 1} / ${state.pageCount}` : "- / -";
@@ -1699,13 +1691,23 @@
     },
     updateButtons() {
       const has = !!state.pdfDoc;
-      dom.btnPrev.disabled = !has || state.pageIndex === 0;
-      dom.btnNext.disabled = !has || state.pageIndex === state.pageCount - 1;
+      // 翻頁 / 縮放
+      dom.btnPrev.disabled    = !has || state.pageIndex === 0;
+      dom.btnNext.disabled    = !has || state.pageIndex === state.pageCount - 1;
+      dom.btnZoomIn.disabled  = !has;
+      dom.btnZoomOut.disabled = !has;
+      // 歷史
       dom.btnUndo.disabled = state.history.undo.length === 0;
       dom.btnRedo.disabled = state.history.redo.length === 0;
+      // 工具列操作（無 PDF 時視覺 disabled）
+      dom.btnAddSign.disabled         = !has;
+      dom.btnAddText.disabled         = !has;
+      dom.btnAddRect.disabled         = !has;
+      if (dom.stampInput) dom.stampInput.disabled = !has;
+      // 匯出 / 草稿
       dom.btnExport.disabled = !has;
-      if (dom.btnSaveDraft) dom.btnSaveDraft.disabled = !has;
-      if (dom.docNameInput) dom.docNameInput.disabled = !has;
+      if (dom.btnSaveDraft) dom.btnSaveDraft.disabled  = !has;
+      if (dom.docNameInput) dom.docNameInput.disabled  = !has;
     },
     syncInspector() {
       const a = getSelected();
@@ -1742,53 +1744,8 @@
       if (dom.saveStatus) dom.saveStatus.textContent = text;
     },
     updateAuthState() {
-      // --- Landing page / App shell visibility ---
-      const showApp = !!state.auth.user;
-      const _landingPage = document.getElementById("landingPage");
-      const _appShell = document.getElementById("appShell");
-      if (_landingPage) _landingPage.hidden = showApp;
-      if (_appShell) _appShell.hidden = !showApp;
-
-      const _landingBtnLogin = document.getElementById("landingBtnLogin");
-      const _landingBtnLoginText = document.getElementById("landingBtnLoginText");
-      if (_landingBtnLogin) _landingBtnLogin.disabled = state.auth.busy;
-      if (_landingBtnLoginText) {
-        _landingBtnLoginText.textContent = state.auth.busy ? "驗證中，請稍候\u2026" : "使用 Google 帳號免費登入";
-      }
-
-      // Topbar user chip
-      const _topbarUserChip = document.getElementById("topbarUserChip");
-      if (_topbarUserChip) {
-        if (state.auth.user) {
-          _topbarUserChip.textContent = state.auth.user.displayName || state.auth.user.email || "已登入";
-          _topbarUserChip.hidden = false;
-        } else {
-          _topbarUserChip.hidden = true;
-        }
-      }
-
-      if (!dom.authModeBadge || !dom.authStatus) return;
-      if (state.auth.firebaseReady) {
-        dom.authModeBadge.textContent = state.auth.user ? "Google 已登入" : "Google 已就緒";
-        dom.authModeBadge.className = "badge ready";
-        if (state.auth.user) {
-          const name = state.auth.user.displayName || state.auth.user.email || "已登入";
-          dom.authStatus.textContent = `已登入：${name}`;
-        } else if (state.auth.busy) {
-          dom.authStatus.textContent = "Google 驗證處理中，請稍候...";
-        } else {
-          dom.authStatus.textContent = "Google 登入已啟用，點擊按鈕即可登入或切換帳號";
-        }
-      } else {
-        dom.authModeBadge.textContent = "本機草稿模式";
-        dom.authModeBadge.className = "badge warn";
-        dom.authStatus.textContent = "Google 登入功能已建置完成，待填入 Firebase 金鑰";
-      }
-      if (dom.btnLoginGoogle) {
-        dom.btnLoginGoogle.disabled = state.auth.busy;
-        dom.btnLoginGoogle.textContent = state.auth.busy ? "處理中..." : (state.auth.user ? "切換 Google 帳號" : "Google 登入");
-      }
-      if (dom.btnLogout) dom.btnLogout.disabled = !(state.auth.firebaseReady && state.auth.user) || state.auth.busy;
+      // 所有 UI 狀態由 renderAuthState 統一管理，避免兩套邏輯衝突
+      if (typeof window.renderAuthState === "function") window.renderAuthState(false);
     },
     applyOpacity() {
       const a = getSelected();
@@ -1879,7 +1836,7 @@
       const nameEl = document.getElementById("consultName");
       const emailEl = document.getElementById("consultEmail");
       if (user) {
-        if (nameEl && !nameEl.value) nameEl.value = user.displayName || "";
+        if (nameEl && !nameEl.value) nameEl.value = user.name || "";
         if (emailEl && !emailEl.value) emailEl.value = user.email || "";
       }
       // Reset to form view
@@ -1980,9 +1937,7 @@
   SignaturePad.init();
   Consult.init();
   UI.bind();
-  UI.updateLabels();
-  UI.updateButtons();
-  UI.updateAuthState();
-  Docs.init().then(() => Assets.refreshList()).catch((err) => console.error(err));
-  Auth.init().catch((err) => console.error(err));
+  PDFEngine.resetWorkspace();
+  Docs.init().catch((err) => console.error(err));
+  Auth.init(); // 同步函式，內部已呼叫 renderAuthState(false) 完成初始化
 })();
