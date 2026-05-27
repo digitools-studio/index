@@ -1,7 +1,7 @@
 // =============================================================
 // ga_event.js — Digitools Studio (site-wide)
 // 自訂事件識別前綴：ds_  (Digitools Studio)
-// 版本：3.1  |  2026-05
+// 版本：3.2  |  2026-05
 //
 // 目標：
 // 1) 保留既有事件名稱，確保 GA4 歷史報表可延續
@@ -26,6 +26,7 @@
     var PATHNAME = (window.location.pathname || '').toLowerCase();
     var IS_SERVICES_PAGE = PATHNAME.indexOf('services.html') !== -1;
     var IS_CONTACT_PAGE = PATHNAME.indexOf('contact.html') !== -1;
+    var IS_QUERYMIND_PAGE = PATHNAME.indexOf('querymind.html') !== -1;
     var SCROLL_DEPTHS = [25, 50, 75, 90];
     var scrollTracked = {};
     var maxScrollDepth = 0;
@@ -87,6 +88,16 @@
 
     // 01 Section 進入視口追蹤
     var sectionMap = {
+      hero: 'QueryMind 首屏',
+      'pain-points': 'QueryMind 痛點',
+      'before-after': 'QueryMind Before After',
+      comparison: 'QueryMind 比較表',
+      roles: 'QueryMind 角色情境',
+      modules: 'QueryMind 模組架構',
+      security: 'QueryMind 安全機制',
+      poc: 'QueryMind PoC 流程',
+      outcomes: 'QueryMind 成效',
+      'final-cta': 'QueryMind Final CTA',
       capabilities: '服務能力',
       scope: '承接案型',
       portfolio: '作品集',
@@ -152,6 +163,26 @@
       track('ds_cta_click', {
         cta_label: safeText(btn.textContent, 80),
         cta_location: 'header'
+      });
+    });
+
+    // 04-1 QueryMind 入口點擊
+    delegate('click', 'a[href="querymind.html"], a[href="./querymind.html"], a[href*="querymind.html"]', function (event, link) {
+      var href = link.getAttribute('href') || '';
+      var sectionEl = link.closest('[id]');
+      var entryLocation = 'unknown';
+
+      if (link.closest('header')) entryLocation = 'header';
+      else if (sectionEl && sectionEl.id === 'services') entryLocation = 'home_services';
+      else if (sectionEl && sectionEl.id === 'querymind') entryLocation = 'services_querymind';
+      else if (link.closest('footer')) entryLocation = 'footer';
+
+      track('ds_querymind_entry_click', {
+        entry_location: entryLocation,
+        source_section: sectionEl ? sectionEl.id : '',
+        link_text: safeText(link.textContent, 100),
+        link_href: href,
+        is_querymind_page: IS_QUERYMIND_PAGE
       });
     });
 
@@ -485,7 +516,7 @@
 
     window.DSAnalytics = {
       track: track,
-      version: '3.1'
+      version: '3.2'
     };
   });
 })();

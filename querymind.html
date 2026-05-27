@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="scroll-smooth">
+<head>
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VXKMN286TH"></script>
+  <script src="ga_event.min.js"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-VXKMN286TH');
+  </script>
+
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>QueryMind｜企業資料查詢助理</title>
+  <meta name="description" content="QueryMind 協助非技術團隊用自然語言安全查詢資料庫、理解資料結構、檢查匯入資料，降低商業與技術團隊的溝通成本。" />
+  <meta name="robots" content="index, follow" />
+  <meta name="author" content="Digitools Studio" />
+  <meta name="theme-color" content="#3B82F6" />
+  <link rel="canonical" href="https://digitools-studio.github.io/querymind.html" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://digitools-studio.github.io/querymind.html" />
+  <meta property="og:site_name" content="Digitools Studio" />
+  <meta property="og:locale" content="zh_TW" />
+  <meta property="og:title" content="QueryMind｜企業資料查詢助理" />
+  <meta property="og:description" content="QueryMind 協助非技術團隊用自然語言安全查詢資料庫、理解資料結構、檢查匯入資料，降低商業與技術團隊的溝通成本。" />
+  <meta property="og:image" content="https://digitools-studio.github.io/Static/Image/og-cover.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="QueryMind 企業資料查詢助理" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="QueryMind｜企業資料查詢助理" />
+  <meta name="twitter:description" content="讓非技術團隊安全查資料、看懂資料、用得上資料。" />
+  <meta name="twitter:image" content="https://digitools-studio.github.io/Static/Image/og-cover.png" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['"Noto Sans TC"', 'sans-serif'] },
+          colors: {
+            line: { DEFAULT: '#00B900', dark: '#009900', light: '#e6f8e6' }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body { font-family: 'Noto Sans TC', sans-serif; }
+    * { -webkit-tap-highlight-color: transparent; }
+    a, button, summary { touch-action: manipulation; }
+
+    .glass-header {
+      background: rgba(255,255,255,0.93);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.07);
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(22px);
+      transition: opacity 0.7s cubic-bezier(0.16,1,0.3,1), transform 0.7s cubic-bezier(0.16,1,0.3,1);
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .delay-100 { transition-delay: 100ms; }
+    .delay-200 { transition-delay: 200ms; }
+    .delay-300 { transition-delay: 300ms; }
+    .delay-400 { transition-delay: 400ms; }
+
+    #mobile-menu {
+      transform-origin: top center;
+      transition: opacity 0.22s ease, transform 0.22s cubic-bezier(0.16,1,0.3,1), visibility 0s linear 0.22s;
+      opacity: 0;
+      transform: translateY(-8px) scaleY(0.96);
+      visibility: hidden;
+    }
+    #mobile-menu.menu-open {
+      opacity: 1;
+      transform: translateY(0) scaleY(1);
+      visibility: visible;
+      transition: opacity 0.22s ease, transform 0.22s cubic-bezier(0.16,1,0.3,1);
+    }
+
+    #back-to-top {
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+    #back-to-top.btt-hidden  { opacity: 0; transform: translateY(8px); pointer-events: none; }
+    #back-to-top.btt-visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
+
+    .hero-grid {
+      background-image:
+        linear-gradient(rgba(148, 163, 184, 0.14) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(148, 163, 184, 0.14) 1px, transparent 1px);
+      background-size: 24px 24px;
+    }
+
+    .card-lift {
+      transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+    }
+    .card-lift:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 24px rgba(15, 23, 42, 0.08);
+      border-color: #cbd5e1;
+    }
+
+    .bridge-glow {
+      animation: pulseBridge 2.8s ease-in-out infinite;
+    }
+    @keyframes pulseBridge {
+      0%, 100% { opacity: 0.45; }
+      50% { opacity: 1; }
+    }
+
+    .role-tab.active {
+      background: #0f172a;
+      color: white;
+      border-color: #0f172a;
+    }
+
+    .comparison-scroll::-webkit-scrollbar { height: 8px; }
+    .comparison-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 999px; }
+
+    @media (max-width: 639px) {
+      input, textarea, select { font-size: 16px !important; }
+    }
+  </style>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "SoftwareApplication",
+        "name": "QueryMind",
+        "applicationCategory": "BusinessApplication",
+        "operatingSystem": "Web",
+        "description": "企業資料查詢助理，協助非技術團隊以自然語言查詢資料、理解資料結構與檢查匯入內容。",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "TWD",
+          "description": "可預約 Demo 與 PoC 諮詢"
+        },
+        "provider": {
+          "@type": "Organization",
+          "name": "Digitools Studio",
+          "url": "https://digitools-studio.github.io/"
+        }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "QueryMind 會取代 BI 嗎？",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "不會。BI 適合固定指標與儀表板，QueryMind 更適合臨時查詢、資料理解、匯入檢查與日常資料操作。"
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "非技術團隊查資料會不會有安全風險？",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "可透過只讀模式、角色權限、欄位遮罩、row limit、SQL Preview 與查詢紀錄控制風險。"
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "可以先不連正式資料庫嗎？",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "可以。PoC 階段可先使用測試資料庫、只讀帳號或脫敏資料進行驗證。"
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+</head>
+<body class="bg-white text-slate-800 antialiased">
+
+  <header id="navbar" class="fixed w-full top-0 z-50 transition-all duration-300 py-5 bg-transparent">
+    <div class="max-w-7xl mx-auto px-5 lg:px-8 flex justify-between items-center">
+      <a href="index.html" class="flex items-center space-x-3 group" aria-label="回到首頁">
+        <div class="w-9 h-9 bg-slate-900 text-white rounded-xl flex items-center justify-center font-bold text-base shadow-md group-hover:bg-blue-600 transition-colors duration-300">D</div>
+        <div>
+          <p class="font-bold text-slate-900 leading-tight text-sm">Digitools Studio</p>
+          <p class="text-xs text-slate-400 hidden md:block">數轉工作室</p>
+        </div>
+      </a>
+      <nav class="hidden lg:flex items-center space-x-6 text-sm font-medium text-slate-600">
+        <a href="index.html" class="hover:text-slate-900 transition-colors">首頁</a>
+        <a href="services.html" class="hover:text-slate-900 transition-colors">服務內容</a>
+        <a href="blog.html" class="hover:text-slate-900 transition-colors">Blog</a>
+        <a href="portfolio.html" class="hover:text-slate-900 transition-colors">作品集</a>
+        <a href="contact.html" class="hover:text-slate-900 transition-colors">聯絡我們</a>
+      </nav>
+      <div class="flex items-center gap-3">
+        <a href="#final-cta" aria-label="預約 QueryMind Demo" class="hidden md:inline-flex items-center gap-2 bg-slate-900 hover:bg-blue-600 text-white px-5 py-2.5 rounded-full text-sm font-medium transition-all shadow-sm">
+          預約 QueryMind Demo
+        </a>
+        <button id="mobile-menu-btn" aria-label="開啟選單" class="lg:hidden text-slate-600 p-2">
+          <i class="fa-solid fa-bars text-lg"></i>
+        </button>
+      </div>
+    </div>
+    <div id="mobile-menu" class="absolute top-full left-0 w-full bg-white/97 backdrop-blur-md shadow-lg border-t border-slate-100 py-4 px-5 flex flex-col space-y-1">
+      <a href="index.html" class="text-sm font-medium text-slate-700 hover:text-slate-900 py-3 border-b border-slate-100">首頁</a>
+      <a href="services.html" class="text-sm font-medium text-slate-700 hover:text-slate-900 py-3 border-b border-slate-100">服務內容</a>
+      <a href="#hero" class="text-sm font-medium text-blue-600 font-semibold py-3 border-b border-slate-100">QueryMind</a>
+      <a href="#comparison" class="text-sm font-medium text-slate-700 hover:text-slate-900 py-3 border-b border-slate-100">差異比較</a>
+      <a href="#security" class="text-sm font-medium text-slate-700 hover:text-slate-900 py-3 border-b border-slate-100">安全機制</a>
+      <a href="#final-cta" class="mt-3 w-full text-center px-5 py-3 rounded-lg text-white bg-slate-900 font-medium">討論導入方式</a>
+    </div>
+  </header>
+
+  <main>
+    <section id="hero" class="relative pt-28 pb-16 lg:pt-40 lg:pb-24 overflow-hidden bg-white">
+      <div class="absolute inset-0 hero-grid opacity-70"></div>
+      <div class="absolute top-0 right-0 w-[680px] h-[680px] -mt-64 -mr-64 rounded-full bg-blue-100 blur-3xl opacity-70 pointer-events-none"></div>
+      <div class="absolute left-0 bottom-0 w-[420px] h-[420px] -mb-40 -ml-20 rounded-full bg-cyan-100 blur-3xl opacity-60 pointer-events-none"></div>
+
+      <div class="max-w-7xl mx-auto px-5 lg:px-8 relative z-10">
+        <div class="grid lg:grid-cols-12 gap-10 items-start">
+          <div class="lg:col-span-6">
+            <span class="reveal visible inline-flex items-center gap-2.5 px-4 py-1.5 border border-slate-200 rounded-full text-xs font-semibold text-slate-500 mb-6 bg-white shadow-sm">
+              <span class="w-1.5 h-1.5 rounded-full bg-blue-600 animate-pulse"></span>
+              Enterprise Data Agent / 企業資料查詢助理
+            </span>
+            <h1 class="reveal visible text-4xl sm:text-5xl lg:text-6xl font-black text-slate-900 leading-[1.12] tracking-tight mb-6">
+              讓非技術團隊，<br>
+              也能安全查詢企業資料庫
+            </h1>
+            <p class="reveal visible delay-100 text-base sm:text-xl text-slate-500 leading-relaxed mb-7 max-w-2xl">
+              QueryMind 讓營運、客服、業務與 PM 用自然語言查資料、理解欄位結構、檢查匯入內容，把原本依賴工程師支援的資料需求，變成企業內部可控的日常流程。
+            </p>
+            <div class="reveal visible delay-200 flex flex-col sm:flex-row gap-3 mb-7">
+              <a href="#final-cta" aria-label="預約 QueryMind Demo" class="inline-flex items-center justify-center gap-2 bg-slate-900 hover:bg-blue-600 text-white px-7 py-3.5 rounded-full font-semibold transition-all shadow-lg hover:shadow-xl">
+                預約 QueryMind Demo
+                <i class="fa-solid fa-arrow-right text-xs"></i>
+              </a>
+              <a href="#poc" aria-label="討論 PoC 導入方式" class="inline-flex items-center justify-center gap-2 border border-slate-200 hover:border-slate-400 text-slate-700 hover:text-slate-900 px-7 py-3.5 rounded-full font-semibold transition-all bg-white hover:bg-slate-50">
+                討論 PoC 導入方式
+              </a>
+            </div>
+            <div class="reveal visible delay-300 flex flex-wrap gap-2.5 text-xs font-semibold">
+              <span class="px-3 py-1.5 rounded-full bg-blue-50 border border-blue-100 text-blue-700">No SQL Needed</span>
+              <span class="px-3 py-1.5 rounded-full bg-slate-50 border border-slate-200 text-slate-600">Safe & Auditable</span>
+              <span class="px-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-100 text-emerald-700">Data Map</span>
+              <span class="px-3 py-1.5 rounded-full bg-amber-50 border border-amber-100 text-amber-700">Import Check</span>
+              <span class="px-3 py-1.5 rounded-full bg-indigo-50 border border-indigo-100 text-indigo-700">Built for Business Teams</span>
+            </div>
+          </div>
+
+          <div class="lg:col-span-6 reveal delay-200">
+            <div class="bg-white border border-slate-200 rounded-3xl p-4 sm:p-5 shadow-xl">
+              <div class="flex items-center justify-between pb-4 border-b border-slate-100 mb-4">
+                <div class="flex items-center gap-2">
+                  <span class="w-2.5 h-2.5 rounded-full bg-red-300"></span>
+                  <span class="w-2.5 h-2.5 rounded-full bg-amber-300"></span>
+                  <span class="w-2.5 h-2.5 rounded-full bg-emerald-300"></span>
+                </div>
+                <span class="text-[11px] text-slate-400">QueryMind Workspace</span>
+              </div>
+
+              <div class="grid md:grid-cols-5 gap-4">
+                <div class="md:col-span-2 rounded-2xl border border-slate-200 bg-slate-50 p-3.5">
+                  <p class="text-xs text-slate-400 mb-2">Chat Query</p>
+                  <div class="text-sm font-medium text-slate-700 leading-relaxed">
+                    「幫我查昨天付款失敗但金額超過 3000 元的訂單」
+                  </div>
+                  <div class="mt-3 text-[11px] text-blue-600 bg-blue-50 border border-blue-100 rounded-lg px-2 py-1 inline-block">Intent Parsed</div>
+                </div>
+
+                <div class="md:col-span-3 rounded-2xl border border-slate-200 overflow-hidden">
+                  <div class="px-3.5 py-2.5 bg-slate-900 text-slate-100 text-xs font-medium">Result Table</div>
+                  <div class="overflow-x-auto">
+                    <table class="min-w-full text-xs">
+                      <thead class="bg-slate-50 text-slate-500">
+                        <tr>
+                          <th class="px-3 py-2 text-left font-medium">訂單編號</th>
+                          <th class="px-3 py-2 text-left font-medium">客戶</th>
+                          <th class="px-3 py-2 text-left font-medium">金額</th>
+                          <th class="px-3 py-2 text-left font-medium">付款狀態</th>
+                          <th class="px-3 py-2 text-left font-medium">建議處理</th>
+                        </tr>
+                      </thead>
+                      <tbody class="text-slate-600">
+                        <tr class="border-t border-slate-100">
+                          <td class="px-3 py-2">#A-1029</td>
+                          <td class="px-3 py-2">王小美</td>
+                          <td class="px-3 py-2">4,800</td>
+                          <td class="px-3 py-2 text-rose-600">failed</td>
+                          <td class="px-3 py-2">客服優先追蹤</td>
+                        </tr>
+                        <tr class="border-t border-slate-100">
+                          <td class="px-3 py-2">#A-1038</td>
+                          <td class="px-3 py-2">永豐商行</td>
+                          <td class="px-3 py-2">6,200</td>
+                          <td class="px-3 py-2 text-amber-600">pending</td>
+                          <td class="px-3 py-2">確認金流回傳</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+
+              <div class="mt-4 grid sm:grid-cols-2 gap-3">
+                <div class="rounded-2xl border border-slate-200 p-3.5 bg-white">
+                  <p class="text-xs text-slate-400 mb-2">Source Trace</p>
+                  <div class="flex flex-wrap gap-2 text-[11px]">
+                    <span class="px-2 py-1 rounded-md bg-slate-100 text-slate-700">orders</span>
+                    <span class="px-2 py-1 rounded-md bg-slate-100 text-slate-700">payments</span>
+                    <span class="px-2 py-1 rounded-md bg-slate-100 text-slate-700">customers</span>
+                  </div>
+                </div>
+                <div class="rounded-2xl border border-blue-200 p-3.5 bg-blue-50/50">
+                  <p class="text-xs font-semibold text-blue-700 mb-2">QueryMind 已理解查詢條件</p>
+                  <ul class="text-xs text-slate-600 space-y-1.5">
+                    <li>時間範圍：昨天</li>
+                    <li>付款狀態：failed / pending</li>
+                    <li>金額條件：大於 3000</li>
+                    <li>查詢模式：Read-only</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="pain-points" class="py-16 lg:py-24 bg-slate-50 border-y border-slate-100">
+      <div class="max-w-7xl mx-auto px-5 lg:px-8">
+        <div class="max-w-3xl mb-10 reveal">
+          <h2 class="text-3xl sm:text-4xl font-black text-slate-900 mb-4">你的資料查詢流程，是否還卡在這些日常摩擦？</h2>
+          <p class="text-slate-500 text-lg">QueryMind 聚焦解決真實的跨部門資料溝通問題，不是再多一個看板，而是把查詢流程變順。</p>
+        </div>
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+          <article class="reveal card-lift bg-white border border-slate-200 rounded-2xl p-6">
+            <i class="fa-solid fa-user-clock text-blue-600 text-xl mb-3"></i>
+            <h3 class="font-bold text-slate-900 mb-2">查資料要排 IT</h3>
+            <p class="text-sm text-slate-500">業務與營運想問一個簡單問題，卻要等工程師寫 SQL。</p>
+          </article>
+          <article class="reveal delay-100 card-lift bg-white border border-slate-200 rounded-2xl p-6">
+            <i class="fa-solid fa-table-columns text-blue-600 text-xl mb-3"></i>
+            <h3 class="font-bold text-slate-900 mb-2">資料表看不懂</h3>
+            <p class="text-sm text-slate-500">table、column、status code 都是技術語言，非技術團隊難以理解。</p>
+          </article>
+          <article class="reveal delay-200 card-lift bg-white border border-slate-200 rounded-2xl p-6">
+            <i class="fa-solid fa-chart-line text-blue-600 text-xl mb-3"></i>
+            <h3 class="font-bold text-slate-900 mb-2">BI 回答不了臨時問題</h3>
+            <p class="text-sm text-slate-500">Dashboard 適合固定指標，但每天新冒出的問題仍然需要人工處理。</p>
+          </article>
+          <article class="reveal delay-300 card-lift bg-white border border-slate-200 rounded-2xl p-6">
+            <i class="fa-solid fa-file-excel text-blue-600 text-xl mb-3"></i>
+            <h3 class="font-bold text-slate-900 mb-2">Excel 匯入容易出錯</h3>
+            <p class="text-sm text-slate-500">欄位不一致、格式錯誤、重複與缺漏常造成後續維護成本。</p>
+          </article>
+          <article class="reveal delay-400 card-lift bg-white border border-slate-200 rounded-2xl p-6">
+            <i class="fa-solid fa-circle-question text-blue-600 text-xl mb-3"></i>
+            <h3 class="font-bold text-slate-900 mb-2">數字來源不透明</h3>
+            <p class="text-sm text-slate-500">看得到結果，但不知道資料從哪張表、哪個欄位來。</p>
+          </article>
+          <article class="reveal delay-400 card-lift bg-white border border-slate-200 rounded-2xl p-6">
+            <i class="fa-solid fa-code-branch text-blue-600 text-xl mb-3"></i>
+            <h3 class="font-bold text-slate-900 mb-2">工程師被打斷</h3>
+            <p class="text-sm text-slate-500">技術團隊被大量重複查詢需求切斷開發節奏。</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="before-after" class="py-16 lg:py-24 bg-white">
+      <div class="max-w-7xl mx-auto px-5 lg:px-8">
+        <div class="max-w-4xl text-center mx-auto mb-12 reveal">
+          <h2 class="text-3xl sm:text-4xl font-black text-slate-900 mb-4">從 IT Bottleneck 到 Business Self-Service</h2>
+          <p class="text-slate-500 text-lg">QueryMind 不是再多做一張報表，而是讓企業把資料查詢、理解與檢查流程變成可控的自助體驗。</p>
+          <p class="text-sm font-semibold text-blue-600 mt-4">From waiting for data to working with data.</p>
+        </div>
+
+        <div class="grid lg:grid-cols-11 gap-6 items-stretch">
+          <div class="lg:col-span-5 reveal bg-slate-50 border border-slate-200 rounded-3xl p-6">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-xl font-black text-slate-700">傳統方式</h3>
+              <div class="flex gap-1.5 text-[11px] font-semibold">
+                <span class="px-2 py-1 rounded-full bg-slate-200 text-slate-600">Slow</span>
+                <span class="px-2 py-1 rounded-full bg-slate-200 text-slate-600">Manual</span>
+                <span class="px-2 py-1 rounded-full bg-slate-200 text-slate-600">IT-dependent</span>
+                <span class="px-2 py-1 rounded-full bg-slate-200 text-slate-600">Hard to repeat</span>
+              </div>
+            </div>
+            <ol class="space-y-2 text-sm text-slate-600 leading-relaxed">
+              <li>1. 業務提出資料問題</li>
+              <li>2. 找工程師或資料分析師</li>
+              <li>3. 工程師寫 SQL</li>
+              <li>4. 匯出 Excel</li>
+              <li>5. 來回確認欄位定義</li>
+              <li>6. 結果不可重複使用</li>
+              <li>7. 下次又重新來一次</li>
+            </ol>
+          </div>
+
+          <div class="lg:col-span-1 flex items-center justify-center reveal delay-100">
+            <div class="hidden lg:flex flex-col items-center gap-2">
+              <div class="bridge-glow w-10 h-10 rounded-full bg-blue-100 border border-blue-200 flex items-center justify-center text-blue-600">
+                <i class="fa-solid fa-arrow-right"></i>
+              </div>
+              <div class="w-px h-24 bg-gradient-to-b from-blue-200 to-transparent"></div>
+            </div>
+            <div class="lg:hidden bridge-glow w-10 h-10 rounded-full bg-blue-100 border border-blue-200 flex items-center justify-center text-blue-600">
+              <i class="fa-solid fa-arrow-down"></i>
+            </div>
+          </div>
+
+          <div class="lg:col-span-5 reveal delay-200 bg-gradient-to-br from-blue-50 to-cyan-50 border border-blue-200 rounded-3xl p-6">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-xl font-black text-slate-900">使用 QueryMind 後</h3>
+              <div class="flex gap-1.5 text-[11px] font-semibold flex-wrap justify-end">
+                <span class="px-2 py-1 rounded-full bg-white/80 text-blue-700 border border-blue-200">Fast</span>
+                <span class="px-2 py-1 rounded-full bg-white/80 text-blue-700 border border-blue-200">Self-service</span>
+                <span class="px-2 py-1 rounded-full bg-white/80 text-blue-700 border border-blue-200">Auditable</span>
+                <span class="px-2 py-1 rounded-full bg-white/80 text-blue-700 border border-blue-200">Reusable</span>
+              </div>
+            </div>
+            <ol class="space-y-2 text-sm text-slate-700 leading-relaxed">
+              <li>1. 非技術團隊直接用中文發問</li>
+              <li>2. QueryMind 確認查詢意圖</li>
+              <li>3. 產生安全查詢並保留 SQL Preview</li>
+              <li>4. 回傳表格結果與來源追蹤</li>
+              <li>5. 解釋欄位與資料關聯</li>
+              <li>6. 儲存成查詢模板</li>
+              <li>7. 後續可排程、匯出、通知或交辦</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="capabilities" class="py-16 lg:py-24 bg-slate-50 border-y border-slate-100">
+      <div class="max-w-7xl mx-auto px-5 lg:px-8">
+        <div class="max-w-3xl mb-10 reveal">
+          <h2 class="text-3xl sm:text-4xl font-black text-slate-900 mb-4">QueryMind 核心能力</h2>
+          <p class="text-slate-500 text-lg">以 Data Agent / Data Operation Layer 為定位，補足企業資料查詢與操作中的斷點。</p>
+        </div>
+
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+          <article class="reveal card-lift bg-white border border-slate-200 rounded-2xl p-6">
+            <i class="fa-solid fa-comments text-blue-600 text-xl mb-3"></i>
+            <h3 class="font-bold text-slate-900">Ask Data</h3>
+            <p class="text-sm text-slate-500 mt-2">用自然語言查資料，不需要 SQL 門檻。</p>
+            <div class="mt-3 text-xs rounded-lg border border-slate-200 bg-slate-50 p-2.5 text-slate-600">Q: 上週退款最高的商品類別？</div>
+          </article>
+          <article class="reveal delay-100 card-lift bg-white border border-slate-200 rounded-2xl p-6">
+            <i class="fa-solid fa-diagram-project text-blue-600 text-xl mb-3"></i>
+            <h3 class="font-bold text-slate-900">Data Map</h3>
+            <p class="text-sm text-slate-500 mt-2">自動整理資料表、欄位與關聯，讓非技術團隊看懂資料庫。</p>
+            <div class="mt-3 text-xs rounded-lg border border-slate-200 bg-slate-50 p-2.5 text-slate-600">orders.customer_id → customers.id</div>
+          </article>
+          <article class="reveal delay-200 card-lift bg-white border border-slate-200 rounded-2xl p-6">
+            <i class="fa-solid fa-route text-blue-600 text-xl mb-3"></i>
+            <h3 class="font-bold text-slate-900">Source Trace</h3>
+            <p class="text-sm text-slate-500 mt-2">每次查詢都能知道結果來自哪些資料表與欄位。</p>
+            <div class="mt-3 text-xs rounded-lg border border-slate-200 bg-slate-50 p-2.5 text-slate-600">來源：orders, payments, members</div>
+          </article>
+          <article class="reveal delay-300 card-lift bg-white border border-slate-200 rounded-2xl p-6">
+            <i class="fa-solid fa-file-circle-check text-blue-600 text-xl mb-3"></i>
+            <h3 class="font-bold text-slate-900">Import Check</h3>
+            <p class="text-sm text-slate-500 mt-2">Excel / CSV 匯入前先做欄位對應、格式檢查、重複檢查與錯誤預覽。</p>
+            <div class="mt-3 text-xs rounded-lg border border-slate-200 bg-slate-50 p-2.5 text-slate-600">88 筆檢查完成，4 筆格式異常</div>
+          </article>
+          <article class="reveal delay-400 card-lift bg-white border border-slate-200 rounded-2xl p-6">
+            <i class="fa-solid fa-book-bookmark text-blue-600 text-xl mb-3"></i>
+            <h3 class="font-bold text-slate-900">Query Templates</h3>
+            <p class="text-sm text-slate-500 mt-2">把常用查詢保存成部門模板，讓查詢可重複、可審核、可交接。</p>
+            <div class="mt-3 text-xs rounded-lg border border-slate-200 bg-slate-50 p-2.5 text-slate-600">模板：每日未付款訂單追蹤</div>
+          </article>
+          <article class="reveal delay-400 card-lift bg-white border border-slate-200 rounded-2xl p-6">
+            <i class="fa-solid fa-shield-halved text-blue-600 text-xl mb-3"></i>
+            <h3 class="font-bold text-slate-900">Governance</h3>
+            <p class="text-sm text-slate-500 mt-2">支援只讀模式、角色權限、敏感欄位遮罩、SQL Preview 與查詢紀錄。</p>
+            <div class="mt-3 text-xs rounded-lg border border-slate-200 bg-slate-50 p-2.5 text-slate-600">Role: Ops_Manager / Read-only</div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="comparison" class="py-16 lg:py-24 bg-white">
+      <div class="max-w-7xl mx-auto px-5 lg:px-8">
+        <div class="max-w-4xl mb-8 reveal">
+          <h2 class="text-3xl sm:text-4xl font-black text-slate-900 mb-4">BI 看固定指標，QueryMind 回答每天新冒出的資料問題</h2>
+          <p class="text-slate-500 text-lg">BI 適合固定指標與管理儀表板；QueryMind 適合臨時查詢、資料理解、資料匯入檢查與日常資料操作。</p>
+        </div>
+        <div class="comparison-scroll overflow-x-auto reveal delay-100 border border-slate-200 rounded-2xl">
+          <table class="min-w-[860px] w-full text-sm">
+            <thead class="bg-slate-900 text-white">
+              <tr>
+                <th class="text-left px-4 py-3.5 font-semibold">比較項目</th>
+                <th class="text-left px-4 py-3.5 font-semibold">傳統 SQL / 工程師協助</th>
+                <th class="text-left px-4 py-3.5 font-semibold">BI Dashboard</th>
+                <th class="text-left px-4 py-3.5 font-semibold">QueryMind Data Agent</th>
+              </tr>
+            </thead>
+            <tbody class="bg-white">
+              <tr class="border-t border-slate-100"><td class="px-4 py-3 font-medium text-slate-700">主要使用者</td><td class="px-4 py-3 text-slate-600">工程師 / 分析師</td><td class="px-4 py-3 text-slate-600">管理者 / 分析角色</td><td class="px-4 py-3 text-blue-700 font-medium">營運、客服、業務、PM、IT</td></tr>
+              <tr class="border-t border-slate-100"><td class="px-4 py-3 font-medium text-slate-700">是否需要 SQL</td><td class="px-4 py-3 text-slate-600">需要</td><td class="px-4 py-3 text-slate-600">多半不需要</td><td class="px-4 py-3 text-blue-700 font-medium">不需要（可看 SQL Preview）</td></tr>
+              <tr class="border-t border-slate-100"><td class="px-4 py-3 font-medium text-slate-700">是否適合臨時查詢</td><td class="px-4 py-3 text-slate-600">中</td><td class="px-4 py-3 text-slate-600">低</td><td class="px-4 py-3 text-blue-700 font-medium">高</td></tr>
+              <tr class="border-t border-slate-100"><td class="px-4 py-3 font-medium text-slate-700">是否能解釋資料來源</td><td class="px-4 py-3 text-slate-600">可，但依人力</td><td class="px-4 py-3 text-slate-600">部分可</td><td class="px-4 py-3 text-blue-700 font-medium">可，內建 Source Trace</td></tr>
+              <tr class="border-t border-slate-100"><td class="px-4 py-3 font-medium text-slate-700">是否能理解資料表與欄位</td><td class="px-4 py-3 text-slate-600">低</td><td class="px-4 py-3 text-slate-600">低</td><td class="px-4 py-3 text-blue-700 font-medium">高，Data Map 支援</td></tr>
+              <tr class="border-t border-slate-100"><td class="px-4 py-3 font-medium text-slate-700">是否能做匯入前檢查</td><td class="px-4 py-3 text-slate-600">多靠人工</td><td class="px-4 py-3 text-slate-600">通常不涵蓋</td><td class="px-4 py-3 text-blue-700 font-medium">可，Import Check</td></tr>
+              <tr class="border-t border-slate-100"><td class="px-4 py-3 font-medium text-slate-700">是否有權限與查詢紀錄</td><td class="px-4 py-3 text-slate-600">依系統而定</td><td class="px-4 py-3 text-slate-600">通常有</td><td class="px-4 py-3 text-blue-700 font-medium">內建治理機制</td></tr>
+              <tr class="border-t border-slate-100"><td class="px-4 py-3 font-medium text-slate-700">是否適合非技術日常使用</td><td class="px-4 py-3 text-slate-600">低</td><td class="px-4 py-3 text-slate-600">中</td><td class="px-4 py-3 text-blue-700 font-medium">高</td></tr>
+              <tr class="border-t border-slate-100"><td class="px-4 py-3 font-medium text-slate-700">是否可模板化常用問題</td><td class="px-4 py-3 text-slate-600">難</td><td class="px-4 py-3 text-slate-600">部分可</td><td class="px-4 py-3 text-blue-700 font-medium">可，Query Templates</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section id="roles" class="py-16 lg:py-24 bg-slate-50 border-y border-slate-100">
+      <div class="max-w-7xl mx-auto px-5 lg:px-8">
+        <div class="max-w-3xl mb-8 reveal">
+          <h2 class="text-3xl sm:text-4xl font-black text-slate-900 mb-4">使用角色與情境</h2>
+          <p class="text-slate-500 text-lg">讓不同部門用同一套資料語言，減少反覆解釋與跨部門等待。</p>
+        </div>
+
+        <div class="reveal delay-100 flex flex-wrap gap-2 mb-6" id="role-tabs" role="tablist" aria-label="角色切換">
+          <button class="role-tab active px-4 py-2 rounded-full border border-slate-300 text-sm font-medium" data-role="ops">營運主管</button>
+          <button class="role-tab px-4 py-2 rounded-full border border-slate-300 text-sm font-medium" data-role="cs">客服主管</button>
+          <button class="role-tab px-4 py-2 rounded-full border border-slate-300 text-sm font-medium" data-role="sales">業務主管</button>
+          <button class="role-tab px-4 py-2 rounded-full border border-slate-300 text-sm font-medium" data-role="pm">PM / 專案經理</button>
+          <button class="role-tab px-4 py-2 rounded-full border border-slate-300 text-sm font-medium" data-role="it">IT / MIS</button>
+        </div>
+
+        <div id="role-panels">
+          <article class="role-panel reveal delay-200 bg-white border border-slate-200 rounded-2xl p-6" data-role="ops">
+            <h3 class="text-xl font-bold text-slate-900 mb-2">營運主管</h3>
+            <p class="text-sm text-slate-500 mb-4">痛點：臨時數據需求多，回應速度常被技術排程卡住。</p>
+            <ul class="text-sm text-slate-700 space-y-1 mb-4">
+              <li>• 幫我查昨天未付款訂單</li>
+              <li>• 幫我找近 30 天回購率下降的客群</li>
+              <li>• 幫我看活動期間新客與回購客比例</li>
+            </ul>
+            <p class="text-sm text-blue-700 font-medium">QueryMind 協助：快速查詢營運資料、整理結果摘要、儲存成固定模板。</p>
+          </article>
+
+          <article class="role-panel hidden bg-white border border-slate-200 rounded-2xl p-6" data-role="cs">
+            <h3 class="text-xl font-bold text-slate-900 mb-2">客服主管</h3>
+            <p class="text-sm text-slate-500 mb-4">痛點：需要即時回覆客訴與付款問題，但資料查找流程太慢。</p>
+            <ul class="text-sm text-slate-700 space-y-1 mb-4">
+              <li>• 查詢這位客戶最近一次訂單狀態</li>
+              <li>• 查詢付款失敗原因</li>
+              <li>• 找出需要優先追蹤的高金額未付款訂單</li>
+            </ul>
+            <p class="text-sm text-blue-700 font-medium">QueryMind 協助：客服不必再請工程師撈資料，可快速回覆客戶。</p>
+          </article>
+
+          <article class="role-panel hidden bg-white border border-slate-200 rounded-2xl p-6" data-role="sales">
+            <h3 class="text-xl font-bold text-slate-900 mb-2">業務主管</h3>
+            <p class="text-sm text-slate-500 mb-4">痛點：想掌握客戶變化，但無法快速取用跨系統資訊。</p>
+            <ul class="text-sm text-slate-700 space-y-1 mb-4">
+              <li>• 查高價值客戶清單</li>
+              <li>• 查最近 7 天新客名單</li>
+              <li>• 查哪些客戶近期有購買下降趨勢</li>
+            </ul>
+            <p class="text-sm text-blue-700 font-medium">QueryMind 協助：縮短名單取得時間，讓業務行動更即時。</p>
+          </article>
+
+          <article class="role-panel hidden bg-white border border-slate-200 rounded-2xl p-6" data-role="pm">
+            <h3 class="text-xl font-bold text-slate-900 mb-2">PM / 專案經理</h3>
+            <p class="text-sm text-slate-500 mb-4">痛點：跨部門溝通時常卡在欄位定義與資料來源不一致。</p>
+            <ul class="text-sm text-slate-700 space-y-1 mb-4">
+              <li>• 訂單、付款、會員表之間怎麼關聯？</li>
+              <li>• 這個欄位是從哪裡來的？</li>
+              <li>• 報表數字與資料庫欄位如何對應？</li>
+            </ul>
+            <p class="text-sm text-blue-700 font-medium">QueryMind 協助：把技術結構翻譯成可理解的業務語言。</p>
+          </article>
+
+          <article class="role-panel hidden bg-white border border-slate-200 rounded-2xl p-6" data-role="it">
+            <h3 class="text-xl font-bold text-slate-900 mb-2">IT / MIS</h3>
+            <p class="text-sm text-slate-500 mb-4">痛點：要讓資料可用，又要守住資料安全與稽核可追蹤性。</p>
+            <ul class="text-sm text-slate-700 space-y-1 mb-4">
+              <li>• 哪些欄位可以開放給業務查？</li>
+              <li>• 如何避免 AI 查到敏感資料？</li>
+              <li>• 如何保留查詢紀錄與 SQL Preview？</li>
+            </ul>
+            <p class="text-sm text-blue-700 font-medium">QueryMind 協助：以權限、遮罩、稽核機制實現可控的自助查詢。</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="modules" class="py-16 lg:py-24 bg-white">
+      <div class="max-w-7xl mx-auto px-5 lg:px-8">
+        <div class="max-w-3xl mb-10 reveal">
+          <h2 class="text-3xl sm:text-4xl font-black text-slate-900 mb-4">產品模組架構</h2>
+          <p class="text-slate-500 text-lg">由查詢、理解、模板、匯入、治理五大模組組成，形成企業資料操作入口。</p>
+        </div>
+        <div class="grid md:grid-cols-2 lg:grid-cols-5 gap-4">
+          <article class="reveal card-lift bg-white border border-slate-200 rounded-2xl p-5">
+            <h3 class="font-bold text-slate-900 mb-2">1. Ask Data</h3>
+            <p class="text-xs text-slate-500 mb-3">自然語言查詢、查詢意圖確認、SQL Preview、結果表格。</p>
+            <div class="text-[11px] text-slate-600 bg-slate-50 border border-slate-200 rounded-md px-2 py-1.5">Input → Intent → SQL Preview → Result</div>
+          </article>
+          <article class="reveal delay-100 card-lift bg-white border border-slate-200 rounded-2xl p-5">
+            <h3 class="font-bold text-slate-900 mb-2">2. Data Map</h3>
+            <p class="text-xs text-slate-500 mb-3">Schema 掃描、欄位字典、關聯解釋、業務詞彙。</p>
+            <div class="text-[11px] text-slate-600 bg-slate-50 border border-slate-200 rounded-md px-2 py-1.5">Table Dictionary + Relation Graph</div>
+          </article>
+          <article class="reveal delay-200 card-lift bg-white border border-slate-200 rounded-2xl p-5">
+            <h3 class="font-bold text-slate-900 mb-2">3. Query Studio</h3>
+            <p class="text-xs text-slate-500 mb-3">常用查詢、部門模板、已審核查詢、參數化查詢。</p>
+            <div class="text-[11px] text-slate-600 bg-slate-50 border border-slate-200 rounded-md px-2 py-1.5">Template Library / Team Shared</div>
+          </article>
+          <article class="reveal delay-300 card-lift bg-white border border-slate-200 rounded-2xl p-5">
+            <h3 class="font-bold text-slate-900 mb-2">4. Import Center</h3>
+            <p class="text-xs text-slate-500 mb-3">Excel/CSV 上傳、欄位映射、資料驗證、錯誤報告。</p>
+            <div class="text-[11px] text-slate-600 bg-slate-50 border border-slate-200 rounded-md px-2 py-1.5">Validate → Preview → Approve</div>
+          </article>
+          <article class="reveal delay-400 card-lift bg-white border border-slate-200 rounded-2xl p-5">
+            <h3 class="font-bold text-slate-900 mb-2">5. Governance Center</h3>
+            <p class="text-xs text-slate-500 mb-3">角色權限、敏感遮罩、只讀模式、查詢紀錄、審核流程。</p>
+            <div class="text-[11px] text-slate-600 bg-slate-50 border border-slate-200 rounded-md px-2 py-1.5">RBAC + Audit + Approval</div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="security" class="py-16 lg:py-24 bg-slate-900 text-slate-100 relative overflow-hidden">
+      <div class="absolute inset-0 opacity-10" style="background-image: linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px); background-size: 26px 26px;"></div>
+      <div class="max-w-7xl mx-auto px-5 lg:px-8 relative z-10">
+        <div class="max-w-3xl mb-10 reveal">
+          <h2 class="text-3xl sm:text-4xl font-black text-white mb-4">為企業設計的可控 AI，而不是黑箱查詢工具</h2>
+          <p class="text-slate-300 text-lg">在導入 Data Agent 時，安全邊界與可追蹤性是第一優先。</p>
+        </div>
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <article class="reveal bg-slate-800/70 border border-slate-700 rounded-2xl p-5">
+            <h3 class="font-semibold text-white mb-2">Read-only Mode</h3>
+            <p class="text-sm text-slate-300">初期可設定只讀查詢，不開放寫入。</p>
+          </article>
+          <article class="reveal delay-100 bg-slate-800/70 border border-slate-700 rounded-2xl p-5">
+            <h3 class="font-semibold text-white mb-2">SQL Preview</h3>
+            <p class="text-sm text-slate-300">讓 IT 可檢查 QueryMind 產生的查詢邏輯。</p>
+          </article>
+          <article class="reveal delay-200 bg-slate-800/70 border border-slate-700 rounded-2xl p-5">
+            <h3 class="font-semibold text-white mb-2">Role-based Access</h3>
+            <p class="text-sm text-slate-300">不同角色只能查授權資料。</p>
+          </article>
+          <article class="reveal delay-300 bg-slate-800/70 border border-slate-700 rounded-2xl p-5">
+            <h3 class="font-semibold text-white mb-2">Sensitive Data Masking</h3>
+            <p class="text-sm text-slate-300">手機、Email、身分證、成本、薪資等敏感欄位可遮罩。</p>
+          </article>
+          <article class="reveal delay-400 bg-slate-800/70 border border-slate-700 rounded-2xl p-5">
+            <h3 class="font-semibold text-white mb-2">Query Audit Log</h3>
+            <p class="text-sm text-slate-300">保留誰在什麼時間問了什麼、查了哪些資料。</p>
+          </article>
+          <article class="reveal delay-400 bg-slate-800/70 border border-slate-700 rounded-2xl p-5">
+            <h3 class="font-semibold text-white mb-2">Approval Workflow</h3>
+            <p class="text-sm text-slate-300">高風險查詢或資料匯入可加入審核流程。</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="poc" class="py-16 lg:py-24 bg-white">
+      <div class="max-w-7xl mx-auto px-5 lg:px-8">
+        <div class="max-w-3xl mb-10 reveal">
+          <h2 class="text-3xl sm:text-4xl font-black text-slate-900 mb-4">從小型 PoC 開始，快速驗證 QueryMind 是否適合你的團隊</h2>
+        </div>
+        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <article class="reveal card-lift bg-slate-50 border border-slate-200 rounded-2xl p-5">
+            <div class="text-xs font-bold text-blue-600 mb-2">Step 1</div>
+            <h3 class="font-bold text-slate-900 mb-2">盤點資料來源與常見查詢情境</h3>
+            <p class="text-sm text-slate-500">整理目前團隊最常問的資料問題、資料庫來源與部門使用場景。</p>
+          </article>
+          <article class="reveal delay-100 card-lift bg-slate-50 border border-slate-200 rounded-2xl p-5">
+            <div class="text-xs font-bold text-blue-600 mb-2">Step 2</div>
+            <h3 class="font-bold text-slate-900 mb-2">設定查詢範圍與安全邊界</h3>
+            <p class="text-sm text-slate-500">設定可查 table、欄位權限、只讀模式、row limit 與敏感欄位遮罩。</p>
+          </article>
+          <article class="reveal delay-200 card-lift bg-slate-50 border border-slate-200 rounded-2xl p-5">
+            <div class="text-xs font-bold text-blue-600 mb-2">Step 3</div>
+            <h3 class="font-bold text-slate-900 mb-2">建立 QueryMind Demo 與查詢模板</h3>
+            <p class="text-sm text-slate-500">建立自然語言查詢體驗、常用問題、SQL Preview 與結果表格。</p>
+          </article>
+          <article class="reveal delay-300 card-lift bg-slate-50 border border-slate-200 rounded-2xl p-5">
+            <div class="text-xs font-bold text-blue-600 mb-2">Step 4</div>
+            <h3 class="font-bold text-slate-900 mb-2">試行、回饋與正式導入建議</h3>
+            <p class="text-sm text-slate-500">讓實際部門試用，評估節省時間、查詢準確性與後續導入方式。</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="outcomes" class="py-16 lg:py-24 bg-slate-50 border-y border-slate-100">
+      <div class="max-w-7xl mx-auto px-5 lg:px-8">
+        <div class="max-w-3xl mb-10 reveal">
+          <h2 class="text-3xl sm:text-4xl font-black text-slate-900 mb-4">讓資料不再卡在技術門檻裡</h2>
+        </div>
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <article class="reveal bg-white border border-slate-200 rounded-2xl p-5"><p class="text-sm font-semibold text-slate-900">降低 IT 重複查詢支援</p><p class="text-xs text-slate-500 mt-2">Less IT dependency</p></article>
+          <article class="reveal delay-100 bg-white border border-slate-200 rounded-2xl p-5"><p class="text-sm font-semibold text-slate-900">提升部門資料回應速度</p><p class="text-xs text-slate-500 mt-2">Faster data response</p></article>
+          <article class="reveal delay-200 bg-white border border-slate-200 rounded-2xl p-5"><p class="text-sm font-semibold text-slate-900">減少 Excel 匯入錯誤</p><p class="text-xs text-slate-500 mt-2">Safer import workflow</p></article>
+          <article class="reveal delay-300 bg-white border border-slate-200 rounded-2xl p-5"><p class="text-sm font-semibold text-slate-900">提升資料來源透明度</p><p class="text-xs text-slate-500 mt-2">Better data visibility</p></article>
+          <article class="reveal delay-400 bg-white border border-slate-200 rounded-2xl p-5"><p class="text-sm font-semibold text-slate-900">讓常用查詢可模板化與交接</p><p class="text-xs text-slate-500 mt-2">Reusable query knowledge</p></article>
+          <article class="reveal delay-400 bg-white border border-slate-200 rounded-2xl p-5"><p class="text-sm font-semibold text-slate-900">讓非技術團隊更快做出資料判斷</p><p class="text-xs text-slate-500 mt-2">Business-ready insights</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section id="faq" class="py-16 lg:py-24 bg-white">
+      <div class="max-w-4xl mx-auto px-5 lg:px-8">
+        <div class="mb-8 reveal">
+          <h2 class="text-3xl sm:text-4xl font-black text-slate-900 mb-4">FAQ</h2>
+        </div>
+        <div class="space-y-3">
+          <details class="reveal group border border-slate-200 rounded-2xl p-5" open>
+            <summary class="cursor-pointer font-semibold text-slate-900 flex items-center justify-between">Q1：QueryMind 會取代 BI 嗎？<i class="fa-solid fa-plus text-xs text-slate-400 group-open:rotate-45 transition-transform"></i></summary>
+            <p class="text-sm text-slate-500 mt-3">不會。BI 適合固定指標與儀表板，QueryMind 更適合臨時查詢、資料理解、匯入檢查與日常資料操作。</p>
+          </details>
+          <details class="reveal delay-100 group border border-slate-200 rounded-2xl p-5">
+            <summary class="cursor-pointer font-semibold text-slate-900 flex items-center justify-between">Q2：非技術團隊查資料會不會有安全風險？<i class="fa-solid fa-plus text-xs text-slate-400 group-open:rotate-45 transition-transform"></i></summary>
+            <p class="text-sm text-slate-500 mt-3">QueryMind 可透過只讀模式、角色權限、欄位遮罩、row limit、SQL Preview 與查詢紀錄控制風險。</p>
+          </details>
+          <details class="reveal delay-200 group border border-slate-200 rounded-2xl p-5">
+            <summary class="cursor-pointer font-semibold text-slate-900 flex items-center justify-between">Q3：可以先不連正式資料庫嗎？<i class="fa-solid fa-plus text-xs text-slate-400 group-open:rotate-45 transition-transform"></i></summary>
+            <p class="text-sm text-slate-500 mt-3">可以。PoC 階段可先使用測試資料庫、只讀帳號或脫敏資料進行驗證。</p>
+          </details>
+          <details class="reveal delay-300 group border border-slate-200 rounded-2xl p-5">
+            <summary class="cursor-pointer font-semibold text-slate-900 flex items-center justify-between">Q4：是否支援 Excel / CSV 匯入？<i class="fa-solid fa-plus text-xs text-slate-400 group-open:rotate-45 transition-transform"></i></summary>
+            <p class="text-sm text-slate-500 mt-3">可設計匯入前檢查流程，先做欄位映射、格式檢查、重複檢查與匯入預覽，再由管理者確認。</p>
+          </details>
+          <details class="reveal delay-400 group border border-slate-200 rounded-2xl p-5">
+            <summary class="cursor-pointer font-semibold text-slate-900 flex items-center justify-between">Q5：IT 團隊需要做什麼？<i class="fa-solid fa-plus text-xs text-slate-400 group-open:rotate-45 transition-transform"></i></summary>
+            <p class="text-sm text-slate-500 mt-3">初期協助提供資料庫連線方式、可查範圍、欄位說明與安全限制，後續可逐步建立查詢模板與權限規則。</p>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <section id="final-cta" class="py-16 lg:py-24 bg-slate-900 text-white relative overflow-hidden">
+      <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[380px] bg-blue-500/20 blur-3xl pointer-events-none"></div>
+      <div class="max-w-5xl mx-auto px-5 lg:px-8 relative z-10">
+        <div class="bg-white/5 border border-white/15 rounded-3xl p-8 md:p-12 text-center backdrop-blur-sm">
+          <h2 class="text-3xl sm:text-4xl font-black leading-tight mb-4">想讓團隊從「等工程師查資料」升級成「自己就能安全查得到」嗎？</h2>
+          <p class="text-slate-200 text-lg mb-2">如果你已有資料庫、ERP、電商後台或內部系統，QueryMind 可以從小型 PoC 開始，快速驗證資料查詢自助化的價值。</p>
+          <p class="text-xs text-slate-300 mb-6">先從一個部門、三到五個常見查詢情境開始。</p>
+          <div class="flex flex-col sm:flex-row justify-center gap-3">
+            <a href="contact.html" aria-label="預約 QueryMind Demo" class="inline-flex items-center justify-center gap-2 bg-white text-slate-900 hover:bg-blue-50 px-7 py-3.5 rounded-full font-semibold transition-all">
+              預約 QueryMind Demo
+            </a>
+            <a href="contact.html" aria-label="與我討論導入方式" class="inline-flex items-center justify-center gap-2 border border-white/30 hover:border-white text-white px-7 py-3.5 rounded-full font-semibold transition-all hover:bg-white/10">
+              與我討論導入方式
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="bg-slate-900 border-t border-slate-800 text-slate-400">
+    <div class="max-w-7xl mx-auto px-5 lg:px-8 py-14">
+      <div class="grid md:grid-cols-4 gap-10 mb-10 pb-10 border-b border-slate-800">
+        <div class="md:col-span-2">
+          <div class="flex items-center space-x-3 mb-4">
+            <div class="w-8 h-8 bg-slate-700 text-white rounded-xl flex items-center justify-center font-bold text-sm">D</div>
+            <span class="font-bold text-white">Digitools Studio</span>
+          </div>
+          <p class="text-sm leading-relaxed max-w-xs mb-5">數轉工作室 — 以軟體開發為核心的接案團隊。LINE 整合、Web 應用、資料自動化，從業務需求出發，設計可用的數位解法。</p>
+          <div class="flex gap-3">
+            <a href="https://lin.ee/6IdgZC4" target="_blank" rel="noopener noreferrer" class="w-9 h-9 bg-line/20 hover:bg-line text-line hover:text-white rounded-lg flex items-center justify-center transition-all" aria-label="LINE 聯絡">
+              <i class="fa-brands fa-line text-base"></i>
+            </a>
+            <a href="mailto:digitalaaronl@gmail.com" class="w-9 h-9 bg-slate-800 hover:bg-slate-600 text-slate-400 hover:text-white rounded-lg flex items-center justify-center transition-all" aria-label="Email 聯絡">
+              <i class="fa-regular fa-envelope text-sm"></i>
+            </a>
+          </div>
+        </div>
+        <div>
+          <h5 class="text-white font-semibold mb-4 text-sm">頁面</h5>
+          <ul class="space-y-2.5 text-sm">
+            <li><a href="index.html" class="hover:text-white transition-colors">首頁</a></li>
+            <li><a href="services.html" class="hover:text-white transition-colors">服務內容</a></li>
+            <li><a href="querymind.html" class="hover:text-white transition-colors">QueryMind</a></li>
+            <li><a href="blog.html" class="hover:text-white transition-colors">Blog</a></li>
+            <li><a href="contact.html" class="hover:text-white transition-colors">聯絡我們</a></li>
+          </ul>
+        </div>
+        <div>
+          <h5 class="text-white font-semibold mb-4 text-sm">聯絡資訊</h5>
+          <ul class="space-y-2.5 text-sm">
+            <li>digitalaaronl@gmail.com</li>
+            <li>新北市 · 個人工作室</li>
+          </ul>
+        </div>
+      </div>
+      <div class="flex flex-col md:flex-row justify-between items-center text-xs text-slate-500">
+        <p>© 2026 Digitools Studio. All rights reserved.</p>
+        <p class="mt-2 md:mt-0">LINE 整合 × 客製 Web × 資料自動化</p>
+      </div>
+    </div>
+  </footer>
+
+  <button id="back-to-top" aria-label="回到頂端" class="btt-hidden fixed bottom-[5.5rem] right-6 z-40 w-10 h-10 bg-white border border-slate-200 rounded-full shadow-md flex items-center justify-center text-slate-500 hover:text-slate-900 hover:border-slate-400 hover:shadow-lg transition-all">
+    <i class="fa-solid fa-chevron-up text-xs"></i>
+  </button>
+
+  <div class="fixed bottom-6 right-6 z-50 group">
+    <a href="https://lin.ee/6IdgZC4" target="_blank" rel="noopener noreferrer" class="flex items-center gap-2.5 bg-line hover:bg-line-dark text-white shadow-2xl rounded-full px-5 py-3.5 transition-all duration-300 hover:scale-105" title="LINE 諮詢" aria-label="LINE 諮詢">
+      <i class="fa-brands fa-line text-2xl"></i>
+      <span class="text-sm font-semibold hidden md:block">LINE 諮詢</span>
+    </a>
+  </div>
+
+  <script>
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 60) {
+        navbar.classList.add('glass-header', 'py-3');
+        navbar.classList.remove('py-5', 'bg-transparent');
+      } else {
+        navbar.classList.remove('glass-header', 'py-3');
+        navbar.classList.add('py-5', 'bg-transparent');
+      }
+    });
+
+    const mobileBtn  = document.getElementById('mobile-menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    function closeMobileMenu() {
+      mobileMenu.classList.remove('menu-open');
+      mobileBtn.querySelector('i').className = 'fa-solid fa-bars text-lg';
+    }
+    mobileBtn.addEventListener('click', () => {
+      if (mobileMenu.classList.contains('menu-open')) {
+        closeMobileMenu();
+      } else {
+        mobileMenu.classList.add('menu-open');
+        mobileBtn.querySelector('i').className = 'fa-solid fa-xmark text-lg';
+      }
+    });
+    mobileMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', closeMobileMenu));
+
+    const revealEls = document.querySelectorAll('.reveal:not(.visible)');
+    const observer  = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }
+      });
+    }, { threshold: 0.1 });
+    revealEls.forEach(el => observer.observe(el));
+
+    const roleTabs = document.querySelectorAll('.role-tab');
+    const rolePanels = document.querySelectorAll('.role-panel');
+    roleTabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        const role = tab.dataset.role;
+        roleTabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        rolePanels.forEach(panel => {
+          panel.classList.toggle('hidden', panel.dataset.role !== role);
+        });
+      });
+    });
+
+    const bttBtn = document.getElementById('back-to-top');
+    window.addEventListener('scroll', function() {
+      if (window.scrollY > 500) {
+        bttBtn.classList.remove('btt-hidden');
+        bttBtn.classList.add('btt-visible');
+      } else {
+        bttBtn.classList.add('btt-hidden');
+        bttBtn.classList.remove('btt-visible');
+      }
+    }, { passive: true });
+    bttBtn.addEventListener('click', function() {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  </script>
+</body>
+</html>
