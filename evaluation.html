@@ -1,0 +1,1539 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>免費需求診斷 - Ken Liao Studio</title>
+  <meta name="description" content="透過轉型需求描繪 Agent，協助你釐清網站、LINE OA、預約系統、電商、後台、自動化或 AI 工具的數位化方向。" />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet" />
+
+  <!-- Vue 3 CDN -->
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: {
+              DEFAULT: '#2563EB',
+              hover: '#1D4ED8',
+              light: '#DBEAFE',
+              deep: '#1E40AF'
+            },
+            secondary: {
+              DEFAULT: '#0EA5A0',
+              hover: '#0F766E',
+              light: '#CCFBF1'
+            },
+            cyber: {
+              cyan: '#22D3EE',
+              blue: '#38BDF8',
+              violet: '#8B5CF6',
+              green: '#34D399'
+            },
+            accent: {
+              DEFAULT: '#F59E0B',
+              light: '#FEF3C7'
+            },
+            dark: '#0F172A',
+            text: '#1E293B',
+            muted: '#64748B',
+            border: '#E2E8F0',
+            bg: '#F8FAFC',
+            card: '#FFFFFF'
+          },
+          boxShadow: {
+            card: '0 18px 48px rgba(15, 23, 42, 0.10)',
+            soft: '0 8px 24px rgba(15, 23, 42, 0.07)',
+            glow: '0 0 40px rgba(37, 99, 235, 0.22)',
+            cyan: '0 0 32px rgba(34, 211, 238, 0.24)'
+          },
+          fontFamily: {
+            sans: ['Inter', 'Noto Sans TC', 'sans-serif']
+          }
+        }
+      }
+    };
+  </script>
+
+  <style>
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: "Inter", "Noto Sans TC", sans-serif;
+      background: #F8FAFC;
+      color: #1E293B;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .glass-header {
+      background: rgba(255, 255, 255, 0.86);
+      backdrop-filter: blur(18px);
+    }
+
+    .digital-bg {
+      background:
+        radial-gradient(circle at 85% 15%, rgba(34, 211, 238, 0.20), transparent 28%),
+        radial-gradient(circle at 15% 85%, rgba(37, 99, 235, 0.16), transparent 34%),
+        linear-gradient(135deg, #FFFFFF 0%, #EFF6FF 52%, #ECFEFF 100%);
+    }
+
+    .grid-pattern {
+      background-image:
+        linear-gradient(rgba(37, 99, 235, 0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(37, 99, 235, 0.06) 1px, transparent 1px);
+      background-size: 28px 28px;
+    }
+
+    .hide-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+
+    .hide-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(14px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .animate-fade-in {
+      animation: fadeIn 0.62s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes pulseGlow {
+      0%, 100% {
+        box-shadow: 0 0 0 rgba(34, 211, 238, 0.0);
+      }
+      50% {
+        box-shadow: 0 0 34px rgba(34, 211, 238, 0.32);
+      }
+    }
+
+    .agent-glow {
+      animation: pulseGlow 2.8s ease-in-out infinite;
+    }
+
+    .modal-backdrop {
+      background: rgba(15, 23, 42, 0.62);
+      backdrop-filter: blur(10px);
+    }
+
+    .required::after {
+      content: " *";
+      color: #DC2626;
+    }
+  </style>
+</head>
+
+<body>
+<div id="app">
+
+  <!-- Header -->
+  <header class="h-[72px] glass-header border-b border-border sticky top-0 z-50 transition-all">
+    <div class="max-w-[1180px] mx-auto px-6 h-full flex items-center justify-between">
+
+      <button @click="scrollToTop" class="font-bold text-xl tracking-tight text-dark flex items-center gap-2 cursor-pointer">
+        <div class="w-8 h-8 rounded-lg bg-primary text-white flex items-center justify-center font-black">K</div>
+        <span>Ken Liao Studio</span>
+      </button>
+
+      <nav class="hidden md:flex items-center gap-8 text-[15px] font-medium text-muted">
+        <a href="#" class="hover:text-primary transition-colors">服務</a>
+        <a href="#diagnosis-agent" class="text-primary font-bold border-b-2 border-primary py-1">免費診斷</a>
+      </nav>
+
+      <div class="flex items-center gap-4">
+        <button
+          @click="scrollToDiagnosis"
+          class="hidden md:block bg-primary hover:bg-primary-hover text-white px-5 py-2.5 rounded-xl font-bold shadow-glow hover:-translate-y-0.5 transition-all text-sm"
+        >
+          開始需求描繪
+        </button>
+
+        <button @click="mobileMenuOpen = !mobileMenuOpen" class="md:hidden text-text p-2" aria-label="開啟選單">
+          <svg v-if="!mobileMenuOpen" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+          <svg v-else width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <div
+      v-if="mobileMenuOpen"
+      class="md:hidden absolute top-[72px] left-0 w-full bg-white border-b border-border shadow-soft p-6 flex flex-col gap-4 z-40 animate-fade-in"
+    >
+      <a href="#" class="text-text font-medium py-2">服務</a>
+      <a href="#diagnosis-agent" @click="mobileMenuOpen = false" class="text-primary font-bold py-2">免費診斷</a>
+      <a href="#" class="text-text font-medium py-2">關於我</a>
+
+      <button
+        @click="scrollToDiagnosis"
+        class="bg-primary text-white w-full py-3 rounded-xl font-bold mt-2 shadow-glow"
+      >
+        開始需求描繪
+      </button>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="relative overflow-hidden digital-bg">
+    <div class="absolute inset-0 grid-pattern opacity-80"></div>
+    <div class="absolute right-[-120px] top-[140px] w-[360px] h-[360px] bg-cyber-cyan rounded-full blur-3xl opacity-25"></div>
+    <div class="absolute left-[-160px] bottom-[-160px] w-[420px] h-[420px] bg-primary-light rounded-full blur-3xl opacity-60"></div>
+
+    <div class="max-w-[1180px] mx-auto px-6 pt-16 pb-24 md:pt-24 md:pb-32 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center relative z-10">
+
+      <div class="text-center lg:text-left animate-fade-in">
+        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/85 border border-border shadow-soft text-[13px] font-bold text-primary mb-6">
+          <span class="w-2 h-2 rounded-full bg-cyber-cyan agent-glow"></span>
+          TransForm Agent・數位轉型需求描繪器
+        </div>
+
+        <h1 class="text-[36px] md:text-[52px] lg:text-[60px] leading-[1.12] font-extrabold tracking-tight text-dark">
+          讓你的想法，<br />
+          被整理成
+          <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary via-cyber-blue to-secondary">
+            可執行的數位專案
+          </span>
+        </h1>
+
+        <p class="mt-6 text-[16px] md:text-[18px] leading-[1.85] text-muted max-w-xl mx-auto lg:mx-0">
+          不需要先懂技術，也不用一開始就寫完整規格。  
+          透過選項、情境描述、參考網址與圖片上傳，讓轉型專屬 Agent 協助你釐清網站、LINE OA、後台、自動化或 AI 工具的方向。
+        </p>
+
+        <div class="mt-10 flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start">
+          <button
+            @click="scrollToDiagnosis"
+            class="w-full sm:w-auto bg-primary hover:bg-primary-hover text-white px-8 py-4 rounded-xl font-bold shadow-glow hover:-translate-y-1 transition-all flex items-center justify-center gap-2 text-[16px]"
+          >
+            開始描繪我的需求
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+              <polyline points="12 5 19 12 12 19"></polyline>
+            </svg>
+          </button>
+
+          <button
+            @click="scrollToResult"
+            class="w-full sm:w-auto bg-white hover:bg-gray-50 text-text border border-border px-8 py-4 rounded-xl font-bold transition-all text-[16px] flex items-center justify-center gap-2"
+          >
+            查看 Agent 會整理什麼
+          </button>
+        </div>
+
+        <div class="mt-8 flex flex-wrap gap-3 justify-center lg:justify-start text-[13px] text-muted">
+          <span class="px-3 py-1.5 rounded-full bg-white border border-border">可上傳參考圖</span>
+          <span class="px-3 py-1.5 rounded-full bg-white border border-border">可貼參考網站</span>
+          <span class="px-3 py-1.5 rounded-full bg-white border border-border">可自由描述需求</span>
+          <span class="px-3 py-1.5 rounded-full bg-white border border-border">Email 基本驗證</span>
+        </div>
+      </div>
+
+      <!-- Agent Preview -->
+      <div class="relative animate-fade-in" style="animation-delay: 0.2s;">
+        <div class="absolute inset-0 bg-gradient-to-tr from-primary-light to-secondary-light blur-3xl opacity-60 rounded-full transform scale-90"></div>
+
+        <div class="relative bg-white/92 border border-white/70 rounded-[28px] p-6 shadow-card backdrop-blur">
+          <div class="flex items-center justify-between gap-4 mb-6 pb-5 border-b border-border">
+            <div class="flex items-center gap-3">
+              <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-primary to-secondary text-white flex items-center justify-center font-black shadow-cyan">
+                AI
+              </div>
+              <div>
+                <h3 class="font-black text-[18px] text-dark">TransForm Agent</h3>
+                <p class="text-[13px] text-muted">你的數位轉型需求整理助理</p>
+              </div>
+            </div>
+
+            <div class="px-3 py-1 rounded-full bg-secondary-light text-secondary text-[12px] font-bold">
+              Online
+            </div>
+          </div>
+
+          <div class="space-y-4">
+            <div class="bg-bg border border-border rounded-2xl p-4">
+              <p class="text-[13px] text-muted mb-2">Agent 提問</p>
+              <p class="text-[15px] text-dark font-bold leading-relaxed">
+                你現在最想改善的是「客戶找得到你」、還是「內部流程不要再手動」？
+              </p>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div class="bg-primary-light/70 rounded-2xl p-4 border border-primary/10">
+                <p class="text-[12px] text-primary font-bold mb-1">需求訊號</p>
+                <p class="text-[15px] text-dark font-black">LINE 訂單混亂</p>
+              </div>
+              <div class="bg-secondary-light/70 rounded-2xl p-4 border border-secondary/10">
+                <p class="text-[12px] text-secondary font-bold mb-1">建議方向</p>
+                <p class="text-[15px] text-dark font-black">預購收單 MVP</p>
+              </div>
+            </div>
+
+            <div class="rounded-2xl bg-dark text-white p-4">
+              <p class="text-[12px] text-cyber-cyan font-bold mb-2">Agent 初步整理</p>
+              <p class="text-[14px] leading-relaxed text-white/85">
+                你可能需要的不是單純網站，而是一個能收單、整理訂單、通知客戶的輕量流程系統。
+              </p>
+            </div>
+          </div>
+
+          <div class="mt-5 h-2 rounded-full bg-gray-100 overflow-hidden">
+            <div class="h-full w-[72%] bg-gradient-to-r from-primary to-secondary"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Benefit -->
+  <div class="max-w-[1180px] mx-auto px-6 relative z-20 -mt-8 md:-mt-12">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div v-for="benefit in benefits" :key="benefit.title" class="bg-white border border-border rounded-[20px] p-5 shadow-soft hover:shadow-card transition-all">
+        <div class="flex gap-4">
+          <div class="w-10 h-10 rounded-xl bg-primary-light text-primary flex items-center justify-center shrink-0 font-black">
+            {{ benefit.icon }}
+          </div>
+          <div>
+            <h4 class="font-bold text-dark text-[17px] mb-1">{{ benefit.title }}</h4>
+            <p class="text-muted text-[13px] leading-relaxed">{{ benefit.desc }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Value Section -->
+  <section class="py-24 px-6 bg-white">
+    <div class="max-w-[1180px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+
+      <div>
+        <p class="text-primary font-black text-[14px] tracking-wider mb-4">WHY THIS WORKS</p>
+        <h2 class="text-[32px] md:text-[40px] font-bold text-dark leading-[1.2] tracking-tight mb-8">
+          不只是問卷，<br />
+          而是協助使用者把需求說清楚
+        </h2>
+
+        <div class="space-y-7">
+          <div v-for="item in valuePoints" :key="item.title" class="flex gap-4">
+            <div class="w-8 h-8 rounded-full bg-secondary-light text-secondary flex items-center justify-center shrink-0 mt-1 font-black">✓</div>
+            <div>
+              <h4 class="font-bold text-[18px] text-dark mb-2">{{ item.title }}</h4>
+              <p class="text-muted text-[16px] leading-relaxed">{{ item.desc }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div v-for="card in valueCards" :key="card.title" class="bg-bg border border-border rounded-2xl p-6 hover:border-primary transition-colors">
+          <div class="w-10 h-10 rounded-xl bg-white border border-border shadow-sm flex items-center justify-center mb-4 text-primary font-black">
+            {{ card.no }}
+          </div>
+          <h4 class="font-bold text-[18px] text-dark mb-2">{{ card.title }}</h4>
+          <p class="text-muted text-[14px] leading-relaxed">{{ card.desc }}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Diagnosis Agent -->
+  <section id="diagnosis-agent" class="py-24 px-6 bg-bg">
+    <div class="max-w-[1180px] mx-auto">
+
+      <div class="text-center mb-12">
+        <div class="inline-flex px-4 py-2 rounded-full bg-primary-light text-primary text-[13px] font-black mb-4">
+          Free Requirement Discovery
+        </div>
+        <h2 class="text-[32px] md:text-[42px] font-black text-dark mb-4">開始描繪你的數位化需求</h2>
+        <p class="text-muted text-[16px] md:text-[18px] max-w-3xl mx-auto leading-relaxed">
+          你可以用選項快速描述，也可以直接補充文字、貼參考網址、上傳圖片。  
+          這裡的目的不是逼你寫規格，而是讓 Agent 有足夠線索整理方向。
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-6 items-start">
+
+        <!-- Left Form -->
+        <div class="bg-white border border-border rounded-[28px] p-6 md:p-8 shadow-card">
+
+          <!-- Progress -->
+          <div class="mb-8">
+            <div class="flex justify-between items-end mb-3">
+              <span class="text-sm font-black text-primary">需求描繪完整度 {{ Math.round(progressPercentage) }}%</span>
+              <span class="text-xs text-muted">已完成 {{ completedStepCount }} / {{ steps.length }} 項</span>
+            </div>
+            <div class="w-full bg-gray-100 rounded-full h-2.5 overflow-hidden">
+              <div
+                class="bg-gradient-to-r from-primary to-secondary h-2.5 rounded-full transition-all duration-500 ease-out"
+                :style="{ width: progressPercentage + '%' }"
+              ></div>
+            </div>
+          </div>
+
+          <!-- Agent Prompt -->
+          <div class="mb-8 rounded-2xl border border-primary/10 bg-gradient-to-r from-primary-light/70 to-secondary-light/50 p-5">
+            <div class="flex gap-4">
+              <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-primary to-secondary text-white flex items-center justify-center font-black shrink-0">
+                AI
+              </div>
+              <div>
+                <p class="text-[13px] text-primary font-black mb-1">TransForm Agent 提醒你</p>
+                <p class="text-[15px] text-dark leading-relaxed font-medium">
+                  不用一次寫得很完整。先把「目前卡住的地方」、「想改善的流程」、「喜歡的參考畫面」留下來，我會再幫你整理成可討論的專案方向。
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Steps -->
+          <div class="space-y-5">
+            <article
+              v-for="step in steps"
+              :key="step.id"
+              class="border border-border rounded-[22px] p-5 md:p-6 bg-white hover:shadow-soft transition-all"
+            >
+              <div class="flex flex-col md:flex-row md:items-start justify-between gap-4 mb-5">
+                <div class="flex gap-4">
+                  <div
+                    :class="[
+                      'w-10 h-10 rounded-2xl flex items-center justify-center font-black shrink-0',
+                      isStepFilled(step.id)
+                        ? 'bg-secondary text-white'
+                        : 'bg-primary-light text-primary'
+                    ]"
+                  >
+                    {{ step.step }}
+                  </div>
+                  <div>
+                    <h3 class="text-[20px] font-black text-dark mb-1">{{ step.title }}</h3>
+                    <p class="text-[14px] text-muted leading-relaxed">{{ step.description }}</p>
+                  </div>
+                </div>
+
+                <span
+                  v-if="isStepFilled(step.id)"
+                  class="px-3 py-1 rounded-full bg-secondary-light text-secondary text-[12px] font-black self-start"
+                >
+                  已補充
+                </span>
+              </div>
+
+              <div class="flex flex-wrap gap-2 mb-5">
+                <button
+                  v-for="opt in step.options"
+                  :key="opt"
+                  @click="toggleOption(step.id, opt, step.mode)"
+                  :class="[
+                    'px-4 py-2 rounded-full border text-[14px] transition-all font-medium text-left',
+                    isSelected(step.id, opt)
+                      ? 'bg-primary text-white border-primary shadow-soft'
+                      : 'bg-bg border-gray-300 text-muted hover:border-primary hover:bg-primary-light/40'
+                  ]"
+                >
+                  <span v-if="isSelected(step.id, opt)">✓ </span>{{ opt }}
+                </button>
+              </div>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="md:col-span-2">
+                  <label class="block text-[13px] font-black text-dark mb-2">
+                    用自己的話補充
+                  </label>
+                  <textarea
+                    v-model="formState[step.id].note"
+                    :placeholder="step.placeholder"
+                    rows="3"
+                    class="w-full bg-bg border border-border rounded-xl px-4 py-3 text-[14px] text-dark placeholder-gray-400 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all resize-none"
+                  ></textarea>
+                </div>
+
+                <div v-if="step.urlEnabled">
+                  <label class="block text-[13px] font-black text-dark mb-2">
+                    參考網址
+                  </label>
+                  <input
+                    v-model="formState[step.id].referenceUrl"
+                    type="url"
+                    placeholder="https://example.com"
+                    class="w-full bg-bg border border-border rounded-xl px-4 py-3 text-[14px] focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+                  />
+                </div>
+              </div>
+            </article>
+
+            <!-- Upload Area -->
+            <article class="border border-dashed border-primary/40 rounded-[22px] p-5 md:p-6 bg-gradient-to-br from-white to-primary-light/30">
+              <div class="flex flex-col md:flex-row md:items-center justify-between gap-5">
+                <div>
+                  <h3 class="text-[20px] font-black text-dark mb-2">上傳參考圖片或截圖</h3>
+                  <p class="text-[14px] text-muted leading-relaxed">
+                    可以上傳喜歡的網站截圖、目前流程截圖、商品資料圖、手繪草圖。圖片會先在前端預覽，之後可透過 Lambda 上傳到後端。
+                  </p>
+                </div>
+
+                <label class="cursor-pointer shrink-0">
+                  <input
+                    type="file"
+                    multiple
+                    accept="image/*,.pdf"
+                    class="hidden"
+                    @change="handleFileUpload"
+                  />
+                  <span class="inline-flex items-center justify-center bg-dark hover:bg-primary text-white px-6 py-3 rounded-xl font-black transition-all shadow-soft">
+                    選擇檔案
+                  </span>
+                </label>
+              </div>
+
+              <div v-if="uploadedFiles.length" class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div
+                  v-for="file in uploadedFiles"
+                  :key="file.id"
+                  class="bg-white border border-border rounded-2xl p-4 flex gap-4 items-center"
+                >
+                  <div class="w-16 h-16 rounded-xl bg-bg border border-border overflow-hidden flex items-center justify-center shrink-0">
+                    <img v-if="file.previewUrl" :src="file.previewUrl" class="w-full h-full object-cover" />
+                    <span v-else class="text-[12px] text-muted font-bold">FILE</span>
+                  </div>
+                  <div class="min-w-0 flex-1">
+                    <p class="font-bold text-[14px] text-dark truncate">{{ file.name }}</p>
+                    <p class="text-[12px] text-muted">{{ file.sizeLabel }}</p>
+                  </div>
+                  <button @click="removeFile(file.id)" class="text-muted hover:text-red-500 font-black">✕</button>
+                </div>
+              </div>
+            </article>
+          </div>
+
+          <!-- Contact Preview CTA -->
+          <div class="mt-8 border-t border-border pt-8 flex flex-col lg:flex-row gap-4 items-center justify-between">
+            <div>
+              <h4 class="font-black text-dark text-[18px] mb-1">描繪差不多了嗎？</h4>
+              <p class="text-muted text-[14px] leading-relaxed">
+                下一步留下聯絡方式，系統會組成 payload，並預留 Lambda API 送出與 AI 回饋介面。
+              </p>
+            </div>
+
+            <button
+              @click="openContactModal"
+              class="w-full lg:w-auto bg-primary hover:bg-primary-hover text-white px-8 py-4 rounded-xl font-black shadow-glow hover:-translate-y-1 transition-all flex items-center justify-center gap-2"
+            >
+              產生需求摘要並留下聯絡方式
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+                <polyline points="12 5 19 12 12 19"></polyline>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Right Agent Live Summary -->
+        <aside class="lg:sticky lg:top-[96px] bg-dark text-white rounded-[28px] p-6 shadow-card overflow-hidden relative">
+          <div class="absolute right-[-60px] top-[-60px] w-40 h-40 bg-cyber-cyan opacity-20 rounded-full blur-3xl"></div>
+
+          <div class="relative z-10">
+            <div class="flex items-center gap-3 mb-6">
+              <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-cyber-cyan to-secondary text-dark flex items-center justify-center font-black">
+                AI
+              </div>
+              <div>
+                <h3 class="font-black text-[18px]">Agent 即時整理</h3>
+                <p class="text-white/55 text-[13px]">根據你的輸入即時更新</p>
+              </div>
+            </div>
+
+            <div class="space-y-4">
+              <div class="bg-white/8 border border-white/10 rounded-2xl p-4">
+                <p class="text-cyber-cyan text-[12px] font-black mb-2">推薦方向</p>
+                <p class="font-black text-[18px] leading-snug">{{ computedAgent.direction }}</p>
+              </div>
+
+              <div class="bg-white/8 border border-white/10 rounded-2xl p-4">
+                <p class="text-cyber-cyan text-[12px] font-black mb-2">目前抓到的需求訊號</p>
+                <ul class="space-y-2 text-[14px] text-white/78">
+                  <li v-for="item in computedAgent.signals" :key="item" class="flex gap-2">
+                    <span class="text-cyber-cyan">•</span>
+                    <span>{{ item }}</span>
+                  </li>
+                </ul>
+              </div>
+
+              <div class="bg-white/8 border border-white/10 rounded-2xl p-4">
+                <p class="text-cyber-cyan text-[12px] font-black mb-2">建議下一步</p>
+                <p class="text-[14px] text-white/78 leading-relaxed">{{ computedAgent.nextAction }}</p>
+              </div>
+
+              <div class="bg-white text-dark rounded-2xl p-4">
+                <p class="text-[12px] text-muted font-black mb-2">Project Fit</p>
+                <div class="flex items-end justify-between">
+                  <div class="text-[42px] font-black leading-none">{{ computedAgent.score }}</div>
+                  <div class="text-right">
+                    <p class="font-black text-primary">{{ computedAgent.gradeLabel }}</p>
+                    <p class="text-[12px] text-muted">{{ computedAgent.score === '--' ? '等待更多資料' : '初步適配分析' }}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </aside>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Result Preview -->
+  <section id="result-preview" class="py-24 px-6 bg-white">
+    <div class="max-w-[1180px] mx-auto">
+      <div class="text-center mb-12">
+        <p class="text-primary font-black text-[14px] tracking-wider mb-4">AGENT OUTPUT</p>
+        <h2 class="text-[32px] md:text-[42px] font-black text-dark mb-4">Agent 會幫你整理出什麼？</h2>
+        <p class="text-muted text-[16px] md:text-[18px] max-w-3xl mx-auto leading-relaxed">
+          送出後，後端可透過 Lambda 呼叫 AI 分析，產生需求摘要、MVP 建議、風險提醒與下一步訪談重點。
+        </p>
+      </div>
+
+      <div class="bg-white border border-border rounded-[28px] shadow-card overflow-hidden grid grid-cols-1 lg:grid-cols-[320px_1fr]">
+        <div class="bg-gradient-to-br from-primary to-secondary text-white p-8 lg:p-10 flex flex-col justify-center">
+          <p class="text-white/70 font-bold text-[13px] tracking-wider mb-3">TRANSFORM AGENT</p>
+          <h3 class="text-[26px] font-black leading-tight mb-8">{{ computedAgent.direction }}</h3>
+
+          <div class="bg-white/12 rounded-2xl p-6 backdrop-blur-sm border border-white/20">
+            <p class="text-white/70 text-[14px] mb-1">Project Fit Score</p>
+            <div class="text-[52px] font-black leading-none">{{ computedAgent.score }}</div>
+            <p class="text-white/65 text-[12px] mt-2">{{ computedAgent.gradeLabel }}</p>
+          </div>
+        </div>
+
+        <div class="p-8 lg:p-10">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+            <div>
+              <h4 class="font-black text-[18px] text-dark border-b border-border pb-3 mb-4">需求摘要</h4>
+              <ul class="space-y-3 text-[14px] text-muted">
+                <li v-for="item in computedAgent.summary" :key="item" class="flex gap-2">
+                  <span class="text-primary">•</span>
+                  <span>{{ item }}</span>
+                </li>
+              </ul>
+            </div>
+
+            <div>
+              <h4 class="font-black text-[18px] text-dark border-b border-border pb-3 mb-4">MVP 建議</h4>
+              <ul class="space-y-3 text-[14px] text-muted">
+                <li v-for="item in computedAgent.mvp" :key="item" class="flex gap-2">
+                  <span class="text-secondary">•</span>
+                  <span>{{ item }}</span>
+                </li>
+              </ul>
+            </div>
+
+            <div>
+              <h4 class="font-black text-[18px] text-dark border-b border-border pb-3 mb-4">訪談重點</h4>
+              <ul class="space-y-3 text-[14px] text-muted">
+                <li v-for="item in computedAgent.interviewFocus" :key="item" class="flex gap-2">
+                  <span class="text-accent">•</span>
+                  <span>{{ item }}</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="bg-accent-light text-[#92400E] rounded-2xl p-4 text-[14px] font-medium leading-relaxed">
+            這不是正式報價單，而是協助你把需求變清楚的初步方向。正式規劃仍需確認流程、資料、權限、串接系統與上線時程。
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Final CTA -->
+  <section class="py-24 px-6 bg-white">
+    <div class="max-w-[1180px] mx-auto">
+      <div class="bg-gradient-to-br from-secondary to-primary text-white rounded-[28px] p-10 md:p-12 flex flex-col md:flex-row justify-between items-center gap-8 shadow-card relative overflow-hidden">
+        <div class="absolute -right-20 -top-20 w-64 h-64 bg-white opacity-10 rounded-full blur-2xl"></div>
+
+        <div class="text-center md:text-left relative z-10">
+          <h2 class="text-[32px] md:text-[40px] font-black leading-tight mb-4 tracking-tight">
+            先把需求說清楚，<br class="hidden md:block" />
+            再決定怎麼做
+          </h2>
+          <p class="text-[16px] text-white/90 font-medium">
+            適合：網站、LINE OA、預約 / 預購、電商、後台、自動化、AI 工具
+          </p>
+        </div>
+
+        <div class="flex flex-col items-center md:items-end gap-3 w-full md:w-auto relative z-10">
+          <button
+            @click="scrollToDiagnosis"
+            class="w-full md:w-auto bg-white text-primary hover:bg-gray-50 px-8 py-5 rounded-xl font-black shadow-lg hover:-translate-y-1 transition-all flex items-center justify-center gap-2 text-[18px]"
+          >
+            開始描繪我的需求
+          </button>
+          <p class="text-[13px] text-white/80 font-medium tracking-wide">
+            免費・可上傳參考圖・可自由描述
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer：保留目前網站內容 -->
+  <footer class="bg-dark text-white pt-16 pb-8 px-6">
+    <div class="max-w-[1180px] mx-auto">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 border-b border-white/10 pb-12 mb-8">
+
+        <div class="lg:col-span-2">
+          <div class="font-bold text-2xl tracking-tight flex items-center gap-2 mb-4">
+            <div class="w-8 h-8 rounded-lg bg-primary text-white flex items-center justify-center font-black text-lg">K</div>
+            Ken Liao Studio
+          </div>
+
+          <p class="text-muted text-[15px] max-w-sm leading-relaxed mb-6">
+            數位轉型顧問｜網站開發｜系統整合｜自動化工具<br />
+            幫你把混亂的需求，變成清晰可執行的數位解決方案。
+          </p>
+
+          <div class="flex gap-4">
+            <a href="#" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-primary transition-colors">
+              <span class="text-sm font-bold">in</span>
+            </a>
+            <a href="#" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-primary transition-colors">
+              <span class="text-sm font-bold">f</span>
+            </a>
+            <a href="#" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-primary transition-colors">
+              <span class="text-sm font-bold">ig</span>
+            </a>
+          </div>
+        </div>
+
+        <div>
+          <h4 class="font-bold text-[16px] mb-6">聯絡資訊</h4>
+          <ul class="space-y-4 text-[14px] text-muted">
+            <li>
+              <a href="mailto:hello@kenliao.studio" class="hover:text-white transition-colors flex items-center gap-2">
+                hello@kenliao.studio
+              </a>
+            </li>
+            <li>
+              <span class="flex items-center gap-2">0988-123-456</span>
+            </li>
+            <li>
+              <span class="flex items-center gap-2">台北・台灣</span>
+            </li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="font-bold text-[16px] mb-6">快速連結</h4>
+          <ul class="space-y-4 text-[14px] text-muted">
+            <li><a href="#" class="hover:text-white transition-colors">隱私權政策</a></li>
+            <li><a href="#" class="hover:text-white transition-colors">服務條款</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="text-center text-[13px] text-muted">
+        © 2024 Ken Liao Studio. All rights reserved.
+      </div>
+    </div>
+  </footer>
+
+  <!-- Contact Modal -->
+  <div
+    v-if="contactModalOpen"
+    class="fixed inset-0 z-[100] modal-backdrop flex items-center justify-center px-6 py-10"
+    @click.self="closeContactModal"
+  >
+    <div class="w-full max-w-[680px] bg-white rounded-[28px] shadow-card border border-border overflow-hidden animate-fade-in">
+
+      <div class="p-6 md:p-8 border-b border-border">
+        <div class="flex items-start justify-between gap-6">
+          <div>
+            <h3 class="text-[24px] md:text-[30px] font-black text-dark mb-3">
+              留下聯絡方式，取得完整初步建議
+            </h3>
+            <p class="text-muted text-[15px] leading-relaxed">
+              我會根據你的需求描繪整理初步方向。Email 會做基本格式驗證，後續可接 Lambda 做寄信與 AI 回饋。
+            </p>
+          </div>
+
+          <button
+            @click="closeContactModal"
+            class="w-10 h-10 rounded-full bg-bg hover:bg-gray-100 text-muted flex items-center justify-center shrink-0"
+            aria-label="關閉"
+          >
+            ✕
+          </button>
+        </div>
+      </div>
+
+      <div v-if="!submitSuccess" class="p-6 md:p-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+          <div>
+            <label class="block text-[13px] font-black text-dark mb-2 required">姓名</label>
+            <input
+              v-model.trim="contact.name"
+              type="text"
+              placeholder="請輸入你的姓名"
+              class="w-full bg-bg border border-border rounded-xl px-4 py-3 text-[14px] focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+            />
+          </div>
+
+          <div>
+            <label class="block text-[13px] font-black text-dark mb-2">公司 / 品牌名稱</label>
+            <input
+              v-model.trim="contact.companyName"
+              type="text"
+              placeholder="例如：小美甜點工作室"
+              class="w-full bg-bg border border-border rounded-xl px-4 py-3 text-[14px] focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+            />
+          </div>
+
+          <div>
+            <label class="block text-[13px] font-black text-dark mb-2 required">Email</label>
+            <input
+              v-model.trim="contact.email"
+              type="email"
+              placeholder="example@gmail.com"
+              :class="[
+                'w-full bg-bg border rounded-xl px-4 py-3 text-[14px] focus:outline-none focus:ring-1 transition-all',
+                emailTouched && !isEmailValid
+                  ? 'border-red-400 focus:border-red-500 focus:ring-red-500'
+                  : 'border-border focus:border-primary focus:ring-primary'
+              ]"
+              @blur="emailTouched = true"
+            />
+            <p v-if="emailTouched && !isEmailValid" class="mt-2 text-[12px] text-red-500 font-bold">
+              請輸入有效的 Email 格式。
+            </p>
+          </div>
+
+          <div>
+            <label class="block text-[13px] font-black text-dark mb-2">LINE ID</label>
+            <input
+              v-model.trim="contact.lineId"
+              type="text"
+              placeholder="方便用 LINE 聯絡可填寫"
+              class="w-full bg-bg border border-border rounded-xl px-4 py-3 text-[14px] focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+            />
+          </div>
+
+          <div>
+            <label class="block text-[13px] font-black text-dark mb-2">手機</label>
+            <input
+              v-model.trim="contact.phone"
+              type="tel"
+              placeholder="0912-345-678"
+              class="w-full bg-bg border border-border rounded-xl px-4 py-3 text-[14px] focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+            />
+          </div>
+
+          <div>
+            <label class="block text-[13px] font-black text-dark mb-2 required">方便聯絡方式</label>
+            <select
+              v-model="contact.preferredContactMethod"
+              class="w-full bg-bg border border-border rounded-xl px-4 py-3 text-[14px] focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+            >
+              <option value="">請選擇</option>
+              <option value="email">Email</option>
+              <option value="line">LINE</option>
+              <option value="phone">手機</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="mt-4">
+          <label class="block text-[13px] font-black text-dark mb-2">補充說明</label>
+          <textarea
+            v-model.trim="contact.message"
+            rows="4"
+            placeholder="可以補充目前最想改善的流程、參考網站、期望合作方式等。"
+            class="w-full bg-bg border border-border rounded-xl px-4 py-3 text-[14px] focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary resize-none"
+          ></textarea>
+        </div>
+
+        <div class="mt-6 rounded-2xl bg-dark text-white p-5">
+          <p class="text-cyber-cyan text-[13px] font-black mb-2">Lambda API 預留</p>
+          <p class="text-white/72 text-[13px] leading-relaxed">
+            submitLead() 已預留 <code class="text-cyber-cyan">LEAD_SUBMIT_ENDPOINT</code>、<code class="text-cyber-cyan">AI_FEEDBACK_ENDPOINT</code>、<code class="text-cyber-cyan">FILE_UPLOAD_ENDPOINT</code>。
+            目前會先輸出 payload 到 console，接上 API 後即可改為正式送出。
+          </p>
+        </div>
+
+        <div class="mt-6 flex flex-col sm:flex-row gap-3 justify-end">
+          <button
+            @click="closeContactModal"
+            class="px-6 py-3 rounded-xl border border-border text-text font-black hover:bg-bg transition-colors"
+          >
+            先不送出
+          </button>
+
+          <button
+            @click="submitLead"
+            :disabled="!canSubmitContact || submitLoading"
+            :class="[
+              'px-6 py-3 rounded-xl text-white font-black transition-all',
+              canSubmitContact && !submitLoading
+                ? 'bg-primary hover:bg-primary-hover shadow-glow hover:-translate-y-0.5'
+                : 'bg-gray-300 cursor-not-allowed'
+            ]"
+          >
+            {{ submitLoading ? '送出中...' : '送出並取得初步建議' }}
+          </button>
+        </div>
+      </div>
+
+      <div v-else class="p-8 md:p-10 text-center">
+        <div class="w-16 h-16 rounded-full bg-secondary-light text-secondary flex items-center justify-center mx-auto mb-6 text-[28px] font-black">
+          ✓
+        </div>
+
+        <h3 class="text-[28px] font-black text-dark mb-3">
+          已收到你的需求描繪
+        </h3>
+
+        <p class="text-muted leading-relaxed max-w-md mx-auto mb-8">
+          我會根據你的內容整理需求摘要與初步建議，並在 1–2 個工作天內回覆你。
+        </p>
+
+        <button
+          @click="closeContactModal"
+          class="bg-primary hover:bg-primary-hover text-white px-8 py-4 rounded-xl font-black shadow-glow"
+        >
+          完成
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const { createApp, ref, computed } = Vue;
+
+  createApp({
+    setup() {
+      /**
+       * API endpoints reserved for Lambda / backend integration.
+       * Replace these URLs when backend is ready.
+       */
+      const LEAD_SUBMIT_ENDPOINT = "https://YOUR_API_GATEWAY_DOMAIN/prod/leads";
+      const AI_FEEDBACK_ENDPOINT = "https://YOUR_API_GATEWAY_DOMAIN/prod/ai-feedback";
+      const FILE_UPLOAD_ENDPOINT = "https://YOUR_API_GATEWAY_DOMAIN/prod/upload";
+
+      const mobileMenuOpen = ref(false);
+      const contactModalOpen = ref(false);
+      const submitSuccess = ref(false);
+      const submitLoading = ref(false);
+      const emailTouched = ref(false);
+
+      const benefits = [
+        {
+          icon: "01",
+          title: "先描述，不用先寫規格",
+          desc: "用選項、文字、網址與圖片，把模糊想法慢慢說清楚。"
+        },
+        {
+          icon: "02",
+          title: "轉型專屬 Agent 引導",
+          desc: "不是冷冰冰表單，而是協助你把需求轉成專案方向。"
+        },
+        {
+          icon: "03",
+          title: "可上傳參考圖片",
+          desc: "喜歡的網站截圖、流程圖、商品圖都可以作為線索。"
+        },
+        {
+          icon: "04",
+          title: "預留後端 AI 回饋",
+          desc: "可接 Lambda、Email、AI 分析與商機通知流程。"
+        }
+      ];
+
+      const valuePoints = [
+        {
+          title: "降低使用者描述需求的壓力",
+          desc: "使用者通常不知道怎麼寫需求規格，所以頁面要用情境問題引導，而不是直接丟一張表單。"
+        },
+        {
+          title: "讓需求從『想做東西』變成『要解決什麼問題』",
+          desc: "真正重要的不是做網站或做系統，而是客戶想改善哪個流程、哪個銷售節點、哪個管理痛點。"
+        },
+        {
+          title: "用數位感建立專業信任",
+          desc: "透過即時摘要、Agent 提示、圖片上傳與流程預留，讓使用者感覺這是一套成熟的數位化需求探索體驗。"
+        }
+      ];
+
+      const valueCards = [
+        {
+          no: "01",
+          title: "情境式提問",
+          desc: "用客戶聽得懂的語言詢問痛點，例如訂單混亂、報名流程人工、資料難整理。"
+        },
+        {
+          no: "02",
+          title: "需求描繪板",
+          desc: "讓使用者可以補充文字、貼網址、上傳圖片，不只依賴固定選項。"
+        },
+        {
+          no: "03",
+          title: "即時 Agent 摘要",
+          desc: "邊填寫邊整理方向，讓使用者感覺需求正在被理解。"
+        },
+        {
+          no: "04",
+          title: "後端流程預留",
+          desc: "前端可先跑，後續再接 Lambda、Email、AI 分析與資料保存。"
+        }
+      ];
+
+      const steps = [
+        {
+          id: "business",
+          step: "01",
+          title: "你目前的業務或服務是什麼？",
+          description: "先讓 Agent 理解你的產業情境與服務型態。",
+          mode: "multiple",
+          options: ["餐飲 / 團購", "電商 / 零售", "顧問 / 教練", "教育 / 課程", "B2B 服務", "個人品牌", "內部管理流程"],
+          placeholder: "例如：我主要透過 LINE 群組販售甜點，每週開團一次；或我是顧問服務，想增加陌生客諮詢。",
+          urlEnabled: false
+        },
+        {
+          id: "problem",
+          step: "02",
+          title: "你現在最想改善哪個問題？",
+          description: "描述越具體，後續越容易整理成可執行方案。",
+          mode: "multiple",
+          options: ["客戶找不到我", "LINE 訊息太亂", "訂單整理太人工", "預約 / 報名流程卡住", "Excel 管理很累", "想導入 AI", "需要後台管理"],
+          placeholder: "例如：客人都在 LINE 留言下單，我要手動複製到 Excel，常常漏單或忘記確認付款。",
+          urlEnabled: false
+        },
+        {
+          id: "vision",
+          step: "03",
+          title: "你想像中的理想流程長什麼樣？",
+          description: "不用懂技術，直接描述你希望客戶或內部人員怎麼操作。",
+          mode: "multiple",
+          options: ["客戶可自己填單", "系統自動通知", "資料自動整理", "後台可查詢狀態", "可線上付款", "可用 LINE 操作", "AI 幫忙摘要"],
+          placeholder: "例如：希望客戶從 LINE 點進來，看商品、填數量、送出訂單，我可以在後台看到付款狀態。",
+          urlEnabled: false
+        },
+        {
+          id: "solution",
+          step: "04",
+          title: "你覺得可能需要哪一類解決方案？",
+          description: "如果不確定，可以多選，Agent 會協助整理適合方向。",
+          mode: "multiple",
+          options: ["一頁式網站", "品牌官網", "LINE OA / LIFF", "預約系統", "預購 / 團購系統", "電商 / 訂單系統", "後台 Dashboard", "自動化流程", "AI 工具"],
+          placeholder: "例如：我不確定該做網站還是 LINE 系統，但希望先讓客戶能線上下單。",
+          urlEnabled: true
+        },
+        {
+          id: "reference",
+          step: "05",
+          title: "有沒有喜歡的參考網站、畫面或流程？",
+          description: "參考資料能幫助更快理解你想要的風格、操作方式與功能層級。",
+          mode: "multiple",
+          options: ["喜歡簡潔科技感", "喜歡溫暖品牌感", "喜歡電商購物流程", "喜歡 SaaS 產品頁", "喜歡 LINE 互動流程", "還沒有參考"],
+          placeholder: "例如：我喜歡某網站的首頁呈現方式，但希望加入 LINE 下單與後台管理。",
+          urlEnabled: true
+        },
+        {
+          id: "data",
+          step: "06",
+          title: "目前有哪些資料或工具？",
+          description: "現有資產會影響開發方式、資料匯入與串接成本。",
+          mode: "multiple",
+          options: ["已有網站", "已有 LINE 官方帳號", "已有 IG / FB", "已有 Google Sheet / Excel", "已有商品資料", "已有會員資料", "已有舊系統", "都還沒有"],
+          placeholder: "例如：目前商品資料都在 Google Sheet，付款狀態也是手動更新。",
+          urlEnabled: false
+        },
+        {
+          id: "scope",
+          step: "07",
+          title: "第一階段最重要的是什麼？",
+          description: "協助 Agent 區分 MVP 必做與之後可延伸的功能。",
+          mode: "multiple",
+          options: ["先上線接客戶", "先改善內部流程", "先建立品牌信任", "先減少人工整理", "先串 LINE", "先接金流", "先做後台"],
+          placeholder: "例如：第一階段先能收單和看訂單狀態，金流可以第二階段再接。",
+          urlEnabled: false
+        },
+        {
+          id: "project",
+          step: "08",
+          title: "預算、時程與決策狀態",
+          description: "不用精準報價，先讓我判斷適合快速 MVP 還是分階段規劃。",
+          mode: "multiple",
+          options: ["1–3 萬", "3–8 萬", "8–15 萬", "15 萬以上", "1 個月內", "1–3 個月", "已決定要做", "正在比較方案", "只是先了解"],
+          placeholder: "例如：希望 2 個月內先做 MVP，預算大約 3–8 萬，目前正在比較方案。",
+          urlEnabled: false
+        }
+      ];
+
+      const formState = ref({});
+      steps.forEach(step => {
+        formState.value[step.id] = {
+          selected: [],
+          note: "",
+          referenceUrl: ""
+        };
+      });
+
+      const uploadedFiles = ref([]);
+
+      const contact = ref({
+        name: "",
+        companyName: "",
+        email: "",
+        lineId: "",
+        phone: "",
+        preferredContactMethod: "",
+        message: ""
+      });
+
+      const backendFlows = [
+        {
+          no: "01",
+          title: "前端整理 Payload",
+          desc: "整合選項、文字、網址、圖片 metadata 與聯絡資料。"
+        },
+        {
+          no: "02",
+          title: "Lambda 接收 Lead",
+          desc: "預留 API Gateway + Lambda 作為需求送出入口。"
+        },
+        {
+          no: "03",
+          title: "檔案上傳接口",
+          desc: "圖片可改為先取 presigned URL，再上傳 S3。"
+        },
+        {
+          no: "04",
+          title: "AI 回饋接口",
+          desc: "可呼叫 AI 產生需求摘要、MVP 建議與風險提醒。"
+        },
+        {
+          no: "05",
+          title: "Email / 通知",
+          desc: "預留自動寄信與高價值需求通知流程。"
+        }
+      ];
+
+      const isSelected = (stepId, option) => {
+        return formState.value[stepId].selected.includes(option);
+      };
+
+      const toggleOption = (stepId, option, mode) => {
+        const current = formState.value[stepId].selected;
+
+        if (mode === "single") {
+          formState.value[stepId].selected = current.includes(option) ? [] : [option];
+          return;
+        }
+
+        if (current.includes(option)) {
+          formState.value[stepId].selected = current.filter(item => item !== option);
+        } else {
+          formState.value[stepId].selected.push(option);
+        }
+      };
+
+      const isStepFilled = (stepId) => {
+        const item = formState.value[stepId];
+        return item.selected.length > 0 || item.note.trim() !== "" || item.referenceUrl.trim() !== "";
+      };
+
+      const completedStepCount = computed(() => {
+        return steps.filter(step => isStepFilled(step.id)).length;
+      });
+
+      const progressPercentage = computed(() => {
+        const fileBonus = uploadedFiles.value.length > 0 ? 0.5 : 0;
+        return Math.min(100, ((completedStepCount.value + fileBonus) / steps.length) * 100);
+      });
+
+      const isAnyFilled = computed(() => {
+        return completedStepCount.value > 0 || uploadedFiles.value.length > 0;
+      });
+
+      const normalizeStep = (stepId) => {
+        const item = formState.value[stepId];
+        return {
+          selected: item.selected,
+          note: item.note.trim(),
+          referenceUrl: item.referenceUrl.trim()
+        };
+      };
+
+      const allSelectedValues = computed(() => {
+        return Object.values(formState.value).flatMap(item => item.selected);
+      });
+
+      const computedAgent = computed(() => {
+        if (!isAnyFilled.value) {
+          return {
+            direction: "等待你開始描繪需求",
+            score: "--",
+            gradeLabel: "尚未分析",
+            signals: [
+              "選擇你的業務類型後，Agent 會開始整理情境。",
+              "補充痛點描述後，會產生更精準的方向。",
+              "上傳參考圖片後，可幫助理解視覺與流程。"
+            ],
+            nextAction: "先從最接近你目前狀況的選項開始，不需要一次寫完整。",
+            summary: [
+              "完成填答後會整理你的產業情境。",
+              "Agent 會萃取主要痛點與需求訊號。",
+              "後續可透過 Lambda 呼叫 AI 產生正式摘要。"
+            ],
+            mvp: [
+              "完成需求描繪後產生 MVP 建議。",
+              "依照預算與時程收斂第一階段範圍。",
+              "判斷適合網站、LINE、後台或自動化。"
+            ],
+            interviewFocus: [
+              "確認主要使用者與操作情境。",
+              "確認資料來源與既有工具。",
+              "確認第一階段必做與可延伸功能。"
+            ]
+          };
+        }
+
+        const values = allSelectedValues.value;
+        const signals = [];
+        const summary = [];
+        const mvp = [];
+        const interviewFocus = [];
+
+        const business = normalizeStep("business");
+        const problem = normalizeStep("problem");
+        const vision = normalizeStep("vision");
+        const solution = normalizeStep("solution");
+        const data = normalizeStep("data");
+        const scope = normalizeStep("scope");
+        const project = normalizeStep("project");
+
+        if (business.selected.length || business.note) {
+          signals.push(`業務情境：${[...business.selected, business.note].filter(Boolean).slice(0, 2).join("、")}`);
+          summary.push("已提供業務情境，可進一步判斷適合的數位化入口。");
+        }
+
+        if (problem.selected.length || problem.note) {
+          signals.push(`核心痛點：${[...problem.selected, problem.note].filter(Boolean).slice(0, 2).join("、")}`);
+          summary.push("目前已出現明確痛點，可作為 MVP 範圍收斂依據。");
+        }
+
+        if (vision.selected.length || vision.note) {
+          summary.push("已描述理想流程，有助於整理使用者旅程與系統功能。");
+        }
+
+        if (solution.selected.length) {
+          mvp.push(...solution.selected.slice(0, 3));
+        }
+
+        if (values.includes("LINE 訊息太亂") || values.includes("LINE OA / LIFF") || values.includes("先串 LINE")) {
+          mvp.push("LINE 導流 / LIFF 互動頁");
+          interviewFocus.push("確認 LINE OA 現況、好友數、導流入口與通知情境。");
+        }
+
+        if (values.includes("訂單整理太人工") || values.includes("預購 / 團購系統") || values.includes("電商 / 訂單系統")) {
+          mvp.push("訂單收集與管理流程");
+          interviewFocus.push("確認商品資料、訂單欄位、付款方式與出貨流程。");
+        }
+
+        if (values.includes("Excel 管理很累") || values.includes("後台 Dashboard") || values.includes("先做後台")) {
+          mvp.push("管理後台 / Dashboard");
+          interviewFocus.push("確認目前 Excel 欄位、使用者角色與查詢需求。");
+        }
+
+        if (values.includes("想導入 AI") || values.includes("AI 工具")) {
+          mvp.push("AI 摘要 / 分類 / 助理功能");
+          interviewFocus.push("確認 AI 要協助處理的資料類型與可接受的人工審核流程。");
+        }
+
+        if (data.selected.length || data.note) {
+          summary.push("已提供現有資產資訊，可評估資料匯入與串接方式。");
+        }
+
+        if (scope.selected.length || scope.note) {
+          summary.push("已描述第一階段重點，有助於區分 MVP 與 Phase 2。");
+        }
+
+        let direction = "客製化數位轉型 MVP";
+
+        if (values.includes("LINE OA / LIFF") || values.includes("LINE 訊息太亂") || values.includes("先串 LINE")) {
+          direction = "LINE 導流與收單 MVP";
+        } else if (values.includes("品牌官網") || values.includes("一頁式網站") || values.includes("客戶找不到我")) {
+          direction = "品牌官網 / 高轉換 Landing Page";
+        } else if (values.includes("後台 Dashboard") || values.includes("Excel 管理很累")) {
+          direction = "管理後台與流程自動化 MVP";
+        } else if (values.includes("AI 工具") || values.includes("想導入 AI")) {
+          direction = "AI 輔助流程工具 MVP";
+        }
+
+        let score = 42;
+        if (problem.selected.length) score += 12;
+        if (vision.note.length > 20) score += 10;
+        if (solution.selected.length) score += 10;
+        if (data.selected.length) score += 8;
+        if (scope.selected.length) score += 8;
+        if (uploadedFiles.value.length) score += 8;
+        if (project.selected.includes("3–8 萬")) score += 8;
+        if (project.selected.includes("8–15 萬")) score += 14;
+        if (project.selected.includes("15 萬以上")) score += 20;
+        if (project.selected.includes("已決定要做")) score += 15;
+        if (project.selected.includes("只是先了解")) score -= 8;
+
+        score = Math.max(20, Math.min(score, 98));
+
+        let gradeLabel = "方向探索中";
+        if (score >= 80) gradeLabel = "高度適配";
+        else if (score >= 65) gradeLabel = "具備合作潛力";
+
+        return {
+          direction,
+          score,
+          gradeLabel,
+          signals: signals.length ? signals.slice(0, 4) : ["已開始收集需求訊號，請繼續補充痛點或理想流程。"],
+          nextAction: score >= 80
+            ? "建議下一步安排需求訪談，確認 MVP 範圍、資料結構與上線時程。"
+            : "建議先補充更多現有流程、參考畫面與第一階段優先目標。",
+          summary: summary.length ? summary.slice(0, 5) : ["已開始描繪需求，請繼續補充更多情境。"],
+          mvp: [...new Set(mvp)].slice(0, 6).length ? [...new Set(mvp)].slice(0, 6) : ["需求釐清工作坊", "MVP 功能範圍整理", "第一階段系統藍圖"],
+          interviewFocus: interviewFocus.length ? [...new Set(interviewFocus)].slice(0, 5) : ["確認使用者角色", "確認核心流程", "確認資料來源", "確認預算與時程"]
+        };
+      });
+
+      const isEmailValid = computed(() => {
+        if (!contact.value.email) return false;
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+        return emailRegex.test(contact.value.email);
+      });
+
+      const canSubmitContact = computed(() => {
+        return Boolean(
+          contact.value.name.trim() &&
+          contact.value.email.trim() &&
+          isEmailValid.value &&
+          contact.value.preferredContactMethod
+        );
+      });
+
+      const formatFileSize = (bytes) => {
+        if (bytes < 1024) return `${bytes} B`;
+        if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+        return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
+      };
+
+      const handleFileUpload = (event) => {
+        const files = Array.from(event.target.files || []);
+
+        files.forEach(file => {
+          const isImage = file.type.startsWith("image/");
+          const fileItem = {
+            id: `${Date.now()}_${Math.random().toString(36).slice(2)}`,
+            file,
+            name: file.name,
+            type: file.type,
+            size: file.size,
+            sizeLabel: formatFileSize(file.size),
+            previewUrl: isImage ? URL.createObjectURL(file) : ""
+          };
+
+          uploadedFiles.value.push(fileItem);
+        });
+
+        event.target.value = "";
+      };
+
+      const removeFile = (fileId) => {
+        const target = uploadedFiles.value.find(file => file.id === fileId);
+        if (target && target.previewUrl) {
+          URL.revokeObjectURL(target.previewUrl);
+        }
+        uploadedFiles.value = uploadedFiles.value.filter(file => file.id !== fileId);
+      };
+
+      const buildLeadPayload = () => {
+        return {
+          source: {
+            page: "free-requirement-diagnosis",
+            agent_name: "TransForm Agent",
+            submitted_at: new Date().toISOString()
+          },
+          contact: {
+            name: contact.value.name,
+            company_name: contact.value.companyName,
+            email: contact.value.email,
+            line_id: contact.value.lineId,
+            phone: contact.value.phone,
+            preferred_contact_method: contact.value.preferredContactMethod,
+            message: contact.value.message
+          },
+          diagnosis: {
+            business: normalizeStep("business"),
+            problem: normalizeStep("problem"),
+            vision: normalizeStep("vision"),
+            solution: normalizeStep("solution"),
+            reference: normalizeStep("reference"),
+            data: normalizeStep("data"),
+            scope: normalizeStep("scope"),
+            project: normalizeStep("project")
+          },
+          files: uploadedFiles.value.map(file => ({
+            name: file.name,
+            type: file.type,
+            size: file.size
+          })),
+          agent_preview: {
+            direction: computedAgent.value.direction,
+            score: computedAgent.value.score,
+            grade_label: computedAgent.value.gradeLabel,
+            signals: computedAgent.value.signals,
+            summary: computedAgent.value.summary,
+            mvp: computedAgent.value.mvp,
+            interview_focus: computedAgent.value.interviewFocus,
+            next_action: computedAgent.value.nextAction
+          }
+        };
+      };
+
+      const submitLead = async () => {
+        emailTouched.value = true;
+        if (!canSubmitContact.value) return;
+
+        submitLoading.value = true;
+
+        const leadPayload = buildLeadPayload();
+
+        console.log("Lead Payload:", leadPayload);
+        console.log("Reserved Lambda Endpoints:", {
+          LEAD_SUBMIT_ENDPOINT,
+          AI_FEEDBACK_ENDPOINT,
+          FILE_UPLOAD_ENDPOINT
+        });
+
+        /*
+          Lambda integration plan:
+
+          1. Upload files first if needed:
+          - Request presigned URLs from FILE_UPLOAD_ENDPOINT
+          - PUT files to S3
+          - Add uploaded file URLs to leadPayload.files
+
+          2. Submit lead:
+          await fetch(LEAD_SUBMIT_ENDPOINT, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(leadPayload)
+          });
+
+          3. Optional AI feedback:
+          const aiResponse = await fetch(AI_FEEDBACK_ENDPOINT, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(leadPayload)
+          });
+
+          4. Backend can:
+          - validate email
+          - store lead in DB
+          - send email to user
+          - send internal notification
+          - call AI model for formal analysis
+        */
+
+        setTimeout(() => {
+          submitLoading.value = false;
+          submitSuccess.value = true;
+        }, 650);
+      };
+
+      const openContactModal = () => {
+        contactModalOpen.value = true;
+        submitSuccess.value = false;
+        emailTouched.value = false;
+      };
+
+      const closeContactModal = () => {
+        contactModalOpen.value = false;
+      };
+
+      const scrollToDiagnosis = () => {
+        mobileMenuOpen.value = false;
+        document.getElementById("diagnosis-agent").scrollIntoView({ behavior: "smooth" });
+      };
+
+      const scrollToResult = () => {
+        document.getElementById("result-preview").scrollIntoView({ behavior: "smooth" });
+      };
+
+      const scrollToTop = () => {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      };
+
+      return {
+        mobileMenuOpen,
+        contactModalOpen,
+        submitSuccess,
+        submitLoading,
+        emailTouched,
+        benefits,
+        valuePoints,
+        valueCards,
+        steps,
+        formState,
+        uploadedFiles,
+        contact,
+        backendFlows,
+        completedStepCount,
+        progressPercentage,
+        computedAgent,
+        isEmailValid,
+        canSubmitContact,
+        isSelected,
+        toggleOption,
+        isStepFilled,
+        handleFileUpload,
+        removeFile,
+        openContactModal,
+        closeContactModal,
+        submitLead,
+        scrollToDiagnosis,
+        scrollToResult,
+        scrollToTop
+      };
+    }
+  }).mount("#app");
+</script>
+
+</body>
+</html>

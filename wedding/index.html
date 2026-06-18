@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="zh-TTW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>思傑 & 彥綾｜溫馨電子喜帖</title>
+  <meta name="description" content="思傑與彥綾的電子喜帖，誠摯邀請您於 2026/10/11 一同見證幸福時刻。" />
+  <link rel="canonical" href="https://digitools-studio.github.io/wedding/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="zh_TW" />
+  <meta property="og:title" content="思傑 & 彥綾｜我們要結婚啦" />
+  <meta property="og:description" content="誠摯邀請您於 2026/10/11 一同見證思傑與彥綾的幸福時刻。" />
+  <meta property="og:image" content="https://digitools-studio.github.io/wedding/cover.jpeg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="theme-color" content="#C38879" />
+  <style>
+    :root {
+      --rose:#C38879; --rose-2:#DEAA9B; --rose-3:#EBC7BC; --cream:#FFF9F4; --paper:#FFFDF9;
+      --gold:#F4CEA7; --coffee:#58301F; --coffee-2:#7A4A3C; --muted:#8C6B5E;
+      --line:rgba(88,48,31,.14); --shadow:0 24px 70px rgba(88,48,31,.18);
+      --safe-top:max(10px, env(safe-area-inset-top, 0px)); --safe-bottom:max(18px, env(safe-area-inset-bottom, 0px));
+      --ui-top-clearance:62px; --ui-bottom-clearance:112px; --vh:1vh;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;width:100%;height:100%;overflow:hidden;font-family:"Noto Serif TC","Noto Sans TC",system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--coffee);background:linear-gradient(135deg,#C38879,#DEAA9B 55%,#F8E4D9)}
+    button,input,select,textarea{font:inherit}
+    button{cursor:pointer}
+    a{color:inherit;text-decoration:none}
+    .app{width:100%;height:100%;position:relative}
+
+    .intro{position:fixed;inset:0;z-index:20;display:grid;place-items:center;padding:24px;background:radial-gradient(circle at 30% 18%,rgba(255,249,244,.55),transparent 32%),linear-gradient(135deg,#C38879,#E7B5A7 58%,#F7E2D6);transition:opacity .8s ease,transform .8s ease}
+    .intro.is-hidden{opacity:0;pointer-events:none;transform:scale(1.02)}
+    .intro-card{width:min(92vw,430px);padding:42px 28px 32px;border-radius:34px;background:rgba(255,253,249,.66);border:1px solid rgba(255,255,255,.55);box-shadow:var(--shadow);backdrop-filter:blur(18px);text-align:center}
+    .intro-kicker,.eyebrow{margin:0 0 10px;font-size:11px;letter-spacing:.26em;text-transform:uppercase;color:var(--rose);font-weight:700}
+    .intro-title{margin:0;font-size:42px;line-height:1.2;font-weight:600;letter-spacing:.08em}
+    .intro-title span{display:block;margin-top:4px}
+    .intro-divider{width:86px;height:1px;background:linear-gradient(90deg,transparent,var(--coffee),transparent);margin:22px auto}
+    .intro-date{margin:0;font-size:18px;letter-spacing:.18em;color:var(--coffee-2)}
+    .intro-copy{margin:18px auto 24px;max-width:330px;line-height:1.9;color:var(--muted);font-size:14px}
+    .intro-btn,.action-btn,.submit-btn{border:0;border-radius:999px;padding:13px 20px;background:linear-gradient(135deg,var(--coffee),#8A4D3D);color:var(--cream);box-shadow:0 14px 34px rgba(88,48,31,.22);font-weight:700;letter-spacing:.06em}
+    .tap-note{display:none}
+
+    .main{height:100%;opacity:0;transition:opacity .8s ease}
+    .main.is-ready{opacity:1}
+    .slider{height:100%;width:100%;overflow:hidden;touch-action:pan-y}
+    .slides{height:100%;display:flex;transition:transform .64s cubic-bezier(.22,.8,.22,1);will-change:transform}
+    .slides.is-dragging{transition:none}
+    .slide{position:relative;flex:0 0 100%;width:100%;height:100%;overflow:hidden}
+    .slide::before{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,rgba(255,253,249,.66),rgba(255,249,244,.44) 43%,rgba(88,48,31,.34))}
+    .slide.paper::before{background:linear-gradient(180deg,rgba(255,253,249,.9),rgba(255,249,244,.72),rgba(195,136,121,.22))}
+    .slide-bg{position:absolute;inset:0;background:radial-gradient(circle at 28% 12%,rgba(255,255,255,.56),transparent 30%),linear-gradient(135deg,#C38879,#E9B8AA 62%,#FFF3EA);transform:scale(1.04);transition:transform 5s ease}
+    .slide.is-active .slide-bg{transform:scale(1.08)}
+    .content{position:relative;z-index:2;height:100%;display:flex;align-items:center;justify-content:center;padding:calc(var(--ui-top-clearance) + var(--safe-top)) 22px calc(var(--ui-bottom-clearance) + var(--safe-bottom))}
+    .scrollable{width:100%;height:100%;overflow:auto;-webkit-overflow-scrolling:touch;display:flex;align-items:flex-start;justify-content:center;padding:6px 0 14px;scroll-padding-top:12px;scroll-padding-bottom:16px}
+    .paper-card{width:min(94vw,940px);border-radius:34px;background:rgba(255,253,249,.74);border:1px solid rgba(255,255,255,.62);box-shadow:var(--shadow);backdrop-filter:blur(16px);padding:24px}
+    .section-title{margin:0 0 12px;font-size:clamp(28px,5vw,48px);line-height:1.25;font-weight:600;letter-spacing:.04em}
+    .subtitle,.small-note{margin:0;color:var(--muted);line-height:1.85;font-size:14px}
+    .small-note{font-size:13px}
+    .grid-2{display:grid;grid-template-columns:minmax(0,.95fr) minmax(0,1.05fr);gap:24px;align-items:center}
+    .grid-2.reverse{grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr)}
+
+    .hero-card{width:min(94vw,520px);max-height:calc(var(--vh)*100 - 140px);overflow:auto;text-align:center;padding:24px 20px 20px;border-radius:34px;background:rgba(255,253,249,.78);border:1px solid rgba(255,255,255,.66);box-shadow:var(--shadow);backdrop-filter:blur(16px)}
+    .hero-card::-webkit-scrollbar{display:none}
+    .hero-card .eyebrow{margin:2px 0 14px;letter-spacing:.32em;color:rgba(122,74,60,.72)}
+    .hero-names{margin:0 0 16px;font-size:clamp(27px,5.6vw,44px);line-height:1.2;font-weight:500;letter-spacing:.12em}
+    .hero-date{display:inline-flex;align-items:center;gap:10px;margin:0 0 16px;padding:9px 16px;border-radius:999px;background:rgba(244,206,167,.26);border:1px solid rgba(88,48,31,.12);letter-spacing:.16em;font-size:13px;font-weight:800}
+    .hero-actions{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:10px;margin-top:18px}
+    .ghost-btn,.soft-btn{border:1px solid var(--line);border-radius:999px;padding:12px 16px;background:rgba(255,253,249,.66);color:var(--coffee);font-weight:700;box-shadow:0 12px 26px rgba(88,48,31,.10)}
+    .soft-btn{background:rgba(244,206,167,.22)}
+
+    .photo-slot{position:relative;overflow:hidden;border-radius:28px;border:1px solid rgba(255,255,255,.72);background:linear-gradient(135deg,rgba(195,136,121,.26),rgba(255,249,244,.74));box-shadow:0 18px 48px rgba(88,48,31,.16);min-height:280px}
+    .photo-slot img{width:100%;height:100%;object-fit:cover;display:block}
+    .photo-placeholder{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:24px;background:radial-gradient(circle at 35% 20%,rgba(255,255,255,.68),transparent 35%),linear-gradient(135deg,rgba(195,136,121,.5),rgba(244,206,167,.24),rgba(255,253,249,.72));font-size:18px;color:var(--coffee)}
+    .photo-slot.cover{min-height:300px;margin:0 0 18px}
+    .photo-slot.story{min-height:420px}
+    .photo-slot.timeline{min-height:300px}
+    .photo-slot.detail{min-height:260px}
+
+    .story-copy{padding:8px}
+    .story-copy p{margin:0 0 14px;color:var(--muted);line-height:1.9;font-size:15px}
+    .story-caption{display:inline-flex;margin-top:8px;padding:8px 12px;border-radius:999px;background:rgba(244,206,167,.24);color:var(--coffee-2);font-size:12px;font-weight:700}
+    .timeline-nav{display:flex;justify-content:center;gap:8px;margin:16px 0 18px;flex-wrap:wrap}
+    .timeline-nav button{border:1px solid var(--line);background:rgba(255,253,249,.62);border-radius:999px;padding:9px 14px;color:var(--coffee);font-weight:800}
+    .timeline-nav button.is-active{background:var(--coffee);color:var(--cream)}
+    .timeline-year{font-size:clamp(58px,13vw,108px);line-height:.95;margin:0;color:rgba(88,48,31,.14);font-weight:800;letter-spacing:.04em}
+
+    .gallery-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:18px}
+    .gallery-item{min-height:150px;border-radius:22px;cursor:pointer}
+    .details-card{text-align:center}
+    .details-date{font-size:clamp(48px,12vw,92px);line-height:.95;margin:4px 0;color:var(--coffee);font-weight:700;letter-spacing:.08em}
+    .details-list{display:grid;gap:10px;margin:20px auto;max-width:420px;text-align:left}
+    .details-row{display:flex;justify-content:space-between;gap:12px;padding:12px 14px;border-radius:16px;background:rgba(195,136,121,.10);border:1px solid rgba(88,48,31,.09)}
+    .details-row span{color:var(--muted);font-size:13px}
+    .details-row b{text-align:right}
+
+    .form-card{width:min(94vw,760px)}
+    .form-grid{display:grid;gap:14px;margin-top:18px}
+    .field label{display:block;margin:0 0 7px;color:var(--coffee);font-weight:800;font-size:13px}
+    .input,.select,.textarea{width:100%;border:1px solid rgba(88,48,31,.16);border-radius:16px;background:rgba(255,253,249,.78);padding:13px 14px;color:var(--coffee);outline:none}
+    .textarea{min-height:98px;resize:vertical;line-height:1.7}
+    .input:focus,.select:focus,.textarea:focus{border-color:rgba(195,136,121,.72);box-shadow:0 0 0 4px rgba(195,136,121,.12)}
+    .radio-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+    .radio-grid.two{grid-template-columns:repeat(2,1fr)}
+    .radio-chip{display:flex;align-items:center;justify-content:center;gap:7px;min-height:44px;padding:10px;border:1px solid rgba(88,48,31,.13);border-radius:999px;background:rgba(255,253,249,.62);font-size:13px;font-weight:700}
+    .radio-chip input{accent-color:var(--rose)}
+    .field-inline-error,.rsvp-dynamic-note{display:none;margin-top:8px;color:#9b3c3c;font-size:12px;line-height:1.6}
+    .rsvp-dynamic-note{padding:10px 12px;border-radius:14px;background:rgba(244,206,167,.18);color:var(--coffee-2)}
+    .live-preview,.summary-card{margin-top:8px;border-radius:18px;padding:14px;background:rgba(195,136,121,.10);border:1px solid rgba(88,48,31,.10)}
+    .summary-row{display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-bottom:1px solid rgba(88,48,31,.08)}
+    .summary-row:last-child{border-bottom:0}
+    .summary-row span{color:var(--muted)}
+    .hint{min-height:22px;color:var(--coffee-2);font-size:13px;line-height:1.6}
+
+     .messages-card{width:min(94vw,780px)}
+    .message-layout{display:grid;grid-template-columns:1fr;gap:18px;margin-top:18px}
+    .messages-divider{display:flex;align-items:center;gap:12px;margin:10px 0 2px;color:var(--coffee);font-weight:900;font-size:14px}
+    .messages-divider:before,.messages-divider:after{content:"";height:1px;flex:1;background:rgba(88,48,31,.12)}
+    .pinned-blessing{margin:16px 0;padding:15px 16px;border-radius:22px;background:linear-gradient(135deg,rgba(255,253,249,.82),rgba(244,206,167,.26));border:1px solid rgba(88,48,31,.11)}
+    .pinned-label{display:inline-flex;border-radius:999px;background:rgba(195,136,121,.13);padding:5px 9px;font-size:11px;font-weight:800;color:var(--coffee-2)}
+    .guideline-item{padding:10px 12px;border-radius:15px;background:rgba(195,136,121,.08);border:1px solid rgba(88,48,31,.08);color:var(--muted);font-size:12px;line-height:1.7}
+    .honeypot{position:absolute;left:-9999px;opacity:0;height:0;overflow:hidden}
+    .char-counter{margin-top:6px;text-align:right;color:var(--muted);font-size:12px}
+    .messages-list-wrap{max-height:none;overflow:visible;padding-right:0}
+    .message-item{padding:14px;margin:0 0 12px;border-radius:22px;background:rgba(255,253,249,.74);border:1px solid rgba(88,48,31,.10);box-shadow:0 12px 26px rgba(88,48,31,.08)}
+    .message-headline{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:8px}
+    .message-name{font-weight:900}
+    .message-time{color:var(--muted);font-size:12px;white-space:nowrap}
+    .message-text{margin:0;color:var(--coffee-2);line-height:1.8}
+    .empty-state{padding:18px;border-radius:20px;background:rgba(195,136,121,.08);color:var(--muted);text-align:center;line-height:1.8}
+    .security-score{font-size:12px;color:var(--muted);line-height:1.6}
+
+    .nav{position:fixed;z-index:8;left:50%;bottom:calc(18px + var(--safe-bottom));transform:translateX(-50%);display:flex;align-items:center;gap:12px;border-radius:999px;padding:9px 12px;background:rgba(255,253,249,.65);border:1px solid rgba(255,255,255,.62);box-shadow:0 18px 44px rgba(88,48,31,.18);backdrop-filter:blur(14px)}
+    .nav-btn{width:42px;height:42px;border-radius:50%;border:1px solid var(--line);background:rgba(255,253,249,.86);font-size:24px;color:var(--coffee)}
+    .dots{display:flex;gap:7px}
+    .dot{width:8px;height:8px;border-radius:999px;border:0;background:rgba(88,48,31,.25);padding:0}
+    .dot.is-active{width:22px;background:var(--coffee)}
+    .page-label,.autoplay-indicator{position:fixed;z-index:7;top:calc(16px + env(safe-area-inset-top,0px));padding:8px 12px;border-radius:999px;background:rgba(255,253,249,.62);border:1px solid rgba(255,255,255,.62);font-size:12px;color:var(--coffee-2);backdrop-filter:blur(12px)}
+    .page-label{left:16px}
+    .autoplay-indicator{left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:8px}
+    .autoplay-indicator span{width:7px;height:7px;border-radius:50%;background:var(--rose)}
+    .music-panel{position:fixed;z-index:9;right:16px;top:calc(16px + env(safe-area-inset-top,0px))}
+    .music-btn{width:44px;height:44px;border:0;border-radius:50%;background:rgba(255,253,249,.76);color:var(--coffee);box-shadow:0 12px 28px rgba(88,48,31,.16);font-weight:900}
+    .music-hint{position:absolute;right:52px;top:5px;padding:6px 10px;border-radius:999px;background:rgba(255,253,249,.94);border:1px solid rgba(88,48,31,.12);box-shadow:0 10px 24px rgba(88,48,31,.12);font-size:12px;color:var(--coffee-2);white-space:nowrap;opacity:0;transform:translateX(6px);pointer-events:none;transition:opacity .25s ease,transform .25s ease}
+    .music-hint.is-show{opacity:1;transform:translateX(0)}
+    .toast{position:fixed;z-index:30;left:50%;bottom:calc(92px + var(--safe-bottom));transform:translateX(-50%) translateY(20px);opacity:0;pointer-events:none;max-width:min(88vw,420px);padding:12px 16px;border-radius:999px;background:rgba(88,48,31,.92);color:var(--cream);box-shadow:0 18px 44px rgba(88,48,31,.28);transition:.25s ease;text-align:center;font-size:13px}
+    .toast.is-show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+    .modal{position:fixed;inset:0;z-index:25;display:none;place-items:center;padding:20px;background:rgba(88,48,31,.36);backdrop-filter:blur(10px)}
+    .modal.is-open{display:grid}
+    .dialog{position:relative;width:min(92vw,460px);max-height:86vh;overflow:auto;padding:24px;border-radius:28px;background:rgba(255,253,249,.94);box-shadow:var(--shadow);border:1px solid rgba(255,255,255,.7);text-align:center}
+    .modal-close{position:absolute;right:14px;top:12px;border:0;background:transparent;font-size:26px;color:var(--coffee)}
+    .qr-card img{width:min(58vw,210px);height:min(58vw,210px);padding:10px;border-radius:18px;background:#fff;box-shadow:0 14px 30px rgba(88,48,31,.12)}
+    .modal-actions{display:grid;gap:10px;margin-top:16px}
+    .calendar-summary{display:grid;gap:8px;margin:14px 0;text-align:left}
+    .calendar-summary-row{display:flex;justify-content:space-between;gap:12px;padding:10px 12px;border-radius:14px;background:rgba(195,136,121,.08)}
+    .reminder-note{margin-top:12px;color:var(--muted);font-size:12px;line-height:1.7}
+    .gallery-lightbox-img{width:min(80vw,760px);height:min(65vh,720px);border-radius:24px;background-size:cover;background-position:center;background-color:#fff;box-shadow:var(--shadow)}
+    .lightbox-actions{display:flex;justify-content:center;gap:10px;margin-top:14px;flex-wrap:wrap}
+
+    .reveal{opacity:0;transform:translateY(16px);transition:opacity .72s ease,transform .72s ease}
+    .slide.is-active .reveal{opacity:1;transform:translateY(0)}
+    .delay-1{transition-delay:.08s}.delay-2{transition-delay:.16s}
+    .page-turn-layer{position:fixed;inset:0;z-index:6;pointer-events:none;perspective:1000px;opacity:0}
+    .page-turn-layer.is-turning{opacity:1}
+    .page-turn-sheet{position:absolute;inset:0;background:linear-gradient(90deg,rgba(255,253,249,.05),rgba(255,253,249,.52),rgba(255,253,249,.04));transform-origin:left center;animation:turnPage .52s ease both}
+    @keyframes turnPage{from{transform:rotateY(0deg);opacity:.0}35%{opacity:.55}to{transform:rotateY(-68deg);opacity:0}}
+
+    @media (max-width:760px){
+      :root{--ui-top-clearance:70px; --ui-bottom-clearance:104px}
+      .content{padding:calc(var(--ui-top-clearance) + var(--safe-top)) 14px calc(var(--ui-bottom-clearance) + var(--safe-bottom))}
+      .grid-2,.grid-2.reverse,.message-layout{grid-template-columns:1fr;gap:16px}
+      .paper-card{border-radius:28px;padding:18px}
+      .hero-card{width:min(94vw,440px);padding:14px;max-height:calc(var(--vh)*100 - 126px)}
+      .photo-slot.cover{min-height:220px;margin-bottom:14px}
+      .photo-slot.story{min-height:260px}
+      .photo-slot.timeline,.photo-slot.detail{min-height:220px}
+      .gallery-grid{grid-template-columns:repeat(2,1fr);gap:10px}
+      .gallery-item{min-height:130px}
+      .radio-grid{grid-template-columns:1fr}
+      .radio-grid.two{grid-template-columns:1fr 1fr}
+      .page-label{display:none}
+      .autoplay-indicator{display:none}
+      .music-panel{right:14px;top:calc(14px + env(safe-area-inset-top,0px))}
+      .music-hint{right:48px;top:4px;font-size:11px;padding:5px 9px}
+      .nav{bottom:calc(12px + var(--safe-bottom));max-width:94vw}
+      .nav-btn{width:38px;height:38px}
+      .form-card,.messages-card{width:min(96vw,720px)}
+      .messages-list-wrap{max-height:none}
+      .details-row{align-items:flex-start}
+    }
+    @media (max-width:420px){
+      :root{--ui-top-clearance:64px; --ui-bottom-clearance:96px}
+      .content{padding-left:10px;padding-right:10px}
+      .paper-card{padding:15px;border-radius:24px}
+      .nav{gap:8px;padding:8px 10px}
+      .dots{gap:6px}
+      .dot.is-active{width:18px}
+      .form-grid{gap:12px}
+    }
+    @media (max-height:700px) and (max-width:760px){
+      .hero-card{max-height:calc(var(--vh)*100 - 112px);padding:12px}
+      .photo-slot.cover{min-height:170px}
+      .hero-names{font-size:27px;letter-spacing:.1em}
+      .hero-actions{margin-top:12px}
+      .action-btn,.ghost-btn,.soft-btn{padding:10px 13px;font-size:13px}
+    }
+  </style>
+</head>
+<body>
+<div id="app" class="app"></div>
+<script>
+(() => {
+  const CONFIG = {
+    weddingId:"sijie-yanling",
+    groom:"思傑",
+    bride:"彥綾",
+    dateText:"2026 . 10 . 11",
+    music:{ localAudioSrc:"./Beautiful%20Wedding%20-%20Cinematic%20Background%20Music%20For%20Videos_320k.mp3" },
+    share:{
+      title:"思傑 & 彥綾｜我們要結婚啦",
+      description:"誠摯邀請您於 2026/10/11 一同見證思傑與彥綾的幸福時刻。",
+      url:"https://digitools-studio.github.io/wedding/",
+      qrImage:"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAcIAAAHCAQAAAABUY/ToAAADsklEQVR4nO2cTW6sOhBGTz2QeuiWsoBeCuwsa8oO2kvJAiKZYSSj7w1sA01ad3BvWqGjqgHCmCNsqWTXHzbxdxL/+0sQnHTSSSeddNJJJ49HWpUeGwEbma1eJjOYemBqb40/PFonj0UiSWKQJKVODAkgSBAyutKaQ+q0efn6XPN08vHk1NaXeO4kpdmkVPt0ZTYAzKz/vm86+TtJKc1m43QS0U6yMWRspPsaAjjCaJ08Iml2yUDIMKTZdL2nPt/8TSefm2xbUxAwgQBZNBBB2PBuKI59Vuv9ydE6eWAympnZGWycehhSp3IHnew1NV/NzOznR+vkociyDq3ri+IZK2tOPGPAbPUu3G5qzzVPJx9HLr59ru1B1aMvjny5S52agw/u2zt5K1VVQkZShiEtSsMSEErU3g3xXPN08nFkXYeqdCXQWCKLw6JSpZlA1+AxRif3sg09B6k68y1O3RSpLUtX8L3MyVvp11sb3g0GzSYmq17+2j28nU2EhP3rN538XWTzy6aXDCH3xKY2Nry9ZMXzB2Kai19mhMWJe655Ovk4cuN+teZiOqdb52yxm3wvc/JGtEhJ1BfNSVWbinm0GNa16Trk5FZu1KcrXn7VEprSLKGhWh7iOuTkVtYIUHHEyrNWK1QVKWRaCKmJ65CT98jpJClByZzV3FgnG0t3J5hqqeMBRuvkwcjQKj7iGYDZGJSx11YAUlKw8ZL35E+M1skjkW17SlCrXVMLR7PJfyxFRMH3Mif30mxqadWXtQy2pmCbKbQWVbsOOblIy3VkdmmO1WFrqbLs+TIn78kuirhGgNZs/cbpx+NDTu5lyZd12eplNphesuIl9wZgw/XTGN57r4V18o4UHTIAFfUJCZgApr4k0mp5Nbk36LLny5y8T85GtJMY0lwqYItlFC/NOYt2EoRP/8/VyZ2s9UPlws4eSmup47bX7SEnmyz20NyrbllAPH/0EHJvw1uXjfDRU3e82f/rcHInupXi5ZdAY3lhW73YfDVfh5zck+u5HzDVP6QBkPRpdZObeiCopc+ecZ5OPoL8cu5HzZwtccegm3VI2dchJ++Ty7kfTCdBO3XIRsBeE+VXWADqe885Tye/n+y/PAkf1kKJwpjWsvwuE62T1+Q7+UdS17IO9aUKZC0/g5DrivTd33Tyd5CL2VOijZfPeoLe8H7a/loWz+7bO7mXmp4v0m2892Y/50257MYAd5vaySpfzv1YGirFr+0Mq5uOf/umk0466aSTTjrp5JHI/wH7yCGlzmn7jwAAAABJRU5ErkJggg==",
+      invitationCardFileName:"sijie-yanling-wedding-invitation-card.png"
+    },
+    banquet:{ label:"午宴", time:"12:30 準時開桌", venue:"梅花里活動中心", address:"梅花里活動中心", mapUrl:"https://www.google.com/maps/search/?api=1&query=%E6%A2%85%E8%8A%B1%E9%87%8C%E6%B4%BB%E5%8B%95%E4%B8%AD%E5%BF%83" },
+    calendar:{ enabled:true, title:"思傑 & 彥綾 婚宴", description:"誠摯邀請您一同見證思傑與彥綾的幸福時刻。", startDateTime:"2026-10-11T12:30:00+08:00", endDateTime:"2026-10-11T15:30:00+08:00", timezone:"Asia/Taipei" },
+    photos:{
+      cover:{src:"./cover.jpeg",position:"50% 34%",title:"首頁封面照片"},
+      story1:{src:"./photo1.jpeg",position:"50% 42%",title:"故事照片 1"},
+      story2:{src:"./photo2.jpeg",position:"50% 35%",title:"故事照片 2"},
+      timeline2018:{src:"./timeline2018.jpeg",position:"50% 42%",title:"2018 初遇照片"},
+      timeline2020:{src:"./timeline2020.jpeg",position:"50% 42%",title:"2020 相戀照片"},
+      timeline2026:{src:"./timeline2026.jpeg",position:"50% 38%",title:"2026 新篇章照片"},
+      gallery1:{src:"./cover.jpeg",position:"50% 34%",title:"相簿照片 1"},
+      gallery2:{src:"./photo1.jpeg",position:"50% 42%",title:"相簿照片 2"},
+      gallery3:{src:"./photo2.jpeg",position:"50% 35%",title:"相簿照片 3"},
+      gallery4:{src:"./timeline2018.jpeg",position:"50% 42%",title:"相簿照片 4"},
+      gallery5:{src:"./timeline2020.jpeg",position:"50% 42%",title:"相簿照片 5"},
+      gallery6:{src:"./timeline2026.jpeg",position:"50% 38%",title:"相簿照片 6"},
+      venue:{src:"./venue.jpeg",position:"50% 44%",title:"婚宴資訊照片"},
+      rsvp:{src:"./photo2.jpeg",position:"50% 35%",title:"出席登記照片"}
+    },
+    storyParts:[
+      {eyebrow:"Our Beginning",title:"那年，在校園球場相遇",lead:"沉穩可靠、低調卻耀眼的思傑，遇見了理性甜美、帶著獨特魅力的彥綾。",body:"2018 年的大學校園球場，是我們故事悄悄開始的地方。那時的相遇看似平凡，卻在彼此心中留下了溫柔的記憶。",caption:"2018｜從一場看似平凡的相遇開始",photoKey:"story1"},
+      {eyebrow:"Our Promise",title:"原來最好的未來，是有彼此在身邊",lead:"從朋友到戀人，我們一路走過學生時期的青春與成長。",body:"2020 年，我們正式相戀；在生活的磨合與陪伴中，我們慢慢蛻變，也更加確認彼此的重要。2026 年，我們決定攜手邁向人生下一個階段。",caption:"2020 - 2026｜從陪伴，到決定一起往前走",photoKey:"story2"}
+    ],
+    timeline:[
+      {year:"2018",title:"在校園球場初次相遇",caption:"那是一段看似平凡，卻悄悄留下記憶的開始。",body:"沉穩可靠、低調卻耀眼的思傑，與理性甜美、神秘中帶點獨特魅力的彥綾，在大學校園球場上初次相遇。",photoKey:"timeline2018"},
+      {year:"2020",title:"從朋友走向相戀",caption:"一路走過學生時期的青春與成長。",body:"從彼此認識、成為朋友，到正式相戀，兩人在生活的磨合與陪伴中，一起慢慢蛻變，也更加了解彼此的重要。",photoKey:"timeline2020"},
+      {year:"2026",title:"攜手展開新的篇章",caption:"原來最好的未來，就是有彼此在身邊。",body:"一路走來的每一段時光，都讓我們更加確定：最好的未來，是能與彼此一同前行。這一年，我們決定攜手邁向人生的下一個階段。",photoKey:"timeline2026"}
+    ]
+  };
+
+  const app=document.getElementById("app");
+  let currentIndex=0, started=false, isDragging=false, touchStartX=0, touchStartY=0, autoTimer=null, autoPausedUntil=0, audio=null, lightboxIndex=0, musicHintLocked=false;
+  const slideCount=10;
+  const AUTO_DURATIONS=[6000,7000,7000,6000,6000,6000,7500,9000,null,null];
+  const MANUAL_PAUSE_MS=12000;
+  const galleryKeys=["gallery1","gallery2","gallery3","gallery4","gallery5","gallery6"];
+
+  function setViewportHeight(){ document.documentElement.style.setProperty("--vh", `${window.innerHeight * 0.01}px`); }
+  setViewportHeight(); window.addEventListener("resize",setViewportHeight); window.addEventListener("orientationchange",()=>setTimeout(setViewportHeight,300));
+  function escapeHtml(value){ const div=document.createElement("div"); div.textContent=String(value ?? ""); return div.innerHTML; }
+  function key(name){ return `wedding:${CONFIG.weddingId}:${name}`; }
+  function track(name,payload={}){ console.info("[wedding-event]",name,payload); }
+  function formatRelativeTime(ts){ const diff=Date.now()-new Date(ts).getTime(); const m=Math.floor(diff/60000),h=Math.floor(diff/3600000),d=Math.floor(diff/86400000); if(m<1)return"剛剛"; if(m<60)return`${m} 分鐘前`; if(h<24)return`${h} 小時前`; return`${d} 天前`; }
+
+  function renderPhotoSlot(photoKey, className="", clickable=false){
+    const p=CONFIG.photos[photoKey] || {};
+    const img=p.src ? `<img src="${escapeHtml(p.src)}" alt="${escapeHtml(p.title || '婚禮照片')}" loading="lazy"${p.position ? ` style="object-position:${escapeHtml(p.position)}"` : ""}>` : `<div class="photo-placeholder">照片</div>`;
+    const open=clickable ? ` role="button" tabindex="0" data-gallery-open="${galleryKeys.indexOf(photoKey)}"` : "";
+    return `<figure class="photo-slot ${className}" data-photo-key="${escapeHtml(photoKey)}"${open}>${img}</figure>`;
+  }
+  function slide(html, cls="story"){ return `<section class="slide ${cls}" data-slide-type="${cls.includes('rsvp')?'rsvp':cls.includes('message')?'message':'story'}"><div class="slide-bg"></div><div class="content">${html}</div></section>`; }
+
+  function render(){
+    app.innerHTML=`
+      <section id="intro" class="intro" aria-label="婚禮邀請開場"><div class="intro-card"><p class="intro-kicker">Wedding Invitation</p><h1 class="intro-title">思傑 <span>彥綾</span></h1><div class="intro-divider"></div><p class="intro-date">${CONFIG.dateText}</p><p class="intro-copy">我們要結婚啦！邀請你一起打開這段從校園球場開始的故事。</p><button id="startBtn" class="intro-btn" type="button">誠摯邀請</button></div></section>
+      <main id="main" class="main" aria-label="思傑與彥綾的電子喜帖">
+        <div class="slider" id="slider"><div class="slides" id="slides">${renderHero()}${renderStoryPart(0)}${renderStoryPart(1)}${renderTimeline(0)}${renderTimeline(1)}${renderTimeline(2)}${renderGallery()}${renderDetails()}${renderRsvp()}${renderMessages()}</div></div>
+        <div class="page-label" id="pageLabel">01 / 10</div><div class="autoplay-indicator" id="autoIndicator"><span></span> Auto</div>
+        <div class="music-panel"><span id="musicHint" class="music-hint" role="status" aria-live="polite">點音符播放音樂</span><button id="musicBtn" class="music-btn" type="button" aria-label="背景音樂">♪</button></div>
+        <nav class="nav" aria-label="喜帖頁面導覽"><button id="prevBtn" class="nav-btn" type="button" aria-label="上一頁">‹</button><div id="dots" class="dots">${Array.from({length:slideCount}).map((_,i)=>`<button class="dot ${i===0?'is-active':''}" type="button" data-index="${i}" aria-label="第 ${i+1} 頁"></button>`).join('')}</div><button id="nextBtn" class="nav-btn" type="button" aria-label="下一頁">›</button></nav>
+        <div id="toast" class="toast" role="status" aria-live="polite"></div>
+        ${renderCalendarModal()}${renderShareModal()}${renderGalleryLightbox()}
+        <div id="pageTurnLayer" class="page-turn-layer" aria-hidden="true"><div class="page-turn-sheet"></div></div>
+        <audio id="audio" preload="none" loop src="${escapeHtml(CONFIG.music.localAudioSrc)}"></audio>
+      </main>`;
+  }
+
+  function renderHero(){ return slide(`<div class="hero-card reveal">${renderPhotoSlot('cover','cover')}<p class="eyebrow">Invitation</p><h2 class="hero-names">思傑<br>彥綾</h2><div class="hero-date">${CONFIG.dateText}</div><p class="subtitle">我們要結婚啦！<br>誠摯邀請你，一同見證這個珍貴又幸福的時刻。</p><div class="hero-actions"><button class="action-btn" type="button" data-go="7">查看婚宴資訊</button><button class="ghost-btn" type="button" data-go="8">直接出席登記</button><button class="soft-btn" type="button" data-share>分享這份邀請</button></div></div>`,"paper hero-slide"); }
+
+  function renderStoryPart(i){ const p=CONFIG.storyParts[i]; const rev=i%2===1; return slide(`<div class="paper-card grid-2 ${rev?'reverse':''} reveal"><div class="${rev?'story-copy':'photo-wrap'}">${rev?renderStoryCopy(p):renderPhotoSlot(p.photoKey,'story')}</div><div class="${rev?'photo-wrap':'story-copy'}">${rev?renderPhotoSlot(p.photoKey,'story'):renderStoryCopy(p)}</div></div>`,"paper"); }
+  function renderStoryCopy(p){ return `<p class="eyebrow">${escapeHtml(p.eyebrow)}</p><h2 class="section-title">${escapeHtml(p.title)}</h2><p><b>${escapeHtml(p.lead)}</b></p><p>${escapeHtml(p.body)}</p><span class="story-caption">${escapeHtml(p.caption)}</span>`; }
+
+  function renderTimeline(i){ const t=CONFIG.timeline[i]; return slide(`<div class="paper-card grid-2 reveal"><div class="story-copy"><p class="eyebrow">Love Timeline</p><p class="timeline-year">${escapeHtml(t.year)}</p><h2 class="section-title">${escapeHtml(t.title)}</h2><p><b>${escapeHtml(t.caption)}</b></p><p>${escapeHtml(t.body)}</p><div class="timeline-nav" aria-label="時間軸切換">${CONFIG.timeline.map((item,idx)=>`<button type="button" class="${idx===i?'is-active':''}" data-go="${3+idx}">${item.year}</button>`).join('')}</div></div><div>${renderPhotoSlot(t.photoKey,'timeline')}</div></div>`,"paper"); }
+
+  function renderGallery(){ return slide(`<div class="scrollable"><section class="paper-card reveal"><p class="eyebrow">Photo Gallery</p><h2 class="section-title">我們的片刻</h2><div class="gallery-grid">${galleryKeys.map((k,i)=>renderPhotoSlot(k,'gallery-item',true)).join('')}</div></section></div>`,"paper"); }
+
+  function renderDetails(){ return slide(`<div class="paper-card grid-2 reveal"><div class="details-card"><p class="eyebrow">Wedding Day</p><div class="details-date">10 / 11</div><h2 class="section-title">婚宴資訊</h2><div class="details-list"><div class="details-row"><span>日期</span><b>2026 / 10 / 11</b></div><div class="details-row"><span>時間</span><b>${CONFIG.banquet.label}｜${CONFIG.banquet.time}</b></div><div class="details-row"><span>地點</span><b>${CONFIG.banquet.venue}</b></div></div><div class="hero-actions"><a class="action-btn" href="${CONFIG.banquet.mapUrl}" target="_blank" rel="noopener" data-track="map">Google Map 導航</a><button class="ghost-btn" type="button" data-calendar-open>加入行事曆</button></div></div><div>${renderPhotoSlot('venue','detail')}</div></div>`,"paper"); }
+
+  function renderRsvp(){ return slide(`<div class="scrollable"><section class="form-card paper-card reveal"><p class="eyebrow">RSVP</p><h2 class="section-title">出席登記</h2><form id="rsvpForm" class="form-grid" novalidate><div class="field"><label for="guestName">姓名 *</label><input id="guestName" class="input" name="name" maxlength="30" placeholder="請輸入您的姓名" required></div><div class="field"><label for="guestPhone">電話 *</label><input id="guestPhone" class="input" name="phone" maxlength="20" placeholder="0912345678" inputmode="tel" required><div id="phoneInlineError" class="field-inline-error">電話格式似乎不正確，請確認後再送出。</div></div><div class="field"><label>是否出席 *</label><div class="radio-grid"><label class="radio-chip"><input type="radio" name="attendance" value="ATTEND" checked>會出席</label><label class="radio-chip"><input type="radio" name="attendance" value="DECLINE">無法出席</label><label class="radio-chip"><input type="radio" name="attendance" value="PENDING">尚未確定</label></div></div><div id="rsvpPendingNotice" class="rsvp-dynamic-note"></div><div id="guestCountField" class="field"><label for="guestCount">出席人數 *</label><select id="guestCount" class="select" name="guestCount"><option value="1">1 位</option><option value="2">2 位</option><option value="3">3 位</option><option value="4">4 位</option></select></div><div id="vegetarianField" class="field"><label>是否吃素 *</label><div class="radio-grid two"><label class="radio-chip"><input type="radio" name="vegetarian" value="NO" checked>葷食</label><label class="radio-chip"><input type="radio" name="vegetarian" value="YES">素食</label></div></div><div class="field"><label for="note">備註</label><textarea id="note" class="textarea" name="note" maxlength="160" placeholder="例如：同行者姓名、餐食補充或其他提醒"></textarea></div><div class="live-preview" id="rsvpLivePreview"></div><button class="submit-btn" type="submit">送出登記</button><div id="rsvpHint" class="hint"></div><div id="rsvpSummary" class="summary-card"></div></form></section></div>`,"paper rsvp"); }
+
+  function renderMessages(){ return slide(`<div class="scrollable"><section class="messages-card paper-card reveal"><p class="eyebrow">Blessing Wall</p><h2 class="section-title">親友祝福牆</h2><div class="pinned-blessing"><span class="pinned-label">新人置頂</span><p><b>思傑 & 彥綾：</b>謝謝每一位來到這裡的你，因為有你們的祝福，我們的故事變得更完整。</p></div><div class="message-layout"><form id="messageForm" class="form-grid" novalidate><div class="field honeypot" aria-hidden="true"><label for="msgWebsite">網站</label><input id="msgWebsite" class="input" name="website" type="text" autocomplete="off" tabindex="-1"></div><div class="field"><label for="msgName">暱稱 *</label><input id="msgName" class="input" name="name" maxlength="20" placeholder="你的暱稱" required></div><div class="field"><label for="msgText">祝福話語 *</label><textarea id="msgText" class="textarea" name="message" maxlength="180" placeholder="寫下你的祝福，讓這一天多一點溫度..." required></textarea><div id="msgCounter" class="char-counter">0 / 180</div></div><button class="submit-btn" type="submit">送出祝福</button><div id="msgHint" class="hint"></div></form><div class="messages-divider"><span>已收到的祝福</span></div><div class="messages-list-wrap"><div id="messagesList"></div></div></div></section></div>`,"paper message"); }
+
+  function renderCalendarModal(){ const cal=CONFIG.calendar; return `<div id="calendarModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="calendarTitle"><div class="dialog"><button class="modal-close" type="button" data-calendar-close aria-label="關閉">×</button><p class="eyebrow">Calendar</p><h3 id="calendarTitle" class="section-title" style="font-size:30px">加入行事曆</h3><div class="calendar-summary"><div class="calendar-summary-row"><span>活動</span><b>${escapeHtml(cal.title)}</b></div><div class="calendar-summary-row"><span>日期</span><b>${CONFIG.dateText}</b></div><div class="calendar-summary-row"><span>時間</span><b>${CONFIG.banquet.label}｜${CONFIG.banquet.time}</b></div><div class="calendar-summary-row"><span>地點</span><b>${CONFIG.banquet.venue}</b></div></div><div class="modal-actions"><button class="action-btn" type="button" data-calendar-google>加入 Google Calendar</button><button class="ghost-btn" type="button" data-calendar-ics>下載行事曆檔案</button></div></div></div>`; }
+  function renderShareModal(){ return `<div id="shareModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="shareTitle"><div class="dialog"><button class="modal-close" type="button" data-share-close aria-label="關閉">×</button><p class="eyebrow">Share</p><h3 id="shareTitle" class="section-title" style="font-size:30px">分享這份邀請</h3><div class="qr-card"><img src="${CONFIG.share.qrImage}" alt="思傑與彥綾電子喜帖 QR Code" loading="lazy"></div><div class="modal-actions"><button class="action-btn" type="button" data-share-native>手機分享 / 複製連結</button><button class="ghost-btn" type="button" data-download-card>下載邀請卡圖片</button></div></div></div>`; }
+  function renderGalleryLightbox(){ return `<div id="galleryLightbox" class="modal" role="dialog" aria-modal="true" aria-label="照片瀏覽"><div class="dialog" style="width:auto;max-width:94vw"><button class="modal-close" type="button" data-gallery-close aria-label="關閉">×</button><div id="galleryImage" class="gallery-lightbox-img"></div><div class="lightbox-actions"><button class="ghost-btn" type="button" data-gallery-prev>上一張</button><button class="action-btn" type="button" data-gallery-next>下一張</button></div></div></div>`; }
+
+  function init(){
+    render(); audio=document.getElementById("audio");
+    document.getElementById("startBtn").addEventListener("click",startExperience);
+    document.getElementById("prevBtn").addEventListener("click",()=>userGoTo(currentIndex-1));
+    document.getElementById("nextBtn").addEventListener("click",()=>userGoTo(currentIndex+1));
+    document.getElementById("dots").addEventListener("click",e=>{ const d=e.target.closest(".dot"); if(d) userGoTo(Number(d.dataset.index)); });
+    const slider=document.getElementById("slider"); slider.addEventListener("touchstart",onTouchStart,{passive:true}); slider.addEventListener("touchmove",onTouchMove,{passive:true}); slider.addEventListener("touchend",onTouchEnd,{passive:true});
+    document.addEventListener("keydown",e=>{ if(e.key==="Escape"){ closeCalendarModal(); closeShareModal(); closeGallery(); } if(!started)return; if(e.key==="ArrowRight") userGoTo(currentIndex+1); if(e.key==="ArrowLeft") userGoTo(currentIndex-1); });
+    document.addEventListener("click",handleDocumentClick);
+    document.getElementById("musicBtn").addEventListener("click",toggleMusic);
+    setupRsvp(); setupMessages(); renderLastRsvpSummary(); renderMessagesList(); update();
+  }
+
+  function handleDocumentClick(e){
+    if(e.target.closest("[data-share]")){ openShareModal(); return; }
+    if(e.target.closest("[data-share-close]") || e.target.id==="shareModal"){ closeShareModal(); return; }
+    if(e.target.closest("[data-share-native]")){ shareInvitation(); return; }
+    if(e.target.closest("[data-download-card]")){ downloadInvitationCard(); return; }
+    if(e.target.closest("[data-calendar-open]")){ openCalendarModal(); return; }
+    if(e.target.closest("[data-calendar-close]") || e.target.id==="calendarModal"){ closeCalendarModal(); return; }
+    if(e.target.closest("[data-calendar-google]")){ window.open(buildGoogleCalendarUrl(),"_blank","noopener"); track("calendar_google",{}); return; }
+    if(e.target.closest("[data-calendar-ics]")){ downloadIcs(); return; }
+    const go=e.target.closest("[data-go]"); if(go){ userGoTo(Number(go.dataset.go)); return; }
+    const open=e.target.closest("[data-gallery-open]"); if(open){ openGallery(Number(open.dataset.galleryOpen)); return; }
+    if(e.target.closest("[data-gallery-close]") || e.target.id==="galleryLightbox"){ closeGallery(); return; }
+    if(e.target.closest("[data-gallery-next]")){ moveGallery(1); return; }
+    if(e.target.closest("[data-gallery-prev]")){ moveGallery(-1); return; }
+  }
+
+  function startExperience(){ if(started)return; started=true; document.getElementById("intro").classList.add("is-hidden"); document.getElementById("main").classList.add("is-ready"); scheduleAutoplay(); tryPlayAudio(); }
+  function setMusicHint(visible){
+    const hint=document.getElementById("musicHint");
+    if(!hint)return;
+    hint.classList.toggle("is-show",visible);
+  }
+  function tryPlayAudio(){
+    if(!audio)return;
+    audio.play().then(()=>{
+      document.getElementById("musicBtn").setAttribute("aria-pressed","true");
+      musicHintLocked=true;
+      setMusicHint(false);
+    }).catch(()=>{
+      document.getElementById("musicBtn").setAttribute("aria-pressed","false");
+      if(!musicHintLocked) setMusicHint(true);
+    });
+  }
+  function toggleMusic(){
+    if(!audio)return;
+    if(!audio.paused){
+      audio.pause();
+      document.getElementById("musicBtn").setAttribute("aria-pressed","false");
+      return;
+    }
+    setMusicHint(false);
+    tryPlayAudio();
+  }
+
+  function onTouchStart(e){ if(isInteractiveTarget(e.target))return; const t=e.changedTouches[0]; touchStartX=t.clientX; touchStartY=t.clientY; isDragging=true; pauseAutoplay(MANUAL_PAUSE_MS); document.getElementById("slides").classList.add("is-dragging"); }
+  function onTouchMove(e){ if(!isDragging)return; const t=e.changedTouches[0]; const dx=t.clientX-touchStartX, dy=t.clientY-touchStartY; if(Math.abs(dy)>Math.abs(dx)*1.25)return; const pct=(-currentIndex*100)+(dx/window.innerWidth*100); document.getElementById("slides").style.transform=`translate3d(${pct}%,0,0)`; }
+  function onTouchEnd(e){ if(!isDragging)return; isDragging=false; document.getElementById("slides").classList.remove("is-dragging"); const t=e.changedTouches[0]; const dx=t.clientX-touchStartX, dy=t.clientY-touchStartY; if(Math.abs(dy)>Math.abs(dx)*1.15 || Math.abs(dx)<42){ update(); return; } userGoTo(currentIndex+(dx<0?1:-1)); }
+  function isInteractiveTarget(target){ return Boolean(target.closest("button,a,input,textarea,select,form,[role='button'],.scrollable")); }
+  function normalizeIndex(i){ return (i+slideCount)%slideCount; }
+  function userGoTo(i){ pauseAutoplay(MANUAL_PAUSE_MS); goTo(i); }
+  function goTo(i,fromAuto=false){ const next=normalizeIndex(i); if(next!==currentIndex) triggerPageTurn(); currentIndex=next; update(); scheduleAutoplay(); }
+  function update(){ const slides=document.getElementById("slides"); if(slides) slides.style.transform=`translate3d(${-currentIndex*100}%,0,0)`; document.querySelectorAll(".slide").forEach((s,i)=>s.classList.toggle("is-active",i===currentIndex)); document.querySelectorAll(".dot").forEach((d,i)=>d.classList.toggle("is-active",i===currentIndex)); document.getElementById("pageLabel").textContent=`${String(currentIndex+1).padStart(2,"0")} / ${String(slideCount).padStart(2,"0")}`; updateAutoplayIndicator(); }
+  function triggerPageTurn(){ const layer=document.getElementById("pageTurnLayer"); layer.classList.remove("is-turning"); void layer.offsetWidth; layer.classList.add("is-turning"); setTimeout(()=>layer.classList.remove("is-turning"),560); }
+  function pauseAutoplay(ms){ autoPausedUntil=Date.now()+ms; scheduleAutoplay(); }
+  function scheduleAutoplay(){ clearTimeout(autoTimer); if(!started)return; const d=AUTO_DURATIONS[currentIndex]; if(!d){ updateAutoplayIndicator(); return; } const wait=Math.max(d,autoPausedUntil-Date.now()); autoTimer=setTimeout(()=>goTo(currentIndex+1,true),wait); updateAutoplayIndicator(); }
+  function updateAutoplayIndicator(){ const el=document.getElementById("autoIndicator"); const d=AUTO_DURATIONS[currentIndex]; if(!d){ el.innerHTML="<span></span> Paused"; return; } const sec=Math.round(d/1000); el.innerHTML=`<span></span> ${sec}s Auto`; }
+
+  function openCalendarModal(){ document.getElementById("calendarModal").classList.add("is-open"); pauseAutoplay(60000); }
+  function closeCalendarModal(){ document.getElementById("calendarModal")?.classList.remove("is-open"); }
+  function toGoogleDate(dt){ return new Date(dt).toISOString().replace(/[-:]/g,"").replace(/\.\d{3}Z$/, "Z"); }
+  function buildGoogleCalendarUrl(){ const cal=CONFIG.calendar; const params=new URLSearchParams({ action:"TEMPLATE", text:cal.title, dates:`${toGoogleDate(cal.startDateTime)}/${toGoogleDate(cal.endDateTime)}`, details:cal.description, location:`${CONFIG.banquet.venue}｜${CONFIG.banquet.address}`, ctz:cal.timezone }); return `https://calendar.google.com/calendar/render?${params.toString()}`; }
+  function toIcsDate(dt){ return new Date(dt).toISOString().replace(/[-:]/g,"").replace(/\.\d{3}Z$/, "Z"); }
+  function escapeIcsText(text){ return String(text||"").replace(/\\/g,"\\\\").replace(/;/g,"\\;").replace(/,/g,"\\,").replace(/\n/g,"\\n"); }
+  function buildIcsContent(){ const cal=CONFIG.calendar; return ["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//Digitools Studio//Wedding Invitation//ZH-TW","CALSCALE:GREGORIAN","METHOD:PUBLISH","BEGIN:VEVENT",`UID:${CONFIG.weddingId}@digitools-studio.github.io`,`DTSTAMP:${toIcsDate(new Date().toISOString())}`,`DTSTART:${toIcsDate(cal.startDateTime)}`,`DTEND:${toIcsDate(cal.endDateTime)}`,`SUMMARY:${escapeIcsText(cal.title)}`,`DESCRIPTION:${escapeIcsText(cal.description)}`,`LOCATION:${escapeIcsText(CONFIG.banquet.venue + "｜" + CONFIG.banquet.address)}`,"BEGIN:VALARM","TRIGGER:-P1D","ACTION:DISPLAY",`DESCRIPTION:${escapeIcsText("明天是思傑與彥綾的婚宴，記得確認時間與交通方式。")}`,"END:VALARM","END:VEVENT","END:VCALENDAR"].join("\r\n"); }
+  function downloadIcs(){ downloadTextFile("sijie-yanling-wedding.ics",buildIcsContent(),"text/calendar;charset=utf-8"); showToast("已下載行事曆檔案，內含前一天提醒"); track("calendar_ics",{}); }
+
+  function openShareModal(){ document.getElementById("shareModal").classList.add("is-open"); pauseAutoplay(60000); }
+  function closeShareModal(){ document.getElementById("shareModal")?.classList.remove("is-open"); }
+  async function shareInvitation(){ const data={title:CONFIG.share.title,text:CONFIG.share.description,url:CONFIG.share.url}; try{ if(navigator.share) await navigator.share(data); else await copyToClipboard(data.url), showToast("已複製喜帖連結，可以貼到 LINE 分享囉"); track("share_invitation",{}); }catch(err){ if(err.name!=="AbortError") showToast("分享未完成，可改用 QR Code 或下載邀請卡"); } }
+  async function downloadInvitationCard(){
+    try{
+      const canvas=document.createElement("canvas"); canvas.width=1200; canvas.height=1600; const ctx=canvas.getContext("2d");
+      const grd=ctx.createLinearGradient(0,0,1200,1600); grd.addColorStop(0,"#C38879"); grd.addColorStop(.55,"#E8B7A9"); grd.addColorStop(1,"#FFF5EC"); ctx.fillStyle=grd; ctx.fillRect(0,0,1200,1600);
+      ctx.fillStyle="rgba(255,253,249,.76)"; roundRect(ctx,92,92,1016,1416,56); ctx.fill(); ctx.strokeStyle="rgba(88,48,31,.18)"; ctx.lineWidth=4; ctx.stroke();
+      ctx.fillStyle="#58301F"; ctx.textAlign="center"; ctx.font="72px serif"; ctx.fillText("思傑 & 彥綾",600,360); ctx.font="40px sans-serif"; ctx.fillText("我們要結婚啦",600,450); ctx.font="34px sans-serif"; ctx.fillText("2026 . 10 . 11",600,540); ctx.font="30px sans-serif"; ctx.fillText("午宴 12:30｜梅花里活動中心",600,610);
+      const qr=await loadImage(CONFIG.share.qrImage); ctx.drawImage(qr,455,760,290,290); ctx.font="24px sans-serif"; ctx.fillStyle="#7A4A3C"; ctx.fillText("掃描 QR Code",600,1100);
+      canvas.toBlob(blob=>{ if(!blob)return; const url=URL.createObjectURL(blob); const a=document.createElement("a"); a.href=url; a.download=CONFIG.share.invitationCardFileName; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url); showToast("已下載邀請卡圖片"); },"image/png");
+    }catch(e){ showToast("邀請卡產生失敗，請稍後再試"); }
+  }
+  function roundRect(ctx,x,y,w,h,r){ ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
+  function loadImage(src){ return new Promise((resolve,reject)=>{ const img=new Image(); img.onload=()=>resolve(img); img.onerror=reject; img.src=src; }); }
+
+  function openGallery(i){ lightboxIndex=Number.isFinite(i)?i:0; updateGallery(); document.getElementById("galleryLightbox").classList.add("is-open"); pauseAutoplay(60000); }
+  function closeGallery(){ document.getElementById("galleryLightbox")?.classList.remove("is-open"); }
+  function moveGallery(d){ lightboxIndex=(lightboxIndex+d+galleryKeys.length)%galleryKeys.length; updateGallery(); }
+  function updateGallery(){ const keyName=galleryKeys[lightboxIndex]; const p=CONFIG.photos[keyName]; const img=document.getElementById("galleryImage"); if(p.src) img.style.backgroundImage=`url("${p.src}")`; else img.style.backgroundImage="linear-gradient(135deg, rgba(195,136,121,.55), rgba(255,253,249,.88))"; }
+
+  function setupRsvp(){ const form=document.getElementById("rsvpForm"); if(!form)return; form.addEventListener("input",updateRsvpLivePreview); form.addEventListener("change",()=>{ updateGuestCountState(); updateRsvpLivePreview(); }); form.addEventListener("submit",submitRsvp); document.getElementById("guestPhone").addEventListener("input",()=>{ const v=document.getElementById("guestPhone").value.trim(); document.getElementById("phoneInlineError").style.display=(v && !isValidPhone(v))?"block":"none"; }); updateGuestCountState(); updateRsvpLivePreview(); }
+  function getRsvpPayload(){ const f=document.getElementById("rsvpForm"); const fd=new FormData(f); return {name:String(fd.get("name")||"").trim(),phone:String(fd.get("phone")||"").trim(),attendance:String(fd.get("attendance")||"ATTEND"),guestCount:Number(fd.get("guestCount")||1),vegetarian:String(fd.get("vegetarian")||"NO"),note:String(fd.get("note")||"").trim()}; }
+  function updateGuestCountState(){ const p=getRsvpPayload(); const show=p.attendance!=="DECLINE"; document.getElementById("guestCountField").style.display=show?"block":"none"; document.getElementById("vegetarianField").style.display=show?"block":"none"; document.getElementById("rsvpPendingNotice").style.display=p.attendance==="PENDING"?"block":"none"; }
+  function labelAttendance(v){ return v==="ATTEND"?"會出席":v==="DECLINE"?"無法出席":"尚未確定"; }
+  function updateRsvpLivePreview(){ const p=getRsvpPayload(); const el=document.getElementById("rsvpLivePreview"); if(!el)return; el.innerHTML=`<div class="summary-row"><span>您的回覆</span><b>${labelAttendance(p.attendance)}</b></div><div class="summary-row"><span>預計人數</span><b>${p.attendance==="DECLINE"?"不出席":p.guestCount+" 位"}</b></div><div class="summary-row"><span>餐食</span><b>${p.attendance==="DECLINE"?"不需安排":p.vegetarian==="YES"?"素食":"葷食"}</b></div>`; }
+  function isValidPhone(v){ return /^09\d{8}$/.test(v.replace(/[\s-]/g,"")); }
+  function submitRsvp(e){ e.preventDefault(); const p=getRsvpPayload(); const hint=document.getElementById("rsvpHint"); if(!p.name){hint.textContent="請先填寫姓名。";return;} if(!isValidPhone(p.phone)){hint.textContent="請填寫正確的台灣手機號碼。";return;} localStorage.setItem(key("rsvp"),JSON.stringify({...p,time:new Date().toISOString()})); hint.textContent="已收到您的回覆，謝謝你。"; renderRsvpSummary(p); track("rsvp_submit",{attendance:p.attendance}); }
+  function renderLastRsvpSummary(){ const raw=localStorage.getItem(key("rsvp")); if(raw){ try{ renderRsvpSummary(JSON.parse(raw)); }catch(e){} } }
+  function renderRsvpSummary(p){ const el=document.getElementById("rsvpSummary"); if(!el)return; el.innerHTML=`<div class="summary-row"><span>姓名</span><b>${escapeHtml(p.name)}</b></div><div class="summary-row"><span>電話</span><b>${escapeHtml(maskPhone(p.phone))}</b></div><div class="summary-row"><span>回覆</span><b>${labelAttendance(p.attendance)}</b></div><div class="summary-row"><span>婚宴</span><b>${CONFIG.dateText}｜${CONFIG.banquet.time}</b></div><div class="hero-actions"><button class="ghost-btn" type="button" data-calendar-open>加入行事曆</button><a class="action-btn" href="${CONFIG.banquet.mapUrl}" target="_blank" rel="noopener">Google Map</a><button class="soft-btn" type="button" data-go="9">留下祝福</button></div>`; }
+  function maskPhone(p){ const v=String(p||""); return v.length>=7 ? `${v.slice(0,4)}***${v.slice(-3)}` : v; }
+
+  function setupMessages(){ const form=document.getElementById("messageForm"); if(!form)return; const text=document.getElementById("msgText"); text.addEventListener("input",()=>{ document.getElementById("msgCounter").textContent=`${text.value.length} / 180`; updateMessageSecurity(); }); form.addEventListener("submit",submitMessage); updateMessageSecurity(); }
+  function baseMessages(){ return [{id:"initial_1",name:"朋友代表",message:"謝謝你們讓我們一起參與這段故事，期待 10/11 見證最幸福的時刻。",time:new Date(Date.now()-86400000).toISOString()},{id:"initial_2",name:"大學同學",message:"從校園到婚禮，真的太感動了！祝你們往後每一天都像今天一樣溫暖。",time:new Date(Date.now()-172800000).toISOString()}]; }
+  function getStoredMessages(){ try{ return JSON.parse(localStorage.getItem(key("messages"))||"[]"); }catch(e){ return []; } }
+  function setStoredMessages(list){ localStorage.setItem(key("messages"),JSON.stringify(list)); }
+  function getMessages(){ return [...getStoredMessages(),...baseMessages()].sort((a,b)=>new Date(b.time)-new Date(a.time)); }
+  function renderMessagesList(){ const el=document.getElementById("messagesList"); if(!el)return; const list=getMessages(); if(!list.length){ el.innerHTML=`<div class="empty-state">成為第一個留下祝福的人。</div>`; return; } el.innerHTML=list.map(m=>`<div class="message-item"><div class="message-headline"><span class="message-name">${escapeHtml(m.name)}</span><span class="message-time">${escapeHtml(formatRelativeTime(m.time))}</span></div><p class="message-text">${escapeHtml(m.message)}</p></div>`).join(""); }
+  function updateMessageSecurity(){ const text=document.getElementById("msgText")?.value || ""; const el=document.getElementById("securityScore"); if(!el)return; const checked=filterMessage(text); el.textContent=checked.blocked?checked.reason:(checked.changed?"內容將自動轉換成較溫和的文字。":"祝福內容狀態：適合公開顯示"); }
+  function submitMessage(e){ e.preventDefault(); const form=e.currentTarget; const hint=document.getElementById("msgHint"); const fd=new FormData(form); if(String(fd.get("website")||"").trim()){ hint.textContent="留言未送出，請稍後再試。";return; } const name=String(fd.get("name")||"").trim(); const msg=String(fd.get("message")||"").trim(); if(!name || !msg){ hint.textContent="請填寫暱稱與祝福內容。";return; } const now=Date.now(); const last=Number(localStorage.getItem(key("lastMessageAt"))||0); if(now-last<8000){ hint.textContent="剛剛已送出祝福，請稍後再留言。";return; } const recent=getStoredMessages().filter(m=>now-new Date(m.time).getTime()<3600000); if(recent.length>=5){ hint.textContent="祝福送出太頻繁，請稍後再試。";return; } if(getMessages().some(m=>m.message.trim()===msg)){ hint.textContent="這段祝福已經留下囉。";return; } const checked=filterMessage(msg); if(checked.blocked){ hint.textContent=checked.reason; return; } const record={id:`msg_${now}`,name:filterName(name),message:checked.text,time:new Date().toISOString()}; const list=getStoredMessages(); list.unshift(record); setStoredMessages(list); localStorage.setItem(key("lastMessageAt"),String(now)); form.reset(); document.getElementById("msgCounter").textContent="0 / 180"; hint.textContent="祝福已送出，謝謝你讓這一天更溫暖。"; renderMessagesList(); track("message_submit",{}); }
+  function filterName(name){ return name.replace(/[<>]/g,"").slice(0,20); }
+  function filterMessage(text){ const lower=text.toLowerCase(); if(/https?:\/\/|www\.|\.com|\.tw|line\.me/.test(lower)) return {blocked:true,reason:"祝福牆不支援網址或廣告內容。",text:""}; if(/<script|javascript:|onerror=|onload=|<iframe/i.test(text)) return {blocked:true,reason:"這段內容含有不適合公開顯示的語法。",text:""}; if(/(.){10,}/.test(text)) return {blocked:true,reason:"文字重複過多，請調整後再送出。",text:""}; const bad=["幹","靠北","白癡","垃圾"]; let changed=false; let out=text; bad.forEach(w=>{ if(out.includes(w)){ out=out.split(w).join("OO"); changed=true; } }); return {blocked:false,changed,text:out}; }
+
+  function openShareLinkFallback(){ copyToClipboard(CONFIG.share.url).then(()=>showToast("已複製喜帖連結")); }
+  async function copyToClipboard(text){ if(navigator.clipboard && window.isSecureContext) return navigator.clipboard.writeText(text); const ta=document.createElement("textarea"); ta.value=text; ta.style.position="fixed"; ta.style.left="-9999px"; document.body.appendChild(ta); ta.focus(); ta.select(); const ok=document.execCommand("copy"); ta.remove(); if(!ok) throw new Error("copy failed"); }
+  function downloadTextFile(filename,content,type){ const blob=new Blob([content],{type}); const url=URL.createObjectURL(blob); const a=document.createElement("a"); a.href=url; a.download=filename; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url); }
+  let toastTimer=null; function showToast(msg){ const t=document.getElementById("toast"); t.textContent=msg; t.classList.add("is-show"); clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.classList.remove("is-show"),2400); }
+
+  init();
+})();
+</script>
+</body>
+</html>
