@@ -1815,6 +1815,21 @@
       }
     }
 
+    // 行動裝置在離頁/切頁時事件觸發節奏不一，統一用強制停播確保立即靜音。
+    function forceStopMusic(reason = 'force_stop') {
+      if (!music) return;
+
+      const wasPlaying = isMusicEnabled || (!music.paused && !music.ended);
+      music.pause();
+      music.currentTime = 0;
+      music.muted = true;
+      setMusicUI(false);
+
+      if (wasPlaying) {
+        trackWeddingEvent('wedding_music_stop', { reason });
+      }
+    }
+
     async function toggleMusic() {
       if (!music) return;
 
@@ -1832,7 +1847,7 @@
 
     function stopMusicWhenLeaveSite() {
       if (document.visibilityState === 'hidden') {
-        stopMusic('leave_site_hidden');
+        forceStopMusic('leave_site_hidden');
       }
     }
 
@@ -1841,8 +1856,26 @@
     }
 
     document.addEventListener('visibilitychange', stopMusicWhenLeaveSite);
-    window.addEventListener('pagehide', () => stopMusic('pagehide'));
-    window.addEventListener('beforeunload', () => stopMusic('beforeunload'));
+    window.addEventListener('pagehide', () => forceStopMusic('pagehide'), { capture: true });
+    window.addEventListener('beforeunload', () => forceStopMusic('beforeunload'), { capture: true });
+    window.addEventListener('unload', () => forceStopMusic('unload'), { capture: true });
+    document.addEventListener('freeze', () => forceStopMusic('freeze'));
+    window.addEventListener('blur', () => {
+      if (document.visibilityState !== 'visible') {
+        forceStopMusic('window_blur_hidden');
+      }
+    });
+
+    // 導頁點擊時先停播，避免在手機上切 app/開新頁短暫殘留聲音。
+    document.addEventListener('click', (e) => {
+      const link = e.target.closest('a[href]');
+      if (!link) return;
+
+      const href = (link.getAttribute('href') || '').trim().toLowerCase();
+      if (!href || href.startsWith('#') || href.startsWith('javascript:')) return;
+
+      forceStopMusic('navigate_link_click');
+    }, true);
 
     // =========================
     // 啟動畫面控制
