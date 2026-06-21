@@ -45,17 +45,19 @@
 
     .main{height:100%;opacity:0;transition:opacity .8s ease}
     .main.is-ready{opacity:1}
-    .slider{height:100%;width:100%;overflow:hidden;touch-action:pan-y}
-    .slides{height:100%;display:flex;transition:transform .64s cubic-bezier(.22,.8,.22,1);will-change:transform}
+    .slider{height:100%;width:100%;overflow:hidden;touch-action:none}
+    .slides{height:100%;display:flex;transition:transform .72s cubic-bezier(.2,.72,.12,1);will-change:transform}
     .slides.is-dragging{transition:none}
     .slide{position:relative;flex:0 0 100%;width:100%;height:100%;overflow:hidden}
     .slide::before{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,rgba(255,253,249,.66),rgba(255,249,244,.44) 43%,rgba(88,48,31,.34))}
     .slide.paper::before{background:linear-gradient(180deg,rgba(255,253,249,.9),rgba(255,249,244,.72),rgba(195,136,121,.22))}
     .slide-bg{position:absolute;inset:0;background:radial-gradient(circle at 28% 12%,rgba(255,255,255,.56),transparent 30%),linear-gradient(135deg,#C38879,#E9B8AA 62%,#FFF3EA);transform:scale(1.04);transition:transform 5s ease}
     .slide.is-active .slide-bg{transform:scale(1.08)}
-    .content{position:relative;z-index:2;height:100%;display:flex;align-items:center;justify-content:center;padding:calc(var(--ui-top-clearance) + var(--safe-top)) 22px calc(var(--ui-bottom-clearance) + var(--safe-bottom))}
-    .scrollable{width:100%;height:100%;overflow:auto;-webkit-overflow-scrolling:touch;display:flex;align-items:flex-start;justify-content:center;padding:6px 0 14px;scroll-padding-top:12px;scroll-padding-bottom:16px}
-    .paper-card{width:min(94vw,940px);border-radius:34px;background:rgba(255,253,249,.74);border:1px solid rgba(255,255,255,.62);box-shadow:var(--shadow);backdrop-filter:blur(16px);padding:24px}
+    .content{position:relative;z-index:2;height:100%;display:flex;align-items:center;justify-content:center;overflow:hidden;padding:calc(var(--ui-top-clearance) + var(--safe-top)) 22px calc(var(--ui-bottom-clearance) + var(--safe-bottom))}
+    .scrollable{width:100%;height:100%;overflow:auto;-webkit-overflow-scrolling:touch;touch-action:pan-y;display:flex;align-items:flex-start;justify-content:center;padding:6px 0 14px;scroll-padding-top:12px;scroll-padding-bottom:16px}
+    .paper-card{width:min(94vw,940px);max-height:100%;border-radius:34px;background:rgba(255,253,249,.74);border:1px solid rgba(255,255,255,.62);box-shadow:var(--shadow);backdrop-filter:blur(16px);padding:24px}
+    .paper-card.grid-2{overflow:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+    .paper-card.grid-2::-webkit-scrollbar{display:none}
     .section-title{margin:0 0 12px;font-size:clamp(28px,5vw,48px);line-height:1.25;font-weight:600;letter-spacing:.04em}
     .subtitle,.small-note{margin:0;color:var(--muted);line-height:1.85;font-size:14px}
     .small-note{font-size:13px}
@@ -75,13 +77,13 @@
     .photo-slot img{width:100%;height:100%;object-fit:cover;display:block}
     .photo-placeholder{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:24px;background:radial-gradient(circle at 35% 20%,rgba(255,255,255,.68),transparent 35%),linear-gradient(135deg,rgba(195,136,121,.5),rgba(244,206,167,.24),rgba(255,253,249,.72));font-size:18px;color:var(--coffee)}
     .photo-slot.cover{min-height:300px;margin:0 0 18px}
-    .photo-slot.story{min-height:420px}
+    .photo-slot.story{min-height:390px}
     .photo-slot.timeline{min-height:300px}
     .photo-slot.detail{min-height:260px}
 
     .story-copy{padding:8px}
-    .story-copy p{margin:0 0 14px;color:var(--muted);line-height:1.9;font-size:15px}
-    .story-caption{display:inline-flex;margin-top:8px;padding:8px 12px;border-radius:999px;background:rgba(244,206,167,.24);color:var(--coffee-2);font-size:12px;font-weight:700}
+    .story-copy p{margin:0 0 12px;color:var(--muted);line-height:1.78;font-size:15px}
+    .story-caption{display:inline-flex;margin-top:4px;padding:8px 12px;border-radius:999px;background:rgba(244,206,167,.24);color:var(--coffee-2);font-size:12px;font-weight:700}
     .timeline-nav{display:flex;justify-content:center;gap:8px;margin:16px 0 18px;flex-wrap:wrap}
     .timeline-nav button{border:1px solid var(--line);background:rgba(255,253,249,.62);border-radius:999px;padding:9px 14px;color:var(--coffee);font-weight:800}
     .timeline-nav button.is-active{background:var(--coffee);color:var(--cream)}
@@ -163,20 +165,30 @@
     .reveal{opacity:0;transform:translateY(16px);transition:opacity .72s ease,transform .72s ease}
     .slide.is-active .reveal{opacity:1;transform:translateY(0)}
     .delay-1{transition-delay:.08s}.delay-2{transition-delay:.16s}
-    .page-turn-layer{position:fixed;inset:0;z-index:6;pointer-events:none;perspective:1000px;opacity:0}
+    .page-turn-layer{position:fixed;inset:0;z-index:6;pointer-events:none;perspective:1400px;opacity:0;overflow:hidden}
     .page-turn-layer.is-turning{opacity:1}
-    .page-turn-sheet{position:absolute;inset:0;background:linear-gradient(90deg,rgba(255,253,249,.05),rgba(255,253,249,.52),rgba(255,253,249,.04));transform-origin:left center;animation:turnPage .52s ease both}
-    @keyframes turnPage{from{transform:rotateY(0deg);opacity:.0}35%{opacity:.55}to{transform:rotateY(-68deg);opacity:0}}
+    .page-turn-sheet{position:absolute;inset:0;background:linear-gradient(90deg,rgba(255,253,249,.02),rgba(255,253,249,.72) 45%,rgba(88,48,31,.18) 100%);box-shadow:inset -28px 0 46px rgba(88,48,31,.16),inset 18px 0 38px rgba(255,255,255,.38);transform-origin:left center;animation:turnPageNext .7s cubic-bezier(.2,.72,.12,1) both}
+    .page-turn-sheet::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(255,255,255,.28),transparent 32%,rgba(88,48,31,.18));opacity:.85}
+    .page-turn-layer.turn-prev .page-turn-sheet{transform-origin:right center;animation-name:turnPagePrev;background:linear-gradient(270deg,rgba(255,253,249,.02),rgba(255,253,249,.72) 45%,rgba(88,48,31,.18) 100%);box-shadow:inset 28px 0 46px rgba(88,48,31,.16),inset -18px 0 38px rgba(255,255,255,.38)}
+    @keyframes turnPageNext{0%{transform:rotateY(0deg);opacity:0}18%{opacity:.78}100%{transform:rotateY(-82deg);opacity:0}}
+    @keyframes turnPagePrev{0%{transform:rotateY(0deg);opacity:0}18%{opacity:.78}100%{transform:rotateY(82deg);opacity:0}}
 
     @media (max-width:760px){
       :root{--ui-top-clearance:70px; --ui-bottom-clearance:104px}
       .content{padding:calc(var(--ui-top-clearance) + var(--safe-top)) 14px calc(var(--ui-bottom-clearance) + var(--safe-bottom))}
       .grid-2,.grid-2.reverse,.message-layout{grid-template-columns:1fr;gap:16px}
       .paper-card{border-radius:28px;padding:18px}
+      .paper-card.grid-2{display:flex;flex-direction:column;justify-content:center}
       .hero-card{width:min(94vw,440px);padding:14px;max-height:calc(var(--vh)*100 - 126px)}
       .photo-slot.cover{min-height:220px;margin-bottom:14px}
-      .photo-slot.story{min-height:260px}
-      .photo-slot.timeline,.photo-slot.detail{min-height:220px}
+      .photo-slot.story{min-height:210px}
+      .photo-slot.timeline,.photo-slot.detail{min-height:190px}
+      .section-title{font-size:clamp(23px,7vw,34px);line-height:1.18;margin-bottom:9px}
+      .story-copy{padding:2px}
+      .story-copy p{font-size:14px;line-height:1.62;margin-bottom:9px}
+      .story-caption{font-size:11px;line-height:1.45;padding:7px 10px}
+      .timeline-year{font-size:clamp(44px,16vw,74px)}
+      .timeline-nav{margin:10px 0 0}
       .gallery-grid{grid-template-columns:repeat(2,1fr);gap:10px}
       .gallery-item{min-height:130px}
       .radio-grid{grid-template-columns:1fr}
@@ -203,6 +215,13 @@
     @media (max-height:700px) and (max-width:760px){
       .hero-card{max-height:calc(var(--vh)*100 - 112px);padding:12px}
       .photo-slot.cover{min-height:170px}
+      .photo-slot.story{min-height:150px}
+      .photo-slot.timeline,.photo-slot.detail{min-height:145px}
+      .paper-card{padding:14px}
+      .grid-2,.grid-2.reverse{gap:10px}
+      .story-copy p{font-size:13px;line-height:1.5;margin-bottom:7px}
+      .story-caption{display:none}
+      .timeline-nav button{padding:7px 11px;font-size:12px}
       .hero-names{font-size:27px;letter-spacing:.1em}
       .hero-actions{margin-top:12px}
       .action-btn,.ghost-btn,.soft-btn{padding:10px 13px;font-size:13px}
@@ -261,7 +280,7 @@
   CONFIG.share.qrImage = `https://api.qrserver.com/v1/create-qr-code/?size=512x512&data=${encodeURIComponent(CONFIG.share.url)}`;
 
   const app=document.getElementById("app");
-  let currentIndex=0, started=false, isDragging=false, touchStartX=0, touchStartY=0, autoTimer=null, autoPausedUntil=0, audio=null, lightboxIndex=0, musicHintLocked=false;
+  let currentIndex=0, started=false, isDragging=false, touchStartX=0, touchStartY=0, touchLastX=0, touchLastY=0, gestureAxis="", autoTimer=null, autoPausedUntil=0, audio=null, lightboxIndex=0, musicHintLocked=false, wheelLocked=false;
   const slideCount=10;
   const AUTO_DURATIONS=[6000,7000,7000,6000,6000,6000,7500,9000,null,null];
   const MANUAL_PAUSE_MS=12000;
@@ -322,7 +341,11 @@
     document.getElementById("prevBtn").addEventListener("click",()=>userGoTo(currentIndex-1));
     document.getElementById("nextBtn").addEventListener("click",()=>userGoTo(currentIndex+1));
     document.getElementById("dots").addEventListener("click",e=>{ const d=e.target.closest(".dot"); if(d) userGoTo(Number(d.dataset.index)); });
-    const slider=document.getElementById("slider"); slider.addEventListener("touchstart",onTouchStart,{passive:true}); slider.addEventListener("touchmove",onTouchMove,{passive:true}); slider.addEventListener("touchend",onTouchEnd,{passive:true});
+    const slider=document.getElementById("slider");
+    slider.addEventListener("touchstart",onTouchStart,{passive:true});
+    slider.addEventListener("touchmove",onTouchMove,{passive:false});
+    slider.addEventListener("touchend",onTouchEnd,{passive:true});
+    slider.addEventListener("wheel",onWheel,{passive:false});
     document.addEventListener("keydown",e=>{ if(e.key==="Escape"){ closeCalendarModal(); closeShareModal(); closeGallery(); } if(!started)return; if(e.key==="ArrowRight") userGoTo(currentIndex+1); if(e.key==="ArrowLeft") userGoTo(currentIndex-1); });
     document.addEventListener("click",handleDocumentClick);
     document.getElementById("musicBtn").addEventListener("click",toggleMusic);
@@ -373,15 +396,65 @@
     tryPlayAudio();
   }
 
-  function onTouchStart(e){ if(isInteractiveTarget(e.target))return; const t=e.changedTouches[0]; touchStartX=t.clientX; touchStartY=t.clientY; isDragging=true; pauseAutoplay(MANUAL_PAUSE_MS); document.getElementById("slides").classList.add("is-dragging"); }
-  function onTouchMove(e){ if(!isDragging)return; const t=e.changedTouches[0]; const dx=t.clientX-touchStartX, dy=t.clientY-touchStartY; if(Math.abs(dy)>Math.abs(dx)*1.25)return; const pct=(-currentIndex*100)+(dx/window.innerWidth*100); document.getElementById("slides").style.transform=`translate3d(${pct}%,0,0)`; }
-  function onTouchEnd(e){ if(!isDragging)return; isDragging=false; document.getElementById("slides").classList.remove("is-dragging"); const t=e.changedTouches[0]; const dx=t.clientX-touchStartX, dy=t.clientY-touchStartY; if(Math.abs(dy)>Math.abs(dx)*1.15 || Math.abs(dx)<42){ update(); return; } userGoTo(currentIndex+(dx<0?1:-1)); }
-  function isInteractiveTarget(target){ return Boolean(target.closest("button,a,input,textarea,select,form,[role='button'],.scrollable")); }
+  function onTouchStart(e){
+    if(isInteractiveTarget(e.target))return;
+    const t=e.changedTouches[0];
+    touchStartX=touchLastX=t.clientX;
+    touchStartY=touchLastY=t.clientY;
+    gestureAxis="";
+    isDragging=true;
+    pauseAutoplay(MANUAL_PAUSE_MS);
+    document.getElementById("slides").classList.add("is-dragging");
+  }
+  function onTouchMove(e){
+    if(!isDragging)return;
+    const t=e.changedTouches[0];
+    touchLastX=t.clientX;
+    touchLastY=t.clientY;
+    const dx=touchLastX-touchStartX, dy=touchLastY-touchStartY;
+    if(!gestureAxis && Math.max(Math.abs(dx),Math.abs(dy))>10) gestureAxis=Math.abs(dx)>Math.abs(dy)?"x":"y";
+    if(!gestureAxis)return;
+    if(gestureAxis==="y" && canScrollWithin(e.target, -dy))return;
+    e.preventDefault();
+    const movement=gestureAxis==="x" ? dx : -dy;
+    const pct=(-currentIndex*100)+(movement/window.innerWidth*100*.86);
+    document.getElementById("slides").style.transform=`translate3d(${pct}%,0,0)`;
+  }
+  function onTouchEnd(){
+    if(!isDragging)return;
+    isDragging=false;
+    document.getElementById("slides").classList.remove("is-dragging");
+    const dx=touchLastX-touchStartX, dy=touchLastY-touchStartY;
+    const movement=gestureAxis==="y" ? -dy : dx;
+    if(!gestureAxis || Math.abs(movement)<46){ update(); return; }
+    userGoTo(currentIndex+(movement<0?1:-1), movement<0?"next":"prev");
+  }
+  function onWheel(e){
+    if(!started || isInteractiveTarget(e.target))return;
+    const primary=Math.abs(e.deltaY)>=Math.abs(e.deltaX)?e.deltaY:e.deltaX;
+    if(Math.abs(primary)<24)return;
+    if(Math.abs(e.deltaY)>=Math.abs(e.deltaX) && canScrollWithin(e.target,e.deltaY))return;
+    e.preventDefault();
+    if(wheelLocked)return;
+    wheelLocked=true;
+    userGoTo(currentIndex+(primary>0?1:-1), primary>0?"next":"prev");
+    setTimeout(()=>{ wheelLocked=false; },760);
+  }
+  function isInteractiveTarget(target){ return Boolean(target.closest("button,a,input,textarea,select,form,[role='button'],.modal.is-open")); }
+  function canScrollWithin(target,deltaY){
+    const scroller=target.closest(".scrollable,.dialog,.paper-card.grid-2");
+    if(!scroller)return false;
+    const max=scroller.scrollHeight-scroller.clientHeight;
+    if(max<=1)return false;
+    if(deltaY>0)return scroller.scrollTop<max-1;
+    if(deltaY<0)return scroller.scrollTop>1;
+    return false;
+  }
   function normalizeIndex(i){ return (i+slideCount)%slideCount; }
-  function userGoTo(i){ pauseAutoplay(MANUAL_PAUSE_MS); goTo(i); }
-  function goTo(i,fromAuto=false){ const next=normalizeIndex(i); if(next!==currentIndex) triggerPageTurn(); currentIndex=next; update(); scheduleAutoplay(); }
+  function userGoTo(i,direction){ pauseAutoplay(MANUAL_PAUSE_MS); goTo(i,false,direction); }
+  function goTo(i,fromAuto=false,direction){ const next=normalizeIndex(i); const turnDirection=direction || ((next>currentIndex || (currentIndex===slideCount-1 && next===0)) ? "next" : "prev"); if(next!==currentIndex) triggerPageTurn(turnDirection); currentIndex=next; update(); scheduleAutoplay(); }
   function update(){ const slides=document.getElementById("slides"); if(slides) slides.style.transform=`translate3d(${-currentIndex*100}%,0,0)`; document.querySelectorAll(".slide").forEach((s,i)=>s.classList.toggle("is-active",i===currentIndex)); document.querySelectorAll(".dot").forEach((d,i)=>d.classList.toggle("is-active",i===currentIndex)); document.getElementById("pageLabel").textContent=`${String(currentIndex+1).padStart(2,"0")} / ${String(slideCount).padStart(2,"0")}`; updateAutoplayIndicator(); }
-  function triggerPageTurn(){ const layer=document.getElementById("pageTurnLayer"); layer.classList.remove("is-turning"); void layer.offsetWidth; layer.classList.add("is-turning"); setTimeout(()=>layer.classList.remove("is-turning"),560); }
+  function triggerPageTurn(direction="next"){ const layer=document.getElementById("pageTurnLayer"); layer.classList.remove("is-turning","turn-prev"); if(direction==="prev") layer.classList.add("turn-prev"); void layer.offsetWidth; layer.classList.add("is-turning"); setTimeout(()=>layer.classList.remove("is-turning","turn-prev"),720); }
   function pauseAutoplay(ms){ autoPausedUntil=Date.now()+ms; scheduleAutoplay(); }
   function scheduleAutoplay(){ clearTimeout(autoTimer); if(!started)return; const d=AUTO_DURATIONS[currentIndex]; if(!d){ updateAutoplayIndicator(); return; } const wait=Math.max(d,autoPausedUntil-Date.now()); autoTimer=setTimeout(()=>goTo(currentIndex+1,true),wait); updateAutoplayIndicator(); }
   function updateAutoplayIndicator(){ const el=document.getElementById("autoIndicator"); const d=AUTO_DURATIONS[currentIndex]; if(!d){ el.innerHTML="<span></span> Paused"; return; } const sec=Math.round(d/1000); el.innerHTML=`<span></span> ${sec}s Auto`; }
