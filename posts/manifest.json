@@ -10,7 +10,7 @@
     "featured": true,
     "gradient": "indigo",
     "icon": "fa-solid fa-brain",
-    "category": "AI應用",
+    "category": "AI Agent",
     "tags": [
       { "label": "AI Agent", "color": "indigo" },
       { "label": "DB Agent", "color": "blue" },
