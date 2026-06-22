@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="scroll-smooth">
+<head>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VXKMN286TH"></script>
+  <script src="../ga_event.min.js"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-VXKMN286TH');
+  </script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Querymind 技術架構解析：AI Agent 如何應用在商業分析流程 | Digitools Studio Blog</title>
+  <meta name="description" content="深度解析 Querymind 如何以 DB Agent、RBAC 權限控管、自然語言查詢、圖表報表生成與 Insight Agent，協助企業使用者安全取得資料並完成商業分析。" />
+  <meta name="keywords" content="Querymind, DB Agent, AI Agent, 商業分析, Text-to-SQL, RBAC, BI, 自然語言查詢, 企業資料庫, Insight Agent, 自動化報表" />
+  <meta name="robots" content="index, follow" />
+  <meta name="author" content="Digitools Studio" />
+  <link rel="canonical" href="https://digitools-studio.github.io/posts/querymind-ai-agent-business-analysis-architecture.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://digitools-studio.github.io/posts/querymind-ai-agent-business-analysis-architecture.html" />
+  <meta property="og:title" content="Querymind 技術架構解析：AI Agent 如何應用在商業分析流程" />
+  <meta property="og:description" content="從傳統需求單開發報表，到具備 RBAC 的 DB Agent 架構，拆解 Querymind 如何讓企業用自然語言取得資料、圖表、報表與 Insight。" />
+  <meta property="og:image" content="https://digitools-studio.github.io/Static/Image/og-cover.png" />
+  <meta property="article:published_time" content="2026-06-23" />
+  <meta property="article:modified_time" content="2026-06-23" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Querymind 技術架構解析：AI Agent 如何應用在商業分析流程" />
+  <meta name="twitter:description" content="解析 DB Agent 如何結合 RBAC、自然語言查詢、圖表報表與 Insight Agent，落地企業商業分析。" />
+  <meta name="twitter:image" content="https://digitools-studio.github.io/Static/Image/og-cover.png" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['"Noto Sans TC"', 'sans-serif'] },
+          colors: { line: { DEFAULT: '#00B900', dark: '#009900' } }
+        }
+      }
+    };
+  </script>
+  <style>
+    body { font-family: 'Noto Sans TC', sans-serif; }
+    .glass-header{background:rgba(255,255,255,.93);backdrop-filter:blur(14px);box-shadow:0 1px 3px rgba(0,0,0,.07);}
+    #reading-progress{position:fixed;top:0;left:0;height:3px;z-index:9999;background:linear-gradient(90deg,#2563eb,#0f766e);transition:width .1s linear;}
+    .prose h2{font-size:1.55rem;font-weight:800;color:#0f172a;margin:2.75rem 0 1rem;padding-bottom:.55rem;border-bottom:2px solid #e2e8f0;}
+    .prose h3{font-size:1.16rem;font-weight:800;color:#1e293b;margin:2rem 0 .75rem;}
+    .prose p{color:#374151;line-height:1.88;margin-bottom:1.25rem;}
+    .prose ul{list-style:none;margin:0 0 1.25rem;padding:0;}
+    .prose ul li{padding-left:1.45rem;position:relative;color:#374151;line-height:1.78;margin-bottom:.45rem;}
+    .prose ul li::before{content:"";position:absolute;left:0;top:.78rem;width:.38rem;height:.38rem;border-radius:999px;background:#2563eb;}
+    .prose table{width:100%;border-collapse:separate;border-spacing:0;margin:1.5rem 0;border:1px solid #e2e8f0;border-radius:12px;overflow:hidden;font-size:.92rem;}
+    .prose th{background:#f8fafc;color:#0f172a;text-align:left;font-weight:800;padding:.85rem;border-bottom:1px solid #e2e8f0;}
+    .prose td{padding:.85rem;color:#334155;border-bottom:1px solid #e2e8f0;vertical-align:top;}
+    .prose tr:last-child td{border-bottom:0;}
+    .prose code{background:#f1f5f9;color:#0f172a;padding:.15em .45em;border-radius:4px;font-size:.875em;font-family:'Courier New',monospace;}
+    .prose pre{background:#0f172a;border-radius:12px;padding:1.25rem;overflow-x:auto;margin:1.5rem 0;}
+    .prose pre code{background:none;color:#e2e8f0;padding:0;font-size:.85rem;line-height:1.7;}
+    .callout{background:#eff6ff;border-left:4px solid #2563eb;padding:1rem 1.25rem;border-radius:0 8px 8px 0;margin:1.35rem 0;}
+    .callout p{margin:0;color:#1e3a8a;}
+    .note-box{border:1px solid #dbeafe;background:linear-gradient(180deg,#ffffff,#eff6ff);border-radius:14px;padding:1.25rem;margin:1.5rem 0;}
+    .visual-panel{border:1px solid #e2e8f0;border-radius:16px;background:#ffffff;box-shadow:0 18px 45px rgba(15,23,42,.08);margin:2rem 0;overflow:hidden;}
+    .visual-panel-header{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:1rem 1.25rem;border-bottom:1px solid #e2e8f0;background:#f8fafc;}
+    .arch-grid{display:grid;grid-template-columns:1fr;gap:.8rem;padding:1.25rem;}
+    .arch-node{border:1px solid #dbeafe;background:#f8fbff;border-radius:12px;padding:1rem;transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease;}
+    .arch-node:hover{transform:translateY(-2px);border-color:#2563eb;box-shadow:0 10px 30px rgba(37,99,235,.12);}
+    .arch-node strong{display:block;color:#0f172a;margin-bottom:.35rem;}
+    .arch-node span{display:block;color:#64748b;font-size:.86rem;line-height:1.55;}
+    .flow-arrow{display:flex;justify-content:center;color:#94a3b8;font-size:.9rem;}
+    .role-btn{border:1px solid #cbd5e1;color:#475569;background:#fff;border-radius:999px;padding:.45rem .8rem;font-size:.82rem;font-weight:700;transition:all .18s ease;white-space:nowrap;}
+    .role-btn.active,.role-btn:hover{background:#0f172a;color:#fff;border-color:#0f172a;}
+    .metric-card{border:1px solid #e2e8f0;border-radius:12px;padding:1rem;background:#fff;}
+    .metric-card .bar{height:8px;border-radius:999px;background:#e2e8f0;overflow:hidden;margin-top:.7rem;}
+    .metric-card .bar span{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,#2563eb,#0f766e);}
+    .comparison-lane{position:relative;padding:1rem;border:1px solid #e2e8f0;border-radius:14px;background:#fff;}
+    .comparison-step{display:flex;gap:.75rem;align-items:flex-start;padding:.8rem 0;border-bottom:1px solid #f1f5f9;}
+    .comparison-step:last-child{border-bottom:0;}
+    .step-num{flex:none;width:1.7rem;height:1.7rem;border-radius:999px;background:#e2e8f0;color:#334155;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:800;}
+    .agent-step .step-num{background:#dbeafe;color:#1d4ed8;}
+    @media (min-width: 768px){
+      .arch-grid{grid-template-columns:1fr 40px 1fr 40px 1fr;}
+      .flow-arrow{align-items:center;}
+    }
+  </style>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": "Querymind 技術架構解析：AI Agent 如何應用在商業分析流程",
+    "description": "深度解析 Querymind 如何以 DB Agent、RBAC 權限控管、自然語言查詢、圖表報表生成與 Insight Agent，協助企業使用者安全取得資料並完成商業分析。",
+    "datePublished": "2026-06-23",
+    "dateModified": "2026-06-23",
+    "author": {
+      "@type": "Organization",
+      "name": "Digitools Studio",
+      "url": "https://digitools-studio.github.io/"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Digitools Studio",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://digitools-studio.github.io/Static/Image/og-cover.png"
+      }
+    },
+    "image": "https://digitools-studio.github.io/Static/Image/og-cover.png",
+    "url": "https://digitools-studio.github.io/posts/querymind-ai-agent-business-analysis-architecture.html",
+    "mainEntityOfPage": "https://digitools-studio.github.io/posts/querymind-ai-agent-business-analysis-architecture.html",
+    "keywords": ["Querymind", "DB Agent", "AI Agent", "商業分析", "Text-to-SQL", "RBAC", "BI", "自然語言查詢"],
+    "inLanguage": "zh-TW"
+  }
+  </script>
+</head>
+<body class="bg-white text-slate-800 antialiased">
+  <div id="reading-progress" style="width:0%"></div>
+
+  <header id="navbar" class="fixed w-full top-0 z-50 transition-all duration-300 py-5 bg-transparent">
+    <div class="max-w-7xl mx-auto px-5 lg:px-8 flex justify-between items-center">
+      <a href="../index.html" class="flex items-center space-x-3 group">
+        <div class="w-9 h-9 bg-slate-900 text-white rounded-xl flex items-center justify-center font-bold text-base shadow-md group-hover:bg-blue-600 transition-colors duration-300">D</div>
+        <div>
+          <p class="font-bold text-slate-900 leading-tight text-sm">Digitools Studio</p>
+          <p class="text-xs text-slate-400 hidden md:block">數轉工作室</p>
+        </div>
+      </a>
+      <nav class="hidden lg:flex items-center space-x-6 text-sm font-medium text-slate-600">
+        <a href="../index.html" class="hover:text-slate-900 transition-colors">首頁</a>
+        <a href="../services.html" class="hover:text-slate-900 transition-colors">服務內容</a>
+        <a href="../blog.html" class="text-blue-600 font-semibold">Blog</a>
+        <a href="../portfolio.html" class="hover:text-slate-900 transition-colors">作品集</a>
+        <a href="../contact.html" class="hover:text-slate-900 transition-colors">聯絡我們</a>
+      </nav>
+      <a href="../contact.html" class="hidden lg:inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-semibold text-white bg-slate-900 hover:bg-blue-600 transition-all shadow-sm">諮詢案件</a>
+    </div>
+  </header>
+
+  <section class="pt-32 pb-12 lg:pt-40 lg:pb-16 bg-white border-b border-slate-100">
+    <div class="max-w-4xl mx-auto px-5 lg:px-8">
+      <nav class="flex items-center gap-2 text-xs text-slate-400 mb-8">
+        <a href="../index.html" class="hover:text-slate-600 transition-colors">首頁</a>
+        <i class="fa-solid fa-chevron-right text-[10px]"></i>
+        <a href="../blog.html" class="hover:text-slate-600 transition-colors">Blog</a>
+        <i class="fa-solid fa-chevron-right text-[10px]"></i>
+        <span class="text-slate-600">Querymind 技術架構解析</span>
+      </nav>
+      <div class="flex flex-wrap gap-2 mb-6">
+        <span class="inline-block px-3 py-1 bg-indigo-50 border border-indigo-200 text-indigo-700 text-xs rounded-full font-medium">AI Agent</span>
+        <span class="inline-block px-3 py-1 bg-blue-50 border border-blue-200 text-blue-700 text-xs rounded-full font-medium">DB Agent</span>
+        <span class="inline-block px-3 py-1 bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs rounded-full font-medium">商業分析</span>
+      </div>
+      <h1 class="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 leading-tight mb-6">Querymind 技術架構解析：AI Agent 如何應用在商業分析流程</h1>
+      <p class="text-lg text-slate-500 leading-relaxed mb-6">從傳統需求單開發報表，到具備 RBAC 的 DB Agent 架構，拆解 Querymind 如何讓企業用自然語言安全取得資料、圖表、報表與 Insight。</p>
+      <div class="flex flex-wrap items-center gap-4 text-sm text-slate-400">
+        <span class="flex items-center gap-1.5"><i class="fa-regular fa-calendar"></i>2026年6月23日</span>
+        <span class="flex items-center gap-1.5"><i class="fa-regular fa-clock"></i>約 16 分鐘閱讀</span>
+        <span class="flex items-center gap-1.5"><i class="fa-regular fa-building"></i>Digitools Studio</span>
+      </div>
+    </div>
+  </section>
+
+  <article class="py-14">
+    <div class="max-w-4xl mx-auto px-5 lg:px-8 prose">
+      <p>企業內部通常不缺資料，真正的問題是資料取得成本太高。客服想知道某個客戶最近的訂單狀態，業務想查某一區的成交率，主管想比較本月與上月的營收變化，這些答案大多已經在資料庫裡，但對非技術使用者來說，資料庫不是可以直接使用的工具。</p>
+
+      <p>Querymind 的設計方向，是把企業資料庫包裝成一個具備權限控管的 DB Agent。使用者不需要寫 SQL，而是用自然語言提出問題；系統會根據他的角色權限，判斷能查哪些資料、如何查詢、要用表格還是圖表呈現，並在需要時透過分析 Agent 產生進一步的商業洞察。</p>
+
+      <div class="callout">
+        <p><strong>本文觀點：</strong>企業 DB Agent 的第一原則不是讓 AI 看起來很聰明，而是讓資料查詢變得安全、可控、可追蹤，並能把查詢結果轉成可被人判斷的 Insight。</p>
+      </div>
+
+      <h2>Querymind 想解決的企業資料痛點</h2>
+      <p>在企業場景裡，資料問題很少只是「查不到」。更多時候是查詢流程過長、資料權限不清、報表無法覆蓋臨時問題，最後讓原本應該快速回答的營運問題變成一張開發需求單。</p>
+
+      <ul>
+        <li>業務、客服、營運人員知道自己想問什麼，但不會 SQL，也不知道資料表在哪裡。</li>
+        <li>BI 報表適合固定指標，但臨時追問常常需要工程師重新處理。</li>
+        <li>不同角色能看的資料不同，不能讓所有人直接碰完整資料庫。</li>
+        <li>查到數字之後，使用者仍然需要理解變化原因、異常訊號與下一步行動。</li>
+        <li>主管想要報表，但一線人員更需要即時查詢與可操作的回答。</li>
+      </ul>
+
+      <p>因此 Querymind 不是單純的 Text-to-SQL 工具，而是一套把自然語言查詢、角色權限、資料語意、查詢驗證、圖表報表與 Insight 分析串起來的 Agent 系統。</p>
+
+      <h2>傳統需求單開發報表 vs Querymind DB Agent</h2>
+      <p>很多企業資料需求一開始並不是「產品功能」，而只是某個角色想確認一件事。例如客服想知道某類客訴最近是否增加，業務想比較不同區域的成交率，主管想看本月新客戶來源是否改變。這些問題如果用傳統方式處理，通常會變成一張需求單。</p>
+
+      <div class="visual-panel">
+        <div class="visual-panel-header">
+          <div>
+            <p class="text-sm font-bold text-slate-900 m-0">工作方式對比</p>
+            <p class="text-xs text-slate-500 m-0">傳統報表開發適合固定流程；DB Agent 適合探索型資料問題。</p>
+          </div>
+          <span class="text-xs font-semibold text-blue-700 bg-blue-50 border border-blue-100 rounded-full px-3 py-1">Workflow</span>
+        </div>
+        <div class="grid md:grid-cols-2 gap-4 p-5">
+          <div class="comparison-lane">
+            <h3 class="text-base font-black text-slate-900 mt-0 mb-3">傳統需求單流程</h3>
+            <div class="comparison-step"><span class="step-num">1</span><div><strong>提出資料需求</strong><p class="text-sm text-slate-500 m-0">使用者用需求單或會議描述想看的資料。</p></div></div>
+            <div class="comparison-step"><span class="step-num">2</span><div><strong>PM / BA 釐清規格</strong><p class="text-sm text-slate-500 m-0">確認欄位、條件、圖表、權限與報表格式。</p></div></div>
+            <div class="comparison-step"><span class="step-num">3</span><div><strong>工程師開發查詢與介面</strong><p class="text-sm text-slate-500 m-0">撰寫 SQL、API、前端篩選器或 BI 報表。</p></div></div>
+            <div class="comparison-step"><span class="step-num">4</span><div><strong>使用者再追問</strong><p class="text-sm text-slate-500 m-0">看到第一版資料後，常會新增條件或改問題。</p></div></div>
+          </div>
+          <div class="comparison-lane">
+            <h3 class="text-base font-black text-slate-900 mt-0 mb-3">Querymind DB Agent 流程</h3>
+            <div class="comparison-step agent-step"><span class="step-num">1</span><div><strong>自然語言提問</strong><p class="text-sm text-slate-500 m-0">使用者直接描述想查的問題與條件。</p></div></div>
+            <div class="comparison-step agent-step"><span class="step-num">2</span><div><strong>RBAC 限制資料範圍</strong><p class="text-sm text-slate-500 m-0">系統先確認角色、資料表、欄位與資料列權限。</p></div></div>
+            <div class="comparison-step agent-step"><span class="step-num">3</span><div><strong>Agent 產生並驗證查詢</strong><p class="text-sm text-slate-500 m-0">將問題轉成安全可執行的 SQL 或 API Query。</p></div></div>
+            <div class="comparison-step agent-step"><span class="step-num">4</span><div><strong>回傳資料、圖表與 Insight</strong><p class="text-sm text-slate-500 m-0">使用者可繼續追問，不必每次重開需求單。</p></div></div>
+          </div>
+        </div>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>面向</th>
+            <th>傳統需求單 / 報表開發</th>
+            <th>Querymind DB Agent</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>問題提出方式</td>
+            <td>需求單、會議、口頭描述</td>
+            <td>自然語言提問</td>
+          </tr>
+          <tr>
+            <td>查詢邏輯</td>
+            <td>工程師寫 SQL 或 API</td>
+            <td>Agent 產生並驗證查詢</td>
+          </tr>
+          <tr>
+            <td>權限控管</td>
+            <td>分散在後端、BI、資料庫或人工流程</td>
+            <td>查詢前依 RBAC 限制資料表、欄位與資料列</td>
+          </tr>
+          <tr>
+            <td>介面需求</td>
+            <td>常需開發表單、篩選器、圖表</td>
+            <td>依問題動態產生表格、圖表與報表</td>
+          </tr>
+          <tr>
+            <td>適合場景</td>
+            <td>固定、高頻、正式流程</td>
+            <td>臨時查詢、探索分析、初步決策</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>這裡的重點不是說 DB Agent 取代所有報表開發。固定、高頻、需要正式審核的流程仍然適合做成標準介面；Querymind 更適合處理那些還在探索階段、每天都會變、但又確實影響決策的資料問題。</p>
+
+      <h2>為什麼 DB Agent 不能只是 Text-to-SQL</h2>
+      <p>Text-to-SQL 是 DB Agent 的重要能力，但不是完整答案。把一句自然語言轉成 SQL 只是中間步驟；真正困難的是企業場景裡的安全性、語意對應、查詢驗證與結果解讀。</p>
+
+      <ul>
+        <li><strong>權限先於查詢：</strong>Agent 不能先產生 SQL 再想權限，而是要先知道使用者能看哪些資料。</li>
+        <li><strong>資料表不是商業語言：</strong>使用者說「成交率」時，系統要知道它對應到哪些欄位與計算邏輯。</li>
+        <li><strong>SQL 正確不代表商業正確：</strong>查詢可能語法正確，但聚合方式、時間區間或排除條件不符合問題本意。</li>
+        <li><strong>Insight 不能假裝成事實：</strong>資料庫查詢結果是事實，Agent 的分析是推論，兩者必須分層呈現。</li>
+      </ul>
+
+      <div class="note-box">
+        <p class="m-0 text-slate-700"><strong>設計原則：</strong>Querymind 需要把「查詢事實」與「分析推論」拆開。使用者應該清楚知道哪些數字來自資料庫，哪些內容是 Agent 根據資料產生的解讀與建議。</p>
+      </div>
+
+      <h2>Querymind 的整體技術架構</h2>
+      <p>Querymind 可以理解為一個在企業資料庫前方的 Agent Orchestration Layer。它不只是把使用者問題丟給模型，而是先處理身份、權限、資料語意、查詢邏輯、結果呈現與 Insight 分析。</p>
+
+      <div class="visual-panel">
+        <div class="visual-panel-header">
+          <div>
+            <p class="text-sm font-bold text-slate-900 m-0">Querymind Architecture</p>
+            <p class="text-xs text-slate-500 m-0">從使用者問題到資料、圖表、報表與 Insight 的主要層級。</p>
+          </div>
+          <span class="text-xs font-semibold text-teal-700 bg-teal-50 border border-teal-100 rounded-full px-3 py-1">DB Agent</span>
+        </div>
+        <div class="arch-grid">
+          <div class="arch-node">
+            <strong>User Interface</strong>
+            <span>客服、業務、營運、主管用自然語言提問，選擇查詢、比較、趨勢或報表輸出。</span>
+          </div>
+          <div class="flow-arrow"><i class="fa-solid fa-arrow-right hidden md:block"></i><i class="fa-solid fa-arrow-down md:hidden"></i></div>
+          <div class="arch-node">
+            <strong>RBAC + Orchestrator</strong>
+            <span>先確認身份與角色，再決定可用資料範圍、Agent 任務順序與查詢限制。</span>
+          </div>
+          <div class="flow-arrow"><i class="fa-solid fa-arrow-right hidden md:block"></i><i class="fa-solid fa-arrow-down md:hidden"></i></div>
+          <div class="arch-node">
+            <strong>Agent Layer</strong>
+            <span>Intent、Schema、Query、Visualization、Report、Insight 與 QA Agent 分工處理。</span>
+          </div>
+          <div class="arch-node">
+            <strong>Semantic Data Layer</strong>
+            <span>建立商業名詞與資料表欄位的對應，例如客戶、訂單、成交率、流失風險。</span>
+          </div>
+          <div class="flow-arrow"><i class="fa-solid fa-arrow-right hidden md:block"></i><i class="fa-solid fa-arrow-down md:hidden"></i></div>
+          <div class="arch-node">
+            <strong>Database / Warehouse</strong>
+            <span>連接 CRM、客服系統、訂單資料庫、資料倉儲或內部 API。</span>
+          </div>
+          <div class="flow-arrow"><i class="fa-solid fa-arrow-right hidden md:block"></i><i class="fa-solid fa-arrow-down md:hidden"></i></div>
+          <div class="arch-node">
+            <strong>Output Layer</strong>
+            <span>依問題回傳摘要、表格、圖表、報表、異常提醒與下一步建議。</span>
+          </div>
+        </div>
+      </div>
+
+      <p>這樣的架構讓 Querymind 在回答問題前先理解「誰在問」、「他可以看什麼」、「這個問題需要哪些資料」、「應該用哪種形式輸出」。這也是 DB Agent 和一般聊天機器人最大的差別。</p>
+
+      <h2>RBAC 權限設計：不同角色看到不同資料</h2>
+      <p>企業導入 DB Agent 最容易被忽略的風險，是讓 AI 成為繞過權限的入口。Querymind 的查詢流程應該把 RBAC 放在查詢生成之前，先限制可見資料範圍，再讓 Query Agent 在可用範圍內產生查詢。</p>
+
+      <div class="visual-panel">
+        <div class="visual-panel-header">
+          <div>
+            <p class="text-sm font-bold text-slate-900 m-0">RBAC 查詢情境</p>
+            <p class="text-xs text-slate-500 m-0">切換角色，觀察同一個問題會被限制到不同資料範圍。</p>
+          </div>
+          <span class="text-xs font-semibold text-slate-700 bg-white border border-slate-200 rounded-full px-3 py-1">Interactive</span>
+        </div>
+        <div class="p-5">
+          <div class="flex gap-2 overflow-x-auto pb-3">
+            <button class="role-btn active" data-role="客服">客服</button>
+            <button class="role-btn" data-role="業務">業務</button>
+            <button class="role-btn" data-role="主管">主管</button>
+            <button class="role-btn" data-role="財務">財務</button>
+          </div>
+          <div class="grid md:grid-cols-3 gap-4 mt-3">
+            <div class="metric-card">
+              <p class="text-xs font-bold text-slate-400 m-0">可查資料</p>
+              <p id="roleScope" class="text-base font-black text-slate-900 mt-2 mb-0">客戶基本資料、訂單狀態、客服紀錄</p>
+            </div>
+            <div class="metric-card">
+              <p class="text-xs font-bold text-slate-400 m-0">禁止範圍</p>
+              <p id="roleBlocked" class="text-base font-black text-slate-900 mt-2 mb-0">成本、毛利、全公司營收</p>
+            </div>
+            <div class="metric-card">
+              <p class="text-xs font-bold text-slate-400 m-0">典型問題</p>
+              <p id="roleQuestion" class="text-base font-black text-slate-900 mt-2 mb-0">這位客戶最近三筆訂單處理到哪裡？</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <p>RBAC 不只是在 UI 上藏按鈕，而是要深入查詢流程：限制可用資料表、可見欄位、資料列範圍、時間區間，甚至限制可輸出的聚合結果。尤其在客服與業務場景裡，使用者需要快速取得資料，但不能因為方便查詢而暴露不該看的敏感資訊。</p>
+
+      <h2>自然語言查詢流程：從問題到 SQL、圖表與報表</h2>
+      <p>Querymind 處理一個問題時，不應該直接把原句丟給模型生成 SQL。比較穩定的方式，是把流程拆成多段可檢查任務。</p>
+
+      <pre><code>User Question
+  -> Authentication / RBAC
+  -> Intent Detection
+  -> Schema Mapping
+  -> Query Planning
+  -> SQL or API Query Generation
+  -> Query Validation
+  -> Database Execution
+  -> Result Formatting
+  -> Visualization / Report
+  -> Insight Analysis</code></pre>
+
+      <p>例如使用者問：「幫我看上個月北區新客戶成交率有沒有下降，順便列出可能原因。」這句話其實包含多個子任務：</p>
+
+      <ul>
+        <li>判斷使用者要看的是趨勢比較，而不是單一查詢。</li>
+        <li>確認使用者是否能看北區客戶與成交資料。</li>
+        <li>把「新客戶」、「成交率」、「上個月」、「下降」對應到資料表與計算規則。</li>
+        <li>查出本月、上月或同期資料，產生比較結果。</li>
+        <li>選擇合適圖表，例如折線圖或區域比較長條圖。</li>
+        <li>讓 Insight Agent 分析是否有來源、渠道、業務負責人、產品類別等因素影響。</li>
+      </ul>
+
+      <h2>Agent 分工設計</h2>
+      <p>Querymind 的 Agent 設計重點，不是把流程切得越細越好，而是把容易出錯、需要不同上下文的工作拆開。以下是一個可落地的分工方式。</p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Agent</th>
+            <th>負責任務</th>
+            <th>設計重點</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Intent Agent</td>
+            <td>判斷使用者想查詢、比較、生成圖表、產出報表或取得 Insight。</td>
+            <td>避免把分析型問題誤判成單純查詢。</td>
+          </tr>
+          <tr>
+            <td>Permission Agent</td>
+            <td>根據 RBAC 限制資料表、欄位、資料列與輸出範圍。</td>
+            <td>權限要在查詢生成前完成。</td>
+          </tr>
+          <tr>
+            <td>Schema Agent</td>
+            <td>理解資料庫結構與商業語意的對應。</td>
+            <td>把「成交率」、「回購」、「客訴」轉成明確欄位與計算邏輯。</td>
+          </tr>
+          <tr>
+            <td>Query Agent</td>
+            <td>產生 SQL 或內部 API Query。</td>
+            <td>只在被允許的 schema 範圍內工作。</td>
+          </tr>
+          <tr>
+            <td>Query Validator</td>
+            <td>檢查查詢安全、聚合合理性與高風險操作。</td>
+            <td>阻擋越權、全表掃描、危險語句與錯誤聚合。</td>
+          </tr>
+          <tr>
+            <td>Visualization Agent</td>
+            <td>根據資料型態選擇圖表。</td>
+            <td>時間序列用折線圖，分類比較用長條圖，比例資料才用圓餅圖。</td>
+          </tr>
+          <tr>
+            <td>Insight Agent</td>
+            <td>分析異常、趨勢、分群差異與可能原因。</td>
+            <td>必須區分資料事實、推論與建議。</td>
+          </tr>
+          <tr>
+            <td>Report Agent</td>
+            <td>把結果組織成摘要、表格、圖表與決策建議。</td>
+            <td>讓輸出格式穩定，可被複製到週報或主管簡報。</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>從資料到 Insight：Querymind 如何做商業分析</h2>
+      <p>企業使用者查資料時，通常不只想知道「是多少」，也想知道「為什麼」和「下一步怎麼做」。這就是 Insight Agent 的角色。</p>
+
+      <p>但 Insight 不能直接把模型推論包裝成資料庫事實。比較穩定的做法，是把輸出分成三層：</p>
+
+      <ul>
+        <li><strong>資料事實：</strong>來自資料庫查詢，例如「北區新客成交率從 18.4% 降到 14.9%」。</li>
+        <li><strong>分析觀察：</strong>根據資料比較得到的現象，例如「下降主要集中在廣告來源客戶」。</li>
+        <li><strong>行動建議：</strong>根據分析提出的下一步，例如「優先檢查北區廣告素材與客服跟進時間」。</li>
+      </ul>
+
+      <div class="visual-panel">
+        <div class="visual-panel-header">
+          <div>
+            <p class="text-sm font-bold text-slate-900 m-0">Insight Output Example</p>
+            <p class="text-xs text-slate-500 m-0">將資料事實、分析觀察與行動建議分層呈現。</p>
+          </div>
+          <span class="text-xs font-semibold text-indigo-700 bg-indigo-50 border border-indigo-100 rounded-full px-3 py-1">Insight</span>
+        </div>
+        <div class="grid md:grid-cols-3 gap-4 p-5">
+          <div class="metric-card">
+            <p class="text-xs font-bold text-slate-400 m-0">資料事實</p>
+            <p class="text-2xl font-black text-slate-900 mt-2 mb-1">14.9%</p>
+            <p class="text-sm text-slate-500 m-0">北區新客成交率，較上月下降 3.5 個百分點。</p>
+            <div class="bar"><span style="width:48%"></span></div>
+          </div>
+          <div class="metric-card">
+            <p class="text-xs font-bold text-slate-400 m-0">分析觀察</p>
+            <p class="text-2xl font-black text-slate-900 mt-2 mb-1">廣告來源</p>
+            <p class="text-sm text-slate-500 m-0">下降集中在 paid search 與社群廣告客戶。</p>
+            <div class="bar"><span style="width:68%"></span></div>
+          </div>
+          <div class="metric-card">
+            <p class="text-xs font-bold text-slate-400 m-0">行動建議</p>
+            <p class="text-2xl font-black text-slate-900 mt-2 mb-1">先查跟進</p>
+            <p class="text-sm text-slate-500 m-0">檢查客服首次回覆時間與業務追蹤漏斗。</p>
+            <div class="bar"><span style="width:82%"></span></div>
+          </div>
+        </div>
+      </div>
+
+      <p>這種分層能降低 AI 誤導風險。使用者可以先看到資料庫查出的事實，再理解 Agent 的分析推論，最後決定是否採納建議。</p>
+
+      <h2>使用場景：客服、業務與主管怎麼用</h2>
+      <p>Querymind 的價值，在於讓不同角色用自己熟悉的語言取得資料，而不是要求所有人學會資料庫結構。</p>
+
+      <h3>客服場景</h3>
+      <p>客服可以問：「這位客戶最近三筆訂單處理到哪裡？有沒有重複客訴？」系統根據客服角色，只開放客戶基本資料、訂單狀態與客服紀錄，不暴露成本、毛利或全公司營收。</p>
+
+      <h3>業務場景</h3>
+      <p>業務可以問：「我負責的客戶裡，最近 30 天有哪些高機率流失？」Querymind 可以查詢互動頻率、訂單下降、客服紀錄與合約狀態，回傳一份可跟進清單。</p>
+
+      <h3>主管場景</h3>
+      <p>主管可以問：「本月各區成交率和上月相比有什麼變化？請用圖表顯示並列出異常區域。」Querymind 會產生區域比較圖、摘要報告與可能原因。</p>
+
+      <h2>技術挑戰與設計取捨</h2>
+      <p>DB Agent 看起來像是讓 AI 更方便地查資料，但實作上最重要的是限制，而不是放大能力。</p>
+
+      <ul>
+        <li><strong>Agent 數量不是越多越好：</strong>每多一個 Agent，都會增加延遲、成本與錯誤傳遞風險。</li>
+        <li><strong>語意層需要長期維護：</strong>企業常用指標必須有明確定義，不能每次靠模型猜。</li>
+        <li><strong>查詢驗證不能省略：</strong>尤其是跨表 join、聚合、時間區間和權限條件。</li>
+        <li><strong>圖表要有規則：</strong>圖表不是裝飾，而是資料理解工具，選錯圖表會誤導判斷。</li>
+        <li><strong>Insight 要可追溯：</strong>每個結論最好能回到資料來源、查詢條件或比較基準。</li>
+      </ul>
+
+      <p>我的看法是，企業 DB Agent 的產品化關鍵，不是讓 AI 回答所有問題，而是明確定義哪些問題可以自動回答、哪些問題需要補充條件、哪些問題必須拒答或轉人工確認。</p>
+
+      <h2>結語：企業 DB Agent 的價值在於安全、可控與可解讀</h2>
+      <p>Querymind 的價值不只是把自然語言轉成 SQL，而是把企業資料查詢與商業分析流程重新整理成一套可控系統。使用者用自然語言提出問題，系統依照 RBAC 限制資料範圍，再透過 Agent 分工完成查詢、圖表、報表與 Insight。</p>
+
+      <p>傳統報表開發仍然重要，尤其是固定、高頻、正式營運流程。但在大量臨時查詢、探索分析與初步決策場景中，DB Agent 可以大幅降低資料取得門檻，讓業務、客服、營運與主管更快從資料裡得到答案。</p>
+
+      <p>真正有價值的 AI Agent，不是把資料庫變成一個無限制的聊天入口，而是在安全、權限、語意與驗證都被設計好的前提下，讓企業內部的人更有效率地理解資料、產生報表，並把數字轉成可行的商業判斷。</p>
+    </div>
+  </article>
+
+  <section class="py-12 bg-slate-50 border-t border-slate-100">
+    <div class="max-w-4xl mx-auto px-5 lg:px-8 flex flex-col sm:flex-row gap-4 justify-between items-center">
+      <a href="../blog.html" class="inline-flex items-center gap-2 text-sm font-semibold text-blue-600 hover:text-blue-700 transition-colors">
+        <i class="fa-solid fa-arrow-left text-xs"></i> 回 Blog 列表
+      </a>
+      <a href="../contact.html" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-semibold text-white bg-slate-900 hover:bg-blue-600 transition-all">
+        討論 AI Agent 導入
+      </a>
+    </div>
+  </section>
+
+  <button id="back-to-top" aria-label="回到頂端" class="fixed bottom-[5.5rem] right-6 z-40 w-10 h-10 bg-white border border-slate-200 rounded-full shadow-md flex items-center justify-center text-slate-500 hover:text-slate-900 hover:border-slate-400 hover:shadow-lg transition-all opacity-0 translate-y-2 pointer-events-none">
+    <i class="fa-solid fa-chevron-up text-xs"></i>
+  </button>
+
+  <div class="fixed bottom-6 right-6 z-50 group">
+    <a href="https://lin.ee/6IdgZC4" target="_blank" rel="noopener noreferrer" class="flex items-center gap-2.5 bg-line hover:bg-line-dark text-white shadow-2xl rounded-full px-5 py-3.5 transition-all duration-300 hover:scale-105" title="LINE 諮詢">
+      <i class="fa-brands fa-line text-2xl"></i>
+      <span class="text-sm font-semibold hidden md:block">LINE 諮詢</span>
+    </a>
+  </div>
+
+  <script>
+    const navbar = document.getElementById('navbar');
+    const progress = document.getElementById('reading-progress');
+    const bttBtn = document.getElementById('back-to-top');
+
+    window.addEventListener('scroll', () => {
+      const y = window.scrollY;
+      if (y > 20) {
+        navbar.classList.add('glass-header', 'py-3');
+        navbar.classList.remove('py-5');
+      } else {
+        navbar.classList.remove('glass-header', 'py-3');
+        navbar.classList.add('py-5');
+      }
+
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const pct = docHeight > 0 ? (y / docHeight) * 100 : 0;
+      progress.style.width = Math.min(100, Math.max(0, pct)) + '%';
+
+      if (y > 500) {
+        bttBtn.classList.remove('opacity-0', 'translate-y-2', 'pointer-events-none');
+      } else {
+        bttBtn.classList.add('opacity-0', 'translate-y-2', 'pointer-events-none');
+      }
+    }, { passive: true });
+
+    bttBtn.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    const roleData = {
+      '客服': {
+        scope: '客戶基本資料、訂單狀態、客服紀錄',
+        blocked: '成本、毛利、全公司營收',
+        question: '這位客戶最近三筆訂單處理到哪裡？'
+      },
+      '業務': {
+        scope: '負責客戶、商機階段、成交紀錄',
+        blocked: '其他業務客戶、公司整體毛利',
+        question: '我負責的客戶裡，哪些最近有流失風險？'
+      },
+      '主管': {
+        scope: '團隊績效、區域營收、趨勢比較',
+        blocked: '非管轄部門個資、未授權財務細項',
+        question: '本月各區成交率和上月相比有什麼變化？'
+      },
+      '財務': {
+        scope: '營收、付款狀態、發票與成本彙總',
+        blocked: '客服對話內容、非必要個人資料',
+        question: '本季逾期未付款金額集中在哪些客戶類型？'
+      }
+    };
+
+    document.querySelectorAll('.role-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const data = roleData[btn.dataset.role];
+        document.getElementById('roleScope').textContent = data.scope;
+        document.getElementById('roleBlocked').textContent = data.blocked;
+        document.getElementById('roleQuestion').textContent = data.question;
+      });
+    });
+  </script>
+</body>
+</html>

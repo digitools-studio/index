@@ -1,5 +1,23 @@
 [
   {
+    "slug": "querymind-ai-agent-business-analysis-architecture",
+    "title": "Querymind 技術架構解析：AI Agent 如何應用在商業分析流程",
+    "description": "解析 Querymind 如何以 DB Agent、RBAC 權限控管、自然語言查詢、圖表報表生成與 Insight Agent，協助企業使用者安全取得資料並完成商業分析。",
+    "excerpt": "企業內部通常不缺資料，真正的問題是資料取得成本太高。這篇從傳統需求單開發報表的流程出發，拆解 Querymind 如何透過 DB Agent、RBAC 權限控管、自然語言查詢、圖表報表與 Insight Agent，讓客服、業務與主管更安全、快速地取得資料並完成商業判斷...",
+    "date": "2026-06-23",
+    "dateDisplay": "2026年6月23日",
+    "readingTime": 16,
+    "featured": true,
+    "gradient": "indigo",
+    "icon": "fa-solid fa-brain",
+    "category": "AI應用",
+    "tags": [
+      { "label": "AI Agent", "color": "indigo" },
+      { "label": "DB Agent", "color": "blue" },
+      { "label": "商業分析", "color": "green" }
+    ]
+  },
+  {
     "slug": "automation-flow-design-playbook",
     "title": "自動化流程設計實戰：從競品監控到通知編排的落地方法",
     "description": "延伸競品監控案例，拆解流程設計、資料模型、告警規則與維運機制，建立可擴充的自動化系統。",
@@ -43,7 +61,7 @@
     "date": "2026-05-01",
     "dateDisplay": "2026年5月1日",
     "readingTime": 10,
-    "featured": true,
+    "featured": false,
     "gradient": "orange",
     "icon": "fa-brands fa-python",
     "category": "自動化",
@@ -61,7 +79,7 @@
     "date": "2026-04-28",
     "dateDisplay": "2026年4月28日",
     "readingTime": 12,
-    "featured": true,
+    "featured": false,
     "gradient": "blue",
     "icon": "fa-solid fa-magnifying-glass",
     "category": "SEO",
