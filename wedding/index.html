@@ -141,7 +141,7 @@
     .dot.is-active{width:22px;background:var(--coffee)}
     .page-label,.autoplay-indicator{position:fixed;z-index:7;top:calc(16px + env(safe-area-inset-top,0px));padding:8px 12px;border-radius:999px;background:rgba(255,253,249,.62);border:1px solid rgba(255,255,255,.62);font-size:12px;color:var(--coffee-2);backdrop-filter:blur(12px)}
     .page-label{left:16px}
-    .autoplay-indicator{left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:8px}
+    .autoplay-indicator{left:50%;transform:translateX(-50%);display:none;align-items:center;gap:8px}
     .autoplay-indicator span{width:7px;height:7px;border-radius:50%;background:var(--rose)}
     .music-panel{position:fixed;z-index:9;right:16px;top:calc(16px + env(safe-area-inset-top,0px))}
     .music-btn{width:44px;height:44px;border:0;border-radius:50%;background:rgba(255,253,249,.76);color:var(--coffee);box-shadow:0 12px 28px rgba(88,48,31,.16);font-weight:900}
@@ -280,14 +280,8 @@
   CONFIG.share.qrImage = `https://api.qrserver.com/v1/create-qr-code/?size=512x512&data=${encodeURIComponent(CONFIG.share.url)}`;
 
   const app=document.getElementById("app");
-  let currentIndex=0, started=false, isDragging=false, touchStartX=0, touchStartY=0, touchLastX=0, touchLastY=0, gestureAxis="", gestureMovedScroller=false, autoTimer=null, autoPausedUntil=0, audio=null, lightboxIndex=0, musicHintLocked=false, wheelLocked=false;
-  const GESTURE_LOCK_PX=16;
-  const AXIS_LOCK_RATIO=1.42;
-  const HORIZONTAL_SWIPE_PX=58;
-  const VERTICAL_SWIPE_PX=66;
+  let currentIndex=0, started=false, audio=null, lightboxIndex=0, musicHintLocked=false;
   const slideCount=10;
-  const AUTO_DURATIONS=[6000,7000,7000,6000,6000,6000,7500,9000,null,null];
-  const MANUAL_PAUSE_MS=12000;
   const galleryKeys=["gallery1","gallery2","gallery3","gallery4","gallery5","gallery6"];
 
   function setViewportHeight(){ document.documentElement.style.setProperty("--vh", `${window.innerHeight * 0.01}px`); }
@@ -345,12 +339,7 @@
     document.getElementById("prevBtn").addEventListener("click",()=>userGoTo(currentIndex-1));
     document.getElementById("nextBtn").addEventListener("click",()=>userGoTo(currentIndex+1));
     document.getElementById("dots").addEventListener("click",e=>{ const d=e.target.closest(".dot"); if(d) userGoTo(Number(d.dataset.index)); });
-    const slider=document.getElementById("slider");
-    slider.addEventListener("touchstart",onTouchStart,{passive:true});
-    slider.addEventListener("touchmove",onTouchMove,{passive:false});
-    slider.addEventListener("touchend",onTouchEnd,{passive:true});
-    slider.addEventListener("wheel",onWheel,{passive:false});
-    document.addEventListener("keydown",e=>{ if(e.key==="Escape"){ closeCalendarModal(); closeShareModal(); closeGallery(); } if(!started)return; if(e.key==="ArrowRight") userGoTo(currentIndex+1); if(e.key==="ArrowLeft") userGoTo(currentIndex-1); });
+    document.addEventListener("keydown",e=>{ if(e.key==="Escape"){ closeCalendarModal(); closeShareModal(); closeGallery(); } });
     document.addEventListener("click",handleDocumentClick);
     document.getElementById("musicBtn").addEventListener("click",toggleMusic);
     setupRsvp(); setupMessages(); renderLastRsvpSummary(); renderMessagesList(); update();
@@ -372,7 +361,7 @@
     if(e.target.closest("[data-gallery-prev]")){ moveGallery(-1); return; }
   }
 
-  function startExperience(){ if(started)return; started=true; document.getElementById("intro").classList.add("is-hidden"); document.getElementById("main").classList.add("is-ready"); scheduleAutoplay(); tryPlayAudio(); }
+  function startExperience(){ if(started)return; started=true; document.getElementById("intro").classList.add("is-hidden"); document.getElementById("main").classList.add("is-ready"); tryPlayAudio(); }
   function setMusicHint(visible){
     const hint=document.getElementById("musicHint");
     if(!hint)return;
@@ -400,89 +389,13 @@
     tryPlayAudio();
   }
 
-  function onTouchStart(e){
-    if(isInteractiveTarget(e.target))return;
-    const t=e.changedTouches[0];
-    touchStartX=touchLastX=t.clientX;
-    touchStartY=touchLastY=t.clientY;
-    gestureAxis="";
-    gestureMovedScroller=false;
-    isDragging=true;
-    pauseAutoplay(MANUAL_PAUSE_MS);
-  }
-  function onTouchMove(e){
-    if(!isDragging)return;
-    const t=e.changedTouches[0];
-    touchLastX=t.clientX;
-    touchLastY=t.clientY;
-    const dx=touchLastX-touchStartX, dy=touchLastY-touchStartY;
-    const absX=Math.abs(dx), absY=Math.abs(dy);
-    if(!gestureAxis && Math.max(absX,absY)>GESTURE_LOCK_PX){
-      if(absX>absY*AXIS_LOCK_RATIO) gestureAxis="x";
-      else if(absY>absX*AXIS_LOCK_RATIO) gestureAxis="y";
-      else return;
-    }
-    if(!gestureAxis)return;
-    if(gestureAxis==="y"){
-      if(canScrollWithin(e.target,-dy)){ gestureMovedScroller=true; return; }
-      e.preventDefault();
-      return;
-    }
-    e.preventDefault();
-    document.getElementById("slides").classList.add("is-dragging");
-    const pct=(-currentIndex*100)+(dx/window.innerWidth*100*.76);
-    document.getElementById("slides").style.transform=`translate3d(${pct}%,0,0)`;
-  }
-  function onTouchEnd(){
-    if(!isDragging)return;
-    isDragging=false;
-    document.getElementById("slides").classList.remove("is-dragging");
-    const dx=touchLastX-touchStartX, dy=touchLastY-touchStartY;
-    const absX=Math.abs(dx), absY=Math.abs(dy);
-    if(gestureMovedScroller || !gestureAxis){ update(); return; }
-    if(gestureAxis==="x"){
-      if(absX<HORIZONTAL_SWIPE_PX || absX<absY*1.2){ update(); return; }
-      userGoTo(currentIndex+(dx<0?1:-1), dx<0?"next":"prev");
-      return;
-    }
-    if(absY<VERTICAL_SWIPE_PX || absY<absX*1.2){ update(); return; }
-    userGoTo(currentIndex+(dy<0?1:-1), dy<0?"next":"prev");
-  }
-  function onWheel(e){
-    if(!started || isInteractiveTarget(e.target))return;
-    const absX=Math.abs(e.deltaX), absY=Math.abs(e.deltaY);
-    if(Math.max(absX,absY)<28)return;
-    if(absY>absX*AXIS_LOCK_RATIO && canScrollWithin(e.target,e.deltaY))return;
-    let direction=0;
-    if(absX>absY*AXIS_LOCK_RATIO) direction=e.deltaX>0?1:-1;
-    else if(absY>absX*AXIS_LOCK_RATIO) direction=e.deltaY>0?1:-1;
-    else return;
-    e.preventDefault();
-    if(wheelLocked)return;
-    wheelLocked=true;
-    userGoTo(currentIndex+direction, direction>0?"next":"prev");
-    setTimeout(()=>{ wheelLocked=false; },760);
-  }
-  function isInteractiveTarget(target){ return Boolean(target.closest("button,a,input,textarea,select,form,[role='button'],.modal.is-open")); }
-  function canScrollWithin(target,deltaY){
-    const scroller=target.closest(".scrollable,.dialog,.paper-card.grid-2");
-    if(!scroller)return false;
-    const max=scroller.scrollHeight-scroller.clientHeight;
-    if(max<=1)return false;
-    if(deltaY>0)return scroller.scrollTop<max-1;
-    if(deltaY<0)return scroller.scrollTop>1;
-    return false;
-  }
   function normalizeIndex(i){ return (i+slideCount)%slideCount; }
-  function userGoTo(i,direction){ pauseAutoplay(MANUAL_PAUSE_MS); goTo(i,false,direction); }
-  function goTo(i,fromAuto=false,direction){ const next=normalizeIndex(i); const turnDirection=direction || ((next>currentIndex || (currentIndex===slideCount-1 && next===0)) ? "next" : "prev"); if(next!==currentIndex) triggerPageTurn(turnDirection); currentIndex=next; update(); scheduleAutoplay(); }
-  function update(){ const slides=document.getElementById("slides"); if(slides) slides.style.transform=`translate3d(${-currentIndex*100}%,0,0)`; document.querySelectorAll(".slide").forEach((s,i)=>s.classList.toggle("is-active",i===currentIndex)); document.querySelectorAll(".dot").forEach((d,i)=>d.classList.toggle("is-active",i===currentIndex)); document.getElementById("pageLabel").textContent=`${String(currentIndex+1).padStart(2,"0")} / ${String(slideCount).padStart(2,"0")}`; updateAutoplayIndicator(); }
+  function userGoTo(i,direction){ goTo(i,false,direction); }
+  function goTo(i,fromAuto=false,direction){ const next=normalizeIndex(i); const turnDirection=direction || ((next>currentIndex || (currentIndex===slideCount-1 && next===0)) ? "next" : "prev"); if(next!==currentIndex) triggerPageTurn(turnDirection); currentIndex=next; update(); }
+  function update(){ const slides=document.getElementById("slides"); if(slides) slides.style.transform=`translate3d(${-currentIndex*100}%,0,0)`; document.querySelectorAll(".slide").forEach((s,i)=>s.classList.toggle("is-active",i===currentIndex)); document.querySelectorAll(".dot").forEach((d,i)=>d.classList.toggle("is-active",i===currentIndex)); document.getElementById("pageLabel").textContent=`${String(currentIndex+1).padStart(2,"0")} / ${String(slideCount).padStart(2,"0")}`; }
   function triggerPageTurn(direction="next"){ const layer=document.getElementById("pageTurnLayer"); layer.classList.remove("is-turning","turn-prev"); if(direction==="prev") layer.classList.add("turn-prev"); void layer.offsetWidth; layer.classList.add("is-turning"); setTimeout(()=>layer.classList.remove("is-turning","turn-prev"),720); }
-  function pauseAutoplay(ms){ autoPausedUntil=Date.now()+ms; scheduleAutoplay(); }
-  function scheduleAutoplay(){ clearTimeout(autoTimer); if(!started)return; const d=AUTO_DURATIONS[currentIndex]; if(!d){ updateAutoplayIndicator(); return; } const wait=Math.max(d,autoPausedUntil-Date.now()); autoTimer=setTimeout(()=>goTo(currentIndex+1,true),wait); updateAutoplayIndicator(); }
-  function updateAutoplayIndicator(){ const el=document.getElementById("autoIndicator"); const d=AUTO_DURATIONS[currentIndex]; if(!d){ el.innerHTML="<span></span> Paused"; return; } const sec=Math.round(d/1000); el.innerHTML=`<span></span> ${sec}s Auto`; }
 
-  function openCalendarModal(){ document.getElementById("calendarModal").classList.add("is-open"); pauseAutoplay(60000); }
+  function openCalendarModal(){ document.getElementById("calendarModal").classList.add("is-open"); }
   function closeCalendarModal(){ document.getElementById("calendarModal")?.classList.remove("is-open"); }
   function toGoogleDate(dt){ return new Date(dt).toISOString().replace(/[-:]/g,"").replace(/\.\d{3}Z$/, "Z"); }
   function buildGoogleCalendarUrl(){ const cal=CONFIG.calendar; const params=new URLSearchParams({ action:"TEMPLATE", text:cal.title, dates:`${toGoogleDate(cal.startDateTime)}/${toGoogleDate(cal.endDateTime)}`, details:cal.description, location:`${CONFIG.banquet.venue}｜${CONFIG.banquet.address}`, ctz:cal.timezone }); return `https://calendar.google.com/calendar/render?${params.toString()}`; }
@@ -491,7 +404,7 @@
   function buildIcsContent(){ const cal=CONFIG.calendar; return ["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//Digitools Studio//Wedding Invitation//ZH-TW","CALSCALE:GREGORIAN","METHOD:PUBLISH","BEGIN:VEVENT",`UID:${CONFIG.weddingId}@digitools-studio.github.io`,`DTSTAMP:${toIcsDate(new Date().toISOString())}`,`DTSTART:${toIcsDate(cal.startDateTime)}`,`DTEND:${toIcsDate(cal.endDateTime)}`,`SUMMARY:${escapeIcsText(cal.title)}`,`DESCRIPTION:${escapeIcsText(cal.description)}`,`LOCATION:${escapeIcsText(CONFIG.banquet.venue + "｜" + CONFIG.banquet.address)}`,"BEGIN:VALARM","TRIGGER:-P1D","ACTION:DISPLAY",`DESCRIPTION:${escapeIcsText("明天是思傑與彥綾的婚宴，記得確認時間與交通方式。")}`,"END:VALARM","END:VEVENT","END:VCALENDAR"].join("\r\n"); }
   function downloadIcs(){ downloadTextFile("sijie-yanling-wedding.ics",buildIcsContent(),"text/calendar;charset=utf-8"); showToast("已下載行事曆檔案，內含前一天提醒"); track("calendar_ics",{}); }
 
-  function openShareModal(){ document.getElementById("shareModal").classList.add("is-open"); pauseAutoplay(60000); }
+  function openShareModal(){ document.getElementById("shareModal").classList.add("is-open"); }
   function closeShareModal(){ document.getElementById("shareModal")?.classList.remove("is-open"); }
   async function shareInvitation(){ const data={title:CONFIG.share.title,text:CONFIG.share.description,url:CONFIG.share.url}; try{ if(navigator.share) await navigator.share(data); else await copyToClipboard(data.url), showToast("已複製喜帖連結，可以貼到 LINE 分享囉"); track("share_invitation",{}); }catch(err){ if(err.name!=="AbortError") showToast("分享未完成，可改用 QR Code 或下載邀請卡"); } }
   async function downloadInvitationCard(){
@@ -507,7 +420,7 @@
   function roundRect(ctx,x,y,w,h,r){ ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
   function loadImage(src){ return new Promise((resolve,reject)=>{ const img=new Image(); img.onload=()=>resolve(img); img.onerror=reject; img.src=src; }); }
 
-  function openGallery(i){ lightboxIndex=Number.isFinite(i)?i:0; updateGallery(); document.getElementById("galleryLightbox").classList.add("is-open"); pauseAutoplay(60000); }
+  function openGallery(i){ lightboxIndex=Number.isFinite(i)?i:0; updateGallery(); document.getElementById("galleryLightbox").classList.add("is-open"); }
   function closeGallery(){ document.getElementById("galleryLightbox")?.classList.remove("is-open"); }
   function moveGallery(d){ lightboxIndex=(lightboxIndex+d+galleryKeys.length)%galleryKeys.length; updateGallery(); }
   function updateGallery(){ const keyName=galleryKeys[lightboxIndex]; const p=CONFIG.photos[keyName]; const img=document.getElementById("galleryImage"); if(p.src) img.style.backgroundImage=`url("${p.src}")`; else img.style.backgroundImage="linear-gradient(135deg, rgba(195,136,121,.55), rgba(255,253,249,.88))"; }
