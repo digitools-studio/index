@@ -195,7 +195,7 @@
 
       <div class="flex flex-wrap items-center gap-4 text-sm text-slate-400">
         <span class="flex items-center gap-1.5"><i class="fa-regular fa-calendar" aria-hidden="true"></i>2026年7月1日</span>
-        <span class="flex items-center gap-1.5"><i class="fa-regular fa-clock" aria-hidden="true"></i>約 10 分鐘閱讀</span>
+        <span class="flex items-center gap-1.5"><i class="fa-regular fa-clock" aria-hidden="true"></i>約 12 分鐘閱讀</span>
         <span class="flex items-center gap-1.5"><i class="fa-regular fa-building" aria-hidden="true"></i>Digitools Studio</span>
       </div>
     </div>
@@ -210,8 +210,9 @@
             <a href="#before-after" class="block hover:text-blue-600 transition-colors">盤點前後差別</a>
             <a href="#six-nodes" class="block hover:text-blue-600 transition-colors">6 個節點</a>
             <a href="#scenario" class="block hover:text-blue-600 transition-colors">模擬情境</a>
+            <a href="#use-case" class="block hover:text-blue-600 transition-colors">使用案例</a>
+            <a href="#record-form" class="block hover:text-blue-600 transition-colors">紀錄表單設計</a>
             <a href="#lead-table" class="block hover:text-blue-600 transition-colors">商機追蹤表</a>
-            <a href="#sheets" class="block hover:text-blue-600 transition-colors">試算表管理</a>
             <a href="#follow-up" class="block hover:text-blue-600 transition-colors">跟進紀錄</a>
             <a href="#stages" class="block hover:text-blue-600 transition-colors">三階段導入</a>
             <a href="#not-yet" class="block hover:text-blue-600 transition-colors">何時先不自動化</a>
@@ -227,8 +228,9 @@
             <a href="#before-after" class="block hover:text-blue-600 transition-colors">盤點前後差別</a>
             <a href="#six-nodes" class="block hover:text-blue-600 transition-colors">6 個節點</a>
             <a href="#scenario" class="block hover:text-blue-600 transition-colors">模擬情境</a>
+            <a href="#use-case" class="block hover:text-blue-600 transition-colors">使用案例</a>
+            <a href="#record-form" class="block hover:text-blue-600 transition-colors">紀錄表單設計</a>
             <a href="#lead-table" class="block hover:text-blue-600 transition-colors">商機追蹤表</a>
-            <a href="#sheets" class="block hover:text-blue-600 transition-colors">試算表管理</a>
             <a href="#follow-up" class="block hover:text-blue-600 transition-colors">跟進紀錄</a>
             <a href="#stages" class="block hover:text-blue-600 transition-colors">三階段導入</a>
             <a href="#not-yet" class="block hover:text-blue-600 transition-colors">何時先不自動化</a>
@@ -306,6 +308,29 @@
             </div>
           </section>
 
+          <section id="use-case">
+            <h2>完整模擬使用案例：一則 LINE 詢問如何進入追蹤流程</h2>
+            <p>假設一家在地服務工作室平常接到的詢問，多半來自 LINE、Email 與網站表單。某天晚上，LINE 進來一則訊息：</p>
+            <div class="article-note">
+              <p>「您好，我想了解下週是否可以安排到府服務。地點在台北市，主要想處理客廳與兩間房間，想先知道大概流程與費用怎麼估。」</p>
+            </div>
+            <p>這不是正式報價所需的完整資訊，但已經足夠判斷它不是單純閒聊，也不是垃圾訊息。這時候流程盤點的目的，就是把這則訊息從聊天視窗轉成一筆可追蹤的商機。</p>
+            <div class="visual-panel">
+              <div class="visual-panel__header">
+                <span class="visual-panel__label"><i class="fa-solid fa-clipboard-check" aria-hidden="true"></i>使用流程</span>
+                <p class="visual-panel__title">從原始訊息到可追蹤商機</p>
+              </div>
+              <div class="flow-lane">
+                <div class="flow-node"><b>1</b><strong>判斷來源</strong><span>來源分類為 LINE，來源細節記錄為網站 LINE 入口。</span></div>
+                <div class="flow-node"><b>2</b><strong>分類需求</strong><span>分類為問價需求，因為訊息已提到服務時間、地點與費用估算。</span></div>
+                <div class="flow-node"><b>3</b><strong>建立紀錄</strong><span>建立 Lead ID，填入地區、需求摘要、目前狀態與負責人。</span></div>
+                <div class="flow-node"><b>4</b><strong>回覆下一步</strong><span>先說明估價需要補齊坪數、現況照片或服務範圍，再邀約簡短訪談。</span></div>
+                <div class="flow-node"><b>5</b><strong>設定跟進</strong><span>若對方未回覆，設定下次跟進日，不讓訊息留在聊天記憶裡。</span></div>
+              </div>
+            </div>
+            <p>這個案例的重點不是把客戶導去填很多欄位，而是把「已經出現在訊息裡的資訊」先整理出來。表單紀錄工具、試算表或簡易後台只是承載資料的位置；真正重要的是你知道要記錄什麼、誰要處理、下一步是什麼。</p>
+          </section>
+
           <section id="lead-table">
             <h2>商機追蹤表：先用欄位群組，不要一開始就做太複雜</h2>
             <p>商機追蹤表不是越大越好。對在地服務工作室或小型團隊來說，第一版重點是「每一筆詢問都有地方放，而且看得出下一步」。</p>
@@ -322,10 +347,39 @@
             <p>這些欄位不是標準答案。以「需求明確度」或「急迫性」為例，它只是工作室內部排序的方式，不代表客戶一定會成交，也不應該被包裝成精準預測。</p>
           </section>
 
-          <section id="sheets">
-            <h2>Google Sheets 可以怎麼放進第一版流程？</h2>
-            <p>如果團隊還不需要完整後台，Google Sheets 可以作為第一版商機追蹤表。根據 Google Docs Editors Help 的官方說明，Google Sheets 可以建立儲存格下拉選單，也可以透過 Data validation 設定規則；Data validation 是資料驗證規則，白話來說，就是限制欄位可以填哪些內容。下拉選單選項可以來自範圍或自行輸入（查詢日期：2026-07-01）。</p>
-            <p>實務上，可以建立一個「設定」工作表，放銷售階段、Lead 狀態、來源分類、需求類型、流失原因等選項，再讓主表用下拉選單引用。這段不是工具教學，重點是先讓狀態穩定、欄位一致、資料能被追蹤。</p>
+          <section id="record-form">
+            <h2>紀錄表單怎麼設計：先從決策問題倒推欄位</h2>
+            <p>紀錄表單不是把所有資料都收進來，而是幫你回答下一步的決策問題。設計時可以先問：「看到這筆詢問後，我要判斷什麼？」再回頭決定欄位。</p>
+            <div class="visual-panel">
+              <div class="visual-panel__header">
+                <span class="visual-panel__label"><i class="fa-solid fa-pen-ruler" aria-hidden="true"></i>設計思維</span>
+                <p class="visual-panel__title">從問題倒推欄位，而不是從工具開始</p>
+              </div>
+              <div class="visual-grid">
+                <div class="visual-card"><strong>能不能回覆？</strong><span>需要稱呼、聯絡方式、來源與聯絡偏好。</span></div>
+                <div class="visual-card"><strong>是不是適合服務？</strong><span>需要地區、需求類型、服務範圍與初步描述。</span></div>
+                <div class="visual-card"><strong>要不要安排訪談？</strong><span>需要需求明確度、急迫性、預算區間或可配合時間。</span></div>
+                <div class="visual-card"><strong>誰要接手？</strong><span>需要負責人、目前狀態、下次跟進日與備註。</span></div>
+              </div>
+            </div>
+            <p>以剛才的 LINE 詢問為例，第一版紀錄表單可以先長這樣：</p>
+            <div class="article-table-wrap">
+              <table class="article-table">
+                <thead>
+                  <tr><th>欄位</th><th>填寫方式</th><th>設計原因</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td>來源分類</td><td>LINE</td><td>知道詢問從哪裡來，後續才能回顧哪些入口最常被使用。</td></tr>
+                  <tr><td>需求類型</td><td>到府服務詢問</td><td>快速分辨一般詢問、問價需求或合作邀約。</td></tr>
+                  <tr><td>服務地區</td><td>台北市</td><td>判斷是否在可服務範圍內。</td></tr>
+                  <tr><td>需求摘要</td><td>客廳與兩間房間，詢問流程與費用估算</td><td>讓下一位接手的人不用重翻聊天紀錄。</td></tr>
+                  <tr><td>目前狀態</td><td>待補資料</td><td>這筆詢問還需要坪數、現況照片或服務範圍。</td></tr>
+                  <tr><td>下一步行動</td><td>回覆補資料清單並邀約訪談</td><td>避免停在「已讀或已回」這種模糊狀態。</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p>如果用試算表管理，可以另外準備一張「設定」頁，統一維護來源分類、需求類型、Lead 狀態、流失原因與負責人選項。這樣不同人更新紀錄時，不會同時出現「已回覆」、「回覆完成」、「已回」三種意思相近但難以統計的狀態。</p>
+            <p>這段的重點仍然不是工具，而是設計過程：先定義決策問題，再設計欄位，最後才決定用表單紀錄工具、試算表或簡易後台承接。</p>
           </section>
 
           <section id="follow-up">
@@ -383,7 +437,7 @@
             <div class="article-faq">
               <details>
                 <summary>網站詢問流程盤點需要多久？</summary>
-                <p>如果資料來源不多，第一次可以先用一到兩次工作會議整理出版本一。重點不是一次做到完美，而是先讓每一則詢問有地方被記錄、有狀態、有下一步。</p>
+                <p>如果詢問入口不多，第一次可以先用一到兩次工作會議整理出版本一。重點不是一次做到完美，而是先讓每一則詢問有地方被記錄、有狀態、有下一步。</p>
               </details>
               <details>
                 <summary>一定要做 CRM 嗎？</summary>
@@ -402,14 +456,6 @@
                 <p>AI 可以協助摘要訊息、分類詢問、整理跟進紀錄或草擬回覆。但在報價、承諾時程、確認合作條件前，仍需要人判斷與確認。</p>
               </details>
             </div>
-          </section>
-
-          <section id="sources">
-            <h2>資料來源</h2>
-            <p>本文未使用搜尋量、轉換率、節省工時或客戶成果數字。工具能力僅引用官方文件支撐高層次描述。</p>
-            <ul>
-              <li>Google Docs Editors Help, Create an in-cell dropdown list，查詢日期：2026-07-01，<a href="https://support.google.com/docs/answer/186103" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-700 underline">https://support.google.com/docs/answer/186103</a></li>
-            </ul>
           </section>
 
           <section id="cta">
