@@ -20,6 +20,7 @@
   },
   {
     "slug": "querymind-ai-agent-business-analysis-architecture",
+    "href": "posts/querymind-ai-agent-business-analysis-architecture.html",
     "title": "Querymind 技術架構解析：AI Agent 如何應用在商業分析流程",
     "description": "解析 Querymind 如何以 DB Agent、RBAC 權限控管、自然語言查詢、圖表報表生成與 Insight Agent，協助企業使用者安全取得資料並完成商業分析。",
     "excerpt": "企業內部通常不缺資料，真正的問題是資料取得成本太高。這篇從傳統需求單開發報表的流程出發，拆解 Querymind 如何透過 DB Agent、RBAC 權限控管、自然語言查詢、圖表報表與 Insight Agent，讓客服、業務與主管更安全、快速地取得資料並完成商業判斷...",
@@ -38,6 +39,7 @@
   },
   {
     "slug": "automation-flow-design-playbook",
+    "href": "posts/automation-flow-design-playbook.html",
     "title": "自動化流程設計實戰：從競品監控到通知編排的落地方法",
     "description": "延伸競品監控案例，拆解流程設計、資料模型、告警規則與維運機制，建立可擴充的自動化系統。",
     "excerpt": "很多團隊把自動化做成單一腳本，短期可用、長期難維護。這篇整理我們在競品監控專案裡實際使用的流程設計方法，從觸發條件、資料欄位定義、差異比對、通知分級到錯誤復原，帶你一步步把自動化做成可擴充的作業系統...",
@@ -56,6 +58,7 @@
   },
   {
     "slug": "line-liff-guide",
+    "href": "posts/line-liff-guide.html",
     "title": "LINE LIFF 開發指南：從零到一的完整流程",
     "description": "在 LINE 內嵌入客製應用已成為常見需求。本文分享如何從申請、開發、測試到上線的完整流程。",
     "excerpt": "LINE LIFF（LINE Front-end Framework）讓開發者能在 LINE 應用內提供客製化互動體驗。相比傳統 App 開發，LIFF 只需要前端知識即可快速上線，並直接取得用戶的 LINE ID 與基本資料...",
@@ -74,6 +77,7 @@
   },
   {
     "slug": "python-crawler-price-monitor",
+    "href": "posts/python-crawler-price-monitor.html",
     "title": "Python 爬蟲實戰：自動監控競品價格與動向",
     "description": "競品分析不需要人工手動查看。透過 Python 爬蟲與排程，自動監控市場變化並生成報告。",
     "excerpt": "做競品分析最花時間的部分就是資料蒐集。我們曾為客戶建立自動化系統，每天自動抓取競品網站資訊、解析關鍵數據，並透過 LINE 推播通知相關人員，讓業務團隊隨時掌握市場動態...",
@@ -92,6 +96,7 @@
   },
   {
     "slug": "seo-best-practices",
+    "href": "posts/seo-best-practices.html",
     "title": "SEO 最佳實踐：如何讓你的網站被搜尋引擎看見",
     "description": "好的 SEO 策略能帶來源源不絕的有機流量。分享我們在 Web 開發中應用的 SEO 技巧。",
     "excerpt": "我們接過多個網站開發案件，發現很多企業忽略了 SEO 優化。實際上，透過正確的語意化 HTML、Meta 標籤設定、JSON-LD 結構化資料和內部連結策略，網站的可見度可以大幅提升...",
@@ -110,6 +115,7 @@
   },
   {
     "slug": "n8n-workflow-automation",
+    "href": "posts/n8n-workflow-automation.html",
     "title": "AI 時代的自動化工作流：如何用 N8N 整合多個應用",
     "description": "無代碼工具讓非技術人員也能建立複雜流程。分享如何用 N8N 打造企業級自動化系統。",
     "excerpt": "N8N 是一個功能強大的無代碼自動化平台，能整合 Slack、Google Sheets 等數百個應用。相比 Zapier 的按次計費，N8N 支援自託管，讓中小企業也能以低成本建立可靠的自動化流程...",

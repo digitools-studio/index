@@ -38,7 +38,9 @@ description: Pre-publication QA for Digital Studio static blog articles. Use bef
 - 是否符合目前網站風格。
 - 是否不小心修改既有正式頁面。
 - 正式文章是否位於目前 repo 的既有正式路徑 `posts/*.html`，而不是誤放到 `index/posts/`。
-- Blog 入口、`posts/manifest.json`、canonical、OG URL、JSON-LD URL 是否全部指向同一個正式路徑。
+- Blog 入口是否只有根目錄 `blog.html`；不得建立或保留 `index/blog.html` 作為第二個索引。
+- `blog.html`、`posts/manifest.json`、`sitemap.xml`、canonical、OG URL、JSON-LD URL 是否全部指向同一組正式路徑。
+- `posts/manifest.json` 每篇文章是否都有明確 `href`，且該檔案存在。
 - 是否存在重複文章副本或空的過渡資料夾，例如同一 slug 同時出現在 `index/posts/` 與 `posts/`。
 - 是否有非正式文章內容準備被提交，例如 `articles/drafts/` 下的 content angle、research brief、SEO brief、full draft、review 或 QA 工作檔。
 - 文章內容是否過長且缺乏掃描性；若正文密度過高，建議改成摘要卡、流程節點、狀態標籤、導入路線卡或可展開 FAQ。
@@ -52,7 +54,7 @@ description: Pre-publication QA for Digital Studio static blog articles. Use bef
 5. 檢查內部連結與資源路徑是否符合檔案位置。
 6. 檢查圖片是否有 `alt`，裝飾圖需明確 `alt=""`。
 7. 檢查文中外部事實是否有來源與查詢日期。
-8. 檢查 Blog 路徑整合：`posts/[slug].html`、`posts/manifest.json`、`blog.html`、canonical、OG URL 與 JSON-LD 必須一致；不得留下 `index/posts` 之類舊路徑入口。
+8. 檢查 Blog 路徑整合：`blog.html` 是唯一文章索引；`posts/[slug].html`、`posts/manifest.json`、`sitemap.xml`、canonical、OG URL 與 JSON-LD 必須一致；manifest 每篇文章需有明確 `href` 且檔案存在；不得留下 `index/blog.html`、`index/posts` 之類舊路徑入口。
 9. 檢查 `git status` 與 `git diff`，確認未意外修改首頁、服務頁、部署設定或既有正式文章；同時確認 `articles/drafts/` 等非正式文章內容不會被 commit。
 10. 若可用，啟動本機靜態伺服器並用瀏覽器檢查桌機與手機寬度。
 
@@ -70,3 +72,4 @@ description: Pre-publication QA for Digital Studio static blog articles. Use bef
 - SEO、JSON-LD、結構、語言、連結與路徑檢查通過。
 - 若未執行瀏覽器預覽，需明確說明原因與替代檢查。
 - `git status` 中可發布檔案與非正式工作稿已清楚區分；正式文章沒有重複路徑。
+- `sitemap.xml` 已列出正式 Blog 索引與正式文章頁，沒有列出被移除的過渡路徑。
