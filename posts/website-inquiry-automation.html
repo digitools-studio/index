@@ -1,0 +1,644 @@
+﻿<!DOCTYPE html>
+<html lang="zh-Hant-TW" class="scroll-smooth">
+<head>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VXKMN286TH"></script>
+  <script src="../ga_event.min.js"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-VXKMN286TH');
+  </script>
+
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>形象網站可以做哪些自動化？從網站詢問到客戶跟進的完整流程 | Digitools Studio</title>
+  <meta name="description" content="了解形象網站如何透過表單、通知、分派與追蹤流程，將每一則詢問變成可管理的商機。從低成本做法到客製化導入，一次看懂。" />
+  <meta name="robots" content="index, follow" />
+  <meta name="author" content="Digitools Studio" />
+  <meta name="theme-color" content="#3B82F6" />
+  <link rel="canonical" href="https://digitools-studio.github.io/posts/website-inquiry-automation.html" />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://digitools-studio.github.io/posts/website-inquiry-automation.html" />
+  <meta property="og:site_name" content="Digitools Studio" />
+  <meta property="og:locale" content="zh_TW" />
+  <meta property="og:title" content="形象網站可以做哪些自動化？從網站詢問到客戶跟進的完整流程 | Digitools Studio" />
+  <meta property="og:description" content="了解形象網站如何透過表單、通知、分派與追蹤流程，將每一則詢問變成可管理的商機。從低成本做法到客製化導入，一次看懂。" />
+  <meta property="og:image" content="https://digitools-studio.github.io/Static/Image/store_logo.png" />
+  <meta property="og:image:alt" content="Digitools Studio 品牌標誌" />
+  <meta property="article:published_time" content="2026-06-30" />
+  <meta property="article:modified_time" content="2026-07-01" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="形象網站可以做哪些自動化？從網站詢問到客戶跟進的完整流程 | Digitools Studio" />
+  <meta name="twitter:description" content="了解形象網站如何透過表單、通知、分派與追蹤流程，將每一則詢問變成可管理的商機。" />
+  <meta name="twitter:image" content="https://digitools-studio.github.io/Static/Image/store_logo.png" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['"Noto Sans TC"', 'sans-serif'] },
+          colors: { line: { DEFAULT: '#00B900', dark: '#009900', light: '#e6f8e6' } }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body { font-family: 'Noto Sans TC', sans-serif; }
+    .glass-header { background: rgba(255,255,255,0.93); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); box-shadow: 0 1px 3px rgba(0,0,0,0.07); }
+    #reading-progress { position: fixed; top: 0; left: 0; height: 3px; z-index: 9999; background: linear-gradient(90deg, #3B82F6, #00B900); transition: width 0.1s linear; }
+    #mobile-menu { transform-origin: top center; transition: opacity 0.22s ease, transform 0.22s cubic-bezier(0.16,1,0.3,1), visibility 0s linear 0.22s; opacity: 0; transform: translateY(-8px) scaleY(0.96); visibility: hidden; }
+    #mobile-menu.menu-open { opacity: 1; transform: translateY(0) scaleY(1); visibility: visible; transition: opacity 0.22s ease, transform 0.22s cubic-bezier(0.16,1,0.3,1); }
+    .article-body h2 { font-size: 1.5rem; font-weight: 800; color: #0f172a; margin: 2.5rem 0 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid #e2e8f0; }
+    .article-body h3 { font-size: 1.125rem; font-weight: 700; color: #1e293b; margin: 2rem 0 0.75rem; }
+    .article-body p { color: #374151; line-height: 1.85; margin-bottom: 1.25rem; }
+    .article-body ul, .article-body ol { color: #374151; line-height: 1.8; margin: 0 0 1.25rem 1.25rem; }
+    .article-body li { margin-bottom: 0.45rem; }
+    .article-body code { background: #f1f5f9; color: #0f172a; padding: 0.15em 0.45em; border-radius: 4px; font-size: 0.875em; font-family: 'Courier New', monospace; }
+    .article-body pre { background: #0f172a; border-radius: 12px; padding: 1.25rem; overflow-x: auto; margin: 1.5rem 0; }
+    .article-body pre code { background: none; color: #e2e8f0; padding: 0; font-size: 0.85rem; line-height: 1.7; }
+    .article-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 1.5rem 0; border: 1px solid #e2e8f0; border-radius: 14px; background: white; }
+    .article-table { width: 100%; min-width: 680px; border-collapse: collapse; font-size: 0.95rem; }
+    .article-table th { background: #f8fafc; color: #0f172a; text-align: left; font-weight: 800; }
+    .article-table th, .article-table td { padding: 0.9rem 1rem; border-bottom: 1px solid #e2e8f0; vertical-align: top; color: #374151; }
+    .article-table tr:last-child td { border-bottom: 0; }
+    .article-note { border-left: 4px solid #3B82F6; background: #eff6ff; color: #1e40af; padding: 1rem 1.25rem; border-radius: 0 10px 10px 0; margin: 1.5rem 0; }
+    .article-note p { margin: 0; color: #1e40af; }
+    .visual-panel { margin: 1.5rem 0; border: 1px solid #e2e8f0; border-radius: 18px; background: #fff; box-shadow: 0 12px 30px rgba(15, 23, 42, 0.06); overflow: hidden; }
+    .visual-panel__header { padding: 1.1rem 1.25rem; background: #f8fafc; border-bottom: 1px solid #e2e8f0; }
+    .visual-panel__label { display: inline-flex; align-items: center; gap: .4rem; font-size: .78rem; font-weight: 800; color: #2563eb; margin-bottom: .35rem; }
+    .visual-panel__title { margin: 0; font-size: 1.05rem; font-weight: 900; color: #0f172a; }
+    .visual-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: .85rem; padding: 1.25rem; }
+    .visual-card { border: 1px solid #e2e8f0; border-radius: 14px; padding: 1rem; background: #fff; }
+    .visual-card strong { display: block; color: #0f172a; font-size: .95rem; margin-bottom: .35rem; }
+    .visual-card span, .visual-card p { color: #64748b; font-size: .9rem; line-height: 1.65; margin: 0; }
+    .flow-lane { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: .75rem; padding: 1.25rem; }
+    .flow-node { position: relative; min-height: 104px; border: 1px solid #dbeafe; border-radius: 14px; background: linear-gradient(180deg, #ffffff 0%, #eff6ff 100%); padding: .95rem; }
+    .flow-node b { display: inline-flex; width: 1.75rem; height: 1.75rem; border-radius: 999px; align-items: center; justify-content: center; background: #2563eb; color: #fff; font-size: .8rem; margin-bottom: .55rem; }
+    .flow-node strong { display: block; color: #0f172a; font-size: .95rem; margin-bottom: .25rem; }
+    .flow-node span { color: #64748b; font-size: .86rem; line-height: 1.55; }
+    .split-compare { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; margin: 1.5rem 0; }
+    .compare-card { border: 1px solid #e2e8f0; border-radius: 16px; padding: 1.15rem; background: #fff; }
+    .compare-card.before { border-color: #fed7aa; background: #fff7ed; }
+    .compare-card.after { border-color: #bbf7d0; background: #f0fdf4; }
+    .compare-card h3 { margin-top: 0; }
+    .tag-list { display: flex; flex-wrap: wrap; gap: .55rem; margin: 1rem 0 0; }
+    .tag-list span { display: inline-flex; align-items: center; border: 1px solid #e2e8f0; border-radius: 999px; padding: .42rem .7rem; color: #334155; background: #fff; font-size: .84rem; font-weight: 700; }
+    .status-board { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: .7rem; margin: 1.25rem 0; }
+    .status-chip { border: 1px solid #e2e8f0; border-radius: 12px; padding: .8rem; background: #fff; }
+    .status-chip strong { display: block; color: #0f172a; font-size: .9rem; }
+    .status-chip span { display: block; color: #64748b; font-size: .82rem; line-height: 1.45; margin-top: .25rem; }
+    .decision-row { display: grid; grid-template-columns: 150px minmax(0,1fr); gap: 1rem; padding: 1rem; border-bottom: 1px solid #e2e8f0; }
+    .decision-row:last-child { border-bottom: 0; }
+    .decision-row strong { color: #0f172a; }
+    .decision-row p { margin: .25rem 0 0; font-size: .92rem; line-height: 1.6; }
+    .metric-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(145px, 1fr)); gap: .75rem; margin: 1.25rem 0; }
+    .metric-card { border: 1px solid #e2e8f0; border-radius: 14px; padding: .95rem; background: #f8fafc; }
+    .metric-card strong { display: block; color: #0f172a; font-size: .9rem; margin-bottom: .25rem; }
+    .metric-card span { color: #64748b; font-size: .82rem; line-height: 1.45; }
+    .article-faq details { border: 1px solid #e2e8f0; border-radius: 14px; background: #fff; padding: .95rem 1rem; margin-bottom: .7rem; }
+    .article-faq summary { cursor: pointer; font-weight: 800; color: #0f172a; }
+    .article-faq details p { margin: .75rem 0 0; }
+    @media (max-width: 640px) {
+      .decision-row { grid-template-columns: 1fr; gap: .35rem; }
+      .flow-node { min-height: auto; }
+    }
+    #back-to-top { transition: opacity 0.3s ease, transform 0.3s ease; }
+    #back-to-top.btt-hidden { opacity: 0; transform: translateY(8px); pointer-events: none; }
+    #back-to-top.btt-visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
+  </style>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https://digitools-studio.github.io/posts/website-inquiry-automation.html"
+    },
+    "headline": "形象網站不只是名片：把每一則詢問變成可追蹤商機的自動化流程",
+    "description": "了解形象網站如何透過表單、通知、分派與追蹤流程，將每一則詢問變成可管理的商機。從低成本做法到客製化導入，一次看懂。",
+    "image": "https://digitools-studio.github.io/Static/Image/store_logo.png",
+    "author": {
+      "@type": "Organization",
+      "name": "Digitools Studio",
+      "url": "https://digitools-studio.github.io/"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Digitools Studio",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://digitools-studio.github.io/Static/Image/store_logo.png"
+      }
+    },
+    "datePublished": "2026-06-30",
+    "dateModified": "2026-07-01",
+    "inLanguage": "zh-Hant-TW",
+    "isPartOf": {
+      "@type": "Blog",
+      "url": "https://digitools-studio.github.io/blog.html"
+    }
+  }
+  </script>
+</head>
+<body class="bg-white text-slate-800 antialiased">
+  <div id="reading-progress" style="width:0%"></div>
+
+  <header id="navbar" class="fixed w-full top-0 z-50 transition-all duration-300 py-5 bg-transparent">
+    <div class="max-w-7xl mx-auto px-5 lg:px-8 flex justify-between items-center">
+      <a href="../index.html" class="flex items-center space-x-3 group">
+        <div class="w-9 h-9 bg-slate-900 text-white rounded-xl flex items-center justify-center font-bold text-base shadow-md group-hover:bg-blue-600 transition-colors duration-300">D</div>
+        <div>
+          <p class="font-bold text-slate-900 leading-tight text-sm">Digitools Studio</p>
+          <p class="text-xs text-slate-400 hidden md:block">數轉工作室</p>
+        </div>
+      </a>
+      <nav class="hidden lg:flex items-center space-x-6 text-sm font-medium text-slate-600" aria-label="主導覽">
+        <a href="../index.html" class="hover:text-slate-900 transition-colors">首頁</a>
+        <a href="../services.html" class="hover:text-slate-900 transition-colors">服務內容</a>
+        <a href="../blog.html" class="text-blue-600 font-semibold">Blog</a>
+        <a href="../portfolio.html" class="hover:text-slate-900 transition-colors">作品集</a>
+        <a href="../contact.html" class="hover:text-slate-900 transition-colors">聯絡我們</a>
+      </nav>
+      <div class="flex items-center gap-3">
+        <a href="../contact.html" class="hidden lg:inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-semibold text-white bg-slate-900 hover:bg-blue-600 transition-all shadow-sm">諮詢案件</a>
+        <button id="mobile-menu-btn" class="lg:hidden w-10 h-10 flex items-center justify-center rounded-xl text-slate-700 hover:bg-slate-100 transition-colors" aria-label="開啟選單">
+          <i class="fa-solid fa-bars text-lg"></i>
+        </button>
+      </div>
+    </div>
+    <nav id="mobile-menu" class="lg:hidden absolute top-full left-0 w-full bg-white border-b border-slate-100 shadow-lg px-5 py-4 flex flex-col gap-1" aria-label="手機導覽">
+      <a href="../index.html" class="text-sm font-medium text-slate-700 hover:text-slate-900 py-3 border-b border-slate-100">首頁</a>
+      <a href="../services.html" class="text-sm font-medium text-slate-700 hover:text-slate-900 py-3 border-b border-slate-100">服務內容</a>
+      <a href="../blog.html" class="text-sm font-semibold text-blue-600 py-3 border-b border-slate-100">Blog</a>
+      <a href="../portfolio.html" class="text-sm font-medium text-slate-700 hover:text-slate-900 py-3 border-b border-slate-100">作品集</a>
+      <a href="../contact.html" class="text-sm font-medium text-slate-700 hover:text-slate-900 py-3 border-b border-slate-100">聯絡我們</a>
+      <a href="../contact.html" class="mt-3 w-full text-center px-5 py-3 rounded-lg text-white bg-slate-900 font-medium">諮詢案件</a>
+    </nav>
+  </header>
+
+  <section class="pt-32 pb-12 lg:pt-40 lg:pb-16 bg-white border-b border-slate-100">
+    <div class="max-w-3xl mx-auto px-5 lg:px-8">
+      <nav class="flex items-center gap-2 text-xs text-slate-400 mb-8" aria-label="麵包屑">
+        <a href="../index.html" class="hover:text-slate-600 transition-colors">首頁</a>
+        <i class="fa-solid fa-chevron-right text-[10px]" aria-hidden="true"></i>
+        <a href="../blog.html" class="hover:text-slate-600 transition-colors">Blog</a>
+        <i class="fa-solid fa-chevron-right text-[10px]" aria-hidden="true"></i>
+        <span class="text-slate-600">網站詢問流程自動化</span>
+      </nav>
+
+      <div class="flex flex-wrap gap-2 mb-6">
+        <span class="inline-block px-3 py-1 bg-purple-50 border border-purple-200 text-purple-700 text-xs rounded-full font-medium">資料自動化</span>
+        <span class="inline-block px-3 py-1 bg-blue-50 border border-blue-200 text-blue-700 text-xs rounded-full font-medium">流程設計</span>
+        <span class="inline-block px-3 py-1 bg-green-50 border border-green-200 text-green-700 text-xs rounded-full font-medium">形象網站</span>
+      </div>
+
+      <h1 class="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 leading-tight mb-6">形象網站不只是名片：把每一則詢問變成可追蹤商機的自動化流程</h1>
+      <p class="text-lg text-slate-500 leading-relaxed mb-6">了解形象網站如何透過表單、通知、分派與追蹤流程，將每一則詢問變成可管理的商機。從低成本做法到客製化導入，一次看懂。</p>
+
+      <div class="flex flex-wrap items-center gap-4 text-sm text-slate-400">
+        <span class="flex items-center gap-1.5"><i class="fa-regular fa-calendar" aria-hidden="true"></i>2026年6月30日</span>
+        <span class="flex items-center gap-1.5"><i class="fa-regular fa-clock" aria-hidden="true"></i>約 12 分鐘閱讀</span>
+        <span class="flex items-center gap-1.5"><i class="fa-regular fa-building" aria-hidden="true"></i>Digitools Studio</span>
+      </div>
+    </div>
+  </section>
+
+  <main class="py-14">
+    <div class="max-w-5xl mx-auto px-5 lg:px-8 grid lg:grid-cols-[220px_minmax(0,1fr)] gap-10">
+      <aside class="hidden lg:block">
+        <div class="sticky top-28 border border-slate-200 rounded-2xl p-5 bg-white">
+          <p class="text-sm font-bold text-slate-900 mb-4">文章目錄</p>
+          <nav class="space-y-2 text-sm text-slate-500" aria-label="文章目錄">
+            <a href="#quick-answer" class="block hover:text-blue-600 transition-colors">先給答案</a>
+            <a href="#why-inquiries-drop" class="block hover:text-blue-600 transition-colors">詢問為什麼沒有下文</a>
+            <a href="#flow-map" class="block hover:text-blue-600 transition-colors">詢問流程圖</a>
+            <a href="#responsibility" class="block hover:text-blue-600 transition-colors">系統與人的分工</a>
+            <a href="#scenario" class="block hover:text-blue-600 transition-colors">模擬案例</a>
+            <a href="#form-fields" class="block hover:text-blue-600 transition-colors">表單欄位設計</a>
+            <a href="#workflow-controls" class="block hover:text-blue-600 transition-colors">狀態與提醒</a>
+            <a href="#stages" class="block hover:text-blue-600 transition-colors">導入路線</a>
+            <a href="#metrics" class="block hover:text-blue-600 transition-colors">可衡量指標</a>
+            <a href="#privacy" class="block hover:text-blue-600 transition-colors">個資與權限提醒</a>
+            <a href="#faq" class="block hover:text-blue-600 transition-colors">FAQ</a>
+            <a href="#sources" class="block hover:text-blue-600 transition-colors">資料來源</a>
+            <a href="#cta" class="block hover:text-blue-600 transition-colors">流程盤點</a>
+          </nav>
+        </div>
+      </aside>
+
+      <article class="min-w-0">
+        <aside class="mb-8 lg:hidden border border-slate-200 rounded-2xl p-5 bg-white">
+          <p class="text-sm font-bold text-slate-900 mb-4">文章目錄</p>
+          <nav class="space-y-2 text-sm text-slate-500" aria-label="手機文章目錄">
+            <a href="#quick-answer" class="block hover:text-blue-600 transition-colors">先給答案</a>
+            <a href="#why-inquiries-drop" class="block hover:text-blue-600 transition-colors">詢問為什麼沒有下文</a>
+            <a href="#flow-map" class="block hover:text-blue-600 transition-colors">詢問流程圖</a>
+            <a href="#responsibility" class="block hover:text-blue-600 transition-colors">系統與人的分工</a>
+            <a href="#scenario" class="block hover:text-blue-600 transition-colors">模擬案例</a>
+            <a href="#form-fields" class="block hover:text-blue-600 transition-colors">表單欄位設計</a>
+            <a href="#workflow-controls" class="block hover:text-blue-600 transition-colors">狀態與提醒</a>
+            <a href="#stages" class="block hover:text-blue-600 transition-colors">導入路線</a>
+            <a href="#metrics" class="block hover:text-blue-600 transition-colors">可衡量指標</a>
+            <a href="#privacy" class="block hover:text-blue-600 transition-colors">個資與權限提醒</a>
+            <a href="#faq" class="block hover:text-blue-600 transition-colors">FAQ</a>
+            <a href="#sources" class="block hover:text-blue-600 transition-colors">資料來源</a>
+            <a href="#cta" class="block hover:text-blue-600 transition-colors">流程盤點</a>
+          </nav>
+        </aside>
+
+        <div class="article-body">
+          <p>很多在地服務工作室都有這種經驗：網站做好了，作品也整理得很漂亮，客戶卻從聯絡表單、LINE、Instagram、Email 和電話分散詢問。白天忙著服務現場，晚上才發現有人只留一句「想了解方案」，有人問了日期但沒有留地點，也有人收到報價後就沒有再追蹤。</p>
+          <p>這篇文章的重點不是再列更多工具，而是把詢問流程畫清楚。Digital Studio 的判斷是：形象網站要從「品牌名片」變成「商機入口」，關鍵在於每一則詢問是否能被接住、建檔、分派、提醒與回顧。</p>
+
+          <section id="quick-answer">
+            <h2>先給答案：形象網站最常見的五種自動化</h2>
+            <div class="visual-panel">
+              <div class="visual-panel__header">
+                <span class="visual-panel__label"><i class="fa-solid fa-bolt" aria-hidden="true"></i>Quick answer</span>
+                <p class="visual-panel__title">先做能減少漏接與漏追蹤的流程，不急著做大型系統。</p>
+              </div>
+              <div class="visual-grid">
+                <div class="visual-card"><strong>接住詢問</strong><span>表單、LINE、電話都可以是入口，但要有建檔規則。</span></div>
+                <div class="visual-card"><strong>補齊資料</strong><span>用欄位引導客戶留下服務類型、地區、日期與聯絡偏好。</span></div>
+                <div class="visual-card"><strong>通知分派</strong><span>新詢問進來時，通知正確負責人或備援人員。</span></div>
+                <div class="visual-card"><strong>追蹤提醒</strong><span>待回覆、待補資料、已報價、需追蹤都要有狀態。</span></div>
+                <div class="visual-card"><strong>回顧改善</strong><span>看哪些來源常進件、哪些欄位最常缺、哪些案件卡住。</span></div>
+              </div>
+            </div>
+            <p>這裡說的自動化，是把固定重複的步驟交給系統先處理。它不是替你做所有判斷，而是減少轉貼、補登、找訊息這些容易漏掉的工作。</p>
+          </section>
+
+          <section id="why-inquiries-drop">
+            <h2>為什麼網站詢問容易沒有下文</h2>
+            <div class="split-compare">
+              <div class="compare-card before">
+                <h3>常見卡點</h3>
+                <ul>
+                  <li>網站表單、LINE、社群、電話各自分散。</li>
+                  <li>客戶只寫「想詢問方案」，沒有地區、日期或服務範圍。</li>
+                  <li>報價後沒有下一次追蹤日期。</li>
+                  <li>負責人不在時，其他人不知道進度。</li>
+                </ul>
+              </div>
+              <div class="compare-card after">
+                <h3>該補的流程</h3>
+                <ul>
+                  <li>每個來源都有建檔或同步規則。</li>
+                  <li>表單欄位只問下一步會用到的資料。</li>
+                  <li>每筆詢問都有負責人、狀態與提醒。</li>
+                  <li>案件回到同一份可信清單，方便交接。</li>
+                </ul>
+              </div>
+            </div>
+          </section>
+
+          <section id="flow-map">
+            <h2>詢問流程圖：表單不是主檔，通知也不是主檔</h2>
+            <p>網站表單、LINE、社群私訊、電話與 Email 都可以是入口，但「單一資料來源」不代表只能使用一個工具，而是每一筆詢問都要有一個唯一可信的狀態紀錄位置。CRM 是客戶關係管理系統，用來保存客戶資料與互動紀錄；小型團隊也可以先用受控的追蹤表開始。</p>
+            <div class="visual-panel">
+              <div class="visual-panel__header">
+                <span class="visual-panel__label"><i class="fa-solid fa-diagram-project" aria-hidden="true"></i>Flow</span>
+                <p class="visual-panel__title">多來源詢問最後要回到同一份案件清單。</p>
+              </div>
+              <div class="flow-lane">
+                <div class="flow-node"><b>1</b><strong>多來源進線</strong><span>網站、LINE、社群、電話、Email。</span></div>
+                <div class="flow-node"><b>2</b><strong>建檔規則</strong><span>自動同步，或由內部人員代為建檔。</span></div>
+                <div class="flow-node"><b>3</b><strong>主要案件清單</strong><span>來源、需求、負責人、狀態集中查看。</span></div>
+                <div class="flow-node"><b>4</b><strong>分派與提醒</strong><span>設定首次回覆期限與追蹤日期。</span></div>
+                <div class="flow-node"><b>5</b><strong>結案回顧</strong><span>成交、未成交、暫緩與卡關點可被檢查。</span></div>
+              </div>
+            </div>
+          </section>
+
+          <section id="responsibility">
+            <h2>系統做什麼、人做什麼</h2>
+            <p>自動化適合減少漏接、轉貼、忘記追蹤；它不應該自行承諾價格、日期或服務範圍。AI 是人工智慧工具，在本文中指協助摘要、分類或草擬文字的功能，仍需要人做最後確認。</p>
+            <div class="visual-panel">
+              <div class="decision-row">
+                <strong>新詢問進入</strong>
+                <p>系統協助建檔、通知、初步分類；人員判斷需求是否合理、是否可服務。</p>
+              </div>
+              <div class="decision-row">
+                <strong>資料不足</strong>
+                <p>系統提醒缺欄位或提供補資料連結；人員決定是否足夠報價或安排諮詢。</p>
+              </div>
+              <div class="decision-row">
+                <strong>報價追蹤</strong>
+                <p>系統建立提醒與下一次追蹤日期；人員確認價格、時程與服務內容。</p>
+              </div>
+              <div class="decision-row">
+                <strong>AI 協助</strong>
+                <p>AI 可摘要、分類、草擬回覆；正式承諾仍由人確認。</p>
+              </div>
+            </div>
+          </section>
+
+          <section id="scenario">
+            <h2>模擬案例：在地服務工作室的一天</h2>
+            <div class="article-note">
+              <p>以下是假設情境，不是真實客戶案例，也不代表任何已發生的專案成果。</p>
+            </div>
+            <div class="visual-panel">
+              <div class="visual-panel__header">
+                <span class="visual-panel__label"><i class="fa-regular fa-building" aria-hidden="true"></i>Scenario</span>
+                <p class="visual-panel__title">白天在現場服務，晚上才整理訊息，是很多在地服務品牌的日常。</p>
+              </div>
+              <div class="visual-grid">
+                <div class="visual-card"><strong>客戶會問</strong><span>價格、日期、服務範圍、是否可到府。</span></div>
+                <div class="visual-card"><strong>來源會散</strong><span>網站表單、LINE、Instagram、電話都可能進來。</span></div>
+                <div class="visual-card"><strong>資料會缺</strong><span>只寫「想詢問方案」，後續還要補問。</span></div>
+                <div class="visual-card"><strong>追蹤會斷</strong><span>報價後沒有下一次追蹤日期，就容易停在記憶裡。</span></div>
+              </div>
+            </div>
+            <p>同一套邏輯可套用到不同產業：到府服務看地區、日期、服務類型；預約諮詢看可預約時段、需求主題、聯絡偏好；客製報價看尺寸、數量、預算區間與交期。</p>
+          </section>
+
+          <section id="form-fields">
+            <h2>表單欄位設計：只問下一步會用到的資料</h2>
+            <p>表單不是欄位越多越好。每一欄都應該支援下一個判斷；暫時用不到的資料不要先收，避免增加填寫阻力，也減少個資管理負擔。</p>
+            <div class="visual-panel">
+              <div class="visual-grid">
+                <div class="visual-card"><strong>所有情境必備</strong><span>姓名或稱呼、聯絡方式、服務類型、需求描述。</span></div>
+                <div class="visual-card"><strong>到府或活動服務</strong><span>地區或服務地點、希望日期或時段。</span></div>
+                <div class="visual-card"><strong>客製化服務</strong><span>預算區間、尺寸、數量、交期。</span></div>
+                <div class="visual-card"><strong>降低來回溝通</strong><span>聯絡偏好：電話、LINE、Email。</span></div>
+                <div class="visual-card"><strong>建立信任</strong><span>個資告知：說明蒐集目的、使用方式與聯絡方式。</span></div>
+              </div>
+            </div>
+            <p>實務做法：回頭看最近的詢問紀錄，找出你每次都要補問的問題。那些問題，才是第一版表單最該優先處理的欄位。</p>
+          </section>
+
+          <section id="workflow-controls">
+            <h2>狀態與提醒：讓每一筆詢問都有下一步</h2>
+            <p>狀態的目的，是讓團隊一眼知道下一步。小型團隊先從五個狀態開始就夠：待回覆、待補資料、已報價、需追蹤、已結案。</p>
+            <div class="status-board">
+              <div class="status-chip"><strong>待回覆</strong><span>已分派，尚未第一次回覆。</span></div>
+              <div class="status-chip"><strong>待補資料</strong><span>缺地區、日期、預算或需求細節。</span></div>
+              <div class="status-chip"><strong>已報價</strong><span>已提供方案，需要設定追蹤日期。</span></div>
+              <div class="status-chip"><strong>需追蹤</strong><span>等待客戶決定，避免重複催促。</span></div>
+              <div class="status-chip"><strong>已結案</strong><span>成交、未成交、暫緩或無效都要收尾。</span></div>
+            </div>
+            <div class="visual-panel">
+              <div class="flow-lane">
+                <div class="flow-node"><b>1</b><strong>指派負責人</strong><span>每筆詢問都有第一回覆者。</span></div>
+                <div class="flow-node"><b>2</b><strong>設定期限</strong><span>由團隊依服務特性設定。</span></div>
+                <div class="flow-node"><b>3</b><strong>逾期提醒</strong><span>提醒原負責人或備援人員。</span></div>
+                <div class="flow-node"><b>4</b><strong>報價追蹤</strong><span>報價後建立下一次追蹤日期。</span></div>
+              </div>
+            </div>
+          </section>
+
+          <section id="stages">
+            <h2>導入路線：從表單到 AI，不要跳步</h2>
+            <p>MVP 是最小可行產品，意思是用最小範圍驗證關鍵假設；在這個主題裡，第一版 MVP 可以先驗證「詢問是否能被接住、分派、追蹤」。API 是系統之間交換資料與指令的介面，通常等跨系統需求明確後再討論。</p>
+            <div class="visual-panel">
+              <div class="decision-row">
+                <strong>1. 接住詢問</strong>
+                <p>適合一人處理、詢問量不大。先做表單、通知、共享追蹤表；不急著做 CRM、AI、客製後台。</p>
+              </div>
+              <div class="decision-row">
+                <strong>2. 建立協作</strong>
+                <p>適合兩人以上處理詢問。補上分派規則、狀態、提醒與回覆範本；不急著把所有工具都串接。</p>
+              </div>
+              <div class="decision-row">
+                <strong>3. 系統化管理</strong>
+                <p>需要權限、歷程、報表或跨系統串接時，再評估簡易後台、資料庫、CRM 或 API 整合。</p>
+              </div>
+              <div class="decision-row">
+                <strong>4. AI 協作</strong>
+                <p>流程穩定、資料格式一致後，再評估摘要、分類、回覆草稿；不讓 AI 自動承諾價格或服務。</p>
+              </div>
+            </div>
+          </section>
+
+          <section id="metrics">
+            <h2>效益怎麼看：只追蹤能幫你改流程的指標</h2>
+            <p>本文不宣稱導入網站詢問流程後一定會增加詢問、提升轉換或節省多少成本。比較負責任的做法，是先建立可衡量指標，再用實際紀錄觀察流程是否改善。</p>
+            <div class="metric-grid">
+              <div class="metric-card"><strong>未回覆詢問數</strong><span>看漏接風險。</span></div>
+              <div class="metric-card"><strong>待補資料數</strong><span>看表單欄位是否清楚。</span></div>
+              <div class="metric-card"><strong>報價後未追蹤</strong><span>看提醒機制是否有效。</span></div>
+              <div class="metric-card"><strong>常見詢問類型</strong><span>看內容與服務頁是否需要調整。</span></div>
+              <div class="metric-card"><strong>最常缺漏欄位</strong><span>看第一版表單要改哪裡。</span></div>
+            </div>
+          </section>
+
+          <section id="privacy">
+            <h2>個資、資料保存與權限提醒</h2>
+            <div class="article-note">
+              <p>以下為網站詢問流程的實務提醒，不構成法律意見，也不能取代法務或合格專業人士的判斷。</p>
+            </div>
+            <div class="visual-grid">
+              <div class="visual-card"><strong>只收必要資料</strong><span>到府服務一開始可先收行政區，不一定需要完整地址。</span></div>
+              <div class="visual-card"><strong>說明資料用途</strong><span>不要只放同意勾選框，應說明蒐集目的與使用方式。</span></div>
+              <div class="visual-card"><strong>控管查看權限</strong><span>確認表單、追蹤表與通知群組的擁有人。</span></div>
+              <div class="visual-card"><strong>處理異動與刪除</strong><span>人員離職要收回權限；客戶要求停止聯繫時要能同步更新。</span></div>
+            </div>
+          </section>
+
+          <section id="faq">
+            <h2>FAQ：非技術背景讀者常問的問題</h2>
+            <div class="article-faq">
+              <details>
+                <summary>詢問量不多，也需要做自動化嗎？</summary>
+                <p>如果少量詢問都能穩定回覆、資料完整，就不急著導入。但若常補問同樣問題、忘記誰還沒回，表單欄位與追蹤表就值得先做。</p>
+              </details>
+              <details>
+                <summary>客戶只想傳 LINE，不想填表怎麼辦？</summary>
+                <p>不用強迫所有客戶都填同一張表。可以由內部人員把 LINE 對話重點整理到主要案件清單；重點是案件最後要回到同一個狀態紀錄位置。</p>
+              </details>
+              <details>
+                <summary>一定要 CRM 或後台嗎？</summary>
+                <p>不一定。若只是避免漏接詢問，可以先用表單、通知與試算表。多人協作、需要歷程或權限時，再評估 CRM 或後台。</p>
+              </details>
+              <details>
+                <summary>已經有 CRM，還需要網站表單嗎？</summary>
+                <p>通常仍需要清楚入口。差別在於表單回覆應優先進入既有 CRM 或與 CRM 對齊，不要另外建立沒有人維護的平行清單。</p>
+              </details>
+              <details>
+                <summary>AI 可以直接回覆客戶嗎？</summary>
+                <p>不建議在未確認前讓 AI 自動承諾。AI 可以協助摘要、分類或草擬回覆，但價格、時程與服務範圍仍需要人確認。</p>
+              </details>
+            </div>
+          </section>
+
+          <section id="sources">
+            <h2>資料來源與延伸閱讀</h2>
+            <p>以下資料用於確認本文提到的法規提醒、表單回覆管理與自動化觸發條件。本文不宣稱任何搜尋量、轉換率、成本節省或客戶成果。</p>
+            <ul>
+              <li>全國法規資料庫，《個人資料保護法》，查詢日期：2026-06-30，<a href="https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=I0050021" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-700 underline">https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=I0050021</a></li>
+              <li>Google Docs Editors Help, View &amp; manage form responses，查詢日期：2026-06-30，<a href="https://support.google.com/docs/answer/139706" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-700 underline">https://support.google.com/docs/answer/139706</a></li>
+              <li>Google Apps Script, Installable triggers，查詢日期：2026-06-30，<a href="https://developers.google.com/apps-script/guides/triggers/installable" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-700 underline">https://developers.google.com/apps-script/guides/triggers/installable</a></li>
+            </ul>
+          </section>
+
+          <section id="cta">
+            <h2>下一步：先做網站詢問流程盤點</h2>
+            <p>如果你已經有形象網站，但詢問進來後仍靠人工轉傳、私人訊息和記憶追蹤，下一步不一定是重做網站，也不一定是馬上導入 AI。比較好的起點，是先盤點一則詢問從進來到結案，經過哪些來源、工具、欄位、人員與決策。</p>
+            <div class="tag-list">
+              <span>詢問來源</span>
+              <span>表單欄位</span>
+              <span>資料主檔</span>
+              <span>分派規則</span>
+              <span>狀態設計</span>
+              <span>追蹤節點</span>
+              <span>MVP 範圍</span>
+            </div>
+            <p>真正值得優化的，不只是讓網站多一張表單，而是讓每一筆詢問都能被看見、被接手，並且被推進到下一個明確決策。</p>
+          </section>
+        </div>
+
+        <section class="mt-14 pt-8 border-t border-slate-200">
+          <h2 class="text-xl font-black text-slate-900 mb-5">站內延伸閱讀</h2>
+          <div class="grid sm:grid-cols-2 gap-4">
+            <a href="../services.html#automation" class="block rounded-2xl border border-slate-200 p-5 hover:border-blue-300 hover:shadow-md transition-all">
+              <span class="text-xs font-semibold text-purple-600">服務內容</span>
+              <h3 class="mt-2 font-bold text-slate-900">資料與流程自動化服務</h3>
+              <p class="mt-2 text-sm text-slate-500 leading-relaxed">從流程盤點、自動化規劃到工具串接，釐清導入風險與優先順序。</p>
+            </a>
+            <a href="../posts/line-liff-guide.html" class="block rounded-2xl border border-slate-200 p-5 hover:border-blue-300 hover:shadow-md transition-all">
+              <span class="text-xs font-semibold text-green-600">LINE 開發</span>
+              <h3 class="mt-2 font-bold text-slate-900">LINE LIFF 開發指南</h3>
+              <p class="mt-2 text-sm text-slate-500 leading-relaxed">理解 LINE 內嵌應用如何承接互動與會員流程。</p>
+            </a>
+            <a href="../posts/python-crawler-price-monitor.html" class="block rounded-2xl border border-slate-200 p-5 hover:border-blue-300 hover:shadow-md transition-all">
+              <span class="text-xs font-semibold text-orange-600">資料自動化</span>
+              <h3 class="mt-2 font-bold text-slate-900">Python 爬蟲實戰</h3>
+              <p class="mt-2 text-sm text-slate-500 leading-relaxed">從資料收集、排程到通知，理解自動化流程的基本設計。</p>
+            </a>
+            <a href="../posts/seo-best-practices.html" class="block rounded-2xl border border-slate-200 p-5 hover:border-blue-300 hover:shadow-md transition-all">
+              <span class="text-xs font-semibold text-blue-600">SEO</span>
+              <h3 class="mt-2 font-bold text-slate-900">SEO 最佳實踐</h3>
+              <p class="mt-2 text-sm text-slate-500 leading-relaxed">網站上線前，確認搜尋引擎能正確理解頁面內容。</p>
+            </a>
+          </div>
+        </section>
+
+        <section class="mt-10 rounded-2xl border border-blue-100 bg-gradient-to-br from-blue-50 to-slate-50 p-6 sm:p-8">
+          <p class="text-sm font-bold text-blue-600 mb-2">網站詢問流程盤點</p>
+          <h2 class="text-2xl font-black text-slate-900 mb-3">不確定詢問從哪裡流失？先把流程攤開來看。</h2>
+          <p class="text-slate-600 leading-relaxed mb-5">不確定該先串哪一個工具，也不知道詢問卡在哪一步？可以先從一次需求訪談開始，把目前流程、欄位、負責人與追蹤節點整理清楚，再判斷最適合的第一步。</p>
+          <a href="../contact.html" class="inline-flex items-center gap-2 px-5 py-3 rounded-full bg-slate-900 text-white text-sm font-semibold hover:bg-blue-600 transition-colors">
+            預約需求訪談 <i class="fa-solid fa-arrow-right text-xs" aria-hidden="true"></i>
+          </a>
+        </section>
+      </article>
+    </div>
+  </main>
+
+  <footer class="bg-slate-900 border-t border-slate-800 text-slate-400">
+    <div class="max-w-7xl mx-auto px-5 lg:px-8 py-14">
+      <div class="grid md:grid-cols-4 gap-10 mb-10 pb-10 border-b border-slate-800">
+        <div class="md:col-span-2">
+          <div class="flex items-center space-x-3 mb-4">
+            <div class="w-8 h-8 bg-slate-700 text-white rounded-xl flex items-center justify-center font-bold text-sm">D</div>
+            <span class="font-bold text-white">Digitools Studio</span>
+          </div>
+          <p class="text-sm leading-relaxed max-w-xs mb-5">數轉工作室 — 以軟體開發為核心的接案團隊。LINE 整合、Web 應用、資料自動化，從業務需求出發，設計可用的數位解法。</p>
+          <div class="flex gap-3">
+            <a href="https://lin.ee/6IdgZC4" target="_blank" rel="noopener noreferrer" class="w-9 h-9 bg-line/20 hover:bg-line text-line hover:text-white rounded-lg flex items-center justify-center transition-all" aria-label="LINE 諮詢">
+              <i class="fa-brands fa-line text-base" aria-hidden="true"></i>
+            </a>
+            <a href="mailto:digitalaaronl@gmail.com" class="w-9 h-9 bg-slate-800 hover:bg-slate-600 text-slate-400 hover:text-white rounded-lg flex items-center justify-center transition-all" aria-label="Email 聯絡">
+              <i class="fa-regular fa-envelope text-sm" aria-hidden="true"></i>
+            </a>
+          </div>
+        </div>
+        <div>
+          <h5 class="text-white font-semibold mb-4 text-sm">頁面</h5>
+          <ul class="space-y-2.5 text-sm">
+            <li><a href="../index.html" class="hover:text-white transition-colors">首頁</a></li>
+            <li><a href="../services.html" class="hover:text-white transition-colors">服務內容</a></li>
+            <li><a href="../blog.html" class="hover:text-white transition-colors">Blog</a></li>
+            <li><a href="../portfolio.html" class="hover:text-white transition-colors">作品集</a></li>
+            <li><a href="../contact.html" class="hover:text-white transition-colors">聯絡我們</a></li>
+          </ul>
+        </div>
+        <div>
+          <h5 class="text-white font-semibold mb-4 text-sm">聯絡資訊</h5>
+          <ul class="space-y-2.5 text-sm">
+            <li>digitalaaronl@gmail.com</li>
+            <li>新北市 · 個人工作室</li>
+          </ul>
+        </div>
+      </div>
+      <div class="flex flex-col md:flex-row justify-between items-center text-xs text-slate-500">
+        <p>© 2026 Digitools Studio. All rights reserved.</p>
+        <p class="mt-2 md:mt-0">LINE 整合 × 客製 Web × 資料自動化</p>
+      </div>
+    </div>
+  </footer>
+
+  <button id="back-to-top" aria-label="回到頂端" class="btt-hidden fixed bottom-[5.5rem] right-6 z-40 w-10 h-10 bg-white border border-slate-200 rounded-full shadow-md flex items-center justify-center text-slate-500 hover:text-slate-900 hover:border-slate-400 hover:shadow-lg transition-all">
+    <i class="fa-solid fa-chevron-up text-xs" aria-hidden="true"></i>
+  </button>
+
+  <div class="fixed bottom-6 right-6 z-50 group">
+    <a href="https://lin.ee/6IdgZC4" target="_blank" rel="noopener noreferrer" class="flex items-center gap-2.5 bg-line hover:bg-line-dark text-white shadow-2xl rounded-full px-5 py-3.5 transition-all duration-300 hover:scale-105" title="LINE 諮詢">
+      <i class="fa-brands fa-line text-2xl" aria-hidden="true"></i>
+      <span class="text-sm font-semibold hidden md:block">LINE 諮詢</span>
+    </a>
+  </div>
+
+  <script>
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 60) {
+        navbar.classList.add('glass-header', 'py-3');
+        navbar.classList.remove('py-5', 'bg-transparent');
+      } else {
+        navbar.classList.remove('glass-header', 'py-3');
+        navbar.classList.add('py-5', 'bg-transparent');
+      }
+
+      const doc = document.documentElement;
+      const scrollTop = doc.scrollTop || document.body.scrollTop;
+      const height = doc.scrollHeight - doc.clientHeight;
+      const progress = height > 0 ? (scrollTop / height) * 100 : 0;
+      document.getElementById('reading-progress').style.width = progress + '%';
+    }, { passive: true });
+
+    const mobileBtn = document.getElementById('mobile-menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    function closeMobileMenu() {
+      mobileMenu.classList.remove('menu-open');
+      mobileBtn.querySelector('i').className = 'fa-solid fa-bars text-lg';
+    }
+    mobileBtn.addEventListener('click', () => {
+      if (mobileMenu.classList.contains('menu-open')) {
+        closeMobileMenu();
+      } else {
+        mobileMenu.classList.add('menu-open');
+        mobileBtn.querySelector('i').className = 'fa-solid fa-xmark text-lg';
+      }
+    });
+    mobileMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', closeMobileMenu));
+
+    const bttBtn = document.getElementById('back-to-top');
+    window.addEventListener('scroll', function() {
+      if (window.scrollY > 500) {
+        bttBtn.classList.remove('btt-hidden');
+        bttBtn.classList.add('btt-visible');
+      } else {
+        bttBtn.classList.add('btt-hidden');
+        bttBtn.classList.remove('btt-visible');
+      }
+    }, { passive: true });
+    bttBtn.addEventListener('click', function() {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  </script>
+</body>
+</html>
+

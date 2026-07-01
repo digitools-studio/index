@@ -1,0 +1,7 @@
+# Local blog working drafts and editorial work-in-progress.
+# Publishable articles live under posts/*.html and posts/manifest.json.
+articles/
+blog/
+docs/
+templates/
+AGENTS.md

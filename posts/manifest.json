@@ -1,5 +1,24 @@
 [
   {
+    "slug": "website-inquiry-automation",
+    "href": "posts/website-inquiry-automation.html",
+    "title": "形象網站不只是名片：把每一則詢問變成可追蹤商機的自動化流程",
+    "description": "了解形象網站如何透過表單、通知、分派與追蹤流程，將每一則詢問變成可管理的商機。",
+    "excerpt": "形象網站不只展示品牌，也能透過表單、通知、分派與追蹤流程，協助中小企業與在地服務工作室把每一則詢問整理成可管理的商機。本文從自動化前後流程、Before / After 對照、分階段導入到個資權限提醒，整理非技術背景也能理解的第一步...",
+    "date": "2026-06-30",
+    "dateDisplay": "2026年6月30日",
+    "readingTime": 12,
+    "featured": false,
+    "gradient": "purple",
+    "icon": "fa-solid fa-route",
+    "category": "資料自動化",
+    "tags": [
+      { "label": "資料自動化", "color": "purple" },
+      { "label": "流程設計", "color": "blue" },
+      { "label": "形象網站", "color": "green" }
+    ]
+  },
+  {
     "slug": "querymind-ai-agent-business-analysis-architecture",
     "title": "Querymind 技術架構解析：AI Agent 如何應用在商業分析流程",
     "description": "解析 Querymind 如何以 DB Agent、RBAC 權限控管、自然語言查詢、圖表報表生成與 Insight Agent，協助企業使用者安全取得資料並完成商業分析。",
