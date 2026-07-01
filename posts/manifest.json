@@ -1,5 +1,24 @@
 [
   {
+    "slug": "website-inquiry-audit",
+    "href": "posts/website-inquiry-audit.html",
+    "title": "網站詢問流程盤點怎麼做？從來源、欄位、狀態到第一版自動化藍圖",
+    "description": "學會盤點網站詢問流程：從 LINE、Email、表單紀錄工具、商機追蹤表、Lead 狀態到跟進紀錄，整理出第一版自動化設計藍圖。",
+    "excerpt": "網站詢問流程盤點不是先選工具，而是先把每一則詢問從進線、分類、建檔、回覆、邀約到跟進的生命週期整理清楚。本文用在地服務工作室的模擬情境，說明盤點前後差別、商機追蹤表、跟進紀錄與三階段導入方案...",
+    "date": "2026-07-01",
+    "dateDisplay": "2026年7月1日",
+    "readingTime": 10,
+    "featured": false,
+    "gradient": "purple",
+    "icon": "fa-solid fa-list-check",
+    "category": "資料自動化",
+    "tags": [
+      { "label": "資料自動化", "color": "purple" },
+      { "label": "流程設計", "color": "blue" },
+      { "label": "顧問觀點", "color": "green" }
+    ]
+  },
+  {
     "slug": "website-inquiry-automation",
     "href": "posts/website-inquiry-automation.html",
     "title": "形象網站不只是名片：把每一則詢問變成可追蹤商機的自動化流程",
