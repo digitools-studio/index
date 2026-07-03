@@ -175,13 +175,19 @@
 
     @media (max-width:760px){
       :root{--ui-top-clearance:70px; --ui-bottom-clearance:104px}
-      .content{padding:calc(var(--ui-top-clearance) + var(--safe-top)) 14px calc(var(--ui-bottom-clearance) + var(--safe-bottom))}
-      .grid-2,.grid-2.reverse,.message-layout{grid-template-columns:1fr;gap:16px}
-      .paper-card{border-radius:28px;padding:18px}
+      .content{align-items:flex-start;padding:calc(var(--ui-top-clearance) + var(--safe-top)) 14px calc(var(--ui-bottom-clearance) + var(--safe-bottom));overflow-y:auto;overscroll-behavior-y:contain;-webkit-overflow-scrolling:touch;scroll-padding-top:calc(var(--ui-top-clearance) + var(--safe-top));scroll-padding-bottom:calc(var(--ui-bottom-clearance) + var(--safe-bottom))}
+      .hero-slide .content{align-items:center;overflow-y:hidden}
+      .scrollable{height:auto;min-height:100%;overflow:visible;padding:0;touch-action:pan-y}
+      .grid-2,.grid-2.reverse,.message-layout{grid-template-columns:1fr;gap:16px;align-items:start}
+      .paper-card{border-radius:28px;padding:18px;margin:0 auto}
       .hero-card{width:min(94vw,440px);padding:14px;max-height:calc(var(--vh)*100 - 126px)}
       .photo-slot.cover{min-height:220px;margin-bottom:14px}
-      .photo-slot.story{min-height:260px}
-      .photo-slot.timeline,.photo-slot.detail{min-height:220px}
+      .photo-slot.story{height:clamp(220px,38vh,310px);min-height:0}
+      .photo-slot.timeline,.photo-slot.detail{height:clamp(200px,34vh,280px);min-height:0}
+      .story-copy{padding:0}
+      .story-copy p{font-size:14px;line-height:1.72;margin-bottom:10px}
+      .section-title{font-size:clamp(25px,7vw,34px);line-height:1.22}
+      .timeline-year{font-size:clamp(50px,17vw,72px)}
       .gallery-grid{grid-template-columns:repeat(2,1fr);gap:10px}
       .gallery-item{min-height:130px}
       .radio-grid{grid-template-columns:1fr}
@@ -208,6 +214,8 @@
     @media (max-height:700px) and (max-width:760px){
       .hero-card{max-height:calc(var(--vh)*100 - 112px);padding:12px}
       .photo-slot.cover{min-height:170px}
+      .photo-slot.story{height:clamp(180px,34vh,240px)}
+      .photo-slot.timeline,.photo-slot.detail{height:clamp(170px,30vh,220px)}
       .hero-names{font-size:27px;letter-spacing:.1em}
       .hero-actions{margin-top:12px}
       .action-btn,.ghost-btn,.soft-btn{padding:10px 13px;font-size:13px}
@@ -388,7 +396,7 @@
   }
   function detectTouchSwipeDevice(){ return Boolean((navigator.maxTouchPoints>0 || "ontouchstart" in window) && (!window.matchMedia || window.matchMedia("(pointer: coarse)").matches)); }
   function onWheelPause(){ if(started) pauseAutoplay(MANUAL_PAUSE_MS); }
-  function onTouchStart(e){ if(!touchSwipeEnabled || isInteractiveTarget(e.target))return; const t=e.changedTouches[0]; touchStartX=t.clientX; touchStartY=t.clientY; dragAxis=null; isDragging=true; pauseAutoplay(MANUAL_PAUSE_MS); }
+  function onTouchStart(e){ if(!touchSwipeEnabled || isBlockingSwipeTarget(e.target))return; const t=e.changedTouches[0]; touchStartX=t.clientX; touchStartY=t.clientY; dragAxis=null; isDragging=true; pauseAutoplay(MANUAL_PAUSE_MS); }
   function onTouchMove(e){
     if(!isDragging)return;
     const t=e.changedTouches[0]; const dx=t.clientX-touchStartX, dy=t.clientY-touchStartY;
@@ -410,7 +418,7 @@
     userGoTo(currentIndex+(dx<0?1:-1));
   }
   function cancelTouchDrag(){ isDragging=false; dragAxis=null; document.getElementById("slides")?.classList.remove("is-dragging"); }
-  function isInteractiveTarget(target){ return Boolean(target.closest("button,a,input,textarea,select,form,[role='button'],.scrollable")); }
+  function isBlockingSwipeTarget(target){ return Boolean(target.closest("button,a,input,textarea,select,label,.modal")); }
   function normalizeIndex(i){ return (i+slideCount)%slideCount; }
   function userGoTo(i){ pauseAutoplay(MANUAL_PAUSE_MS); goTo(i); }
   function goTo(i,fromAuto=false){ const next=normalizeIndex(i); if(next!==currentIndex) triggerPageTurn(getTurnDirection(next)); currentIndex=next; update(); scheduleAutoplay(); }
