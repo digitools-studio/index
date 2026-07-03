@@ -5,13 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>思傑 & 彥綾｜溫馨電子喜帖</title>
   <meta name="description" content="思傑與彥綾的電子喜帖，誠摯邀請您於 2026/10/11 一同見證幸福時刻。" />
-  <link rel="canonical" href="https://digitools-studio.github.io/wedding/" />
+  <link rel="canonical" href="https://digitools-studio.github.io/weddings/sijie-yanling/" />
   <meta property="og:type" content="website" />
   <meta property="og:locale" content="zh_TW" />
   <meta property="og:title" content="思傑 & 彥綾｜我們要結婚啦" />
   <meta property="og:description" content="誠摯邀請您於 2026/10/11 一同見證思傑與彥綾的幸福時刻。" />
-  <meta property="og:url" content="https://digitools-studio.github.io/wedding/" />
-  <meta property="og:image" content="https://digitools-studio.github.io/wedding/cover.jpeg" />
+  <meta property="og:image" content="https://digitools-studio.github.io/weddings/sijie-yanling/images/og-preview.svg" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
   <meta name="twitter:card" content="summary_large_image" />
@@ -46,18 +45,17 @@
     .main{height:100%;opacity:0;transition:opacity .8s ease}
     .main.is-ready{opacity:1}
     .slider{height:100%;width:100%;overflow:hidden;touch-action:pan-y}
-    .slides{height:100%;display:flex;transition:transform .72s cubic-bezier(.2,.72,.12,1);will-change:transform}
+    .slider.no-touch-swipe{touch-action:auto}
+    .slides{height:100%;display:flex;transition:transform .72s cubic-bezier(.2,.82,.2,1);will-change:transform}
     .slides.is-dragging{transition:none}
     .slide{position:relative;flex:0 0 100%;width:100%;height:100%;overflow:hidden}
     .slide::before{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,rgba(255,253,249,.66),rgba(255,249,244,.44) 43%,rgba(88,48,31,.34))}
     .slide.paper::before{background:linear-gradient(180deg,rgba(255,253,249,.9),rgba(255,249,244,.72),rgba(195,136,121,.22))}
     .slide-bg{position:absolute;inset:0;background:radial-gradient(circle at 28% 12%,rgba(255,255,255,.56),transparent 30%),linear-gradient(135deg,#C38879,#E9B8AA 62%,#FFF3EA);transform:scale(1.04);transition:transform 5s ease}
     .slide.is-active .slide-bg{transform:scale(1.08)}
-    .content{position:relative;z-index:2;height:100%;display:flex;align-items:center;justify-content:center;overflow:hidden;padding:calc(var(--ui-top-clearance) + var(--safe-top)) 22px calc(var(--ui-bottom-clearance) + var(--safe-bottom))}
-    .scrollable{width:100%;height:100%;overflow:auto;-webkit-overflow-scrolling:touch;touch-action:pan-y;display:flex;align-items:flex-start;justify-content:center;padding:6px 0 14px;scroll-padding-top:12px;scroll-padding-bottom:16px}
-    .paper-card{width:min(94vw,940px);max-height:100%;border-radius:34px;background:rgba(255,253,249,.74);border:1px solid rgba(255,255,255,.62);box-shadow:var(--shadow);backdrop-filter:blur(16px);padding:24px}
-    .paper-card.grid-2{overflow:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
-    .paper-card.grid-2::-webkit-scrollbar{display:none}
+    .content{position:relative;z-index:2;height:100%;display:flex;align-items:center;justify-content:center;padding:calc(var(--ui-top-clearance) + var(--safe-top)) 22px calc(var(--ui-bottom-clearance) + var(--safe-bottom))}
+    .scrollable{width:100%;height:100%;overflow:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;display:flex;align-items:flex-start;justify-content:center;padding:6px 0 34px;scroll-padding-top:12px;scroll-padding-bottom:84px}
+    .paper-card{width:min(94vw,940px);border-radius:34px;background:rgba(255,253,249,.74);border:1px solid rgba(255,255,255,.62);box-shadow:var(--shadow);backdrop-filter:blur(16px);padding:24px}
     .section-title{margin:0 0 12px;font-size:clamp(28px,5vw,48px);line-height:1.25;font-weight:600;letter-spacing:.04em}
     .subtitle,.small-note{margin:0;color:var(--muted);line-height:1.85;font-size:14px}
     .small-note{font-size:13px}
@@ -73,17 +71,17 @@
     .ghost-btn,.soft-btn{border:1px solid var(--line);border-radius:999px;padding:12px 16px;background:rgba(255,253,249,.66);color:var(--coffee);font-weight:700;box-shadow:0 12px 26px rgba(88,48,31,.10)}
     .soft-btn{background:rgba(244,206,167,.22)}
 
-    .photo-slot{position:relative;overflow:hidden;border-radius:28px;border:1px solid rgba(255,255,255,.72);background:linear-gradient(135deg,rgba(195,136,121,.26),rgba(255,249,244,.74));box-shadow:0 18px 48px rgba(88,48,31,.16);min-height:280px}
+    .photo-slot{position:relative;overflow:hidden;margin:0;border-radius:28px;border:1px solid rgba(255,255,255,.72);background:linear-gradient(135deg,rgba(195,136,121,.26),rgba(255,249,244,.74));box-shadow:0 18px 48px rgba(88,48,31,.16);min-height:280px}
     .photo-slot img{width:100%;height:100%;object-fit:cover;display:block}
     .photo-placeholder{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:24px;background:radial-gradient(circle at 35% 20%,rgba(255,255,255,.68),transparent 35%),linear-gradient(135deg,rgba(195,136,121,.5),rgba(244,206,167,.24),rgba(255,253,249,.72));font-size:18px;color:var(--coffee)}
     .photo-slot.cover{min-height:300px;margin:0 0 18px}
-    .photo-slot.story{min-height:390px}
+    .photo-slot.story{min-height:420px}
     .photo-slot.timeline{min-height:300px}
     .photo-slot.detail{min-height:260px}
 
     .story-copy{padding:8px}
-    .story-copy p{margin:0 0 12px;color:var(--muted);line-height:1.78;font-size:15px}
-    .story-caption{display:inline-flex;margin-top:4px;padding:8px 12px;border-radius:999px;background:rgba(244,206,167,.24);color:var(--coffee-2);font-size:12px;font-weight:700}
+    .story-copy p{margin:0 0 14px;color:var(--muted);line-height:1.9;font-size:15px}
+    .story-caption{display:inline-flex;margin-top:8px;padding:8px 12px;border-radius:999px;background:rgba(244,206,167,.24);color:var(--coffee-2);font-size:12px;font-weight:700}
     .timeline-nav{display:flex;justify-content:center;gap:8px;margin:16px 0 18px;flex-wrap:wrap}
     .timeline-nav button{border:1px solid var(--line);background:rgba(255,253,249,.62);border-radius:999px;padding:9px 14px;color:var(--coffee);font-weight:800}
     .timeline-nav button.is-active{background:var(--coffee);color:var(--cream)}
@@ -141,7 +139,7 @@
     .dot.is-active{width:22px;background:var(--coffee)}
     .page-label,.autoplay-indicator{position:fixed;z-index:7;top:calc(16px + env(safe-area-inset-top,0px));padding:8px 12px;border-radius:999px;background:rgba(255,253,249,.62);border:1px solid rgba(255,255,255,.62);font-size:12px;color:var(--coffee-2);backdrop-filter:blur(12px)}
     .page-label{left:16px}
-    .autoplay-indicator{left:50%;transform:translateX(-50%);display:none;align-items:center;gap:8px}
+    .autoplay-indicator{left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:8px}
     .autoplay-indicator span{width:7px;height:7px;border-radius:50%;background:var(--rose)}
     .music-panel{position:fixed;z-index:9;right:16px;top:calc(16px + env(safe-area-inset-top,0px))}
     .music-btn{width:44px;height:44px;border:0;border-radius:50%;background:rgba(255,253,249,.76);color:var(--coffee);box-shadow:0 12px 28px rgba(88,48,31,.16);font-weight:900}
@@ -155,6 +153,7 @@
     .dialog{position:relative;width:min(92vw,460px);max-height:86vh;overflow:auto;padding:24px;border-radius:28px;background:rgba(255,253,249,.94);box-shadow:var(--shadow);border:1px solid rgba(255,255,255,.7);text-align:center}
     .modal-close{position:absolute;right:14px;top:12px;border:0;background:transparent;font-size:26px;color:var(--coffee)}
     .qr-card img{width:min(58vw,210px);height:min(58vw,210px);padding:10px;border-radius:18px;background:#fff;box-shadow:0 14px 30px rgba(88,48,31,.12)}
+    .share-url{display:block;margin:12px auto 0;max-width:100%;padding:9px 12px;border-radius:14px;background:rgba(195,136,121,.09);border:1px solid rgba(88,48,31,.10);color:var(--coffee-2);font-size:12px;line-height:1.5;overflow-wrap:anywhere}
     .modal-actions{display:grid;gap:10px;margin-top:16px}
     .calendar-summary{display:grid;gap:8px;margin:14px 0;text-align:left}
     .calendar-summary-row{display:flex;justify-content:space-between;gap:12px;padding:10px 12px;border-radius:14px;background:rgba(195,136,121,.08)}
@@ -165,30 +164,24 @@
     .reveal{opacity:0;transform:translateY(16px);transition:opacity .72s ease,transform .72s ease}
     .slide.is-active .reveal{opacity:1;transform:translateY(0)}
     .delay-1{transition-delay:.08s}.delay-2{transition-delay:.16s}
-    .page-turn-layer{position:fixed;inset:0;z-index:6;pointer-events:none;perspective:1400px;opacity:0;overflow:hidden}
+    .page-turn-layer{position:fixed;inset:0;z-index:6;pointer-events:none;perspective:1200px;opacity:0;overflow:hidden}
     .page-turn-layer.is-turning{opacity:1}
-    .page-turn-sheet{position:absolute;inset:0;background:linear-gradient(90deg,rgba(255,253,249,.02),rgba(255,253,249,.72) 45%,rgba(88,48,31,.18) 100%);box-shadow:inset -28px 0 46px rgba(88,48,31,.16),inset 18px 0 38px rgba(255,255,255,.38);transform-origin:left center;animation:turnPageNext .7s cubic-bezier(.2,.72,.12,1) both}
-    .page-turn-sheet::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(255,255,255,.28),transparent 32%,rgba(88,48,31,.18));opacity:.85}
-    .page-turn-layer.turn-prev .page-turn-sheet{transform-origin:right center;animation-name:turnPagePrev;background:linear-gradient(270deg,rgba(255,253,249,.02),rgba(255,253,249,.72) 45%,rgba(88,48,31,.18) 100%);box-shadow:inset 28px 0 46px rgba(88,48,31,.16),inset -18px 0 38px rgba(255,255,255,.38)}
-    @keyframes turnPageNext{0%{transform:rotateY(0deg);opacity:0}18%{opacity:.78}100%{transform:rotateY(-82deg);opacity:0}}
-    @keyframes turnPagePrev{0%{transform:rotateY(0deg);opacity:0}18%{opacity:.78}100%{transform:rotateY(82deg);opacity:0}}
+    .page-turn-layer::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(88,48,31,.12),transparent);opacity:0;animation:turnShadow .66s ease both}
+    .page-turn-sheet{position:absolute;top:0;bottom:0;left:0;width:62%;background:linear-gradient(90deg,rgba(255,253,249,.12),rgba(255,253,249,.9) 48%,rgba(244,206,167,.28) 78%,rgba(88,48,31,.08));box-shadow:22px 0 48px rgba(88,48,31,.18);transform-origin:left center;animation:turnPageForward .66s cubic-bezier(.2,.75,.2,1) both}
+    .page-turn-layer.is-back .page-turn-sheet{left:auto;right:0;transform-origin:right center;background:linear-gradient(270deg,rgba(255,253,249,.12),rgba(255,253,249,.9) 48%,rgba(244,206,167,.28) 78%,rgba(88,48,31,.08));box-shadow:-22px 0 48px rgba(88,48,31,.18);animation-name:turnPageBack}
+    @keyframes turnPageForward{0%{transform:rotateY(0deg) translateX(-8%);opacity:0}18%{opacity:.78}58%{opacity:.72}100%{transform:rotateY(-78deg) translateX(42%);opacity:0}}
+    @keyframes turnPageBack{0%{transform:rotateY(0deg) translateX(8%);opacity:0}18%{opacity:.78}58%{opacity:.72}100%{transform:rotateY(78deg) translateX(-42%);opacity:0}}
+    @keyframes turnShadow{0%,100%{opacity:0}38%{opacity:.55}}
 
     @media (max-width:760px){
       :root{--ui-top-clearance:70px; --ui-bottom-clearance:104px}
       .content{padding:calc(var(--ui-top-clearance) + var(--safe-top)) 14px calc(var(--ui-bottom-clearance) + var(--safe-bottom))}
       .grid-2,.grid-2.reverse,.message-layout{grid-template-columns:1fr;gap:16px}
       .paper-card{border-radius:28px;padding:18px}
-      .paper-card.grid-2{display:flex;flex-direction:column;justify-content:center}
       .hero-card{width:min(94vw,440px);padding:14px;max-height:calc(var(--vh)*100 - 126px)}
       .photo-slot.cover{min-height:220px;margin-bottom:14px}
-      .photo-slot.story{min-height:210px}
-      .photo-slot.timeline,.photo-slot.detail{min-height:190px}
-      .section-title{font-size:clamp(23px,7vw,34px);line-height:1.18;margin-bottom:9px}
-      .story-copy{padding:2px}
-      .story-copy p{font-size:14px;line-height:1.62;margin-bottom:9px}
-      .story-caption{font-size:11px;line-height:1.45;padding:7px 10px}
-      .timeline-year{font-size:clamp(44px,16vw,74px)}
-      .timeline-nav{margin:10px 0 0}
+      .photo-slot.story{min-height:260px}
+      .photo-slot.timeline,.photo-slot.detail{min-height:220px}
       .gallery-grid{grid-template-columns:repeat(2,1fr);gap:10px}
       .gallery-item{min-height:130px}
       .radio-grid{grid-template-columns:1fr}
@@ -215,13 +208,6 @@
     @media (max-height:700px) and (max-width:760px){
       .hero-card{max-height:calc(var(--vh)*100 - 112px);padding:12px}
       .photo-slot.cover{min-height:170px}
-      .photo-slot.story{min-height:150px}
-      .photo-slot.timeline,.photo-slot.detail{min-height:145px}
-      .paper-card{padding:14px}
-      .grid-2,.grid-2.reverse{gap:10px}
-      .story-copy p{font-size:13px;line-height:1.5;margin-bottom:7px}
-      .story-caption{display:none}
-      .timeline-nav button{padding:7px 11px;font-size:12px}
       .hero-names{font-size:27px;letter-spacing:.1em}
       .hero-actions{margin-top:12px}
       .action-btn,.ghost-btn,.soft-btn{padding:10px 13px;font-size:13px}
@@ -232,22 +218,20 @@
 <div id="app" class="app"></div>
 <script>
 (() => {
-  const SHARE_CANONICAL_URL = document.querySelector('link[rel="canonical"]')?.href || "https://digitools-studio.github.io/wedding/";
-
   const CONFIG = {
     weddingId:"sijie-yanling",
     groom:"思傑",
     bride:"彥綾",
     dateText:"2026 . 10 . 11",
-    music:{ localAudioSrc:"./Beautiful%20Wedding%20-%20Cinematic%20Background%20Music%20For%20Videos_320k.mp3" },
+    music:{ localAudioSrc:"./Beautiful Wedding - Cinematic Background Music For Videos_320k.mp3" },
     share:{
       title:"思傑 & 彥綾｜我們要結婚啦",
       description:"誠摯邀請您於 2026/10/11 一同見證思傑與彥綾的幸福時刻。",
-      url:SHARE_CANONICAL_URL,
+      url:"https://digitools-studio.github.io/index/weddings/sijie-yanling/",
       qrImage:"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAcIAAAHCAQAAAABUY/ToAAADsklEQVR4nO2cTW6sOhBGTz2QeuiWsoBeCuwsa8oO2kvJAiKZYSSj7w1sA01ad3BvWqGjqgHCmCNsqWTXHzbxdxL/+0sQnHTSSSeddNJJJ49HWpUeGwEbma1eJjOYemBqb40/PFonj0UiSWKQJKVODAkgSBAyutKaQ+q0efn6XPN08vHk1NaXeO4kpdmkVPt0ZTYAzKz/vm86+TtJKc1m43QS0U6yMWRspPsaAjjCaJ08Iml2yUDIMKTZdL2nPt/8TSefm2xbUxAwgQBZNBBB2PBuKI59Vuv9ydE6eWAympnZGWycehhSp3IHnew1NV/NzOznR+vkociyDq3ri+IZK2tOPGPAbPUu3G5qzzVPJx9HLr59ru1B1aMvjny5S52agw/u2zt5K1VVQkZShiEtSsMSEErU3g3xXPN08nFkXYeqdCXQWCKLw6JSpZlA1+AxRif3sg09B6k68y1O3RSpLUtX8L3MyVvp11sb3g0GzSYmq17+2j28nU2EhP3rN538XWTzy6aXDCH3xKY2Nry9ZMXzB2Kai19mhMWJe655Ovk4cuN+teZiOqdb52yxm3wvc/JGtEhJ1BfNSVWbinm0GNa16Trk5FZu1KcrXn7VEprSLKGhWh7iOuTkVtYIUHHEyrNWK1QVKWRaCKmJ65CT98jpJClByZzV3FgnG0t3J5hqqeMBRuvkwcjQKj7iGYDZGJSx11YAUlKw8ZL35E+M1skjkW17SlCrXVMLR7PJfyxFRMH3Mif30mxqadWXtQy2pmCbKbQWVbsOOblIy3VkdmmO1WFrqbLs+TIn78kuirhGgNZs/cbpx+NDTu5lyZd12eplNphesuIl9wZgw/XTGN57r4V18o4UHTIAFfUJCZgApr4k0mp5Nbk36LLny5y8T85GtJMY0lwqYItlFC/NOYt2EoRP/8/VyZ2s9UPlws4eSmup47bX7SEnmyz20NyrbllAPH/0EHJvw1uXjfDRU3e82f/rcHInupXi5ZdAY3lhW73YfDVfh5zck+u5HzDVP6QBkPRpdZObeiCopc+ecZ5OPoL8cu5HzZwtccegm3VI2dchJ++Ty7kfTCdBO3XIRsBeE+VXWADqe885Tye/n+y/PAkf1kKJwpjWsvwuE62T1+Q7+UdS17IO9aUKZC0/g5DrivTd33Tyd5CL2VOijZfPeoLe8H7a/loWz+7bO7mXmp4v0m2892Y/50257MYAd5vaySpfzv1YGirFr+0Mq5uOf/umk0466aSTTjrp5JHI/wH7yCGlzmn7jwAAAABJRU5ErkJggg==",
       invitationCardFileName:"sijie-yanling-wedding-invitation-card.png"
     },
-    banquet:{ label:"午宴", time:"12:30 準時開桌", venue:"梅花里活動中心", address:"梅花里活動中心", mapUrl:"https://www.google.com/maps/place/%E5%AE%89%E5%8D%97%E5%8D%80%E6%A2%85%E8%8A%B1%E9%87%8C%E6%B4%BB%E5%8B%95%E4%B8%AD%E5%BF%83/@23.0394704,120.1967148,17z/data=!3m1!4b1!4m6!3m5!1s0x346e77a165209fff:0x7a4143fbff4743e3!8m2!3d23.0394655!4d120.1992897!16s%2Fg%2F1pzrskcyp?authuser=0&entry=ttu&g_ep=EgoyMDI2MDYxMy4wIKXMDSoASAFQAw%3D%3D" },
+    banquet:{ label:"午宴", time:"12:30 準時開桌", venue:"梅花里活動中心", address:"梅花里活動中心", mapUrl:"https://www.google.com/maps/search/?api=1&query=%E6%A2%85%E8%8A%B1%E9%87%8C%E6%B4%BB%E5%8B%95%E4%B8%AD%E5%BF%83" },
     calendar:{ enabled:true, title:"思傑 & 彥綾 婚宴", description:"誠摯邀請您一同見證思傑與彥綾的幸福時刻。", startDateTime:"2026-10-11T12:30:00+08:00", endDateTime:"2026-10-11T15:30:00+08:00", timezone:"Asia/Taipei" },
     photos:{
       cover:{src:"./cover.jpeg",position:"50% 34%",title:"首頁封面照片"},
@@ -276,12 +260,11 @@
     ]
   };
 
-  // Keep share link and QR code source in sync to avoid stale hardcoded URLs.
-  CONFIG.share.qrImage = `https://api.qrserver.com/v1/create-qr-code/?size=512x512&data=${encodeURIComponent(CONFIG.share.url)}`;
-
   const app=document.getElementById("app");
-  let currentIndex=0, started=false, audio=null, lightboxIndex=0, musicHintLocked=false;
+  let currentIndex=0, started=false, isDragging=false, touchStartX=0, touchStartY=0, dragAxis=null, touchSwipeEnabled=false, autoTimer=null, autoPausedUntil=0, audio=null, lightboxIndex=0, musicHintLocked=false;
   const slideCount=10;
+  const AUTO_DURATIONS=[6000,7000,7000,6000,6000,6000,7500,9000,null,null];
+  const MANUAL_PAUSE_MS=12000;
   const galleryKeys=["gallery1","gallery2","gallery3","gallery4","gallery5","gallery6"];
 
   function setViewportHeight(){ document.documentElement.style.setProperty("--vh", `${window.innerHeight * 0.01}px`); }
@@ -330,7 +313,7 @@
   function renderMessages(){ return slide(`<div class="scrollable"><section class="messages-card paper-card reveal"><p class="eyebrow">Blessing Wall</p><h2 class="section-title">親友祝福牆</h2><div class="pinned-blessing"><span class="pinned-label">新人置頂</span><p><b>思傑 & 彥綾：</b>謝謝每一位來到這裡的你，因為有你們的祝福，我們的故事變得更完整。</p></div><div class="message-layout"><form id="messageForm" class="form-grid" novalidate><div class="field honeypot" aria-hidden="true"><label for="msgWebsite">網站</label><input id="msgWebsite" class="input" name="website" type="text" autocomplete="off" tabindex="-1"></div><div class="field"><label for="msgName">暱稱 *</label><input id="msgName" class="input" name="name" maxlength="20" placeholder="你的暱稱" required></div><div class="field"><label for="msgText">祝福話語 *</label><textarea id="msgText" class="textarea" name="message" maxlength="180" placeholder="寫下你的祝福，讓這一天多一點溫度..." required></textarea><div id="msgCounter" class="char-counter">0 / 180</div></div><button class="submit-btn" type="submit">送出祝福</button><div id="msgHint" class="hint"></div></form><div class="messages-divider"><span>已收到的祝福</span></div><div class="messages-list-wrap"><div id="messagesList"></div></div></div></section></div>`,"paper message"); }
 
   function renderCalendarModal(){ const cal=CONFIG.calendar; return `<div id="calendarModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="calendarTitle"><div class="dialog"><button class="modal-close" type="button" data-calendar-close aria-label="關閉">×</button><p class="eyebrow">Calendar</p><h3 id="calendarTitle" class="section-title" style="font-size:30px">加入行事曆</h3><div class="calendar-summary"><div class="calendar-summary-row"><span>活動</span><b>${escapeHtml(cal.title)}</b></div><div class="calendar-summary-row"><span>日期</span><b>${CONFIG.dateText}</b></div><div class="calendar-summary-row"><span>時間</span><b>${CONFIG.banquet.label}｜${CONFIG.banquet.time}</b></div><div class="calendar-summary-row"><span>地點</span><b>${CONFIG.banquet.venue}</b></div></div><div class="modal-actions"><button class="action-btn" type="button" data-calendar-google>加入 Google Calendar</button><button class="ghost-btn" type="button" data-calendar-ics>下載行事曆檔案</button></div></div></div>`; }
-  function renderShareModal(){ return `<div id="shareModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="shareTitle"><div class="dialog"><button class="modal-close" type="button" data-share-close aria-label="關閉">×</button><p class="eyebrow">Share</p><h3 id="shareTitle" class="section-title" style="font-size:30px">分享這份邀請</h3><div class="qr-card"><img src="${CONFIG.share.qrImage}" alt="思傑與彥綾電子喜帖 QR Code" loading="lazy"></div><div class="modal-actions"><button class="action-btn" type="button" data-share-native>手機分享 / 複製連結</button><button class="ghost-btn" type="button" data-download-card>下載邀請卡圖片</button></div></div></div>`; }
+  function renderShareModal(){ const shareUrl=getShareUrl(); return `<div id="shareModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="shareTitle"><div class="dialog"><button class="modal-close" type="button" data-share-close aria-label="關閉">×</button><p class="eyebrow">Share</p><h3 id="shareTitle" class="section-title" style="font-size:30px">分享這份邀請</h3><div class="qr-card"><img src="${CONFIG.share.qrImage}" alt="思傑與彥綾電子喜帖 QR Code" loading="lazy"></div><a class="share-url" href="${escapeHtml(shareUrl)}" target="_blank" rel="noopener" data-share-url>${escapeHtml(shareUrl)}</a><div class="modal-actions"><button class="action-btn" type="button" data-share-native>手機分享</button><button class="ghost-btn" type="button" data-copy-share-link>複製喜帖連結</button><button class="ghost-btn" type="button" data-download-card>下載邀請卡圖片</button></div></div></div>`; }
   function renderGalleryLightbox(){ return `<div id="galleryLightbox" class="modal" role="dialog" aria-modal="true" aria-label="照片瀏覽"><div class="dialog" style="width:auto;max-width:94vw"><button class="modal-close" type="button" data-gallery-close aria-label="關閉">×</button><div id="galleryImage" class="gallery-lightbox-img"></div><div class="lightbox-actions"><button class="ghost-btn" type="button" data-gallery-prev>上一張</button><button class="action-btn" type="button" data-gallery-next>下一張</button></div></div></div>`; }
 
   function init(){
@@ -339,7 +322,8 @@
     document.getElementById("prevBtn").addEventListener("click",()=>userGoTo(currentIndex-1));
     document.getElementById("nextBtn").addEventListener("click",()=>userGoTo(currentIndex+1));
     document.getElementById("dots").addEventListener("click",e=>{ const d=e.target.closest(".dot"); if(d) userGoTo(Number(d.dataset.index)); });
-    document.addEventListener("keydown",e=>{ if(e.key==="Escape"){ closeCalendarModal(); closeShareModal(); closeGallery(); } });
+    setupResponsiveInput();
+    document.addEventListener("keydown",e=>{ if(e.key==="Escape"){ closeCalendarModal(); closeShareModal(); closeGallery(); } if(!started)return; if(e.key==="ArrowRight") userGoTo(currentIndex+1); if(e.key==="ArrowLeft") userGoTo(currentIndex-1); });
     document.addEventListener("click",handleDocumentClick);
     document.getElementById("musicBtn").addEventListener("click",toggleMusic);
     setupRsvp(); setupMessages(); renderLastRsvpSummary(); renderMessagesList(); update();
@@ -349,6 +333,7 @@
     if(e.target.closest("[data-share]")){ openShareModal(); return; }
     if(e.target.closest("[data-share-close]") || e.target.id==="shareModal"){ closeShareModal(); return; }
     if(e.target.closest("[data-share-native]")){ shareInvitation(); return; }
+    if(e.target.closest("[data-copy-share-link]")){ copyShareLink(); return; }
     if(e.target.closest("[data-download-card]")){ downloadInvitationCard(); return; }
     if(e.target.closest("[data-calendar-open]")){ openCalendarModal(); return; }
     if(e.target.closest("[data-calendar-close]") || e.target.id==="calendarModal"){ closeCalendarModal(); return; }
@@ -361,7 +346,7 @@
     if(e.target.closest("[data-gallery-prev]")){ moveGallery(-1); return; }
   }
 
-  function startExperience(){ if(started)return; started=true; document.getElementById("intro").classList.add("is-hidden"); document.getElementById("main").classList.add("is-ready"); tryPlayAudio(); }
+  function startExperience(){ if(started)return; started=true; document.getElementById("intro").classList.add("is-hidden"); document.getElementById("main").classList.add("is-ready"); scheduleAutoplay(); tryPlayAudio(); }
   function setMusicHint(visible){
     const hint=document.getElementById("musicHint");
     if(!hint)return;
@@ -389,13 +374,54 @@
     tryPlayAudio();
   }
 
+  function setupResponsiveInput(){
+    const slider=document.getElementById("slider");
+    touchSwipeEnabled=detectTouchSwipeDevice();
+    slider.classList.toggle("no-touch-swipe",!touchSwipeEnabled);
+    if(touchSwipeEnabled){
+      slider.addEventListener("touchstart",onTouchStart,{passive:true});
+      slider.addEventListener("touchmove",onTouchMove,{passive:false});
+      slider.addEventListener("touchend",onTouchEnd,{passive:true});
+      slider.addEventListener("touchcancel",cancelTouchDrag,{passive:true});
+    }
+    slider.addEventListener("wheel",onWheelPause,{passive:true});
+  }
+  function detectTouchSwipeDevice(){ return Boolean((navigator.maxTouchPoints>0 || "ontouchstart" in window) && (!window.matchMedia || window.matchMedia("(pointer: coarse)").matches)); }
+  function onWheelPause(){ if(started) pauseAutoplay(MANUAL_PAUSE_MS); }
+  function onTouchStart(e){ if(!touchSwipeEnabled || isInteractiveTarget(e.target))return; const t=e.changedTouches[0]; touchStartX=t.clientX; touchStartY=t.clientY; dragAxis=null; isDragging=true; pauseAutoplay(MANUAL_PAUSE_MS); }
+  function onTouchMove(e){
+    if(!isDragging)return;
+    const t=e.changedTouches[0]; const dx=t.clientX-touchStartX, dy=t.clientY-touchStartY;
+    if(!dragAxis && Math.max(Math.abs(dx),Math.abs(dy))>8) dragAxis=Math.abs(dx)>Math.abs(dy)*1.15?"horizontal":"vertical";
+    if(dragAxis!=="horizontal")return;
+    e.preventDefault();
+    document.getElementById("slides").classList.add("is-dragging");
+    const limitedDx=Math.max(Math.min(dx,window.innerWidth*.34),-window.innerWidth*.34);
+    const pct=(-currentIndex*100)+(limitedDx/window.innerWidth*100);
+    document.getElementById("slides").style.transform=`translate3d(${pct}%,0,0)`;
+  }
+  function onTouchEnd(e){
+    if(!isDragging)return;
+    const t=e.changedTouches[0]; const dx=t.clientX-touchStartX, dy=t.clientY-touchStartY;
+    const axis=dragAxis;
+    cancelTouchDrag();
+    const threshold=Math.max(46,window.innerWidth*.14);
+    if(axis!=="horizontal" || Math.abs(dy)>Math.abs(dx)*1.15 || Math.abs(dx)<threshold){ update(); return; }
+    userGoTo(currentIndex+(dx<0?1:-1));
+  }
+  function cancelTouchDrag(){ isDragging=false; dragAxis=null; document.getElementById("slides")?.classList.remove("is-dragging"); }
+  function isInteractiveTarget(target){ return Boolean(target.closest("button,a,input,textarea,select,form,[role='button'],.scrollable")); }
   function normalizeIndex(i){ return (i+slideCount)%slideCount; }
-  function userGoTo(i,direction){ goTo(i,false,direction); }
-  function goTo(i,fromAuto=false,direction){ const next=normalizeIndex(i); const turnDirection=direction || ((next>currentIndex || (currentIndex===slideCount-1 && next===0)) ? "next" : "prev"); if(next!==currentIndex) triggerPageTurn(turnDirection); currentIndex=next; update(); }
-  function update(){ const slides=document.getElementById("slides"); if(slides) slides.style.transform=`translate3d(${-currentIndex*100}%,0,0)`; document.querySelectorAll(".slide").forEach((s,i)=>s.classList.toggle("is-active",i===currentIndex)); document.querySelectorAll(".dot").forEach((d,i)=>d.classList.toggle("is-active",i===currentIndex)); document.getElementById("pageLabel").textContent=`${String(currentIndex+1).padStart(2,"0")} / ${String(slideCount).padStart(2,"0")}`; }
-  function triggerPageTurn(direction="next"){ const layer=document.getElementById("pageTurnLayer"); layer.classList.remove("is-turning","turn-prev"); if(direction==="prev") layer.classList.add("turn-prev"); void layer.offsetWidth; layer.classList.add("is-turning"); setTimeout(()=>layer.classList.remove("is-turning","turn-prev"),720); }
+  function userGoTo(i){ pauseAutoplay(MANUAL_PAUSE_MS); goTo(i); }
+  function goTo(i,fromAuto=false){ const next=normalizeIndex(i); if(next!==currentIndex) triggerPageTurn(getTurnDirection(next)); currentIndex=next; update(); scheduleAutoplay(); }
+  function update(){ const slides=document.getElementById("slides"); if(slides) slides.style.transform=`translate3d(${-currentIndex*100}%,0,0)`; document.querySelectorAll(".slide").forEach((s,i)=>s.classList.toggle("is-active",i===currentIndex)); document.querySelectorAll(".dot").forEach((d,i)=>d.classList.toggle("is-active",i===currentIndex)); document.getElementById("pageLabel").textContent=`${String(currentIndex+1).padStart(2,"0")} / ${String(slideCount).padStart(2,"0")}`; updateAutoplayIndicator(); }
+  function getTurnDirection(next){ if(currentIndex===slideCount-1 && next===0)return 1; if(currentIndex===0 && next===slideCount-1)return -1; return next>currentIndex?1:-1; }
+  function triggerPageTurn(direction=1){ const layer=document.getElementById("pageTurnLayer"); layer.classList.remove("is-turning","is-back"); if(direction<0) layer.classList.add("is-back"); void layer.offsetWidth; layer.classList.add("is-turning"); setTimeout(()=>layer.classList.remove("is-turning","is-back"),700); }
+  function pauseAutoplay(ms){ autoPausedUntil=Date.now()+ms; scheduleAutoplay(); }
+  function scheduleAutoplay(){ clearTimeout(autoTimer); if(!started)return; const d=AUTO_DURATIONS[currentIndex]; if(!d){ updateAutoplayIndicator(); return; } const wait=Math.max(d,autoPausedUntil-Date.now()); autoTimer=setTimeout(()=>goTo(currentIndex+1,true),wait); updateAutoplayIndicator(); }
+  function updateAutoplayIndicator(){ const el=document.getElementById("autoIndicator"); const d=AUTO_DURATIONS[currentIndex]; if(!d){ el.innerHTML="<span></span> Paused"; return; } const sec=Math.round(d/1000); el.innerHTML=`<span></span> ${sec}s Auto`; }
 
-  function openCalendarModal(){ document.getElementById("calendarModal").classList.add("is-open"); }
+  function openCalendarModal(){ document.getElementById("calendarModal").classList.add("is-open"); pauseAutoplay(60000); }
   function closeCalendarModal(){ document.getElementById("calendarModal")?.classList.remove("is-open"); }
   function toGoogleDate(dt){ return new Date(dt).toISOString().replace(/[-:]/g,"").replace(/\.\d{3}Z$/, "Z"); }
   function buildGoogleCalendarUrl(){ const cal=CONFIG.calendar; const params=new URLSearchParams({ action:"TEMPLATE", text:cal.title, dates:`${toGoogleDate(cal.startDateTime)}/${toGoogleDate(cal.endDateTime)}`, details:cal.description, location:`${CONFIG.banquet.venue}｜${CONFIG.banquet.address}`, ctz:cal.timezone }); return `https://calendar.google.com/calendar/render?${params.toString()}`; }
@@ -404,9 +430,45 @@
   function buildIcsContent(){ const cal=CONFIG.calendar; return ["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//Digitools Studio//Wedding Invitation//ZH-TW","CALSCALE:GREGORIAN","METHOD:PUBLISH","BEGIN:VEVENT",`UID:${CONFIG.weddingId}@digitools-studio.github.io`,`DTSTAMP:${toIcsDate(new Date().toISOString())}`,`DTSTART:${toIcsDate(cal.startDateTime)}`,`DTEND:${toIcsDate(cal.endDateTime)}`,`SUMMARY:${escapeIcsText(cal.title)}`,`DESCRIPTION:${escapeIcsText(cal.description)}`,`LOCATION:${escapeIcsText(CONFIG.banquet.venue + "｜" + CONFIG.banquet.address)}`,"BEGIN:VALARM","TRIGGER:-P1D","ACTION:DISPLAY",`DESCRIPTION:${escapeIcsText("明天是思傑與彥綾的婚宴，記得確認時間與交通方式。")}`,"END:VALARM","END:VEVENT","END:VCALENDAR"].join("\r\n"); }
   function downloadIcs(){ downloadTextFile("sijie-yanling-wedding.ics",buildIcsContent(),"text/calendar;charset=utf-8"); showToast("已下載行事曆檔案，內含前一天提醒"); track("calendar_ics",{}); }
 
-  function openShareModal(){ document.getElementById("shareModal").classList.add("is-open"); }
+  function openShareModal(){ document.getElementById("shareModal").classList.add("is-open"); pauseAutoplay(60000); }
   function closeShareModal(){ document.getElementById("shareModal")?.classList.remove("is-open"); }
-  async function shareInvitation(){ const data={title:CONFIG.share.title,text:CONFIG.share.description,url:CONFIG.share.url}; try{ if(navigator.share) await navigator.share(data); else await copyToClipboard(data.url), showToast("已複製喜帖連結，可以貼到 LINE 分享囉"); track("share_invitation",{}); }catch(err){ if(err.name!=="AbortError") showToast("分享未完成，可改用 QR Code 或下載邀請卡"); } }
+  function getShareUrl(){ return CONFIG.share.url || document.querySelector('link[rel="canonical"]')?.href || location.href; }
+  function getShareData(){ return {title:CONFIG.share.title,text:CONFIG.share.description,url:getShareUrl()}; }
+  async function shareInvitation(){
+    const data=getShareData();
+    try{
+      if(navigator.share && (!navigator.canShare || navigator.canShare(data))){
+        await navigator.share(data);
+        showToast("已開啟分享");
+        track("share_invitation",{method:"native"});
+        return;
+      }
+      await copyShareLink();
+    }catch(err){
+      if(err.name==="AbortError") return;
+      await copyShareLink("手機分享未完成，已改為複製連結");
+    }
+  }
+  async function copyShareLink(successMessage="已複製喜帖連結，可以貼到 LINE 分享囉"){
+    try{
+      await copyToClipboard(getShareUrl());
+      showToast(successMessage);
+      track("share_invitation",{method:"copy"});
+    }catch(e){
+      selectShareUrl();
+      showToast("已選取喜帖連結，可按複製或長按手動複製");
+    }
+  }
+  function selectShareUrl(){
+    const link=document.querySelector("[data-share-url]");
+    if(!link)return;
+    const range=document.createRange();
+    range.selectNodeContents(link);
+    const selection=window.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(range);
+    link.focus?.();
+  }
   async function downloadInvitationCard(){
     try{
       const canvas=document.createElement("canvas"); canvas.width=1200; canvas.height=1600; const ctx=canvas.getContext("2d");
@@ -420,7 +482,7 @@
   function roundRect(ctx,x,y,w,h,r){ ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
   function loadImage(src){ return new Promise((resolve,reject)=>{ const img=new Image(); img.onload=()=>resolve(img); img.onerror=reject; img.src=src; }); }
 
-  function openGallery(i){ lightboxIndex=Number.isFinite(i)?i:0; updateGallery(); document.getElementById("galleryLightbox").classList.add("is-open"); }
+  function openGallery(i){ lightboxIndex=Number.isFinite(i)?i:0; updateGallery(); document.getElementById("galleryLightbox").classList.add("is-open"); pauseAutoplay(60000); }
   function closeGallery(){ document.getElementById("galleryLightbox")?.classList.remove("is-open"); }
   function moveGallery(d){ lightboxIndex=(lightboxIndex+d+galleryKeys.length)%galleryKeys.length; updateGallery(); }
   function updateGallery(){ const keyName=galleryKeys[lightboxIndex]; const p=CONFIG.photos[keyName]; const img=document.getElementById("galleryImage"); if(p.src) img.style.backgroundImage=`url("${p.src}")`; else img.style.backgroundImage="linear-gradient(135deg, rgba(195,136,121,.55), rgba(255,253,249,.88))"; }
@@ -447,8 +509,8 @@
   function filterName(name){ return name.replace(/[<>]/g,"").slice(0,20); }
   function filterMessage(text){ const lower=text.toLowerCase(); if(/https?:\/\/|www\.|\.com|\.tw|line\.me/.test(lower)) return {blocked:true,reason:"祝福牆不支援網址或廣告內容。",text:""}; if(/<script|javascript:|onerror=|onload=|<iframe/i.test(text)) return {blocked:true,reason:"這段內容含有不適合公開顯示的語法。",text:""}; if(/(.){10,}/.test(text)) return {blocked:true,reason:"文字重複過多，請調整後再送出。",text:""}; const bad=["幹","靠北","白癡","垃圾"]; let changed=false; let out=text; bad.forEach(w=>{ if(out.includes(w)){ out=out.split(w).join("OO"); changed=true; } }); return {blocked:false,changed,text:out}; }
 
-  function openShareLinkFallback(){ copyToClipboard(CONFIG.share.url).then(()=>showToast("已複製喜帖連結")); }
-  async function copyToClipboard(text){ if(navigator.clipboard && window.isSecureContext) return navigator.clipboard.writeText(text); const ta=document.createElement("textarea"); ta.value=text; ta.style.position="fixed"; ta.style.left="-9999px"; document.body.appendChild(ta); ta.focus(); ta.select(); const ok=document.execCommand("copy"); ta.remove(); if(!ok) throw new Error("copy failed"); }
+  function openShareLinkFallback(){ copyShareLink("已複製喜帖連結"); }
+  async function copyToClipboard(text){ if(navigator.clipboard && window.isSecureContext) return navigator.clipboard.writeText(text); const ta=document.createElement("textarea"); ta.value=text; ta.setAttribute("readonly",""); ta.style.position="fixed"; ta.style.top="0"; ta.style.left="-9999px"; document.body.appendChild(ta); ta.focus(); ta.select(); ta.setSelectionRange(0,ta.value.length); const ok=document.execCommand("copy"); ta.remove(); if(!ok) throw new Error("copy failed"); }
   function downloadTextFile(filename,content,type){ const blob=new Blob([content],{type}); const url=URL.createObjectURL(blob); const a=document.createElement("a"); a.href=url; a.download=filename; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url); }
   let toastTimer=null; function showToast(msg){ const t=document.getElementById("toast"); t.textContent=msg; t.classList.add("is-show"); clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.classList.remove("is-show"),2400); }
 
