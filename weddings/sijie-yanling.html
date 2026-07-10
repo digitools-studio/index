@@ -364,11 +364,45 @@
 
       .floating-copy-inner{padding:0 4px;background:transparent;text-shadow:0 1px 0 rgba(255,253,249,.98),0 0 13px rgba(255,253,249,.96),0 8px 24px rgba(88,48,31,.34),0 16px 42px rgba(88,48,31,.20)}
       .floating-copy .timeline-year{font-size:clamp(46px,18vw,76px);margin-bottom:12px}
-      .floating-copy .section-title{font-size:clamp(24px,7vw,34px);margin-bottom:14px}
-      .floating-copy p{font-size:14px;line-height:1.86;font-weight:680}
+      .floating-copy .section-title{font-size:clamp(22px,6.6vw,32px);margin-bottom:13px}
+      .floating-copy p{font-size:13px;line-height:1.82;font-weight:680}
 
+      .floating-copy .timeline-caption{margin-bottom:12px}
       .floating-copy .timeline-body{max-height:42vh;overflow:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
       .floating-copy .timeline-body::-webkit-scrollbar{display:none}
+
+      .photo-story-card.timeline-card-2{
+        background:linear-gradient(135deg,rgba(195,136,121,.20),rgba(255,249,244,.86));
+      }
+      .photo-story-card.timeline-card-2 img{
+        object-fit:contain;
+        object-position:50% 50%;
+        transform:scale(1);
+      }
+      .slide.is-active .photo-story-card.timeline-card-2 img{transform:scale(1)}
+
+      .details-slide .paper-card{
+        max-height:calc(var(--vh)*100 - var(--ui-top-clearance) - var(--ui-bottom-clearance) - var(--safe-top) - var(--safe-bottom) - 10px);
+        overflow:auto;
+        -webkit-overflow-scrolling:touch;
+        padding:14px 16px;
+        gap:12px;
+      }
+      .details-slide .paper-card::-webkit-scrollbar{display:none}
+      .details-slide .details-date{font-size:clamp(34px,10vw,56px);margin:0;line-height:.92}
+      .details-slide .section-title{font-size:clamp(22px,6vw,30px);margin-bottom:8px;line-height:1.18}
+      .details-slide .eyebrow{font-size:10px;margin-bottom:6px}
+      .details-slide .details-list{margin:12px auto;gap:8px}
+      .details-slide .details-row{padding:9px 12px;border-radius:14px}
+      .details-slide .details-row span{font-size:12px}
+      .details-slide .details-row b{font-size:13px}
+      .details-slide .countdown-strip{margin:10px auto 2px;gap:6px}
+      .details-slide .countdown-unit{padding:8px 4px;border-radius:14px}
+      .details-slide .countdown-unit b{font-size:clamp(18px,5vw,24px)}
+      .details-slide .countdown-unit span{font-size:10px;margin-top:4px}
+      .details-slide .photo-slot.detail{min-height:150px}
+      .details-slide .hero-actions{margin-top:12px}
+      .details-slide .action-btn{padding:10px 15px;font-size:13px}
 
       .gallery-grid{grid-template-columns:repeat(2,1fr);gap:10px}
 
@@ -408,7 +442,12 @@
     @media (max-height:620px) and (max-width:760px){
       .photo-story-card{height:calc(var(--vh)*100 - 172px);min-height:430px}
       .floating-copy{bottom:14px}
+      .floating-copy .section-title{font-size:clamp(21px,6.2vw,29px)}
+      .floating-copy p{font-size:12.5px;line-height:1.74}
       .floating-copy .timeline-body{max-height:30vh}
+      .details-slide .photo-slot.detail{min-height:120px}
+      .details-slide .details-list{margin:8px auto}
+      .details-slide .countdown-unit{padding:6px 4px}
     }
 
     @media (max-height:700px) and (max-width:760px){
@@ -519,12 +558,12 @@
     const cardPositionClass=i===1 ? "copy-left" : "copy-right";
     const bodyLines=Array.isArray(t.body) ? t.body : [t.body];
     const bodyHtml=bodyLines.filter(Boolean).map(line=>`<p>${escapeHtml(line)}</p>`).join('');
-    return slide(`<article class="photo-story-card ${cardPositionClass} reveal"><img src="${escapeHtml(p.src)}" alt="${escapeHtml(p.title || t.title)}" style="--pos:${escapeHtml(p.position || "50% 42%")}"><div class="photo-story-overlay" aria-hidden="true"></div><div class="floating-copy ${copyPositionClass}"><div class="floating-copy-inner"><h2 class="section-title">${escapeHtml(t.title)}</h2><p class="timeline-caption">${escapeHtml(t.caption)}</p><div class="timeline-body">${bodyHtml}</div></div></div></article>`,"paper photo-story");
+    return slide(`<article class="photo-story-card timeline-card-${i} ${cardPositionClass} reveal"><img src="${escapeHtml(p.src)}" alt="${escapeHtml(p.title || t.title)}" style="--pos:${escapeHtml(p.position || "50% 42%")}"><div class="photo-story-overlay" aria-hidden="true"></div><div class="floating-copy ${copyPositionClass}"><div class="floating-copy-inner"><h2 class="section-title">${escapeHtml(t.title)}</h2><p class="timeline-caption">${escapeHtml(t.caption)}</p><div class="timeline-body">${bodyHtml}</div></div></div></article>`,"paper photo-story");
   }
 
   function renderGallery(){ return slide(`<div class="scrollable"><section class="paper-card reveal"><p class="eyebrow">Photo Gallery</p><h2 class="section-title">我們的片刻</h2><span class="gallery-hint">⌕ 點擊照片可放大瀏覽</span><div class="gallery-grid">${galleryKeys.map((k,i)=>renderPhotoSlot(k,'gallery-item',true)).join('')}</div></section></div>`,"paper"); }
 
-  function renderDetails(){ return slide(`<div class="paper-card grid-2 reveal"><div class="details-card"><p class="eyebrow">Wedding Day</p><div class="details-date">10 / 11</div><h2 class="section-title">婚宴資訊</h2><div class="details-list"><div class="details-row"><span>日期</span><b>2026 / 10 / 11</b></div><div class="details-row"><span>時間</span><b>${CONFIG.banquet.label}｜${CONFIG.banquet.time}</b></div><div class="details-row"><span>地點</span><b>${CONFIG.banquet.venue}</b></div></div><div class="countdown-strip" id="weddingCountdown" aria-label="婚宴倒數">${renderCountdownUnits()}</div><div class="hero-actions"><a class="action-btn" href="${CONFIG.banquet.mapUrl}" data-map-link>Google Map 導航</a></div></div><div>${renderPhotoSlot('venue','detail')}</div></div>`,"paper"); }
+  function renderDetails(){ return slide(`<div class="paper-card grid-2 reveal"><div class="details-card"><p class="eyebrow">Wedding Day</p><div class="details-date">10 / 11</div><h2 class="section-title">婚宴資訊</h2><div class="details-list"><div class="details-row"><span>日期</span><b>2026 / 10 / 11</b></div><div class="details-row"><span>時間</span><b>${CONFIG.banquet.label}｜${CONFIG.banquet.time}</b></div><div class="details-row"><span>地點</span><b>${CONFIG.banquet.venue}</b></div></div><div class="countdown-strip" id="weddingCountdown" aria-label="婚宴倒數">${renderCountdownUnits()}</div><div class="hero-actions"><a class="action-btn" href="${CONFIG.banquet.mapUrl}" data-map-link>Google Map 導航</a></div></div><div>${renderPhotoSlot('venue','detail')}</div></div>`,"paper details-slide"); }
 
   function renderFinalInvite(){ return slide(`<div class="hero-card reveal">${renderPhotoSlot('cover','cover')}<p class="eyebrow">Invitation</p><h2 class="hero-names">思傑<br>彥綾</h2><div class="hero-date">${CONFIG.dateText}</div><p class="subtitle">我們要結婚啦！<br>誠摯邀請你，一同見證這個珍貴又幸福的時刻。</p><div class="hero-actions"><button class="action-btn" type="button" data-go="4">查看婚宴資訊</button><button class="ghost-btn" type="button" data-go="5">直接出席登記</button><button class="soft-btn" type="button" data-share>分享這份邀請</button></div></div>`,"paper hero-slide"); }
 
@@ -693,7 +732,7 @@
     userGoTo(currentIndex+(dx<0?1:-1));
   }
   function cancelTouchDrag(){ isDragging=false; dragAxis=null; document.getElementById("slides")?.classList.remove("is-dragging"); }
-  function isInteractiveTarget(target){ return Boolean(target.closest("button,a,input,textarea,select,form,.modal")); }
+  function isInteractiveTarget(target){ return Boolean(target.closest("button,a,input,textarea,select,.modal,[role=\"button\"]")); }
   function normalizeIndex(i){ return Math.max(0,Math.min(slideCount-1,i)); }
   function userGoTo(i){ pauseAutoplay(MANUAL_PAUSE_MS); goTo(i); }
   function goTo(i,fromAuto=false){ const next=normalizeIndex(i); if(next!==currentIndex) triggerPageTurn(getTurnDirection(next)); currentIndex=next; update(); scheduleAutoplay(); }
