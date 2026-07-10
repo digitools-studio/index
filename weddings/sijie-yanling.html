@@ -457,6 +457,64 @@
       .hero-actions{margin-top:12px}
       .action-btn,.ghost-btn,.soft-btn{padding:10px 13px;font-size:13px}
     }
+
+
+    /* v6: 手機開場邀請頁置中修正
+       - 保持原有視覺，不改桌機版
+       - 使用完整 viewport 與 inline-size 讓卡片在手機上不受 padding / safe-area 造成視覺偏移 */
+    @media (max-width:760px){
+      .intro{
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        width:100vw;
+        min-height:calc(var(--vh) * 100);
+        padding:calc(18px + env(safe-area-inset-top,0px)) 18px calc(18px + env(safe-area-inset-bottom,0px));
+        text-align:center;
+      }
+      .intro-card{
+        width:min(88vw,390px);
+        max-width:390px;
+        margin-inline:auto;
+        padding:40px 24px 32px;
+        justify-self:center;
+        align-self:center;
+      }
+      .intro-title{
+        width:100%;
+        text-align:center;
+        letter-spacing:.055em;
+        text-indent:.055em;
+      }
+      .intro-title span{
+        display:block;
+        text-align:center;
+      }
+      .xi-entry{
+        margin-left:auto;
+        margin-right:auto;
+      }
+      .intro-date{
+        text-align:center;
+        letter-spacing:.14em;
+        text-indent:.14em;
+      }
+    }
+    @media (max-width:420px){
+      .intro-card{
+        width:min(86vw,340px);
+        padding:38px 22px 30px;
+      }
+      .intro-title{
+        font-size:39px;
+      }
+      .xi-entry{
+        width:106px;
+        height:106px;
+        font-size:60px;
+      }
+    }
+
   </style>
 </head>
 <body>
@@ -585,6 +643,7 @@
     document.addEventListener("keydown",e=>{ if(e.key==="Escape"){ closeCalendarModal(); closeShareModal(); closeGallery(); } if(!started)return; if(e.key==="ArrowRight") userGoTo(currentIndex+1); if(e.key==="ArrowLeft") userGoTo(currentIndex-1); });
     document.addEventListener("click",handleDocumentClick);
     document.getElementById("musicBtn").addEventListener("click",toggleMusic);
+    bindMusicLifecycleGuards();
     setupRsvp(); setupMessages(); renderLastRsvpSummary(); renderMessagesList(); startCountdown(); update();
   }
 
@@ -657,6 +716,8 @@
   function updateMusicUi(playing){ const btn=document.getElementById("musicBtn"); if(!btn)return; btn.classList.toggle("is-playing",playing); btn.classList.toggle("is-muted",!playing); btn.textContent=playing?"♪":"音"; }
   function tryPlayAudio(){
     if(!audio)return;
+    audio.loop=true;
+    audio.muted=false;
     audio.play().then(()=>{
       document.getElementById("musicBtn").setAttribute("aria-pressed","true");
       document.getElementById("musicBtn").setAttribute("aria-label","背景音樂播放中，點擊關閉");
@@ -762,7 +823,66 @@
   function renderCountdownUnits(){ return ["天","小時","分鐘","秒"].map(label=>`<div class="countdown-unit"><b>--</b><span>${label}</span></div>`).join(""); }
   function startCountdown(){ updateCountdown(); setInterval(updateCountdown,1000); }
   function updateCountdown(){ const el=document.getElementById("weddingCountdown"); if(!el)return; const target=new Date(CONFIG.calendar.startDateTime).getTime(); const diff=Math.max(0,target-Date.now()); const days=Math.floor(diff/86400000); const hours=Math.floor(diff%86400000/3600000); const minutes=Math.floor(diff%3600000/60000); const seconds=Math.floor(diff%60000/1000); [days,hours,minutes,seconds].forEach((value,i)=>{ const node=el.querySelectorAll("b")[i]; if(node) node.textContent=String(value).padStart(i===0?1:2,"0"); }); }
-  function stopBackgroundMusic(message="背景音樂已關閉"){ if(audio){ audio.pause(); audio.currentTime=0; } const btn=document.getElementById("musicBtn"); btn?.setAttribute("aria-pressed","false"); btn?.setAttribute("aria-label","背景音樂已關閉，點擊播放"); updateMusicUi(false); announceMusicStatus(message); }
+  function syncMusicStoppedUi(label="背景音樂已關閉，點擊播放"){
+    const btn=document.getElementById("musicBtn");
+    btn?.setAttribute("aria-pressed","false");
+    btn?.setAttribute("aria-label",label);
+    updateMusicUi(false);
+  }
+  function stopBackgroundMusic(message="背景音樂已關閉"){
+    if(audio){
+      audio.pause();
+      audio.currentTime=0;
+      audio.muted=false;
+    }
+    syncMusicStoppedUi("背景音樂已關閉，點擊播放");
+    announceMusicStatus(message);
+  }
+  function forceStopBackgroundMusic(reason="page_lifecycle"){
+    const media=audio || document.getElementById("audio");
+    if(media){
+      try{
+        media.pause();
+        media.currentTime=0;
+        media.muted=true;
+        media.loop=false;
+        media.removeAttribute("autoplay");
+      }catch(err){
+        console.warn("forceStopBackgroundMusic failed",reason,err);
+      }
+    }
+    syncMusicStoppedUi("背景音樂已停止，點擊播放");
+    musicHintLocked=false;
+    track("music_force_stop",{reason});
+  }
+  function bindMusicLifecycleGuards(){
+    if(bindMusicLifecycleGuards.bound)return;
+    bindMusicLifecycleGuards.bound=true;
+
+    document.addEventListener("visibilitychange",()=>{
+      if(document.visibilityState==="hidden"){
+        forceStopBackgroundMusic("visibility_hidden");
+      }else if(audio){
+        audio.muted=false;
+        audio.loop=true;
+      }
+    },{capture:true});
+
+    window.addEventListener("pagehide",()=>forceStopBackgroundMusic("pagehide"),{capture:true});
+    window.addEventListener("beforeunload",()=>forceStopBackgroundMusic("beforeunload"),{capture:true});
+    window.addEventListener("unload",()=>forceStopBackgroundMusic("unload"),{capture:true});
+    window.addEventListener("blur",()=>{
+      if(document.visibilityState!=="visible") forceStopBackgroundMusic("window_blur_hidden");
+    },{capture:true});
+    document.addEventListener("freeze",()=>forceStopBackgroundMusic("freeze"),{capture:true});
+    window.addEventListener("pageshow",()=>{
+      if(audio){
+        audio.muted=false;
+        audio.loop=true;
+      }
+      syncMusicStoppedUi("背景音樂未播放，點擊播放");
+    },{capture:true});
+  }
   function openMapAndCloseSite(url){ stopBackgroundMusic("背景音樂已關閉，正在開啟 Google Map"); track("map_open",{}); setTimeout(()=>window.location.assign(url),520); }
   function openCalendarModal(){ document.getElementById("calendarModal").classList.add("is-open"); pauseAutoplay(60000); }
   function closeCalendarModal(){ document.getElementById("calendarModal")?.classList.remove("is-open"); }
