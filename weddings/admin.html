@@ -1,0 +1,831 @@
+<!doctype html>
+<html lang="zh-TW">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>思傑 & 彥綾｜喜帖管理後台</title>
+  <style>
+:root {
+  --rose: #c38879;
+  --rose-soft: #f1d8cf;
+  --cream: #fff9f4;
+  --paper: #fffdf9;
+  --coffee: #58301f;
+  --coffee-2: #7a4a3c;
+  --muted: #8c6b5e;
+  --line: rgba(88, 48, 31, .14);
+  --danger: #9f3434;
+  --success: #39704d;
+  --shadow: 0 22px 60px rgba(88, 48, 31, .12);
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: "Noto Sans TC", system-ui, sans-serif;
+  color: var(--coffee);
+  background:
+    radial-gradient(circle at 10% 0%, rgba(195, 136, 121, .18), transparent 30rem),
+    #f7f2ed;
+}
+button, input, select, textarea { font: inherit; }
+button { cursor: pointer; }
+.shell { width: min(1440px, 100%); margin: 0 auto; padding: 28px; }
+.eyebrow { margin: 0 0 8px; color: var(--rose); text-transform: uppercase; letter-spacing: .18em; font-size: 12px; font-weight: 800; }
+h1, h2, p { margin-top: 0; }
+.login-card {
+  width: min(460px, 100%);
+  margin: 12vh auto 0;
+  padding: 38px;
+  border-radius: 28px;
+  background: rgba(255, 253, 249, .94);
+  border: 1px solid rgba(255, 255, 255, .9);
+  box-shadow: var(--shadow);
+  text-align: center;
+}
+.login-card p { color: var(--muted); line-height: 1.8; }
+.topbar { display: flex; align-items: center; justify-content: space-between; gap: 24px; margin-bottom: 24px; }
+.topbar h1 { margin-bottom: 0; }
+.user-actions { display: flex; align-items: center; justify-content: flex-end; gap: 10px; flex-wrap: wrap; }
+.user-actions span { color: var(--muted); font-size: 14px; }
+.primary-btn, .ghost-btn, .icon-btn {
+  border-radius: 999px;
+  padding: 11px 16px;
+  font-weight: 800;
+  border: 1px solid var(--line);
+}
+.primary-btn { color: white; background: linear-gradient(135deg, var(--coffee), #8a4d3d); border: 0; }
+.ghost-btn { color: var(--coffee); background: var(--paper); }
+.icon-btn { border: 0; background: transparent; font-size: 28px; padding: 4px 8px; }
+button:disabled { opacity: .55; cursor: wait; }
+.summary-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px; margin-bottom: 20px; }
+.summary-card { padding: 20px; border-radius: 22px; background: var(--paper); border: 1px solid var(--line); box-shadow: 0 10px 30px rgba(88,48,31,.06); }
+.summary-card span { display: block; color: var(--muted); font-size: 13px; }
+.summary-card strong { display: block; margin-top: 10px; font-size: 32px; }
+.tabs { display: flex; gap: 8px; margin-bottom: 14px; }
+.tab-btn { border: 1px solid var(--line); background: var(--paper); color: var(--coffee); padding: 11px 18px; border-radius: 999px; font-weight: 800; }
+.tab-btn.is-active { background: var(--coffee); color: white; }
+.panel { padding: 24px; border-radius: 26px; background: rgba(255, 253, 249, .96); border: 1px solid rgba(255,255,255,.9); box-shadow: var(--shadow); }
+.panel-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 18px; margin-bottom: 18px; }
+.panel-head h2 { margin-bottom: 5px; }
+.panel-head p { margin-bottom: 0; color: var(--muted); }
+.filters { display: grid; grid-template-columns: minmax(260px, 1fr) 220px; gap: 12px; margin-bottom: 16px; }
+input, select, textarea { width: 100%; border: 1px solid var(--line); border-radius: 14px; background: white; color: var(--coffee); padding: 11px 13px; outline: none; }
+input:focus, select:focus, textarea:focus { border-color: var(--rose); box-shadow: 0 0 0 4px rgba(195,136,121,.12); }
+textarea { min-height: 100px; resize: vertical; }
+.table-wrap { overflow: auto; }
+table { width: 100%; border-collapse: collapse; min-width: 980px; }
+th, td { padding: 13px 10px; text-align: left; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { color: var(--muted); font-size: 12px; white-space: nowrap; }
+td { font-size: 14px; }
+.note-cell { max-width: 240px; white-space: pre-wrap; color: var(--muted); }
+.status-badge { display: inline-flex; padding: 5px 9px; border-radius: 999px; font-size: 12px; font-weight: 800; background: var(--rose-soft); }
+.status-badge.attend, .status-badge.approved { color: var(--success); background: #e6f2e9; }
+.status-badge.decline, .status-badge.rejected { color: var(--danger); background: #f8e5e5; }
+.status-badge.pending { color: #8a641c; background: #fff0cb; }
+.status-badge.hidden { color: var(--muted); background: #eee8e4; }
+.message-list { display: grid; gap: 14px; }
+.message-card { padding: 18px; border: 1px solid var(--line); border-radius: 20px; background: white; }
+.message-card-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
+.message-card-head h3 { margin: 0; font-size: 16px; }
+.message-card p { margin: 0 0 12px; color: var(--coffee-2); line-height: 1.8; white-space: pre-wrap; }
+.message-meta { color: var(--muted); font-size: 12px; }
+.message-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px; }
+.message-actions button { padding: 8px 12px; }
+.empty-state { padding: 32px; text-align: center; color: var(--muted); }
+dialog { width: min(520px, calc(100% - 30px)); border: 0; border-radius: 24px; padding: 0; box-shadow: var(--shadow); }
+dialog::backdrop { background: rgba(50, 27, 18, .4); backdrop-filter: blur(4px); }
+.dialog-form { padding: 24px; display: grid; gap: 14px; }
+.dialog-form label { display: grid; gap: 7px; font-weight: 700; font-size: 13px; }
+.dialog-head, .dialog-actions { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.dialog-actions { justify-content: flex-end; margin-top: 4px; }
+.loading-overlay { position: fixed; inset: 0; z-index: 40; display: grid; place-content: center; gap: 12px; background: rgba(255, 249, 244, .72); backdrop-filter: blur(4px); text-align: center; font-weight: 800; }
+.spinner { width: 42px; height: 42px; margin: auto; border: 4px solid rgba(88,48,31,.15); border-top-color: var(--coffee); border-radius: 50%; animation: spin .8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.toast { position: fixed; left: 50%; bottom: 28px; transform: translate(-50%, 20px); opacity: 0; pointer-events: none; padding: 12px 18px; border-radius: 999px; background: var(--coffee); color: white; transition: .2s ease; z-index: 50; }
+.toast.is-show { opacity: 1; transform: translate(-50%, 0); }
+.toast.is-error { background: var(--danger); }
+
+@media (max-width: 980px) {
+  .summary-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .topbar, .panel-head { align-items: stretch; flex-direction: column; }
+  .user-actions { justify-content: flex-start; }
+}
+@media (max-width: 640px) {
+  .shell { padding: 14px; }
+  .summary-grid { grid-template-columns: 1fr 1fr; }
+  .filters { grid-template-columns: 1fr; }
+  .panel { padding: 16px; }
+  .login-card { margin-top: 7vh; padding: 28px 20px; }
+}
+
+</style>
+</head>
+<body>
+  <main class="shell">
+    <section id="loginView" class="login-card">
+      <p class="eyebrow">Wedding Admin</p>
+      <h1>喜帖管理後台</h1>
+      <p id="loginMessage">登入後可管理 RSVP 與祝福留言。</p>
+      <button id="loginBtn" class="primary-btn" type="button">使用新人帳號登入</button>
+    </section>
+
+    <section id="adminView" class="admin-view" hidden>
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Wedding Admin</p>
+          <h1 id="weddingTitle">喜帖管理後台</h1>
+        </div>
+        <div class="user-actions">
+          <span id="userEmail"></span>
+          <button id="reloadBtn" class="ghost-btn" type="button">重新整理</button>
+          <button id="logoutBtn" class="ghost-btn" type="button">登出</button>
+        </div>
+      </header>
+
+      <section class="summary-grid" aria-label="婚宴回覆摘要">
+        <article class="summary-card"><span>已回覆組數</span><strong id="summaryResponses">—</strong></article>
+        <article class="summary-card"><span>會出席組數</span><strong id="summaryAttending">—</strong></article>
+        <article class="summary-card"><span>預計出席人數</span><strong id="summaryGuests">—</strong></article>
+        <article class="summary-card"><span>預計素食人數</span><strong id="summaryVegetarian">—</strong></article>
+        <article class="summary-card"><span>待審核留言</span><strong id="summaryPending">—</strong></article>
+      </section>
+
+      <nav class="tabs" aria-label="管理功能">
+        <button class="tab-btn is-active" type="button" data-tab="rsvp">RSVP 管理</button>
+        <button class="tab-btn" type="button" data-tab="messages">留言審核</button>
+      </nav>
+
+      <section id="rsvpPanel" class="panel">
+        <div class="panel-head">
+          <div>
+            <h2>RSVP 管理</h2>
+            <p>搜尋、篩選、修改與匯出出席回覆。</p>
+          </div>
+          <button id="exportBtn" class="primary-btn" type="button">匯出 CSV</button>
+        </div>
+        <div class="filters">
+          <input id="rsvpSearch" type="search" placeholder="搜尋姓名、電話或備註">
+          <select id="rsvpStatusFilter">
+            <option value="ALL">全部出席狀態</option>
+            <option value="ATTEND">會出席</option>
+            <option value="DECLINE">無法出席</option>
+            <option value="PENDING">尚未確定</option>
+          </select>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>姓名</th>
+                <th>電話</th>
+                <th>回覆</th>
+                <th>人數</th>
+                <th>餐食</th>
+                <th>備註</th>
+                <th>更新時間</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="rsvpTableBody"></tbody>
+          </table>
+        </div>
+        <div id="rsvpEmpty" class="empty-state" hidden>目前沒有符合條件的 RSVP。</div>
+      </section>
+
+      <section id="messagesPanel" class="panel" hidden>
+        <div class="panel-head">
+          <div>
+            <h2>留言審核</h2>
+            <p>新留言預設為待審核，核准後才會出現在喜帖前台。</p>
+          </div>
+          <select id="messageStatusFilter">
+            <option value="PENDING">待審核</option>
+            <option value="APPROVED">已公開</option>
+            <option value="REJECTED">已拒絕</option>
+            <option value="HIDDEN">已隱藏</option>
+            <option value="ALL">全部留言</option>
+          </select>
+        </div>
+        <div id="messageList" class="message-list"></div>
+        <div id="messageEmpty" class="empty-state" hidden>目前沒有符合條件的留言。</div>
+      </section>
+    </section>
+  </main>
+
+  <dialog id="rsvpDialog">
+    <form id="rsvpEditForm" method="dialog" class="dialog-form">
+      <div class="dialog-head">
+        <div>
+          <p class="eyebrow">Edit RSVP</p>
+          <h2 id="dialogGuestName">修改出席資料</h2>
+        </div>
+        <button class="icon-btn" type="button" data-dialog-close aria-label="關閉">×</button>
+      </div>
+      <input id="editRsvpId" type="hidden">
+      <label>出席狀態
+        <select id="editAttendance" required>
+          <option value="ATTEND">會出席</option>
+          <option value="DECLINE">無法出席</option>
+          <option value="PENDING">尚未確定</option>
+        </select>
+      </label>
+      <label>出席人數
+        <input id="editGuestCount" type="number" min="0" max="4" required>
+      </label>
+      <label>餐食
+        <select id="editVegetarian">
+          <option value="NO">葷食</option>
+          <option value="YES">素食</option>
+        </select>
+      </label>
+      <label>備註
+        <textarea id="editNote" maxlength="160"></textarea>
+      </label>
+      <div class="dialog-actions">
+        <button class="ghost-btn" type="button" data-dialog-close>取消</button>
+        <button id="saveRsvpBtn" class="primary-btn" type="submit">儲存修改</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div id="loadingOverlay" class="loading-overlay" hidden>
+    <div class="spinner" aria-hidden="true"></div>
+    <span>資料處理中…</span>
+  </div>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script>
+"use strict";
+
+// ============================================================
+// 只需要修改以下 3 個值；其餘程式不要動。
+// ============================================================
+const ADMIN_SETTINGS = Object.freeze({
+  weddingName: "思傑 & 彥綾",
+
+  // API Gateway HTTP API 的 Invoke URL，不要在結尾加斜線。
+  apiBaseUrl: "https://REPLACE_ME.execute-api.ap-northeast-1.amazonaws.com",
+
+  // Cognito Managed Login Domain，不要在結尾加斜線。
+  cognitoDomain: "https://REPLACE_ME.auth.ap-northeast-1.amazoncognito.com",
+
+  // Cognito App Client ID。
+  clientId: "REPLACE_WITH_COGNITO_APP_CLIENT_ID",
+
+  // 必須與 Cognito App Client 的 Callback / Sign-out URL 完全一致。
+  // 預設自動採用 admin.html 當前網址。
+  scopes: ["openid", "email", "wedding-admin-api/manage"]
+});
+
+const adminPageUrl = new URL(window.location.href);
+adminPageUrl.search = "";
+adminPageUrl.hash = "";
+
+const ADMIN_CONFIG = Object.freeze({
+  ...ADMIN_SETTINGS,
+  redirectUri: adminPageUrl.href,
+  logoutUri: adminPageUrl.href
+});
+
+function assertAdminConfig() {
+  const values = [
+    ADMIN_CONFIG.apiBaseUrl,
+    ADMIN_CONFIG.cognitoDomain,
+    ADMIN_CONFIG.clientId
+  ];
+  if (values.some(value => !value || value.includes("REPLACE"))) {
+    throw new Error("請先修改 admin.html 頂部 ADMIN_SETTINGS 的 API Gateway 與 Cognito 設定。");
+  }
+}
+
+
+
+const STORAGE_KEY = "wedding-admin-auth";
+const PKCE_KEY = "wedding-admin-pkce";
+
+function randomString(byteLength = 32) {
+  const bytes = new Uint8Array(byteLength);
+  crypto.getRandomValues(bytes);
+  return base64Url(bytes);
+}
+
+function base64Url(bytes) {
+  return btoa(String.fromCharCode(...bytes))
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=+$/, "");
+}
+
+async function sha256(value) {
+  return new Uint8Array(
+    await crypto.subtle.digest("SHA-256", new TextEncoder().encode(value))
+  );
+}
+
+function decodeJwt(token) {
+  try {
+    const [, payload] = token.split(".");
+    const normalized = payload.replace(/-/g, "+").replace(/_/g, "/");
+    const padded = normalized.padEnd(Math.ceil(normalized.length / 4) * 4, "=");
+    const binary = atob(padded);
+    const bytes = Uint8Array.from(binary, character => character.charCodeAt(0));
+    return JSON.parse(new TextDecoder().decode(bytes));
+  } catch {
+    return {};
+  }
+}
+
+function getStoredSession() {
+  try {
+    return JSON.parse(sessionStorage.getItem(STORAGE_KEY) || "null");
+  } catch {
+    return null;
+  }
+}
+
+function isTokenValid(token, bufferSeconds = 30) {
+  if (!token) return false;
+  const payload = decodeJwt(token);
+  return Number(payload.exp || 0) > Math.floor(Date.now() / 1000) + bufferSeconds;
+}
+
+async function login() {
+  const verifier = randomString(64);
+  const state = randomString(24);
+  const challenge = base64Url(await sha256(verifier));
+
+  sessionStorage.setItem(PKCE_KEY, JSON.stringify({ verifier, state }));
+
+  const params = new URLSearchParams({
+    response_type: "code",
+    client_id: ADMIN_CONFIG.clientId,
+    redirect_uri: ADMIN_CONFIG.redirectUri,
+    scope: ADMIN_CONFIG.scopes.join(" "),
+    state,
+    code_challenge_method: "S256",
+    code_challenge: challenge
+  });
+
+  window.location.assign(
+    `${ADMIN_CONFIG.cognitoDomain.replace(/\/$/, "")}/oauth2/authorize?${params}`
+  );
+}
+
+async function handleAuthCallback() {
+  const url = new URL(window.location.href);
+  const code = url.searchParams.get("code");
+  const returnedState = url.searchParams.get("state");
+  const error = url.searchParams.get("error");
+
+  if (error) {
+    history.replaceState({}, document.title, ADMIN_CONFIG.redirectUri);
+    throw new Error(url.searchParams.get("error_description") || "Cognito 登入失敗。");
+  }
+  if (!code) return false;
+
+  const stored = JSON.parse(sessionStorage.getItem(PKCE_KEY) || "null");
+  if (!stored?.verifier || !stored?.state || stored.state !== returnedState) {
+    throw new Error("登入狀態驗證失敗，請重新登入。");
+  }
+
+  const body = new URLSearchParams({
+    grant_type: "authorization_code",
+    client_id: ADMIN_CONFIG.clientId,
+    code,
+    redirect_uri: ADMIN_CONFIG.redirectUri,
+    code_verifier: stored.verifier
+  });
+
+  const response = await fetch(
+    `${ADMIN_CONFIG.cognitoDomain.replace(/\/$/, "")}/oauth2/token`,
+    {
+      method: "POST",
+      headers: { "content-type": "application/x-www-form-urlencoded" },
+      body
+    }
+  );
+
+  const tokens = await response.json().catch(() => ({}));
+  if (!response.ok || !tokens.access_token) {
+    throw new Error(tokens.error_description || "無法取得登入憑證。");
+  }
+
+  sessionStorage.setItem(STORAGE_KEY, JSON.stringify(tokens));
+  sessionStorage.removeItem(PKCE_KEY);
+  history.replaceState({}, document.title, ADMIN_CONFIG.redirectUri);
+  return true;
+}
+
+function getAccessToken() {
+  const session = getStoredSession();
+  if (!isTokenValid(session?.access_token)) return null;
+  return session.access_token;
+}
+
+function getCurrentUser() {
+  const session = getStoredSession();
+  const idClaims = decodeJwt(session?.id_token || "");
+  const accessClaims = decodeJwt(session?.access_token || "");
+  return {
+    email: idClaims.email || accessClaims.username || accessClaims["cognito:username"] || "管理者",
+    sub: idClaims.sub || accessClaims.sub || ""
+  };
+}
+
+function clearSession() {
+  sessionStorage.removeItem(STORAGE_KEY);
+  sessionStorage.removeItem(PKCE_KEY);
+}
+
+function logout() {
+  clearSession();
+  const params = new URLSearchParams({
+    client_id: ADMIN_CONFIG.clientId,
+    logout_uri: ADMIN_CONFIG.logoutUri
+  });
+  window.location.assign(
+    `${ADMIN_CONFIG.cognitoDomain.replace(/\/$/, "")}/logout?${params}`
+  );
+}
+
+
+class ApiError extends Error {
+  constructor(message, status, code) {
+    super(message);
+    this.name = "ApiError";
+    this.status = status;
+    this.code = code;
+  }
+}
+
+async function request(path, options = {}) {
+  const token = getAccessToken();
+  if (!token) {
+    clearSession();
+    throw new ApiError("登入已失效，請重新登入。", 401, "AUTH_EXPIRED");
+  }
+
+  const response = await fetch(
+    `${ADMIN_CONFIG.apiBaseUrl.replace(/\/$/, "")}${path}`,
+    {
+      ...options,
+      headers: {
+        authorization: `Bearer ${token}`,
+        ...(options.body ? { "content-type": "application/json" } : {}),
+        ...(options.headers || {})
+      }
+    }
+  );
+
+  const body = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    if (response.status === 401) clearSession();
+    throw new ApiError(
+      body.message || `API 呼叫失敗（${response.status}）`,
+      response.status,
+      body.code
+    );
+  }
+  return body;
+}
+
+const adminApi = {
+  getData() {
+    return request("/admin/data");
+  },
+  updateRsvp(id, patch) {
+    return request(`/admin/rsvps/${encodeURIComponent(id)}`, {
+      method: "PATCH",
+      body: JSON.stringify(patch)
+    });
+  },
+  updateMessage(id, patch) {
+    return request(`/admin/messages/${encodeURIComponent(id)}`, {
+      method: "PATCH",
+      body: JSON.stringify(patch)
+    });
+  }
+};
+
+function csvCell(value) {
+  const text = String(value ?? "").replace(/"/g, '""');
+  return `"${text}"`;
+}
+
+function exportRsvpsCsv(rsvps) {
+  const attendanceLabel = {
+    ATTEND: "會出席",
+    DECLINE: "無法出席",
+    PENDING: "尚未確定"
+  };
+
+  const rows = [
+    ["姓名", "電話", "出席狀態", "人數", "餐食", "備註", "建立時間", "最後更新時間", "最後更新者"],
+    ...rsvps.map(item => [
+      item.name,
+      item.phone,
+      attendanceLabel[item.attendance] || item.attendance,
+      item.guestCount,
+      item.vegetarian === "YES" ? "素食" : "葷食",
+      item.note,
+      item.createdAt,
+      item.updatedAt,
+      item.updatedBy
+    ])
+  ];
+
+  const csv = `\uFEFF${rows.map(row => row.map(csvCell).join(",")).join("\r\n")}`;
+  const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = `sijie-yanling-rsvp-${new Date().toISOString().slice(0, 10)}.csv`;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+}
+
+
+const state = {
+  rsvps: [],
+  messages: [],
+  summary: {},
+  activeTab: "rsvp"
+};
+
+const attendanceLabels = {
+  ATTEND: "會出席",
+  DECLINE: "無法出席",
+  PENDING: "尚未確定"
+};
+const messageStatusLabels = {
+  PENDING: "待審核",
+  APPROVED: "已公開",
+  REJECTED: "已拒絕",
+  HIDDEN: "已隱藏"
+};
+
+const $ = selector => document.querySelector(selector);
+let toastTimer;
+
+function escapeHtml(value) {
+  const div = document.createElement("div");
+  div.textContent = String(value ?? "");
+  return div.innerHTML;
+}
+
+function formatDate(value) {
+  if (!value) return "—";
+  return new Intl.DateTimeFormat("zh-TW", {
+    dateStyle: "short",
+    timeStyle: "short"
+  }).format(new Date(value));
+}
+
+function showToast(message, isError = false) {
+  const toast = $("#toast");
+  toast.textContent = message;
+  toast.classList.toggle("is-error", isError);
+  toast.classList.add("is-show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.classList.remove("is-show"), 2600);
+}
+
+function setLoading(loading) {
+  $("#loadingOverlay").hidden = !loading;
+}
+
+function showLogin(message = "登入後可管理 RSVP 與祝福留言。") {
+  $("#loginView").hidden = false;
+  $("#adminView").hidden = true;
+  $("#loginMessage").textContent = message;
+}
+
+function showAdmin() {
+  $("#loginView").hidden = true;
+  $("#adminView").hidden = false;
+  $("#weddingTitle").textContent = `${ADMIN_CONFIG.weddingName}｜喜帖管理`;
+  $("#userEmail").textContent = getCurrentUser().email;
+}
+
+function renderSummary() {
+  $("#summaryResponses").textContent = state.summary.responseCount ?? 0;
+  $("#summaryAttending").textContent = state.summary.attendingGroups ?? 0;
+  $("#summaryGuests").textContent = state.summary.guestCount ?? 0;
+  $("#summaryVegetarian").textContent = state.summary.vegetarianGuestCount ?? 0;
+  $("#summaryPending").textContent = state.summary.pendingMessageCount ?? 0;
+}
+
+function rsvpStatusClass(status) {
+  return status === "ATTEND" ? "attend" : status === "DECLINE" ? "decline" : "pending";
+}
+
+function renderRsvps() {
+  const search = $("#rsvpSearch").value.trim().toLowerCase();
+  const status = $("#rsvpStatusFilter").value;
+  const filtered = state.rsvps.filter(item => {
+    const matchesStatus = status === "ALL" || item.attendance === status;
+    const haystack = `${item.name} ${item.phone} ${item.note}`.toLowerCase();
+    return matchesStatus && (!search || haystack.includes(search));
+  });
+
+  $("#rsvpTableBody").innerHTML = filtered.map(item => `
+    <tr>
+      <td><strong>${escapeHtml(item.name)}</strong></td>
+      <td>${escapeHtml(item.phone)}</td>
+      <td><span class="status-badge ${rsvpStatusClass(item.attendance)}">${attendanceLabels[item.attendance] || item.attendance}</span></td>
+      <td>${item.guestCount}</td>
+      <td>${item.vegetarian === "YES" ? "素食" : "葷食"}</td>
+      <td class="note-cell">${escapeHtml(item.note || "—")}</td>
+      <td>${formatDate(item.updatedAt)}</td>
+      <td><button class="ghost-btn" type="button" data-edit-rsvp="${escapeHtml(item.id)}">修改</button></td>
+    </tr>
+  `).join("");
+
+  $("#rsvpEmpty").hidden = filtered.length > 0;
+}
+
+function messageStatusClass(status) {
+  return String(status || "").toLowerCase();
+}
+
+function renderMessages() {
+  const status = $("#messageStatusFilter").value;
+  const filtered = state.messages.filter(item => status === "ALL" || item.status === status);
+
+  $("#messageList").innerHTML = filtered.map(item => `
+    <article class="message-card">
+      <div class="message-card-head">
+        <h3>${escapeHtml(item.name)} ${item.isPinned ? "📌" : ""}</h3>
+        <span class="status-badge ${messageStatusClass(item.status)}">${messageStatusLabels[item.status] || item.status}</span>
+      </div>
+      <p>${escapeHtml(item.message)}</p>
+      <div class="message-meta">
+        建立：${formatDate(item.createdAt)}
+        ${item.moderatedBy ? `｜最後處理：${escapeHtml(item.moderatedBy)} ${formatDate(item.moderatedAt)}` : ""}
+      </div>
+      <div class="message-actions">
+        ${item.status !== "APPROVED" ? `<button class="primary-btn" type="button" data-message-action="APPROVED" data-message-id="${item.id}">核准公開</button>` : ""}
+        ${item.status !== "REJECTED" ? `<button class="ghost-btn" type="button" data-message-action="REJECTED" data-message-id="${item.id}">拒絕</button>` : ""}
+        ${item.status !== "HIDDEN" ? `<button class="ghost-btn" type="button" data-message-action="HIDDEN" data-message-id="${item.id}">隱藏</button>` : ""}
+        <button class="ghost-btn" type="button" data-message-pin="${item.isPinned ? "false" : "true"}" data-message-id="${item.id}">${item.isPinned ? "取消置頂" : "置頂"}</button>
+      </div>
+    </article>
+  `).join("");
+
+  $("#messageEmpty").hidden = filtered.length > 0;
+}
+
+function renderAll() {
+  renderSummary();
+  renderRsvps();
+  renderMessages();
+}
+
+async function loadData() {
+  setLoading(true);
+  try {
+    const data = await adminApi.getData();
+    state.rsvps = data.rsvps || [];
+    state.messages = data.messages || [];
+    state.summary = data.summary || {};
+    renderAll();
+  } catch (error) {
+    handleError(error);
+  } finally {
+    setLoading(false);
+  }
+}
+
+function handleError(error) {
+  if (error instanceof ApiError && error.status === 401) {
+    showLogin("登入已失效，請重新登入。");
+    return;
+  }
+  showToast(error.message || "操作失敗，請稍後再試。", true);
+}
+
+function switchTab(tab) {
+  state.activeTab = tab;
+  document.querySelectorAll(".tab-btn").forEach(button => {
+    button.classList.toggle("is-active", button.dataset.tab === tab);
+  });
+  $("#rsvpPanel").hidden = tab !== "rsvp";
+  $("#messagesPanel").hidden = tab !== "messages";
+}
+
+function openRsvpDialog(id) {
+  const item = state.rsvps.find(rsvp => rsvp.id === id);
+  if (!item) return;
+  $("#editRsvpId").value = item.id;
+  $("#dialogGuestName").textContent = `修改｜${item.name}`;
+  $("#editAttendance").value = item.attendance;
+  $("#editGuestCount").value = item.guestCount;
+  $("#editVegetarian").value = item.vegetarian;
+  $("#editNote").value = item.note || "";
+  updateRsvpEditState();
+  $("#rsvpDialog").showModal();
+}
+
+function updateRsvpEditState() {
+  const declined = $("#editAttendance").value === "DECLINE";
+  $("#editGuestCount").disabled = declined;
+  $("#editVegetarian").disabled = declined;
+  if (declined) {
+    $("#editGuestCount").value = 0;
+    $("#editVegetarian").value = "NO";
+  } else if (Number($("#editGuestCount").value) < 1) {
+    $("#editGuestCount").value = 1;
+  }
+}
+
+async function saveRsvp(event) {
+  event.preventDefault();
+  const id = $("#editRsvpId").value;
+  const patch = {
+    attendance: $("#editAttendance").value,
+    guestCount: Number($("#editGuestCount").value),
+    vegetarian: $("#editVegetarian").value,
+    note: $("#editNote").value.trim()
+  };
+
+  setLoading(true);
+  try {
+    await adminApi.updateRsvp(id, patch);
+    $("#rsvpDialog").close();
+    showToast("出席資料已更新。");
+    await loadData();
+  } catch (error) {
+    handleError(error);
+  } finally {
+    setLoading(false);
+  }
+}
+
+async function updateMessage(id, patch) {
+  setLoading(true);
+  try {
+    await adminApi.updateMessage(id, patch);
+    showToast("留言狀態已更新。");
+    await loadData();
+  } catch (error) {
+    handleError(error);
+  } finally {
+    setLoading(false);
+  }
+}
+
+function bindEvents() {
+  $("#loginBtn").addEventListener("click", () => login().catch(handleError));
+  $("#logoutBtn").addEventListener("click", logout);
+  $("#reloadBtn").addEventListener("click", loadData);
+  $("#exportBtn").addEventListener("click", () => exportRsvpsCsv(state.rsvps));
+  $("#rsvpSearch").addEventListener("input", renderRsvps);
+  $("#rsvpStatusFilter").addEventListener("change", renderRsvps);
+  $("#messageStatusFilter").addEventListener("change", renderMessages);
+  $("#editAttendance").addEventListener("change", updateRsvpEditState);
+  $("#rsvpEditForm").addEventListener("submit", saveRsvp);
+
+  document.addEventListener("click", event => {
+    const tab = event.target.closest("[data-tab]");
+    if (tab) switchTab(tab.dataset.tab);
+
+    const edit = event.target.closest("[data-edit-rsvp]");
+    if (edit) openRsvpDialog(edit.dataset.editRsvp);
+
+    if (event.target.closest("[data-dialog-close]")) {
+      $("#rsvpDialog").close();
+    }
+
+    const action = event.target.closest("[data-message-action]");
+    if (action) updateMessage(action.dataset.messageId, { status: action.dataset.messageAction });
+
+    const pin = event.target.closest("[data-message-pin]");
+    if (pin) updateMessage(pin.dataset.messageId, { isPinned: pin.dataset.messagePin === "true" });
+  });
+}
+
+async function init() {
+  bindEvents();
+  try {
+    assertAdminConfig();
+    await handleAuthCallback();
+    if (!getAccessToken()) {
+      showLogin();
+      return;
+    }
+    showAdmin();
+    await loadData();
+  } catch (error) {
+    showLogin(error.message || "後台初始化失敗。");
+  }
+}
+
+init();
+</script>
+</body>
+</html>
