@@ -592,7 +592,7 @@
   };
 
   const app=document.getElementById("app");
-  let currentIndex=0, started=false, isDragging=false, touchStartX=0, touchStartY=0, dragAxis=null, touchSwipeEnabled=false, autoTimer=null, autoPausedUntil=0, audio=null, lightboxIndex=0, musicHintLocked=false, mapReturnResumePending=false;
+  let currentIndex=0, started=false, isDragging=false, touchStartX=0, touchStartY=0, dragAxis=null, touchSwipeEnabled=false, autoTimer=null, autoPausedUntil=0, audio=null, lightboxIndex=0, musicHintLocked=false, mapReturnResumePending=false, mapNavigationInProgress=false, mapReturnAudioTime=0;
   const slideCount=8;
   const MAP_RETURN_KEY=`${CONFIG.weddingId}:map-return`;
   const AUTO_DURATIONS=[];
@@ -624,7 +624,7 @@
         <div id="toast" class="toast" role="status" aria-live="polite"></div>
         ${renderCalendarModal()}${renderShareModal()}${renderGalleryLightbox()}
         <div id="pageTurnLayer" class="page-turn-layer" aria-hidden="true"><div class="page-turn-sheet"></div></div>
-        <audio id="audio" preload="none" loop src="${escapeHtml(CONFIG.music.localAudioSrc)}"></audio>
+        <audio id="audio" preload="auto" loop src="${escapeHtml(CONFIG.music.localAudioSrc)}"></audio>
       </main>`;
   }
 
@@ -764,6 +764,7 @@
     audio.muted=false;
     audio.play().then(()=>{
       mapReturnResumePending=false;
+      mapReturnAudioTime=0;
       try{ sessionStorage.removeItem(MAP_RETURN_KEY); }catch(e){}
       document.getElementById("musicBtn").setAttribute("aria-pressed","true");
       document.getElementById("musicBtn").setAttribute("aria-label","背景音樂播放中，點擊關閉");
@@ -889,9 +890,9 @@
     if(media){
       try{
         media.pause();
-        media.currentTime=0;
+        if(!mapNavigationInProgress) media.currentTime=0;
         media.muted=true;
-        media.loop=false;
+        media.loop=mapNavigationInProgress;
         media.removeAttribute("autoplay");
       }catch(err){
         console.warn("forceStopBackgroundMusic failed",reason,err);
@@ -932,15 +933,19 @@
     },{capture:true});
   }
   function rememberMapReturnState(){
-    try{ sessionStorage.setItem(MAP_RETURN_KEY,JSON.stringify({index:currentIndex,time:Date.now()})); }catch(e){}
+    mapNavigationInProgress=true;
+    mapReturnAudioTime=Number(audio?.currentTime||0);
+    try{ sessionStorage.setItem(MAP_RETURN_KEY,JSON.stringify({index:currentIndex,time:Date.now(),audioTime:mapReturnAudioTime})); }catch(e){}
   }
   function restoreMapReturnState(){
     let state=null;
     try{ state=JSON.parse(sessionStorage.getItem(MAP_RETURN_KEY)||"null"); }catch(e){}
     if(!state || Date.now()-Number(state.time||0)>1800000)return false;
     currentIndex=normalizeIndex(Number(state.index));
+    mapReturnAudioTime=Math.max(0,Number(state.audioTime||0));
     started=true;
     mapReturnResumePending=true;
+    mapNavigationInProgress=false;
     document.getElementById("intro")?.classList.add("is-hidden");
     document.getElementById("main")?.classList.add("is-ready");
     update();
@@ -951,6 +956,10 @@
     if(!mapReturnResumePending || !audio || document.visibilityState!=="visible")return;
     audio.loop=true;
     audio.muted=true;
+    if(mapReturnAudioTime>0){
+      const restoreTime=()=>{ try{ if(Math.abs(audio.currentTime-mapReturnAudioTime)>.75) audio.currentTime=mapReturnAudioTime; }catch(e){} };
+      if(audio.readyState>=1) restoreTime(); else audio.addEventListener("loadedmetadata",restoreTime,{once:true});
+    }
     const attempt=audio.play();
     if(!attempt || typeof attempt.then!=="function")return;
     attempt.then(()=>{
@@ -959,6 +968,7 @@
         audio.loop=true;
         if(audio.paused)return;
         mapReturnResumePending=false;
+        mapReturnAudioTime=0;
         try{ sessionStorage.removeItem(MAP_RETURN_KEY); }catch(e){}
         document.getElementById("musicBtn")?.setAttribute("aria-pressed","true");
         document.getElementById("musicBtn")?.setAttribute("aria-label","背景音樂播放中，點擊關閉");
@@ -971,7 +981,7 @@
       syncMusicStoppedUi("背景音樂未播放，點擊播放");
     });
   }
-  function openMapAndCloseSite(url){ rememberMapReturnState(); stopBackgroundMusic("背景音樂已關閉，正在開啟 Google Map"); track("map_open",{}); setTimeout(()=>window.location.assign(url),520); }
+  function openMapAndCloseSite(url){ rememberMapReturnState(); if(audio){ audio.pause(); audio.muted=false; } syncMusicStoppedUi("背景音樂已暫停，返回後將自動播放"); announceMusicStatus("正在開啟 Google Map"); track("map_open",{}); window.location.assign(url); }
   function openCalendarModal(){ document.getElementById("calendarModal").classList.add("is-open"); pauseAutoplay(60000); }
   function closeCalendarModal(){ document.getElementById("calendarModal")?.classList.remove("is-open"); }
   function toGoogleDate(dt){ return new Date(dt).toISOString().replace(/[-:]/g,"").replace(/\.\d{3}Z$/, "Z"); }
