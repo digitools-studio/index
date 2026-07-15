@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>預約營運 OS｜入口</title>
+  <link rel="stylesheet" href="./assets/styles.css" />
+</head>
+<body>
+  <main class="shell">
+    <section class="hero-card">
+      <div class="badge">Booking Ops System</div>
+      <h1>小型服務業預約營運 OS</h1>
+      <p>
+        這是 GitHub Pages 靜態部署版本。請依實際入口選擇 LIFF 預約頁或官網預約頁。
+      </p>
+
+      <div class="action-grid">
+        <a class="action-card" href="./liff-booking.html?src=line_oa&medium=richmenu&campaign=booking_main&placement=manual_test&debug=true">
+          <strong>LIFF 預約頁測試</strong>
+          <span>適合 LINE OA / IG Bio / 用 LINE 預約</span>
+        </a>
+        <a class="action-card" href="./website-booking.html?src=official_site&medium=homepage_cta&campaign=booking_main&placement=home_hero&debug=true">
+          <strong>官網預約頁測試</strong>
+          <span>適合官網直接嵌入 Cal.com</span>
+        </a>
+        <a class="action-card" href="./privacy.html">
+          <strong>隱私說明</strong>
+          <span>LINE 使用者資訊與預約資料說明</span>
+        </a>
+      </div>
+
+      <div class="notice">
+        請先修改 <code>src/config.js</code> 裡的 <code>LIFF_ID</code> 與 <code>CALCOM_EVENT_URL</code>。
+      </div>
+    </section>
+  </main>
+</body>
+</html>

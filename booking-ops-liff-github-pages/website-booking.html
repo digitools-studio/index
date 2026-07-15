@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>官網預約</title>
+  <link rel="stylesheet" href="./assets/styles.css" />
+</head>
+
+<body>
+  <main class="booking-page">
+    <header class="booking-header">
+      <div>
+        <p class="eyebrow">Website Booking</p>
+        <h1 id="page-title">官網線上預約</h1>
+        <p id="page-subtitle">請選擇可預約時段，完成後系統會自動建立紀錄。</p>
+      </div>
+    </header>
+
+    <section id="status-card" class="status-card">
+      <div class="spinner" aria-hidden="true"></div>
+      <div>
+        <strong id="status-title">正在開啟預約系統</strong>
+        <p id="status-message">請稍候，系統正在載入 Cal.com 預約頁。</p>
+      </div>
+    </section>
+
+    <section id="debug-panel" class="debug-panel hidden">
+      <div class="debug-title">Debug metadata preview</div>
+      <pre id="debug-output">{}</pre>
+    </section>
+
+    <section id="cal-container" class="cal-container"></section>
+
+    <section id="fallback-card" class="fallback-card hidden">
+      <p>若上方預約頁無法載入，請改用外部連結開啟。</p>
+      <a id="fallback-link" class="primary-button" href="#" target="_blank" rel="noopener">開啟 Cal.com 預約頁</a>
+    </section>
+  </main>
+
+  <script type="module" src="./src/app-website.js"></script>
+</body>
+</html>
