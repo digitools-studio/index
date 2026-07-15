@@ -139,3 +139,29 @@ https://liff.line.me/{LIFF_ID}?src=line_oa&medium=richmenu&campaign=booking_main
 ```
 
 畫面會顯示即將送進 Cal.com metadata 的資料。
+
+
+---
+
+## 目前已接入的 Cal.com 預約連結
+
+```text
+https://cal.com/digital-studio-gtrwkk/30min
+```
+
+目前 Cal.com Embed 設定：
+
+```js
+CALCOM_EVENT_URL: "https://cal.com/digital-studio-gtrwkk/30min"
+CALCOM_NAMESPACE: "30min"
+CALCOM_ORIGIN: "https://app.cal.com"
+CALCOM_EMBED_SCRIPT_URL: "https://app.cal.com/embed/embed.js"
+CALCOM_USE_SLOTS_VIEW_ON_SMALL_SCREEN: "true"
+CALCOM_FORWARD_QUERY_PARAMS: true
+```
+
+官網預約頁測試 URL：
+
+```text
+https://digitools-studio.github.io/index/booking-ops-liff-github-pages/website-booking.html?src=official_site&medium=homepage_cta&campaign=booking_main&placement=home_hero&debug=true
+```

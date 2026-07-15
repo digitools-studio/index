@@ -9,7 +9,7 @@
  */
 
 export const CONFIG = {
-  BRAND_NAME: "Your Brand",
+  BRAND_NAME: "Digital Studio",
   PAGE_TITLE: "線上預約",
   PAGE_SUBTITLE: "請選擇您方便的服務時段，系統會自動建立預約並發送確認通知。",
 
@@ -23,13 +23,17 @@ export const CONFIG = {
    * 必改：Cal.com 公開預約連結
    * 範例：https://cal.com/your-brand/consultation
    */
-  CALCOM_EVENT_URL: "https://cal.com/your-brand/consultation",
+  CALCOM_EVENT_URL: "https://cal.com/digital-studio-gtrwkk/30min",
 
   /**
    * Cal.com Embed 設定
    */
-  CALCOM_NAMESPACE: "booking",
+  CALCOM_NAMESPACE: "30min",
   CALCOM_LAYOUT: "month_view",
+  CALCOM_ORIGIN: "https://app.cal.com",
+  CALCOM_EMBED_SCRIPT_URL: "https://app.cal.com/embed/embed.js",
+  CALCOM_USE_SLOTS_VIEW_ON_SMALL_SCREEN: "true",
+  CALCOM_FORWARD_QUERY_PARAMS: true,
 
   /**
    * URL 未帶參數時的預設值

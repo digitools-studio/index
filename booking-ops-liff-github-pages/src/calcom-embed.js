@@ -12,12 +12,20 @@ export function getCalLink(calcomEventUrl = CONFIG.CALCOM_EVENT_URL) {
     const url = new URL(calcomEventUrl);
     return url.pathname.replace(/^\/+/, "").replace(/\/+$/, "");
   } catch {
-    return calcomEventUrl.replace(/^https?:\/\/cal\.com\//, "").replace(/\/+$/, "");
+    return calcomEventUrl
+      .replace(/^https?:\/\/cal\.com\//, "")
+      .replace(/^https?:\/\/app\.cal\.com\//, "")
+      .replace(/\/+$/, "");
   }
 }
 
 /**
  * 載入 Cal.com Embed SDK。
+ *
+ * 此版本依照你提供的 Cal.com inline embed code：
+ * - script: https://app.cal.com/embed/embed.js
+ * - origin: https://app.cal.com
+ * - namespace: 30min
  */
 export function loadCalEmbedSdk() {
   return new Promise((resolve, reject) => {
@@ -53,27 +61,32 @@ export function loadCalEmbedSdk() {
           const api = function () {
             p(api, arguments);
           };
+
           const namespace = ar[1];
           api.q = api.q || [];
+
           if (typeof namespace === "string") {
-            cal.ns[namespace] = api;
-            p(api, ar);
+            cal.ns[namespace] = cal.ns[namespace] || api;
+            p(cal.ns[namespace], ar);
+            p(cal, ["initNamespace", namespace]);
           } else {
             p(cal, ar);
           }
+
           return;
         }
 
         p(cal, ar);
       };
-    })(window, "https://cal.com/embed.js", "init");
+    })(window, CONFIG.CALCOM_EMBED_SCRIPT_URL, "init");
 
-    // 觸發 script 注入
     window.Cal("init", CONFIG.CALCOM_NAMESPACE, {
-      origin: "https://cal.com"
+      origin: CONFIG.CALCOM_ORIGIN
     });
 
-    // 防止 onload 因快取或執行順序沒觸發。
+    window.Cal.config = window.Cal.config || {};
+    window.Cal.config.forwardQueryParams = CONFIG.CALCOM_FORWARD_QUERY_PARAMS;
+
     setTimeout(() => {
       if (window.Cal) resolve(window.Cal);
     }, 1200);
@@ -90,14 +103,18 @@ export async function renderCalcomInline({ elementSelector, metadataConfig, pref
   const calLink = getCalLink();
 
   window.Cal("init", namespace, {
-    origin: "https://cal.com"
+    origin: CONFIG.CALCOM_ORIGIN
   });
+
+  window.Cal.config = window.Cal.config || {};
+  window.Cal.config.forwardQueryParams = CONFIG.CALCOM_FORWARD_QUERY_PARAMS;
 
   window.Cal.ns[namespace]("inline", {
     elementOrSelector: elementSelector,
     calLink,
     config: {
       layout: CONFIG.CALCOM_LAYOUT,
+      useSlotsViewOnSmallScreen: CONFIG.CALCOM_USE_SLOTS_VIEW_ON_SMALL_SCREEN,
       ...prefill,
       ...metadataConfig
     }
