@@ -553,6 +553,8 @@
     .page-turn-stage{perspective:1400px;box-shadow:0 18px 42px rgba(66,32,22,.14)}.page-turn-fold{filter:none}.page-turn-stage.is-next .page-turn-card--outgoing,.page-turn-stage.is-next .page-turn-card--incoming,.page-turn-stage.is-back .page-turn-card--outgoing,.page-turn-stage.is-back .page-turn-card--incoming,.page-turn-stage .page-turn-fold{animation-duration:560ms}.page-turn-card--incoming{filter:none;transform:translate3d(3%,0,-14px) scale(.994)}
     @keyframes premiumPageOutNext{0%{opacity:1;transform:translate3d(0,0,0) rotateY(0)}46%{opacity:.94;transform:translate3d(-.5%,0,8px) rotateY(-10deg);box-shadow:14px 0 28px rgba(66,32,22,.12)}100%{opacity:0;transform:translate3d(-6%,0,-28px) rotateY(-38deg)}}@keyframes premiumPageInNext{0%{opacity:0;transform:translate3d(3%,0,-14px) scale(.994)}35%{opacity:.36}100%{opacity:1;transform:translate3d(0,0,0) scale(1)}}@keyframes premiumPageOutBack{0%{opacity:1;transform:translate3d(0,0,0) rotateY(0)}46%{opacity:.94;transform:translate3d(.5%,0,8px) rotateY(10deg);box-shadow:-14px 0 28px rgba(66,32,22,.12)}100%{opacity:0;transform:translate3d(6%,0,-28px) rotateY(38deg)}}@keyframes premiumPageInBack{0%{opacity:0;transform:translate3d(-3%,0,-14px) scale(.994)}35%{opacity:.36}100%{opacity:1;transform:translate3d(0,0,0) scale(1)}}@keyframes premiumFoldSweep{0%,100%{opacity:0}28%{opacity:.12}50%{opacity:.48;transform:translateX(0)}72%{opacity:.12}}
     @media(max-width:760px){.page-turn-stage.is-next .page-turn-card--outgoing,.page-turn-stage.is-next .page-turn-card--incoming,.page-turn-stage.is-back .page-turn-card--outgoing,.page-turn-stage.is-back .page-turn-card--incoming,.page-turn-stage .page-turn-fold{animation-duration:500ms}}
+    .is-page-transitioning .slides{transition:none!important}.is-page-transitioning .slide.is-active .reveal{opacity:1!important;transform:none!important;transition:none!important}
+    @media(max-width:760px){.page-turn-stage.is-next .page-turn-card--outgoing{animation-name:mobilePageOutNext;animation-duration:540ms}.page-turn-stage.is-next .page-turn-card--incoming{animation-name:mobilePageInNext;animation-duration:540ms}.page-turn-stage.is-back .page-turn-card--outgoing{animation-name:mobilePageOutBack;animation-duration:540ms}.page-turn-stage.is-back .page-turn-card--incoming{animation-name:mobilePageInBack;animation-duration:540ms}.page-turn-stage .page-turn-fold{animation-name:mobileFoldSweep;animation-duration:540ms}@keyframes mobilePageOutNext{0%{opacity:1;transform:translate3d(0,0,0) rotateY(0)}44%{opacity:.96;transform:translate3d(-1%,0,10px) rotateY(-14deg);box-shadow:18px 0 32px rgba(66,32,22,.15)}100%{opacity:0;transform:translate3d(-8%,0,-34px) rotateY(-50deg)}}@keyframes mobilePageInNext{0%{opacity:0;transform:translate3d(5%,0,-18px) scale(.992)}32%{opacity:.28}100%{opacity:1;transform:translate3d(0,0,0) scale(1)}}@keyframes mobilePageOutBack{0%{opacity:1;transform:translate3d(0,0,0) rotateY(0)}44%{opacity:.96;transform:translate3d(1%,0,10px) rotateY(14deg);box-shadow:-18px 0 32px rgba(66,32,22,.15)}100%{opacity:0;transform:translate3d(8%,0,-34px) rotateY(50deg)}}@keyframes mobilePageInBack{0%{opacity:0;transform:translate3d(-5%,0,-18px) scale(.992)}32%{opacity:.28}100%{opacity:1;transform:translate3d(0,0,0) scale(1)}}@keyframes mobileFoldSweep{0%,100%{opacity:0}24%{opacity:.16}50%{opacity:.68;transform:translateX(0)}76%{opacity:.16}}}
     @media(prefers-reduced-motion:reduce){.page-turn-stage .page-turn-card,.page-turn-stage .page-turn-fold{animation:none!important}}
   </style>
 </head>
@@ -903,13 +905,15 @@
     layer.replaceChildren(stage);
     layer.className="page-turn-layer is-turning";
     isPageTransitioning=true;
+    document.documentElement.classList.add("is-page-transitioning");
     currentIndex=next;
     update();
-    const duration=window.matchMedia?.("(max-width: 760px)").matches?520:580;
+    const duration=window.matchMedia?.("(max-width: 760px)").matches?560:580;
     const finish=()=>{
       clearTimeout(pageTransitionTimer);
       layer.className="page-turn-layer";
       layer.replaceChildren(Object.assign(document.createElement("div"),{className:"page-turn-sheet"}));
+      document.documentElement.classList.remove("is-page-transitioning");
       isPageTransitioning=false;
     };
     outgoingWrap.addEventListener("animationend",finish,{once:true});
