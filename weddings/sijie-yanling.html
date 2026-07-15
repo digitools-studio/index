@@ -539,6 +539,21 @@
     .details-shell,.rsvp-shell{height:min(70dvh,600px);min-height:0;max-height:calc(100dvh - var(--ui-top-clearance) - var(--ui-bottom-clearance) - var(--safe-top) - var(--safe-bottom) - 8px)}.details-shell{overflow:hidden}.details-panel,.venue-visual{min-height:0}.details-panel{overflow-y:auto;overscroll-behavior:contain;padding-right:5px;padding-bottom:8px;scrollbar-width:thin;scrollbar-color:rgba(195,136,121,.35) transparent}.details-panel::-webkit-scrollbar{width:5px}.details-panel::-webkit-scrollbar-thumb{background:rgba(195,136,121,.35);border-radius:999px}.details-map-actions{padding-bottom:4px}.venue-visual .detail{min-height:0;height:100%}.rsvp-visual,.rsvp-photo{min-height:0;height:100%}.rsvp-form-panel{min-height:0;height:100%;overflow-y:auto}.blessing-shell .pinned-blessing{margin:10px 0;padding:10px 18px 9px 48px}.blessing-shell .pinned-quote{left:23px;top:17px;font-size:34px}.blessing-shell .pinned-signature{margin-top:3px}
     @media(max-width:760px){.top-utility{left:14px;right:14px;top:calc(14px + env(safe-area-inset-top,0px))}.page-label{display:inline-flex}.utility-ornament{display:none}.music-panel{margin-left:auto}.music-btn{min-width:88px}.intro-card{width:min(88vw,390px);padding:34px 22px 27px}.details-shell,.rsvp-shell{width:min(96vw,620px);height:min(68dvh,540px);max-height:calc(100dvh - var(--ui-top-clearance) - var(--ui-bottom-clearance) - var(--safe-top) - var(--safe-bottom) - 8px)}.details-shell{display:flex;flex-direction:column;overflow-y:auto;padding:18px 15px;scroll-padding-bottom:18px}.details-panel{flex:0 0 auto;overflow:visible;padding-right:0;padding-bottom:6px}.details-panel>.details-date{font-size:clamp(24px,8vw,34px);line-height:1.05}.venue-visual{flex:0 0 190px;min-height:190px}.venue-visual .detail{min-height:190px;height:190px}.rsvp-shell{display:flex;flex-direction:column;overflow:hidden;border-radius:27px}.rsvp-visual{height:145px;min-height:145px;flex:0 0 145px}.rsvp-photo{height:145px;min-height:145px}.rsvp-visual-copy{left:19px;bottom:12px}.rsvp-visual-icon{display:none}.rsvp-visual-copy p{font-size:7px}.rsvp-visual-copy h2{font-size:20px;line-height:1.2;margin-bottom:4px}.rsvp-form-panel{height:auto;min-height:0;flex:1;padding:15px 16px 18px;overflow-y:auto}.rsvp-heading-icon{width:36px;height:36px;flex-basis:36px}.rsvp-subtitle{font-size:10px}.rsvp-progress{margin:11px 0 2px}.rsvp-form{grid-template-columns:1fr;gap:9px;margin-top:11px}.rsvp-form .field-full{grid-column:auto}.attendance-grid{grid-template-columns:1fr}.blessing-shell{width:min(96vw,620px);padding:18px 15px 21px}.blessing-shell .pinned-blessing{margin:8px 0;padding:9px 13px 8px 42px}.blessing-shell .pinned-quote{left:19px;top:14px;font-size:30px}.blessing-layout{grid-template-columns:1fr}.message-stream-panel .messages-list-wrap{height:min(38vh,260px);max-height:min(38vh,260px)}.closing-card{display:flex;flex-direction:column;width:min(94vw,520px);height:calc(var(--vh)*100 - 142px);min-height:440px;overflow:auto}.closing-photo{height:44%;min-height:205px;flex:0 0 44%}.closing-photo-slot{min-height:205px}.closing-paper{flex:1;padding:22px 18px 27px}.closing-title{font-size:clamp(38px,11vw,54px)}.closing-actions{margin-top:17px}}
     @media(max-width:420px){.intro-card{width:min(88vw,350px);padding:31px 18px 25px}.music-btn{min-width:82px}.closing-actions{display:grid;grid-template-columns:1fr 1fr;width:100%}.closing-actions .action-btn{grid-column:1/-1}.closing-actions button{width:100%}}
+    /* Targeted UI/UX refinement: RSVP, 2018, 2026 and closing image only. */
+    .rsvp-shell{display:block;width:min(94vw,780px);padding:0}.rsvp-form-panel{width:100%;padding:28px 32px 32px}.rsvp-form{grid-template-columns:repeat(2,minmax(0,1fr));column-gap:18px}.rsvp-form .field-full{grid-column:1/-1}
+    .photo-story-card.timeline-card-0 .photo-story-overlay{background:linear-gradient(180deg,rgba(255,253,249,.02) 0%,rgba(255,253,249,.08) 36%,rgba(255,253,249,.72) 100%)}.photo-story-card.timeline-card-0 .floating-copy{left:clamp(22px,4vw,48px);right:clamp(22px,4vw,48px);top:auto;bottom:clamp(20px,4vh,36px);width:auto;transform:none}
+    .photo-story-card.timeline-card-2 .floating-copy{top:auto;bottom:clamp(14px,3vh,28px);transform:none}.photo-story-card.timeline-card-2 img{object-position:var(--pos,50% 28%)}
+    .closing-photo-slot img{object-position:66% 34%!important}
+    @media(max-width:760px){.rsvp-shell{display:block;width:min(96vw,620px);height:min(68dvh,540px);overflow:hidden}.rsvp-form-panel{height:100%;padding:18px 16px 20px;overflow-y:auto}.rsvp-form{grid-template-columns:1fr;gap:10px}.rsvp-form .field-full{grid-column:auto}.photo-story-card.timeline-card-0 .floating-copy{left:16px;right:16px;bottom:18px}.photo-story-card.timeline-card-2 .floating-copy{left:16px;right:16px;bottom:10px}.closing-photo-slot img{object-position:64% 34%!important}}
+    /* Premium bidirectional page transition. Actual outgoing/incoming cards are cloned into this stage. */
+    .page-turn-layer{z-index:12;opacity:0;overflow:hidden;perspective:none;contain:layout paint style}.page-turn-layer::after,.page-turn-sheet{display:none!important}.page-turn-layer.is-turning{opacity:1}.page-turn-stage{position:fixed;left:var(--turn-frame-left);top:var(--turn-frame-top);width:var(--turn-frame-width);height:var(--turn-frame-height);border-radius:var(--turn-radius);overflow:hidden;pointer-events:none;perspective:1800px;transform-style:preserve-3d;isolation:isolate;box-shadow:0 30px 72px rgba(66,32,22,.22)}.page-turn-card{position:absolute;inset:0;overflow:hidden;border-radius:inherit;backface-visibility:hidden;transform-style:preserve-3d;will-change:transform,opacity,filter;pointer-events:none;background:rgba(255,253,249,.98)}.page-turn-card>*{width:100%!important;height:100%!important;min-width:0!important;min-height:0!important;max-width:none!important;max-height:none!important;margin:0!important;border-radius:inherit!important;box-sizing:border-box!important}.page-turn-card .reveal,.page-turn-card.reveal{opacity:1!important;transform:none!important}.page-turn-card .scrollable{height:100%!important;overflow:hidden!important}.page-turn-card--incoming{z-index:1;opacity:0;transform:translate3d(8%,0,-40px) scale(.985);filter:brightness(.94) saturate(.92)}.page-turn-card--outgoing{z-index:3}.page-turn-fold{position:absolute;z-index:4;top:0;bottom:0;width:18%;opacity:0;pointer-events:none;filter:blur(.2px);will-change:transform,opacity}.page-turn-stage.is-next .page-turn-fold{right:-4%;background:linear-gradient(90deg,transparent,rgba(77,38,26,.18) 34%,rgba(255,255,255,.62) 52%,rgba(88,48,31,.14) 68%,transparent);transform:translateX(16%)}.page-turn-stage.is-back .page-turn-fold{left:-4%;background:linear-gradient(270deg,transparent,rgba(77,38,26,.18) 34%,rgba(255,255,255,.62) 52%,rgba(88,48,31,.14) 68%,transparent);transform:translateX(-16%)}.page-turn-stage.is-next .page-turn-card--outgoing{transform-origin:left center;animation:premiumPageOutNext 760ms cubic-bezier(.22,.72,.18,1) both}.page-turn-stage.is-next .page-turn-card--incoming{animation:premiumPageInNext 760ms cubic-bezier(.22,.72,.18,1) both}.page-turn-stage.is-back .page-turn-card--outgoing{transform-origin:right center;animation:premiumPageOutBack 760ms cubic-bezier(.22,.72,.18,1) both}.page-turn-stage.is-back .page-turn-card--incoming{animation:premiumPageInBack 760ms cubic-bezier(.22,.72,.18,1) both}.page-turn-stage .page-turn-fold{animation:premiumFoldSweep 760ms cubic-bezier(.22,.72,.18,1) both}
+    @keyframes premiumPageOutNext{0%{opacity:1;transform:translate3d(0,0,0) rotateY(0);filter:brightness(1)}42%{opacity:1;transform:translate3d(-1.5%,0,18px) rotateY(-18deg);filter:brightness(.98);box-shadow:28px 0 50px rgba(66,32,22,.18)}100%{opacity:0;transform:translate3d(-13%,0,-70px) rotateY(-72deg);filter:brightness(.78)}}@keyframes premiumPageInNext{0%{opacity:0;transform:translate3d(8%,0,-40px) scale(.985);filter:brightness(.94) saturate(.92)}38%{opacity:.28}100%{opacity:1;transform:translate3d(0,0,0) scale(1);filter:brightness(1) saturate(1)}}@keyframes premiumPageOutBack{0%{opacity:1;transform:translate3d(0,0,0) rotateY(0);filter:brightness(1)}42%{opacity:1;transform:translate3d(1.5%,0,18px) rotateY(18deg);filter:brightness(.98);box-shadow:-28px 0 50px rgba(66,32,22,.18)}100%{opacity:0;transform:translate3d(13%,0,-70px) rotateY(72deg);filter:brightness(.78)}}@keyframes premiumPageInBack{0%{opacity:0;transform:translate3d(-8%,0,-40px) scale(.985);filter:brightness(.94) saturate(.92)}38%{opacity:.28}100%{opacity:1;transform:translate3d(0,0,0) scale(1);filter:brightness(1) saturate(1)}}@keyframes premiumFoldSweep{0%,100%{opacity:0}22%{opacity:.25}48%{opacity:.92;transform:translateX(0)}72%{opacity:.3}}
+    @media(max-width:760px){.page-turn-stage{perspective:1200px}.page-turn-stage.is-next .page-turn-card--outgoing{animation-duration:650ms}.page-turn-stage.is-next .page-turn-card--incoming{animation-duration:650ms}.page-turn-stage.is-back .page-turn-card--outgoing{animation-duration:650ms}.page-turn-stage.is-back .page-turn-card--incoming{animation-duration:650ms}.page-turn-stage .page-turn-fold{animation-duration:650ms}}
+    /* Lighter transition pass: reduced GPU work and softer motion. */
+    .page-turn-stage{perspective:1400px;box-shadow:0 18px 42px rgba(66,32,22,.14)}.page-turn-fold{filter:none}.page-turn-stage.is-next .page-turn-card--outgoing,.page-turn-stage.is-next .page-turn-card--incoming,.page-turn-stage.is-back .page-turn-card--outgoing,.page-turn-stage.is-back .page-turn-card--incoming,.page-turn-stage .page-turn-fold{animation-duration:560ms}.page-turn-card--incoming{filter:none;transform:translate3d(3%,0,-14px) scale(.994)}
+    @keyframes premiumPageOutNext{0%{opacity:1;transform:translate3d(0,0,0) rotateY(0)}46%{opacity:.94;transform:translate3d(-.5%,0,8px) rotateY(-10deg);box-shadow:14px 0 28px rgba(66,32,22,.12)}100%{opacity:0;transform:translate3d(-6%,0,-28px) rotateY(-38deg)}}@keyframes premiumPageInNext{0%{opacity:0;transform:translate3d(3%,0,-14px) scale(.994)}35%{opacity:.36}100%{opacity:1;transform:translate3d(0,0,0) scale(1)}}@keyframes premiumPageOutBack{0%{opacity:1;transform:translate3d(0,0,0) rotateY(0)}46%{opacity:.94;transform:translate3d(.5%,0,8px) rotateY(10deg);box-shadow:-14px 0 28px rgba(66,32,22,.12)}100%{opacity:0;transform:translate3d(6%,0,-28px) rotateY(38deg)}}@keyframes premiumPageInBack{0%{opacity:0;transform:translate3d(-3%,0,-14px) scale(.994)}35%{opacity:.36}100%{opacity:1;transform:translate3d(0,0,0) scale(1)}}@keyframes premiumFoldSweep{0%,100%{opacity:0}28%{opacity:.12}50%{opacity:.48;transform:translateX(0)}72%{opacity:.12}}
+    @media(max-width:760px){.page-turn-stage.is-next .page-turn-card--outgoing,.page-turn-stage.is-next .page-turn-card--incoming,.page-turn-stage.is-back .page-turn-card--outgoing,.page-turn-stage.is-back .page-turn-card--incoming,.page-turn-stage .page-turn-fold{animation-duration:500ms}}
+    @media(prefers-reduced-motion:reduce){.page-turn-stage .page-turn-card,.page-turn-stage .page-turn-fold{animation:none!important}}
   </style>
 </head>
 <body>
@@ -566,7 +581,7 @@
       story2:{src:"./photo2.jpeg",position:"50% 35%",title:"故事照片 2"},
       timeline2018:{src:"./timeline2018.jpeg",position:"50% 32%",title:"2018 初遇照片"},
       timeline2020:{src:"./timeline2020.jpeg",position:"50% 34%",title:"2020 相戀照片"},
-      timeline2026:{src:"./timeline2026.jpeg",position:"50% 38%",title:"2026 新篇章照片"},
+      timeline2026:{src:"./timeline2026.jpeg",position:"50% 28%",title:"2026 新篇章照片"},
       gallery1:{src:"./photo_wall/photo_wall_01.jpg",position:"50% 45%",title:"相簿照片 1"},
       gallery2:{src:"./photo_wall/photo_wall_02.jpg",position:"50% 45%",title:"相簿照片 2"},
       gallery3:{src:"./photo_wall/photo_wall_03.jpg",position:"50% 45%",title:"相簿照片 3"},
@@ -592,7 +607,7 @@
   };
 
   const app=document.getElementById("app");
-  let currentIndex=0, started=false, isDragging=false, touchStartX=0, touchStartY=0, dragAxis=null, touchSwipeEnabled=false, autoTimer=null, autoPausedUntil=0, audio=null, lightboxIndex=0, musicHintLocked=false, mapReturnResumePending=false, mapNavigationInProgress=false, mapReturnAudioTime=0;
+  let currentIndex=0, started=false, isDragging=false, touchStartX=0, touchStartY=0, dragAxis=null, touchSwipeEnabled=false, autoTimer=null, autoPausedUntil=0, audio=null, lightboxIndex=0, musicHintLocked=false, mapReturnResumePending=false, mapNavigationInProgress=false, mapReturnAudioTime=0, mapResumeAttemptInFlight=false, isPageTransitioning=false, pageTransitionTimer=null;
   const slideCount=8;
   const MAP_RETURN_KEY=`${CONFIG.weddingId}:map-return`;
   const AUTO_DURATIONS=[];
@@ -624,7 +639,7 @@
         <div id="toast" class="toast" role="status" aria-live="polite"></div>
         ${renderCalendarModal()}${renderShareModal()}${renderGalleryLightbox()}
         <div id="pageTurnLayer" class="page-turn-layer" aria-hidden="true"><div class="page-turn-sheet"></div></div>
-        <audio id="audio" preload="auto" loop src="${escapeHtml(CONFIG.music.localAudioSrc)}"></audio>
+        <audio id="audio" preload="auto" playsinline webkit-playsinline loop src="${escapeHtml(CONFIG.music.localAudioSrc)}"></audio>
       </main>`;
   }
 
@@ -667,9 +682,9 @@
 
   function renderDetails(){ return slide(`<div class="paper-card grid-2 details-shell reveal"><section class="details-panel"><div class="details-heading"><span class="wedding-day-badge" aria-hidden="true">${renderSelectedIcon("calendar")}</span><div><p class="eyebrow">Wedding Day</p><h4 class="section-title">婚宴資訊</h4></div></div><div class="details-date">10 / 11</div><div class="details-date-sub">SUNDAY · 2026</div><div class="details-list"><div class="details-info-row"><span class="details-info-icon">${renderSelectedIcon("calendar")}</span><div class="details-row-copy"><span class="details-row-label">日期 DATE</span><b class="details-row-value">2026 / 10 / 11</b></div></div><div class="details-info-row"><span class="details-info-icon">${renderSelectedIcon("clock")}</span><div class="details-row-copy"><span class="details-row-label">時間 TIME</span><b class="details-row-value">${CONFIG.banquet.label}｜${CONFIG.banquet.time}</b></div></div><div class="details-info-row"><span class="details-info-icon">${renderSelectedIcon("pin")}</span><div class="details-row-copy"><span class="details-row-label">地點 VENUE</span><b class="details-row-value">${CONFIG.banquet.venue}</b></div></div></div><div class="countdown-block"><div class="countdown-heading"><span class="countdown-heading-icon">${renderSelectedIcon("hourglass")}</span><span>距離幸福時刻</span></div><div class="countdown-strip" id="weddingCountdown" aria-label="婚宴倒數">${renderCountdownUnits()}</div></div><div class="hero-actions details-map-actions"><a class="action-btn" href="${CONFIG.banquet.mapUrl}" data-map-link>Google Map 導航</a></div></section><aside class="venue-visual">${renderPhotoSlot('venue','detail')}<div class="venue-caption"><span class="venue-caption-icon">${renderSelectedIcon("pin")}</span><div class="venue-caption-copy"><span>WEDDING VENUE</span><b>${CONFIG.banquet.venue}</b></div></div></aside></div>`,"paper details-slide"); }
 
-  function renderFinalInvite(){ return slide(`<article class="closing-card reveal"><div class="closing-photo">${renderPhotoSlot('cover','closing-photo-slot')}<div class="closing-photo-overlay"></div></div><div class="closing-paper"><div class="closing-monogram" aria-hidden="true">${escapeHtml(CONFIG.groom.slice(0,1))}<i>&</i>${escapeHtml(CONFIG.bride.slice(0,1))}</div><div class="closing-sparkle closing-sparkle--one">${renderSelectedIcon("sparkle")}</div><div class="closing-sparkle closing-sparkle--two">${renderSelectedIcon("sparkle")}</div><p class="closing-kicker">Thank You</p><h2 class="closing-title">謝謝你</h2><p class="closing-copy">與我們一同分享這份喜悅<br>期待在幸福的日子裡與你相見</p><div class="closing-divider"><span></span><i>♥</i><span></span></div><p class="closing-names">${escapeHtml(CONFIG.groom)} <i>&</i> ${escapeHtml(CONFIG.bride)}</p><p class="closing-date">${CONFIG.dateText}</p><p class="closing-tagline">LOVE · FOREVER · ALWAYS</p><div class="hero-actions closing-actions"><button class="ghost-btn" type="button" data-go="4">${renderSelectedIcon("pin")}婚宴資訊</button><button class="ghost-btn" type="button" data-go="5">${renderSelectedIcon("check")}出席登記</button><button class="action-btn" type="button" data-share>${renderSelectedIcon("share")}分享喜帖</button></div></div></article>`,"paper hero-slide closing-slide"); }
+  function renderFinalInvite(){ return slide(`<article class="closing-card reveal"><div class="closing-photo">${renderPhotoSlot('cover','closing-photo-slot')}<div class="closing-photo-overlay"></div></div><div class="closing-paper"><div class="closing-monogram" aria-hidden="true">${escapeHtml(CONFIG.groom.slice(0,1))}<i>&</i>${escapeHtml(CONFIG.bride.slice(0,1))}</div><div class="closing-sparkle closing-sparkle--one">${renderSelectedIcon("sparkle")}</div><div class="closing-sparkle closing-sparkle--two">${renderSelectedIcon("sparkle")}</div><p class="closing-kicker">Thank You</p><h2 class="closing-title">謝謝您</h2><p class="closing-copy">與我們一同分享這份喜悅<br>期待在幸福的日子裡與你相見</p><div class="closing-divider"><span></span><i>♥</i><span></span></div><p class="closing-names">${escapeHtml(CONFIG.groom)} <i>&</i> ${escapeHtml(CONFIG.bride)}</p><p class="closing-date">${CONFIG.dateText}</p><p class="closing-tagline">LOVE · FOREVER · ALWAYS</p><div class="hero-actions closing-actions"><button class="ghost-btn" type="button" data-go="4">${renderSelectedIcon("pin")}婚宴資訊</button><button class="ghost-btn" type="button" data-go="5">${renderSelectedIcon("check")}出席登記</button><button class="action-btn" type="button" data-share>${renderSelectedIcon("share")}分享喜帖</button></div></div></article>`,"paper hero-slide closing-slide"); }
 
-  function renderRsvp(){ return slide(`<div class="scrollable rsvp-scroll"><section class="form-card paper-card rsvp-shell reveal"><div class="rsvp-visual">${renderPhotoSlot('rsvp','rsvp-photo')}<div class="rsvp-visual-overlay"></div><div class="rsvp-visual-copy"><span class="rsvp-visual-icon">${renderSelectedIcon("envelope")}</span><p>WE ARE WAITING FOR YOU</p><h2>期待與你<br>共享這份喜悅</h2><span>2026 · 10 · 11</span></div></div><div class="rsvp-form-panel"><header class="rsvp-heading"><div class="rsvp-heading-icon">${renderSelectedIcon("heart")}</div><div><p class="eyebrow">RSVP</p><h2 class="section-title">出席登記</h2><p class="rsvp-subtitle">請告訴我們你的出席意願，讓我們為你保留最溫暖的位置。</p></div></header><div id="rsvpProgress" class="rsvp-progress"><div class="is-active"><b>1</b><span>基本資料</span></div><i></i><div><b>2</b><span>出席資訊</span></div><i></i><div><b>3</b><span>完成登記</span></div></div><form id="rsvpForm" class="form-grid rsvp-form" novalidate><div class="field"><label for="guestName">${renderSelectedIcon("person")}姓名 *</label><input id="guestName" class="input" name="name" maxlength="30" placeholder="請輸入您的姓名" autocomplete="name" required></div><div class="field"><label for="guestPhone">${renderSelectedIcon("phone")}電話 *</label><input id="guestPhone" class="input" name="phone" maxlength="20" placeholder="0912345678" inputmode="tel" autocomplete="tel" required><div id="phoneInlineError" class="field-inline-error">電話格式似乎不正確，請確認後再送出。</div></div><div class="field field-full"><label>${renderSelectedIcon("heart")}是否出席 *</label><div class="radio-grid attendance-grid"><label class="radio-chip"><input type="radio" name="attendance" value="ATTEND" checked><span>會出席</span></label><label class="radio-chip"><input type="radio" name="attendance" value="DECLINE"><span>無法出席</span></label><label class="radio-chip"><input type="radio" name="attendance" value="PENDING"><span>尚未確定</span></label></div></div><div id="rsvpPendingNotice" class="rsvp-dynamic-note field-full">尚未確定也沒關係，送出後仍可在這台裝置上重新更新回覆。</div><div id="guestCountField" class="field"><label for="guestCount">${renderSelectedIcon("users")}出席人數 *</label><select id="guestCount" class="select" name="guestCount"><option value="1">1 位</option><option value="2">2 位</option><option value="3">3 位</option><option value="4">4 位</option></select></div><div id="vegetarianField" class="field"><label>${renderSelectedIcon("meal")}餐食需求 *</label><div class="radio-grid two"><label class="radio-chip"><input type="radio" name="vegetarian" value="NO" checked><span>葷食</span></label><label class="radio-chip"><input type="radio" name="vegetarian" value="YES"><span>素食</span></label></div></div><div class="field field-full"><label for="note">${renderSelectedIcon("note")}備註</label><textarea id="note" class="textarea" name="note" maxlength="160" placeholder="例如：同行者姓名、餐食補充或其他提醒"></textarea></div><div class="live-preview field-full" id="rsvpLivePreview"></div><button class="submit-btn rsvp-submit field-full" type="submit">${renderSelectedIcon("send")}送出登記</button><div id="rsvpHint" class="hint field-full"></div><div id="rsvpSummary" class="summary-card field-full"></div></form></div></section></div>`,"paper rsvp rsvp-slide"); }
+  function renderRsvp(){ return slide(`<div class="scrollable rsvp-scroll"><section class="form-card paper-card rsvp-shell reveal"><div class="rsvp-form-panel"><header class="rsvp-heading"><div class="rsvp-heading-icon">${renderSelectedIcon("heart")}</div><div><p class="eyebrow">RSVP</p><h2 class="section-title">出席登記</h2><p class="rsvp-subtitle">請告訴我們你的出席意願，讓我們為你保留最溫暖的位置。</p></div></header><div id="rsvpProgress" class="rsvp-progress"><div class="is-active"><b>1</b><span>基本資料</span></div><i></i><div><b>2</b><span>出席資訊</span></div><i></i><div><b>3</b><span>完成登記</span></div></div><form id="rsvpForm" class="form-grid rsvp-form" novalidate><div class="field"><label for="guestName">${renderSelectedIcon("person")}姓名 *</label><input id="guestName" class="input" name="name" maxlength="30" placeholder="請輸入您的姓名" autocomplete="name" required></div><div class="field"><label for="guestPhone">${renderSelectedIcon("phone")}電話 *</label><input id="guestPhone" class="input" name="phone" maxlength="20" placeholder="0912345678" inputmode="tel" autocomplete="tel" required><div id="phoneInlineError" class="field-inline-error">電話格式似乎不正確，請確認後再送出。</div></div><div class="field field-full"><label>${renderSelectedIcon("heart")}是否出席 *</label><div class="radio-grid attendance-grid"><label class="radio-chip"><input type="radio" name="attendance" value="ATTEND" checked><span>會出席</span></label><label class="radio-chip"><input type="radio" name="attendance" value="DECLINE"><span>無法出席</span></label><label class="radio-chip"><input type="radio" name="attendance" value="PENDING"><span>尚未確定</span></label></div></div><div id="rsvpPendingNotice" class="rsvp-dynamic-note field-full">尚未確定也沒關係，送出後仍可在這台裝置上重新更新回覆。</div><div id="guestCountField" class="field"><label for="guestCount">${renderSelectedIcon("users")}出席人數 *</label><select id="guestCount" class="select" name="guestCount"><option value="1">1 位</option><option value="2">2 位</option><option value="3">3 位</option><option value="4">4 位</option></select></div><div id="vegetarianField" class="field"><label>${renderSelectedIcon("meal")}餐食需求 *</label><div class="radio-grid two"><label class="radio-chip"><input type="radio" name="vegetarian" value="NO" checked><span>葷食</span></label><label class="radio-chip"><input type="radio" name="vegetarian" value="YES"><span>素食</span></label></div></div><div class="field field-full"><label for="note">${renderSelectedIcon("note")}備註</label><textarea id="note" class="textarea" name="note" maxlength="160" placeholder="例如：同行者姓名、餐食補充或其他提醒"></textarea></div><div class="live-preview field-full" id="rsvpLivePreview"></div><button class="submit-btn rsvp-submit field-full" type="submit">${renderSelectedIcon("send")}送出登記</button><div id="rsvpHint" class="hint field-full"></div><div id="rsvpSummary" class="summary-card field-full"></div></form></div></section></div>`,"paper rsvp rsvp-slide"); }
 
   function renderMessages(){ return slide(`<div class="scrollable blessing-scroll"><section class="messages-card paper-card blessing-shell reveal"><header class="blessing-heading"><div class="blessing-envelope">${renderSelectedIcon("envelope")}</div><div><p class="eyebrow">Blessing Wall</p><h2 class="section-title">留下您的祝福</h2><p class="blessing-subtitle">每一句溫柔的話，都會成為我們珍藏的婚禮回憶。</p></div></header><div class="pinned-blessing"><span class="pinned-label">新人置頂</span><span class="pinned-quote">“</span><p><b>${escapeHtml(CONFIG.groom)} & ${escapeHtml(CONFIG.bride)}：</b>謝謝每一位來到這裡的你，因為有你們的祝福，我們的故事變得更完整。</p><div class="pinned-signature">WITH LOVE · 2026</div></div><div class="message-layout blessing-layout"><form id="messageForm" class="form-grid message-form-panel" novalidate><div class="message-panel-title"><span>${renderSelectedIcon("envelope")}</span><div><b>寫一封祝福小信</b><small>給新人最溫暖的一句話</small></div></div><div class="field honeypot" aria-hidden="true"><input id="msgWebsite" name="website" type="text" tabindex="-1"></div><div class="field field-with-icon"><label for="msgName">${renderSelectedIcon("person")}暱稱 *</label><input id="msgName" class="input" name="name" maxlength="20" placeholder="你的暱稱" required></div><div class="field field-with-icon"><label for="msgText">${renderSelectedIcon("heart")}祝福話語 *</label><textarea id="msgText" class="textarea blessing-textarea" name="message" maxlength="180" placeholder="寫下你的祝福，讓這一天多一點溫度..." required></textarea><div id="msgCounter" class="char-counter">0 / 180</div></div><button class="submit-btn blessing-submit" type="submit">${renderSelectedIcon("send")}送出祝福</button><div id="msgHint" class="hint"></div></form><section class="message-stream-panel"><div class="messages-divider"><span>${renderSelectedIcon("sparkle")}</span><div><b>已收到的祝福</b><small>THANK YOU FOR YOUR LOVE</small></div><em id="messageCount" class="messages-count">0 則祝福</em></div><div class="messages-list-wrap"><div id="messagesList"></div></div></section></div></section></div>`,"paper message blessing-slide"); }
 
@@ -764,8 +779,9 @@
     audio.muted=false;
     audio.play().then(()=>{
       mapReturnResumePending=false;
+      mapNavigationInProgress=false;
       mapReturnAudioTime=0;
-      try{ sessionStorage.removeItem(MAP_RETURN_KEY); }catch(e){}
+      clearMapReturnState();
       document.getElementById("musicBtn").setAttribute("aria-pressed","true");
       document.getElementById("musicBtn").setAttribute("aria-label","背景音樂播放中，點擊關閉");
       updateMusicUi(true);
@@ -843,27 +859,63 @@
   function isInteractiveTarget(target){ return Boolean(target.closest("button,a,input,textarea,select,.modal,[role=\"button\"]")); }
   function normalizeIndex(i){ return Math.max(0,Math.min(slideCount-1,i)); }
   function userGoTo(i){ pauseAutoplay(MANUAL_PAUSE_MS); goTo(i); }
-  function goTo(i,fromAuto=false){ const next=normalizeIndex(i); if(next!==currentIndex) triggerPageTurn(getTurnDirection(next)); currentIndex=next; update(); scheduleAutoplay(); }
+  function goTo(i,fromAuto=false){
+    const next=normalizeIndex(i);
+    if(next===currentIndex || isPageTransitioning)return;
+    const direction=getTurnDirection(next);
+    if(!runPageTransition(next,direction)){ currentIndex=next; update(); }
+    scheduleAutoplay();
+  }
   function update(){ const slides=document.getElementById("slides"); if(slides) slides.style.transform=`translate3d(${-currentIndex*100}%,0,0)`; document.querySelectorAll(".slide").forEach((s,i)=>s.classList.toggle("is-active",i===currentIndex)); document.querySelectorAll(".dot").forEach((d,i)=>d.classList.toggle("is-active",i===currentIndex)); document.getElementById("pageLabel").textContent=`${String(currentIndex+1).padStart(2,"0")} / ${String(slideCount).padStart(2,"0")}`; document.getElementById("prevBtn").disabled=currentIndex===0; document.getElementById("nextBtn").disabled=currentIndex===slideCount-1; updateCountdown(); }
   function getTurnDirection(next){ return next>currentIndex?1:-1; }
-  function setTurnGeometry(direction=1){
-    const layer=document.getElementById("pageTurnLayer");
-    const active=document.querySelector(".slide.is-active .photo-story-card,.slide.is-active .hero-card,.slide.is-active .paper-card,.slide.is-active .form-card,.slide.is-active .messages-card");
-    if(!layer || !active)return;
-    const r=active.getBoundingClientRect();
-    const radius=Math.min(34,Math.max(18,Number.parseFloat(getComputedStyle(active).borderRadius)||28));
-    const sheetLeft=direction<0 ? r.left : r.left + r.width/2;
-    layer.style.setProperty("--turn-frame-left",`${r.left}px`);
-    layer.style.setProperty("--turn-frame-top",`${r.top}px`);
-    layer.style.setProperty("--turn-frame-width",`${r.width}px`);
-    layer.style.setProperty("--turn-frame-height",`${r.height}px`);
-    layer.style.setProperty("--turn-top",`${r.top}px`);
-    layer.style.setProperty("--turn-left",`${sheetLeft}px`);
-    layer.style.setProperty("--turn-width",`${r.width/2}px`);
-    layer.style.setProperty("--turn-height",`${r.height}px`);
-    layer.style.setProperty("--turn-radius",`${radius}px`);
+  function getPageTransitionCard(slide){ return slide?.querySelector(".photo-story-card,.hero-card,.details-shell,.rsvp-shell,.blessing-shell,.closing-card,.paper-card,.form-card,.messages-card")||null; }
+  function sanitizeTransitionClone(node){
+    const clone=node.cloneNode(true);
+    clone.querySelectorAll("[id]").forEach(el=>el.removeAttribute("id"));
+    clone.querySelectorAll("audio,video,iframe,script").forEach(el=>el.remove());
+    clone.setAttribute("aria-hidden","true");
+    return clone;
   }
-  function triggerPageTurn(direction=1){ const layer=document.getElementById("pageTurnLayer"); setTurnGeometry(direction); layer.classList.remove("is-turning","is-back"); if(direction<0) layer.classList.add("is-back"); void layer.offsetWidth; layer.classList.add("is-turning"); setTimeout(()=>layer.classList.remove("is-turning","is-back"),850); }
+  function runPageTransition(next,direction=1){
+    if(window.matchMedia?.("(prefers-reduced-motion: reduce)").matches)return false;
+    const layer=document.getElementById("pageTurnLayer");
+    const slides=[...document.querySelectorAll(".slide")];
+    const outgoing=getPageTransitionCard(slides[currentIndex]);
+    const incoming=getPageTransitionCard(slides[next]);
+    if(!layer || !outgoing || !incoming)return false;
+    const r=outgoing.getBoundingClientRect();
+    if(r.width<20 || r.height<20)return false;
+    const radius=Math.min(38,Math.max(18,Number.parseFloat(getComputedStyle(outgoing).borderRadius)||28));
+    const stage=document.createElement("div");
+    stage.className=`page-turn-stage ${direction<0?"is-back":"is-next"}`;
+    stage.style.setProperty("--turn-frame-left",`${r.left}px`);
+    stage.style.setProperty("--turn-frame-top",`${r.top}px`);
+    stage.style.setProperty("--turn-frame-width",`${r.width}px`);
+    stage.style.setProperty("--turn-frame-height",`${r.height}px`);
+    stage.style.setProperty("--turn-radius",`${radius}px`);
+    const incomingWrap=document.createElement("div");
+    const outgoingWrap=document.createElement("div");
+    incomingWrap.className="page-turn-card page-turn-card--incoming";
+    outgoingWrap.className="page-turn-card page-turn-card--outgoing";
+    incomingWrap.appendChild(sanitizeTransitionClone(incoming));
+    outgoingWrap.appendChild(sanitizeTransitionClone(outgoing));
+    stage.append(incomingWrap,outgoingWrap,Object.assign(document.createElement("div"),{className:"page-turn-fold"}));
+    layer.replaceChildren(stage);
+    layer.className="page-turn-layer is-turning";
+    isPageTransitioning=true;
+    currentIndex=next;
+    update();
+    const duration=window.matchMedia?.("(max-width: 760px)").matches?520:580;
+    const finish=()=>{
+      clearTimeout(pageTransitionTimer);
+      layer.className="page-turn-layer";
+      layer.replaceChildren(Object.assign(document.createElement("div"),{className:"page-turn-sheet"}));
+      isPageTransitioning=false;
+    };
+    outgoingWrap.addEventListener("animationend",finish,{once:true});
+    pageTransitionTimer=setTimeout(finish,duration+120);
+    return true;
+  }
   function pauseAutoplay(ms){ clearTimeout(autoTimer); }
   function scheduleAutoplay(){ clearTimeout(autoTimer); }
 
@@ -923,24 +975,42 @@
       if(document.visibilityState!=="visible") forceStopBackgroundMusic("window_blur_hidden");
     },{capture:true});
     window.addEventListener("focus",()=>{ if(mapReturnResumePending) resumeMusicAfterMapReturn(); },{capture:true});
+    const resumeFromUserGesture=e=>{ if(mapReturnResumePending && !e.target.closest?.("#musicBtn")) resumeMusicAfterMapReturn(true); };
+    document.addEventListener("pointerdown",resumeFromUserGesture,{capture:true,passive:true});
+    document.addEventListener("touchend",resumeFromUserGesture,{capture:true,passive:true});
     document.addEventListener("freeze",()=>forceStopBackgroundMusic("freeze"),{capture:true});
     window.addEventListener("pageshow",()=>{
       if(audio){
         audio.muted=false;
         audio.loop=true;
       }
-      if(!restoreMapReturnState()) syncMusicStoppedUi("背景音樂未播放，點擊播放");
+      if(!restoreMapReturnState() && audio?.paused) syncMusicStoppedUi("背景音樂未播放，點擊播放");
     },{capture:true});
+  }
+  function saveMapReturnState(state){
+    const value=JSON.stringify(state);
+    try{ sessionStorage.setItem(MAP_RETURN_KEY,value); }catch(e){}
+    try{ localStorage.setItem(MAP_RETURN_KEY,value); }catch(e){}
+  }
+  function readMapReturnState(){
+    let value=null;
+    try{ value=sessionStorage.getItem(MAP_RETURN_KEY); }catch(e){}
+    if(!value){ try{ value=localStorage.getItem(MAP_RETURN_KEY); }catch(e){} }
+    try{ return JSON.parse(value||"null"); }catch(e){ return null; }
+  }
+  function clearMapReturnState(){
+    try{ sessionStorage.removeItem(MAP_RETURN_KEY); }catch(e){}
+    try{ localStorage.removeItem(MAP_RETURN_KEY); }catch(e){}
   }
   function rememberMapReturnState(){
     mapNavigationInProgress=true;
+    mapReturnResumePending=true;
     mapReturnAudioTime=Number(audio?.currentTime||0);
-    try{ sessionStorage.setItem(MAP_RETURN_KEY,JSON.stringify({index:currentIndex,time:Date.now(),audioTime:mapReturnAudioTime})); }catch(e){}
+    saveMapReturnState({index:currentIndex,time:Date.now(),audioTime:mapReturnAudioTime});
   }
   function restoreMapReturnState(){
-    let state=null;
-    try{ state=JSON.parse(sessionStorage.getItem(MAP_RETURN_KEY)||"null"); }catch(e){}
-    if(!state || Date.now()-Number(state.time||0)>1800000)return false;
+    const state=readMapReturnState();
+    if(!state || Date.now()-Number(state.time||0)>43200000){ clearMapReturnState(); return false; }
     currentIndex=normalizeIndex(Number(state.index));
     mapReturnAudioTime=Math.max(0,Number(state.audioTime||0));
     started=true;
@@ -949,39 +1019,55 @@
     document.getElementById("intro")?.classList.add("is-hidden");
     document.getElementById("main")?.classList.add("is-ready");
     update();
-    setTimeout(()=>resumeMusicAfterMapReturn(),80);
+    requestAnimationFrame(()=>resumeMusicAfterMapReturn());
     return true;
   }
-  function resumeMusicAfterMapReturn(){
-    if(!mapReturnResumePending || !audio || document.visibilityState!=="visible")return;
+  function resumeMusicAfterMapReturn(fromUserGesture=false){
+    if(!mapReturnResumePending || mapResumeAttemptInFlight || !audio || document.visibilityState!=="visible")return;
+    mapResumeAttemptInFlight=true;
     audio.loop=true;
-    audio.muted=true;
+    audio.muted=!fromUserGesture;
     if(mapReturnAudioTime>0){
       const restoreTime=()=>{ try{ if(Math.abs(audio.currentTime-mapReturnAudioTime)>.75) audio.currentTime=mapReturnAudioTime; }catch(e){} };
       if(audio.readyState>=1) restoreTime(); else audio.addEventListener("loadedmetadata",restoreTime,{once:true});
     }
-    const attempt=audio.play();
-    if(!attempt || typeof attempt.then!=="function")return;
+    let attempt;
+    try{ attempt=audio.play(); }catch(e){ mapResumeAttemptInFlight=false; return; }
+    if(!attempt || typeof attempt.then!=="function"){ mapResumeAttemptInFlight=false; return; }
     attempt.then(()=>{
-      setTimeout(()=>{
+      const completeResume=()=>{
         audio.muted=false;
         audio.loop=true;
+        mapResumeAttemptInFlight=false;
         if(audio.paused)return;
         mapReturnResumePending=false;
+        mapNavigationInProgress=false;
         mapReturnAudioTime=0;
-        try{ sessionStorage.removeItem(MAP_RETURN_KEY); }catch(e){}
+        clearMapReturnState();
         document.getElementById("musicBtn")?.setAttribute("aria-pressed","true");
         document.getElementById("musicBtn")?.setAttribute("aria-label","背景音樂播放中，點擊關閉");
         updateMusicUi(true);
         musicHintLocked=true;
         setMusicHint(false);
-      },80);
+      };
+      if(fromUserGesture) completeResume(); else requestAnimationFrame(completeResume);
     }).catch(()=>{
+      mapResumeAttemptInFlight=false;
       audio.muted=false;
-      syncMusicStoppedUi("背景音樂未播放，點擊播放");
+      syncMusicStoppedUi("點一下頁面即可恢復背景音樂");
+      const hint=document.getElementById("musicHint");
+      if(hint) hint.textContent="點一下頁面繼續播放音樂";
+      setMusicHint(true);
     });
   }
-  function openMapAndCloseSite(url){ rememberMapReturnState(); if(audio){ audio.pause(); audio.muted=false; } syncMusicStoppedUi("背景音樂已暫停，返回後將自動播放"); announceMusicStatus("正在開啟 Google Map"); track("map_open",{}); window.location.assign(url); }
+  function openMapAndCloseSite(url){
+    rememberMapReturnState();
+    if(audio){ audio.pause(); audio.muted=false; }
+    syncMusicStoppedUi("背景音樂已暫停，返回後將自動播放");
+    announceMusicStatus("正在開啟 Google Map");
+    track("map_open",{mode:"same_tab"});
+    window.location.assign(url);
+  }
   function openCalendarModal(){ document.getElementById("calendarModal").classList.add("is-open"); pauseAutoplay(60000); }
   function closeCalendarModal(){ document.getElementById("calendarModal")?.classList.remove("is-open"); }
   function toGoogleDate(dt){ return new Date(dt).toISOString().replace(/[-:]/g,"").replace(/\.\d{3}Z$/, "Z"); }
