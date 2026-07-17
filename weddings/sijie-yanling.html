@@ -867,7 +867,7 @@
     @keyframes romanticSnowFall{0%{opacity:0;transform:translate3d(0,-8vh,0) rotate(0deg)}8%{opacity:var(--snow-opacity)}84%{opacity:var(--snow-opacity)}100%{opacity:0;transform:translate3d(var(--snow-drift),118vh,0) rotate(210deg)}}
 
     /* Page 3 / 2026: always fill the photo card, especially on mobile. */
-    .photo-story-card.timeline-card-2 img{width:100%!important;height:100%!important;object-fit:cover!important;object-position:var(--pos,50% 28%)!important;transform:scale(1.012)!important}.slide.is-active .photo-story-card.timeline-card-2 img{transform:scale(1.035)!important}
+    .photo-story-card.timeline-card-2 img{width:100%!important;height:100%!important;object-fit:cover!important;object-position:50% 0%!important;transform:scale(1.012)!important;transform-origin:50% 0%!important}.slide.is-active .photo-story-card.timeline-card-2 img{transform:scale(1.035)!important}
     @media(max-width:760px){.photo-story-card.timeline-card-2{width:min(94vw,620px);overflow:hidden}.photo-story-card.timeline-card-2 img{object-fit:cover!important;object-position:var(--pos,50% 28%)!important;transform:scale(1.018)!important}.slide.is-active .photo-story-card.timeline-card-2 img{transform:scale(1.04)!important}}
     @media(prefers-reduced-motion:reduce){.intro-snow{display:none}.photo-story-card.timeline-card-2 img,.slide.is-active .photo-story-card.timeline-card-2 img{transition:none!important;transform:scale(1.012)!important}}
 
@@ -921,8 +921,8 @@
         width:100%!important;
         height:100%!important;
         object-fit:cover!important;
-        object-position:var(--pos,50% 28%)!important;
-        transform:translate3d(0,22%,0) scale(1.45)!important;
+        object-position:50% 50%!important;
+        transform:scale(1.008)!important;
         transform-origin:center!important;
       }
     }
@@ -1018,7 +1018,7 @@
       story2:{src:"./photo2.jpeg",position:"50% 35%",title:"故事照片 2"},
       timeline2018:{src:"./timeline2018.jpeg",position:"50% 32%",title:"2018 初遇照片"},
       timeline2020:{src:"./timeline2020.jpeg",position:"50% 34%",title:"2020 相戀照片"},
-      timeline2026:{src:"./timeline2026.jpeg",position:"50% 28%",title:"2026 新篇章照片"},
+      timeline2026:{src:"./timeline2026.jpeg",position:"50% 50%",title:"2026 新篇章照片"},
       gallery1:{src:"./photo_wall/photo_wall_01.jpg",position:"50% 45%",title:"相簿照片 1"},
       gallery2:{src:"./photo_wall/photo_wall_02.jpg",position:"50% 45%",title:"相簿照片 2"},
       gallery3:{src:"./photo_wall/photo_wall_03.jpg",position:"50% 45%",title:"相簿照片 3"},
