@@ -922,7 +922,7 @@
         height:100%!important;
         object-fit:cover!important;
         object-position:var(--pos,50% 28%)!important;
-        transform:scale(1.008)!important;
+        transform:translate3d(0,22%,0) scale(1.45)!important;
         transform-origin:center!important;
       }
     }
@@ -947,6 +947,47 @@
     .storybook-page-stage[data-surface="paper"] :is(.storybook-page-base,.storybook-page-leaf) .slide.paper .content>:where(.paper-card,.hero-card,.form-card,.messages-card)::after,
     .storybook-page-stage[data-surface="paper"] :is(.storybook-page-base,.storybook-page-leaf) .slide.paper .scrollable>:where(.paper-card,.form-card,.messages-card)::after{display:none!important}
     .storybook-page-stage[data-surface="paper"] :is(.storybook-page-base,.storybook-page-leaf) .closing-card{box-shadow:0 0 0 1px rgba(255,255,255,.72)!important}
+
+    /* Mobile: retain a clear page sweep without rotating filtered cards through 3D space. */
+    @media(max-width:760px){
+      .storybook-page-stage.is-mobile-turn{perspective:1000px;overflow:hidden}
+      .storybook-page-stage.is-mobile-turn .storybook-page-face--back{display:none}
+      .storybook-page-stage.is-mobile-turn.is-next .storybook-page-leaf{
+        transform-origin:left center;
+        animation:mobileBookSweepNext 580ms cubic-bezier(.22,.72,.18,1) both;
+      }
+      .storybook-page-stage.is-mobile-turn.is-back .storybook-page-leaf{
+        transform-origin:right center;
+        animation:mobileBookSweepBack 580ms cubic-bezier(.22,.72,.18,1) both;
+      }
+      .storybook-page-stage.is-mobile-turn .page-turn-fold{
+        display:block!important;
+        top:0;
+        bottom:0;
+        width:34%;
+        filter:none;
+        animation:mobileBookFold 580ms cubic-bezier(.22,.72,.18,1) both;
+      }
+      .storybook-page-stage.is-mobile-turn.is-next .page-turn-fold{
+        right:-10%;
+        background:linear-gradient(90deg,transparent,rgba(72,35,23,.17) 32%,rgba(255,255,255,.68) 51%,rgba(88,48,31,.12) 69%,transparent);
+      }
+      .storybook-page-stage.is-mobile-turn.is-back .page-turn-fold{
+        left:-10%;
+        background:linear-gradient(270deg,transparent,rgba(72,35,23,.17) 32%,rgba(255,255,255,.68) 51%,rgba(88,48,31,.12) 69%,transparent);
+      }
+      @keyframes mobileBookSweepNext{
+        0%{opacity:1;transform:translate3d(0,0,0) rotateY(0deg);box-shadow:0 0 0 rgba(48,20,12,0)}
+        44%{opacity:1;transform:translate3d(-1.5%,0,10px) rotateY(-16deg);box-shadow:20px 3px 34px rgba(48,20,12,.22)}
+        100%{opacity:0;transform:translate3d(-9%,0,-20px) rotateY(-34deg);box-shadow:0 0 0 rgba(48,20,12,0)}
+      }
+      @keyframes mobileBookSweepBack{
+        0%{opacity:1;transform:translate3d(0,0,0) rotateY(0deg);box-shadow:0 0 0 rgba(48,20,12,0)}
+        44%{opacity:1;transform:translate3d(1.5%,0,10px) rotateY(16deg);box-shadow:-20px 3px 34px rgba(48,20,12,.22)}
+        100%{opacity:0;transform:translate3d(9%,0,-20px) rotateY(34deg);box-shadow:0 0 0 rgba(48,20,12,0)}
+      }
+      @keyframes mobileBookFold{0%,100%{opacity:0;transform:translateX(13%)}25%{opacity:.14}50%{opacity:.78;transform:translateX(0)}76%{opacity:.16}}
+    }
   </style>
 </head>
 <body>
@@ -1284,8 +1325,8 @@
     return clone;
   }
   function runPageTransition(next,direction=1){
-    if(window.matchMedia?.("(max-width: 760px)").matches)return false;
     if(window.matchMedia?.("(prefers-reduced-motion: reduce)").matches)return false;
+    const isMobileTurn=window.matchMedia?.("(max-width: 760px)").matches;
     const layer=document.getElementById("pageTurnLayer");
     const slides=[...document.querySelectorAll(".slide")];
     const outgoing=getPageTransitionCard(slides[currentIndex]);
@@ -1297,9 +1338,9 @@
     if(r.width<20 || r.height<20)return false;
 
     const radius=Math.min(38,Math.max(18,Number.parseFloat(getComputedStyle(app).borderRadius)||28));
-    const transitionSurface=outgoing.classList.contains("photo-story") && incoming.classList.contains("photo-story") ? "photo" : "paper";
+    const transitionSurface=isMobileTurn || !(outgoing.classList.contains("photo-story") && incoming.classList.contains("photo-story")) ? "paper" : "photo";
     const stage=document.createElement("div");
-    stage.className=`page-turn-stage storybook-page-stage ${direction<0?"is-back":"is-next"}${transitionSurface==="paper"?" is-preparing":""}`;
+    stage.className=`page-turn-stage storybook-page-stage ${direction<0?"is-back":"is-next"}${transitionSurface==="paper"?" is-preparing":""}${isMobileTurn?" is-mobile-turn":""}`;
     stage.dataset.surface=transitionSurface;
     stage.style.setProperty("--turn-frame-left",`${r.left-appRect.left}px`);
     stage.style.setProperty("--turn-frame-top",`${r.top-appRect.top}px`);
@@ -1328,7 +1369,7 @@
     isPageTransitioning=true;
     document.documentElement.classList.add("is-page-transitioning");
 
-    const duration=window.matchMedia?.("(max-width: 760px)").matches?780:940;
+    const duration=isMobileTurn?580:940;
     let finished=false;
     let transitionStarted=false;
     let appliedNextPage=false;
@@ -1352,7 +1393,7 @@
       isPageTransitioning=false;
     };
     const onLeafAnimationEnd=event=>{
-      if(event.target===leaf && event.animationName.startsWith("storybookFlip"))finish();
+      if(event.target===leaf && (event.animationName.startsWith("storybookFlip") || event.animationName.startsWith("mobileBookSweep")))finish();
     };
     const beginTransition=()=>{
       if(transitionStarted || finished)return;
