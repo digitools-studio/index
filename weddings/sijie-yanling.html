@@ -870,6 +870,83 @@
     .photo-story-card.timeline-card-2 img{width:100%!important;height:100%!important;object-fit:cover!important;object-position:var(--pos,50% 28%)!important;transform:scale(1.012)!important}.slide.is-active .photo-story-card.timeline-card-2 img{transform:scale(1.035)!important}
     @media(max-width:760px){.photo-story-card.timeline-card-2{width:min(94vw,620px);overflow:hidden}.photo-story-card.timeline-card-2 img{object-fit:cover!important;object-position:var(--pos,50% 28%)!important;transform:scale(1.018)!important}.slide.is-active .photo-story-card.timeline-card-2 img{transform:scale(1.04)!important}}
     @media(prefers-reduced-motion:reduce){.intro-snow{display:none}.photo-story-card.timeline-card-2 img,.slide.is-active .photo-story-card.timeline-card-2 img{transition:none!important;transform:scale(1.012)!important}}
+
+    /* Mobile photo framing and lightweight page movement. */
+    @media(max-width:760px){
+      :root{--mobile-content-gutter:14px}
+      .slides{
+        transition:transform .42s cubic-bezier(.22,.72,.22,1);
+        will-change:transform;
+        backface-visibility:hidden;
+        -webkit-backface-visibility:hidden;
+      }
+      .slide{
+        background:linear-gradient(135deg,#C38879,#E9B8AA 62%,#FFF3EA);
+        backface-visibility:hidden;
+        -webkit-backface-visibility:hidden;
+      }
+      .slide-bg,
+      .slide.is-active .slide-bg{transform:scale(1.06);transition:none;will-change:auto}
+      .reveal,
+      .slide.is-active .reveal{opacity:1;transform:none;transition:none}
+      .photo-story-card img,
+      .slide.is-active .photo-story-card img{transition:none!important;will-change:auto}
+
+      /* Page 1 / 2018: crop to the portrait's upper body on phones. */
+      .photo-story-card.timeline-card-0 img,
+      .slide.is-active .photo-story-card.timeline-card-0 img{
+        object-fit:cover!important;
+        object-position:var(--pos,50% 32%)!important;
+        transform:scale(2.25)!important;
+        transform-origin:46% 34%!important;
+      }
+
+      /* Page 3 / 2026: extend through the content gutters and fill its available height. */
+      .photo-story-card.timeline-card-2{
+        width:calc(100% + var(--mobile-content-gutter) * 2);
+        max-width:none;
+        height:auto;
+        min-height:0;
+        align-self:stretch;
+        margin-inline:calc(var(--mobile-content-gutter) * -1);
+        overflow:hidden;
+        border:0;
+        border-radius:0;
+        outline:0!important;
+        box-shadow:none!important;
+      }
+      .slide.paper .content>.photo-story-card.timeline-card-2::after{display:none}
+      .photo-story-card.timeline-card-2 img,
+      .slide.is-active .photo-story-card.timeline-card-2 img{
+        width:100%!important;
+        height:100%!important;
+        object-fit:cover!important;
+        object-position:var(--pos,50% 28%)!important;
+        transform:scale(1.008)!important;
+        transform-origin:center!important;
+      }
+    }
+    @media(max-width:420px){:root{--mobile-content-gutter:10px}}
+
+    /* Dense paper pages use a stable, crisp material only while their clone is turning. */
+    .storybook-page-stage[data-surface="paper"]{background:#fffdf9;box-shadow:none}
+    .storybook-page-stage.is-preparing .storybook-page-leaf{
+      animation:none!important;
+      transform:rotateY(0deg) translateZ(0)!important;
+    }
+    .storybook-page-stage.is-preparing .page-turn-fold{animation:none!important;opacity:0!important}
+    .storybook-page-stage[data-surface="paper"] :is(.storybook-page-base,.storybook-page-leaf) :is(.paper-card,.hero-card,.form-card,.messages-card,.venue-caption){
+      backdrop-filter:none!important;
+      -webkit-backdrop-filter:none!important;
+    }
+    .storybook-page-stage[data-surface="paper"] :is(.storybook-page-base,.storybook-page-leaf) .slide.paper .content>:where(.paper-card,.hero-card,.form-card,.messages-card),
+    .storybook-page-stage[data-surface="paper"] :is(.storybook-page-base,.storybook-page-leaf) .slide.paper .scrollable>:where(.paper-card,.form-card,.messages-card){
+      outline:0!important;
+      box-shadow:0 0 0 1px rgba(255,255,255,.74)!important;
+    }
+    .storybook-page-stage[data-surface="paper"] :is(.storybook-page-base,.storybook-page-leaf) .slide.paper .content>:where(.paper-card,.hero-card,.form-card,.messages-card)::after,
+    .storybook-page-stage[data-surface="paper"] :is(.storybook-page-base,.storybook-page-leaf) .slide.paper .scrollable>:where(.paper-card,.form-card,.messages-card)::after{display:none!important}
+    .storybook-page-stage[data-surface="paper"] :is(.storybook-page-base,.storybook-page-leaf) .closing-card{box-shadow:0 0 0 1px rgba(255,255,255,.72)!important}
   </style>
 </head>
 <body>
@@ -1207,6 +1284,7 @@
     return clone;
   }
   function runPageTransition(next,direction=1){
+    if(window.matchMedia?.("(max-width: 760px)").matches)return false;
     if(window.matchMedia?.("(prefers-reduced-motion: reduce)").matches)return false;
     const layer=document.getElementById("pageTurnLayer");
     const slides=[...document.querySelectorAll(".slide")];
@@ -1219,8 +1297,10 @@
     if(r.width<20 || r.height<20)return false;
 
     const radius=Math.min(38,Math.max(18,Number.parseFloat(getComputedStyle(app).borderRadius)||28));
+    const transitionSurface=outgoing.classList.contains("photo-story") && incoming.classList.contains("photo-story") ? "photo" : "paper";
     const stage=document.createElement("div");
-    stage.className=`page-turn-stage storybook-page-stage ${direction<0?"is-back":"is-next"}`;
+    stage.className=`page-turn-stage storybook-page-stage ${direction<0?"is-back":"is-next"}${transitionSurface==="paper"?" is-preparing":""}`;
+    stage.dataset.surface=transitionSurface;
     stage.style.setProperty("--turn-frame-left",`${r.left-appRect.left}px`);
     stage.style.setProperty("--turn-frame-top",`${r.top-appRect.top}px`);
     stage.style.setProperty("--turn-frame-width",`${r.width}px`);
@@ -1248,22 +1328,47 @@
     isPageTransitioning=true;
     document.documentElement.classList.add("is-page-transitioning");
 
-    currentIndex=next;
-    update();
-
     const duration=window.matchMedia?.("(max-width: 760px)").matches?780:940;
     let finished=false;
+    let transitionStarted=false;
+    let appliedNextPage=false;
+    let prepareTimer=null;
+    const applyNextPage=()=>{
+      if(appliedNextPage)return;
+      appliedNextPage=true;
+      currentIndex=next;
+      update();
+    };
     const finish=()=>{
       if(finished)return;
       finished=true;
+      clearTimeout(prepareTimer);
       clearTimeout(pageTransitionTimer);
+      leaf.removeEventListener("animationend",onLeafAnimationEnd);
+      applyNextPage();
       layer.className="page-turn-layer";
       layer.replaceChildren(Object.assign(document.createElement("div"),{className:"page-turn-sheet"}));
       document.documentElement.classList.remove("is-page-transitioning");
       isPageTransitioning=false;
     };
-    leaf.addEventListener("animationend",finish,{once:true});
-    pageTransitionTimer=setTimeout(finish,duration+140);
+    const onLeafAnimationEnd=event=>{
+      if(event.target===leaf && event.animationName.startsWith("storybookFlip"))finish();
+    };
+    const beginTransition=()=>{
+      if(transitionStarted || finished)return;
+      transitionStarted=true;
+      clearTimeout(prepareTimer);
+      leaf.addEventListener("animationend",onLeafAnimationEnd);
+      stage.classList.remove("is-preparing");
+      applyNextPage();
+      pageTransitionTimer=setTimeout(finish,duration+160);
+    };
+    if(transitionSurface==="paper"){
+      prepareTimer=setTimeout(beginTransition,96);
+      requestAnimationFrame(()=>requestAnimationFrame(beginTransition));
+    }else{
+      beginTransition();
+    }
     return true;
   }
   function pauseAutoplay(ms){ clearTimeout(autoTimer); }
